@@ -43,7 +43,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T>
     Pair<List<T>,List<T>> partition(final Function<? super T, Boolean> f);
 
     <U>Iterable2<Pair<T,U>> zip(final Iterable2<? extends U> l2);
-    //<U>Pair<List<T>,List<U>> unzip();
+    // Pair<List<T1>,List<T2>> unzip();
     <U,V>Iterable2<Triple<T,U,V>> zip3(final Iterable<? extends U> l2, final Iterable<? extends V> l3);
     <U>U in(final Function<Iterable2<T>, U> f);
 
