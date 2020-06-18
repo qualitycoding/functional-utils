@@ -6,7 +6,6 @@ import me.shaftesbury.utils.functional.monad.String.MissingValueException;
 import me.shaftesbury.utils.functional.monad.String.NonBlankString;
 import me.shaftesbury.utils.functional.monad.String.NonEmptyString;
 import me.shaftesbury.utils.functional.monad.String.NonNullString;
-import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -56,6 +55,156 @@ class StringTest {
     }
 
     @Nested
+    class Equals {
+        @Nested
+        class Value {
+            @Test
+            void nonBlankStringEqualsNonBlankString() {
+                assertThat(NonBlankString.of("gsdf")).isEqualTo(NonBlankString.of("gsdf"));
+            }
+
+            @Test
+            void nonBlankStringEqualsNonEmptyString() {
+                assertThat(NonBlankString.of("gsdf")).isEqualTo(NonEmptyString.of("gsdf"));
+            }
+
+            @Test
+            void nonBlankStringEqualsNonNullString() {
+                assertThat(NonBlankString.of("gsdf")).isEqualTo(NonNullString.of("gsdf"));
+            }
+
+            @Test
+            void nonEmptyStringEqualsNonBlankString() {
+                assertThat(NonEmptyString.of("gsdf")).isEqualTo(NonBlankString.of("gsdf"));
+            }
+
+            @Test
+            void nonEmptyStringEqualsNonEmptyString() {
+                assertThat(NonEmptyString.of("gsdf")).isEqualTo(NonEmptyString.of("gsdf"));
+            }
+
+            @Test
+            void nonEmptyStringEqualsNonNullString() {
+                assertThat(NonEmptyString.of("gsdf")).isEqualTo(NonNullString.of("gsdf"));
+            }
+
+            @Test
+            void nonNullStringEqualsNonBlankString() {
+                assertThat(NonNullString.of("gsdf")).isEqualTo(NonBlankString.of("gsdf"));
+            }
+
+            @Test
+            void nonNullStringEqualsNonEmptyString() {
+                assertThat(NonNullString.of("gsdf")).isEqualTo(NonEmptyString.of("gsdf"));
+            }
+
+            @Test
+            void nonNullStringEqualsNonNullString() {
+                assertThat(NonNullString.of("gsdf")).isEqualTo(NonNullString.of("gsdf"));
+            }
+        }
+
+        @Nested
+        class Empty {
+            @Test
+            void nonBlankStringEqualsNonBlankString() {
+                assertThat(NonBlankString.of("    ")).isEqualTo(NonBlankString.of("    "));
+            }
+
+            @Test
+            void nonBlankStringEqualsNonEmptyString() {
+                assertThat(NonBlankString.of("    ")).isEqualTo(NonEmptyString.of(""));
+            }
+
+            @Test
+            void nonBlankStringEqualsNonNullString() {
+                assertThat(NonBlankString.of("    ")).isEqualTo(NonNullString.of(null));
+            }
+
+            @Test
+            void nonEmptyStringEqualsNonBlankString() {
+                assertThat(NonEmptyString.of("")).isEqualTo(NonBlankString.of("    "));
+            }
+
+            @Test
+            void nonEmptyStringEqualsNonEmptyString() {
+                assertThat(NonEmptyString.of("")).isEqualTo(NonEmptyString.of(""));
+            }
+
+            @Test
+            void nonEmptyStringEqualsNonNullString() {
+                assertThat(NonEmptyString.of("")).isEqualTo(NonNullString.of(null));
+            }
+
+            @Test
+            void nonNullStringEqualsNonBlankString() {
+                assertThat(NonNullString.of(null)).isEqualTo(NonBlankString.of("    "));
+            }
+
+            @Test
+            void nonNullStringEqualsNonEmptyString() {
+                assertThat(NonNullString.of(null)).isEqualTo(NonEmptyString.of(""));
+            }
+
+            @Test
+            void nonNullStringEqualsNonNullString() {
+                assertThat(NonNullString.of(null)).isEqualTo(NonNullString.of(null));
+            }
+        }
+    }
+
+    @Nested
+    class NotEqual {
+        @Nested
+        class Value {
+            @Test
+            void nonBlankStringDoesNotEqualNonBlankString() {
+                assertThat(NonBlankString.of("gsdf")).isNotEqualTo((NonBlankString.of("dj")));
+            }
+
+            @Test
+            void nonBlankStringDoesNotEqualNonEmptyString() {
+                assertThat(NonBlankString.of("gsdf")).isNotEqualTo((NonEmptyString.of("dj")));
+            }
+
+            @Test
+            void nonBlankStringDoesNotEqualNonNullString() {
+                assertThat(NonBlankString.of("gsdf")).isNotEqualTo((NonNullString.of("dj")));
+            }
+
+            @Test
+            void nonEmptyStringDoesNotEqualNonBlankString() {
+                assertThat(NonEmptyString.of("gsdf")).isNotEqualTo((NonBlankString.of("dj")));
+            }
+
+            @Test
+            void nonEmptyStringDoesNotEqualNonEmptyString() {
+                assertThat(NonEmptyString.of("gsdf")).isNotEqualTo((NonEmptyString.of("dj")));
+            }
+
+            @Test
+            void nonEmptyStringDoesNotEqualNonNullString() {
+                assertThat(NonEmptyString.of("gsdf")).isNotEqualTo((NonNullString.of("dj")));
+            }
+
+            @Test
+            void nonNullStringDoesNotEqualNonBlankString() {
+                assertThat(NonNullString.of("gsdf")).isNotEqualTo((NonBlankString.of("dj")));
+            }
+
+            @Test
+            void nonNullStringDoesNotEqualNonEmptyString() {
+                assertThat(NonNullString.of("gsdf")).isNotEqualTo((NonEmptyString.of("dj")));
+            }
+
+            @Test
+            void nonNullStringDoesNotEqualNonNullString() {
+                assertThat(NonNullString.of("gsdf")).isNotEqualTo((NonNullString.of("dj")));
+            }
+        }
+    }
+
+    @Nested
     class Get {
         @Test
         void get() {
@@ -72,12 +221,14 @@ class StringTest {
     class GetOrEmpty {
         @Test
         void returnsOptionOf() {
-            VavrAssertions.assertThat(NonBlankString.of("hgh").getOrEmpty()).contains("hgh");
+            assertThat(NonBlankString.of("hgh").getOrEmpty().toJavaOptional()).hasValue("hgh");
+//            VavrAssertions.assertThat(NonBlankString.of("hgh").getOrEmpty()).contains("hgh");
         }
 
         @Test
         void returnsEmpty() {
-            VavrAssertions.assertThat(NonBlankString.of("  ").getOrEmpty()).isEmpty();
+            assertThat(NonBlankString.of("   ").getOrEmpty().toJavaOptional()).isEmpty();
+//            VavrAssertions.assertThat(NonBlankString.of("  ").getOrEmpty()).isEmpty();
         }
     }
 
@@ -179,8 +330,11 @@ class StringTest {
     class Map {
         @Test
         void map() {
-            final NonBlankString s = NonBlankString.of("kggsdf");
-            assertThat(s.map(java.lang.String::toUpperCase)).isEqualTo(s);
+            final java.lang.String value = "kggsdf";
+            final java.lang.String expectedValue = value.toUpperCase();
+            final NonBlankString expected = NonBlankString.of(expectedValue);
+            final NonBlankString s = NonBlankString.of(value);
+            assertThat(s.map(java.lang.String::toUpperCase)).isEqualTo(expected);
         }
 
         @Test
@@ -193,8 +347,11 @@ class StringTest {
     class FlatMap {
         @Test
         void flatMap() {
-            final NonBlankString s = NonBlankString.of("kggsdf");
-            assertThat(s.flatMap(s1 -> NonBlankString.of(s1.toUpperCase()))).isEqualTo(s);
+            final java.lang.String value = "kggsdf";
+            final java.lang.String expectedValue = value.toUpperCase();
+            final NonBlankString expected = NonBlankString.of(expectedValue);
+            final NonBlankString s = NonBlankString.of(value);
+            assertThat(s.flatMap(s1 -> NonBlankString.of(s1.toUpperCase()))).isEqualTo(expected);
         }
 
         @Test

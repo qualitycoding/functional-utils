@@ -2,7 +2,6 @@ package me.shaftesbury.utils.functional;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -10,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 public class Functional_Unzip_Test {
     public Functional_Unzip_Test() {
     }
@@ -28,8 +28,8 @@ public class Functional_Unzip_Test {
 
         final Pair<List<String>, List<Integer>> output = Functional.unzip(input);
 
-        Assertions.assertThat(output.getLeft()).containsExactlyElementsOf(expected.getLeft());
-        Assertions.assertThat(output.getRight()).containsExactlyElementsOf(expected.getRight());
+        assertThat(output.getLeft()).containsExactlyElementsOf(expected.getLeft());
+        assertThat(output.getRight()).containsExactlyElementsOf(expected.getRight());
     }
 
     @Test
@@ -46,8 +46,8 @@ public class Functional_Unzip_Test {
 
         final Pair<List<String>, List<Integer>> output = Functional.unzip(IterableHelper.create(input));
 
-        Assertions.assertThat(output.getLeft()).containsExactlyElementsOf(expected.getLeft());
-        Assertions.assertThat(output.getRight()).containsExactlyElementsOf(expected.getRight());
+        assertThat(output.getLeft()).containsExactlyElementsOf(expected.getLeft());
+        assertThat(output.getRight()).containsExactlyElementsOf(expected.getRight());
     }
 
     @Test
@@ -66,9 +66,9 @@ public class Functional_Unzip_Test {
 
         final Triple<List<String>, List<Integer>, List<String>> output = Functional.unzip3(input);
 
-        Assertions.assertThat(output.getLeft()).containsExactlyElementsOf(expected.getLeft());
-        Assertions.assertThat(output.getMiddle()).containsExactlyElementsOf(expected.getMiddle());
-        Assertions.assertThat(output.getRight()).containsExactlyElementsOf(expected.getRight());
+        assertThat(output.getLeft()).containsExactlyElementsOf(expected.getLeft());
+        assertThat(output.getMiddle()).containsExactlyElementsOf(expected.getMiddle());
+        assertThat(output.getRight()).containsExactlyElementsOf(expected.getRight());
     }
 
     @Test
@@ -87,8 +87,8 @@ public class Functional_Unzip_Test {
 
         final Triple<List<String>, List<Integer>, List<String>> output = Functional.unzip3(IterableHelper.create(input));
 
-        Assertions.assertThat(output.getLeft()).containsExactlyElementsOf(expected.getLeft());
-        Assertions.assertThat(output.getMiddle()).containsExactlyElementsOf(expected.getMiddle());
-        Assertions.assertThat(output.getRight()).containsExactlyElementsOf(expected.getRight());
+        assertThat(output.getLeft()).containsExactlyElementsOf(expected.getLeft());
+        assertThat(output.getMiddle()).containsExactlyElementsOf(expected.getMiddle());
+        assertThat(output.getRight()).containsExactlyElementsOf(expected.getRight());
     }
 }

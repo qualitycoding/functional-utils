@@ -1,6 +1,5 @@
 package me.shaftesbury.utils.functional;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -9,7 +8,6 @@ import java.util.function.Function;
 
 import static me.shaftesbury.utils.functional.FunctionalTest.doublingGenerator;
 import static org.assertj.core.api.Assertions.assertThat;
-
 public class Functional_Pipeline_Test {
     private final FunctionalTest functionalTest;
 
@@ -21,7 +19,7 @@ public class Functional_Pipeline_Test {
     void fwdPipelineTest1() {
         final Collection<Integer> li = Functional.init(doublingGenerator, 5);
         final String s1 = Functional.in(li, functionalTest.concatenate);
-        Assertions.assertThat(s1).isEqualTo("2,4,6,8,10");
+       assertThat(s1).isEqualTo("2,4,6,8,10");
     }
 
     @Test
@@ -30,8 +28,8 @@ public class Functional_Pipeline_Test {
         final Collection<Integer> evens = Functional.in(li, functionalTest.evens_f);
         final String s1 = Functional.in(evens, functionalTest.concatenate);
         final String s2 = Functional.in(li, Functional.then(functionalTest.evens_f, functionalTest.concatenate));
-        Assertions.assertThat(s1).isEqualTo("6,12");
-        Assertions.assertThat(s2).isEqualTo(s1);
+        assertThat(s1).isEqualTo("6,12");
+        assertThat(s2).isEqualTo(s1);
     }
 
     @Test

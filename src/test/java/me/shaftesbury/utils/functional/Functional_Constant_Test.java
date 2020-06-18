@@ -1,10 +1,10 @@
 package me.shaftesbury.utils.functional;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
+import static org.assertj.core.api.Assertions.assertThat;
 public class Functional_Constant_Test {
     public Functional_Constant_Test() {
     }
@@ -14,8 +14,8 @@ public class Functional_Constant_Test {
         final int howMany = 6;
         final int initValue = -1;
         final Collection<Integer> l = Functional.init(Functional.constant(initValue), howMany);
-        Assertions.assertThat(l.size()).isEqualTo(howMany);
+        assertThat(l.size()).isEqualTo(howMany);
         for (final int i : l)
-            Assertions.assertThat(i).isEqualTo(initValue);
+            assertThat(i).isEqualTo(initValue);
     }
 }

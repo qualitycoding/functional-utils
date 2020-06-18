@@ -25,13 +25,8 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class FunctionalTest {
-    public static Func_int_int DoublingGenerator = a -> 2 * a;
-
-    @Test
-    void initTest1() {
-        final IntList output = Functional.init(DoublingGenerator, 5);
-        assertThat(output.toArray()).containsExactly(2, 4, 6, 8, 10);
-    }
+    private static final Func2_int_int_T<Boolean> dBothAreLessThan10 = FunctionalTest::bothAreLessThan10;
+    public static Func_int_int doublingGenerator = a -> 2 * a;
 
     @Test
     void rangeTest1() {
@@ -39,19 +34,14 @@ public class FunctionalTest {
         assertThat(output.toArray()).containsExactly(0, 1, 2, 3, 4);
     }
 
-    @Test
-    void mapTest1() {
-        final IntList input = new IntList(new int[]{1, 2, 3, 4, 5});
-        final Collection<String> output = Functional.map(Functional.dStringify(), input);
-        assertThat(output.toArray()).containsExactly(new String[]{"1", "2", "3", "4", "5"});
+    private static boolean bothAreLessThan10(final int a, final int b) {
+        return a < 10 && b < 10;
     }
 
     @Test
-    void mapiTest1() {
-        final IntList input = new IntList(new int[]{1, 2, 3, 4, 5});
-        final Collection<Pair<Integer, String>> output = Functional.mapi((pos, i) -> Pair.of(pos, Integer.toString(i)), input);
-        assertThat(me.shaftesbury.utils.functional.Functional.map(Pair::getRight, output).toArray()).containsExactly(new String[]{"1", "2", "3", "4", "5"});
-        assertThat(Functional.map(Pair::getLeft, output).toArray()).containsExactly(0, 1, 2, 3, 4);
+    void initTest1() {
+        final IntList output = Functional.init(doublingGenerator, 5);
+        assertThat(output.toArray()).containsExactly(2, 4, 6, 8, 10);
     }
 
 //    @Test
@@ -64,13 +54,13 @@ public class FunctionalTest {
 //                return Pair.of(pos, i.toString());
 //            }
 //        }, input));
-//        assertThat().containsExactly(new String[]{"1","2","3","4","5"},Functional.map(new Function<Pair<Integer,String>, String>() {
+//        assertThat().containsExactly("1","2","3","4","5",Functional.map(new Function<Pair<Integer,String>, String>() {
 //
 //            public String apply(final Pair<Integer,String> o) {
 //                return o.getValue1();
 //            }
 //        },output).toArray());
-//        assertThat().containsExactly(new Integer[]{0,1,2,3,4},Functional.map(new Function<Pair<Integer,String>, Integer>() {
+//        assertThat().containsExactly(0,1,2,3,4,Functional.map(new Function<Pair<Integer,String>, Integer>() {
 //
 //            public Integer apply(final Pair<Integer,String> o) {
 //                return o.getLeft();
@@ -122,16 +112,11 @@ public class FunctionalTest {
         return Functional.isEven.apply(a) && Functional.isEven.apply(b);
     }
 
-
     @Test
-    void forAll2Test1() {
-        final IntList l = Functional.init(DoublingGenerator, 5);
-        final IntList m = Functional.init(QuadruplingGenerator, 5);
-        try {
-            assertThat(Functional.forAll2(FunctionalTest::BothAreEven, l, m)).isTrue();
-        } catch (final Exception e) {
-            fail();
-        }
+    void mapTest1() {
+        final IntList input = new IntList(new int[]{1, 2, 3, 4, 5});
+        final Collection<String> output = Functional.map(Functional.dStringify(), input);
+        assertThat(output).containsExactly("1", "2", "3", "4", "5");
     }
 
 //    @Test
@@ -155,15 +140,28 @@ public class FunctionalTest {
 //        }
 //    }
 
-    private static boolean BothAreLessThan10(final int a, final int b) {
-        return a < 10 && b < 10;
+    @Test
+    void mapiTest1() {
+        final IntList input = new IntList(new int[]{1, 2, 3, 4, 5});
+        final Collection<Pair<Integer, String>> output = Functional.mapi((pos, i) -> Pair.of(pos, Integer.toString(i)), input);
+        assertThat(me.shaftesbury.utils.functional.Functional.map(Pair::getRight, output)).containsExactly("1", "2", "3", "4", "5");
+        assertThat(Functional.map(Pair::getLeft, output).toArray()).containsExactly(0, 1, 2, 3, 4);
     }
 
-    private static Func2_int_int_T<Boolean> dBothAreLessThan10 = FunctionalTest::BothAreLessThan10;
+    @Test
+    void forAll2Test1() {
+        final IntList l = Functional.init(doublingGenerator, 5);
+        final IntList m = Functional.init(QuadruplingGenerator, 5);
+        try {
+            assertThat(Functional.forAll2(FunctionalTest::BothAreEven, l, m)).isTrue();
+        } catch (final Exception e) {
+            fail();
+        }
+    }
 
     @Test
     void forAll2Test2() {
-        final IntList l = Functional.init(DoublingGenerator, 5);
+        final IntList l = Functional.init(doublingGenerator, 5);
         final IntList m = Functional.init(TriplingGenerator, 5);
 
         assertThat(Functional.forAll2(dBothAreLessThan10, l, m)).isFalse();
@@ -171,7 +169,7 @@ public class FunctionalTest {
 
     @Test
     void forAll2Test3() {
-        final IntList l = Functional.init(DoublingGenerator, 5);
+        final IntList l = Functional.init(doublingGenerator, 5);
         final IntList m = Functional.init(QuadruplingGenerator, 7);
 
         assertThatExceptionOfType(Exception.class).isThrownBy(() ->
@@ -216,23 +214,15 @@ public class FunctionalTest {
 
     @Test
     void compositionTest2() {
-        final IntList l = Functional.init(DoublingGenerator, 5);
+        final IntList l = Functional.init(doublingGenerator, 5);
         final IntList m = Functional.init(TriplingGenerator, 5);
         assertThat(Functional.forAll2(Functional.not2(dBothAreLessThan10), l, m)).isFalse();
         // equivalent to BothAreGreaterThanOrEqualTo10
 
         final int lowerLimit = 1;
         final int upperLimit = 16;
-        assertThat(
-                Functional.forAll2(
-                        Functional.not2(
-                                (a, b) -> a > lowerLimit && b > lowerLimit
-                        ), l, m)).isFalse();
-        assertThat(
-                Functional.forAll2(
-                        Functional.not2(
-                                (a, b) -> a > upperLimit && b > upperLimit
-                        ), l, m)).isTrue();
+        assertThat(Functional.forAll2(Functional.not2((a, b) -> a > lowerLimit && b > lowerLimit), l, m)).isFalse();
+        assertThat(Functional.forAll2(Functional.not2((a, b) -> a > upperLimit && b > upperLimit), l, m)).isTrue();
     }
 
     @Test
@@ -242,39 +232,38 @@ public class FunctionalTest {
 
         final Integer[] left = {3, 9, 15};
         final Integer[] right = {6, 12};
-        assertThat(r.getLeft().toArray()).containsExactly(left);
-        assertThat(r.getRight().toArray()).containsExactly(right);
+        assertThat(r.getLeft()).containsExactly(left);
+        assertThat(r.getRight()).containsExactly(right);
     }
 
     @Test
     void partitionTest2() {
-        final IntList l = Functional.init(DoublingGenerator, 5);
+        final IntList l = Functional.init(doublingGenerator, 5);
         final Pair<List<Integer>, List<Integer>> r = Functional.partition(Functional.isEven, l);
-        assertThat(r.getLeft().toArray()).containsExactly(l.toArray(new Integer[0]));
-        assertThat(r.getRight().toArray()).containsExactly(new Integer[]{});
+        assertThat(r.getLeft()).containsExactly(l.toArray(new Integer[0]));
+        assertThat(r.getRight()).isEmpty();
     }
 
     @Test
     void partitionTest3() {
-        final IntList l = Functional.init(DoublingGenerator, 5);
+        final IntList l = Functional.init(doublingGenerator, 5);
         final Pair<List<Integer>, List<Integer>> r = Functional.partition(Functional.isEven, l);
-        assertThat(r.getLeft().toArray()).containsExactly(Functional.filter(Functional.isEven, l).toArray(new Integer[0]));
+        assertThat(r.getLeft()).containsExactly(Functional.filter(Functional.isEven, l).toArray(new Integer[0]));
     }
 
     @Test
     void toStringTest1() {
-        final IntList li = Functional.init(DoublingGenerator, 5);
+        final IntList li = Functional.init(doublingGenerator, 5);
         final Collection<String> ls = Functional.map(Functional.dStringify(), li);
         //String s = String.Join(",", ls);
-        assertThat(ls.toArray()).containsExactly(new String[]{"2", "4", "6", "8", "10"});
+        assertThat(ls).containsExactly("2", "4", "6", "8", "10");
     }
 
     @Test
     void chooseTest1B() throws OptionNoValueAccessException {
         final IntList li = Functional.init(TriplingGenerator, 5);
         final Collection<String> o = Functional.choose((Func_int_T<Option<String>>) i -> i % 2 == 0 ? Option.toOption(Integer.toString(i)) : Option.None(), li);
-        final String[] expected = {"6", "12"};
-        assertThat(expected).containsExactlyElementsOf(o);
+        assertThat(o).containsExactly("6", "12");
     }
 
     @Test
@@ -288,7 +277,7 @@ public class FunctionalTest {
         expected.put(6, "6");
         expected.put(12, "12");
         assertThat(o).hasSize(expected.size());
-        for (final Integer expectedKey : expected.keySet()) {
+        for (final int expectedKey : expected.keySet()) {
             assertThat(o).containsKey(expectedKey);
             final String expectedValue = expected.get(expectedKey);
             //assertThat().isEqualTo(expectedValue,o.get(expectedKey),"Expected '"+expectedValue+"' but got '"+o.get(expectedKey)+"'");
@@ -352,7 +341,7 @@ public class FunctionalTest {
 
     @Test
     void foldvsMapTest1() {
-        final IntList li = Functional.init(DoublingGenerator, 5);
+        final IntList li = Functional.init(doublingGenerator, 5);
         final String s1 = me.shaftesbury.utils.functional.Functional.join(",", Functional.map(Functional.dStringify(), li));
         assertThat(s1).isEqualTo("2,4,6,8,10");
         final String s2 = Functional.fold(FunctionalTest::csv, "", li);
@@ -364,7 +353,7 @@ public class FunctionalTest {
 
     @Test
     void fwdPipelineTest1() {
-        final IntList li = Functional.init(DoublingGenerator, 5);
+        final IntList li = Functional.init(doublingGenerator, 5);
         final String s1 = in(li, concatenate);
         assertThat(s1).isEqualTo("2,4,6,8,10");
     }
@@ -697,14 +686,14 @@ public class FunctionalTest {
 //
     @Test
     void findLastTest1() {
-        final IntList l = Functional.init(DoublingGenerator, 5);
+        final IntList l = Functional.init(doublingGenerator, 5);
         assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(() -> Functional.findLast(Functional.isOdd, l));
     }
 
     @Test
     void findLastTest2() {
-        final IntList l = Functional.init(DoublingGenerator, 5);
+        final IntList l = Functional.init(doublingGenerator, 5);
         assertThat(Functional.findLast(Functional.isEven, l)).isEqualTo(10);
     }
 //
@@ -967,7 +956,7 @@ public class FunctionalTest {
 //
     @Test
     void fwdPipelineTest3() {
-        final IntList input = Functional.init(DoublingGenerator, 5);
+        final IntList input = Functional.init(doublingGenerator, 5);
         final Collection<String> output = in(input,
                 (Function<IntList, Collection<String>>) integers -> Functional.map(Functional.dStringify(), integers));
 
@@ -2572,7 +2561,7 @@ public class FunctionalTest {
 //    {
 //        final IntList input = new int[]{1, 2, 3, 4, 5});
 //        final Collection<String> output = Functional.inTermsOfFold.map(Functional.<Integer>dStringify(), input);
-//        assertThat().containsExactly(new String[]{"1", "2", "3", "4", "5"}, output.toArray());
+//        assertThat().containsExactly("1", "2", "3", "4", "5", output.toArray());
 //    }
 //
 //    @Test
@@ -2592,7 +2581,7 @@ public class FunctionalTest {
 //                return integer * 2;
 //            }
 //        }, 5);
-//        assertThat().containsExactly(new Integer[]{2, 4, 6, 8, 10}, output.toArray());
+//        assertThat().containsExactly(2, 4, 6, 8, 10, output.toArray());
 //    }
 //
 //    @Test

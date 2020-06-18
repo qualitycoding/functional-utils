@@ -2,7 +2,6 @@ package me.shaftesbury.utils.functional;
 
 import me.shaftesbury.utils.functional.monad.Option;
 import me.shaftesbury.utils.functional.monad.OptionNoValueAccessException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -16,7 +15,7 @@ import java.util.function.Function;
 import static me.shaftesbury.utils.functional.FunctionalTest.triplingGenerator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class Functional_Choose_Test {
     public Functional_Choose_Test() {
@@ -26,14 +25,14 @@ public class Functional_Choose_Test {
     void chooseTest1B() throws OptionNoValueAccessException {
         final Collection<Integer> li = Functional.init(triplingGenerator, 5);
         final Collection<String> o = Functional.choose(i -> i % 2 == 0 ? Option.toOption(i.toString()) : Option.None(), li);
-        Assertions.assertThat(o).containsExactly("6", "12");
+        assertThat(o).containsExactly("6", "12");
     }
 
     @Test
     void curriedChooseTest1B() throws OptionNoValueAccessException {
         final Collection<Integer> li = Functional.init(triplingGenerator, 5);
         final Collection<String> o = Functional.choose((Function<Integer, Option<String>>) i -> i % 2 == 0 ? Option.toOption(i.toString()) : Option.None()).apply(li);
-        Assertions.assertThat(o).containsExactly("6", "12");
+        assertThat(o).containsExactly("6", "12");
     }
 
     @Test
@@ -49,12 +48,12 @@ public class Functional_Choose_Test {
         final Map<Integer, String> expected = new HashMap<Integer, String>();
         expected.put(6, "6");
         expected.put(12, "12");
-        Assertions.assertThat(expected.size() == o.size()).isTrue();
-        for (final Integer expectedKey : expected.keySet()) {
-            Assertions.assertThat(o.containsKey(expectedKey)).isTrue();
+        assertThat(expected.size() == o.size()).isTrue();
+        for (final int expectedKey : expected.keySet()) {
+            assertThat(o.containsKey(expectedKey)).isTrue();
             final String expectedValue = expected.get(expectedKey);
             //assertThat("Expected '"+expectedValue+"' but got '"+o.get(expectedKey)+"'").isEqualTo(expectedValue,o.get(expectedKey));
-            Assertions.assertThat(o.get(expectedKey).equals(expectedValue)).isTrue();
+            assertThat(o.get(expectedKey).equals(expectedValue)).isTrue();
         }
     }
 
@@ -147,5 +146,4 @@ public class Functional_Choose_Test {
 
         assertThat(output).containsExactlyElementsOf(expected);
     }
-
 }

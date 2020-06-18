@@ -1,11 +1,11 @@
 package me.shaftesbury.utils.functional;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 public class Functional_ToArray_Test {
     public Functional_ToArray_Test() {
     }
@@ -18,9 +18,9 @@ public class Functional_ToArray_Test {
 
         final Object[] output = Functional.toArray(strs);
 
-        Assertions.assertThat(output.length).isEqualTo(expected.size());
+        assertThat(output.length).isEqualTo(expected.size());
         for (int i = 0; i < expected.size(); ++i)
-            Assertions.assertThat(output[i]).isEqualTo(expected.get(i));
+            assertThat(output[i]).isEqualTo(expected.get(i));
     }
 
     @Test
@@ -31,8 +31,8 @@ public class Functional_ToArray_Test {
 
         final Object[] output = Functional.toArray(strs);
 
-        Assertions.assertThat(output.length).isEqualTo(expected.size());
+        assertThat(output.length).isEqualTo(expected.size());
         for (int i = 0; i < expected.size(); ++i)
-            Assertions.assertThat(output[i]).isEqualTo(expected.get(i));
+            assertThat(output[i]).isEqualTo(expected.get(i));
     }
 }

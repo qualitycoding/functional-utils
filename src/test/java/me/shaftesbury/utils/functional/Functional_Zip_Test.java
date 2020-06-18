@@ -1,7 +1,6 @@
 package me.shaftesbury.utils.functional;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -11,6 +10,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.junit.jupiter.api.Assertions.fail;
 public class Functional_Zip_Test {
     public Functional_Zip_Test() {
     }
@@ -29,7 +32,7 @@ public class Functional_Zip_Test {
 
         final Collection<Pair<Integer, Character>> output = Functional.zip(input1, input2);
 
-        Assertions.assertThat(output).containsExactlyElementsOf(expected);
+        assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -46,7 +49,7 @@ public class Functional_Zip_Test {
 
         final Collection<Pair<Integer, Character>> output = Functional.zip(input1, input2);
 
-        Assertions.assertThat(output).containsExactlyElementsOf(expected);
+        assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -54,7 +57,7 @@ public class Functional_Zip_Test {
         final Collection<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);
         final Collection<Character> input2 = Arrays.asList('a', 'b', 'c', 'd');
 
-        Assertions.assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip(input1, input2));
+        assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip(input1, input2));
     }
 
     @Test
@@ -70,7 +73,7 @@ public class Functional_Zip_Test {
 
         final List<Pair<Integer, String>> output = Functional.zip(Functional.identity(), Functional.dStringify(), ints);
 
-        Assertions.assertThat(output).containsExactlyElementsOf(expected);
+        assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -87,7 +90,7 @@ public class Functional_Zip_Test {
 
         final Collection<Pair<Integer, Character>> output = Functional.noException.zip(input1, input2);
 
-        Assertions.assertThat(output).containsExactlyElementsOf(expected);
+        assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -104,7 +107,7 @@ public class Functional_Zip_Test {
 
         final Collection<Pair<Integer, Character>> output = Functional.noException.zip(input1, input2);
 
-        Assertions.assertThat(output).containsExactlyElementsOf(expected);
+        assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -121,7 +124,7 @@ public class Functional_Zip_Test {
 
         final Collection<Pair<Integer, Character>> output = Functional.toList(Functional.seq.zip(input1, input2));
 
-        Assertions.assertThat(output).containsExactlyElementsOf(expected);
+        assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -138,7 +141,7 @@ public class Functional_Zip_Test {
 
         final Collection<Pair<Integer, Character>> output = Functional.toList(Functional.seq.<Integer, Character>zip(input1).apply(input2));
 
-        Assertions.assertThat(output).containsExactlyElementsOf(expected);
+        assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -147,7 +150,7 @@ public class Functional_Zip_Test {
         final Collection<Character> input2 = Arrays.asList('a', 'b', 'c', 'd', 'e');
 
         final Iterable<Pair<Integer, Character>> zip = Functional.seq.zip(input1, input2);
-        Assertions.assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> zip.iterator().remove());
+        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> zip.iterator().remove());
     }
 
     @Test
@@ -159,9 +162,9 @@ public class Functional_Zip_Test {
         try {
             zip.iterator();
         } catch (final UnsupportedOperationException e) {
-            Assertions.fail("Shouldn't reach this point");
+            fail("Shouldn't reach this point");
         }
-        Assertions.assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(zip::iterator);
+        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(zip::iterator);
     }
 
     @Test
@@ -180,21 +183,21 @@ public class Functional_Zip_Test {
         final Iterator<Pair<Integer, Character>> iterator = output.iterator();
 
         for (int i = 0; i < 20; ++i)
-            Assertions.assertThat(iterator.hasNext()).isTrue();
+            assertThat(iterator.hasNext()).isTrue();
 
         for (final Pair<Integer, Character> element : expected) {
             final Pair<Integer, Character> next = iterator.next();
-            Assertions.assertThat(next).isEqualTo(element);
+            assertThat(next).isEqualTo(element);
         }
 
-        Assertions.assertThat(iterator.hasNext()).isFalse();
+        assertThat(iterator.hasNext()).isFalse();
         try {
             iterator.next();
         } catch (final NoSuchElementException e) {
             return;
         }
 
-        Assertions.fail("Should not reach this point");
+        fail("Should not reach this point");
     }
 
     @Test
@@ -210,7 +213,7 @@ public class Functional_Zip_Test {
 
         final List<Pair<Integer, String>> output = Functional.toList(Functional.seq.zip(Functional.identity(), Functional.dStringify(), input));
 
-        Assertions.assertThat(output).containsExactlyElementsOf(expected);
+        assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -218,7 +221,7 @@ public class Functional_Zip_Test {
         final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
 
         final Iterable<Pair<Integer, String>> output = Functional.seq.zip(Functional.identity(), Functional.dStringify(), input);
-        Assertions.assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
+        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
     }
 
     @Test
@@ -229,8 +232,8 @@ public class Functional_Zip_Test {
         try {
             output.iterator();
         } catch (final UnsupportedOperationException e) {
-            Assertions.fail("Shouldn't reach this point");
+            fail("Shouldn't reach this point");
         }
-        Assertions.assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(output::iterator);
+        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(output::iterator);
     }
 }

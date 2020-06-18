@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
 import static me.shaftesbury.utils.functional.FunctionalTest.doublingGenerator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class Functional_Init_Test {
     @Test

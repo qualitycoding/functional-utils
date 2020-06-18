@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 public class Iterable2Test {
-    private static Function<Integer, Integer> DoublingGenerator = a -> 2 * a;
+    private static final Function<Integer, Integer> DoublingGenerator = a -> 2 * a;
 
     @Test
     void initTest1() {
@@ -66,9 +66,9 @@ public class Iterable2Test {
         assertThat(j).containsExactly(1, 4, 6, 7, 23);
     }
 
-    private static Function<Integer, Integer> TriplingGenerator = a -> 3 * a;
+    private static final Function<Integer, Integer> TriplingGenerator = a -> 3 * a;
 
-    private static Function<Integer, Integer> QuadruplingGenerator = a -> 4 * a;
+    private static final Function<Integer, Integer> QuadruplingGenerator = a -> 4 * a;
 
     private static boolean BothAreEven(final int a, final int b) {
         return Functional.isEven.apply(a) && Functional.isEven.apply(b);
@@ -85,7 +85,7 @@ public class Iterable2Test {
         return a < 10 && b < 10;
     }
 
-    private static BiFunction<Integer, Integer, Boolean> dBothAreLessThan10 = Iterable2Test::BothAreLessThan10;
+    private static final BiFunction<Integer, Integer, Boolean> dBothAreLessThan10 = Iterable2Test::BothAreLessThan10;
 
     @Test
     void forAll2Test2() {
@@ -140,35 +140,21 @@ public class Iterable2Test {
         assertThat(Functional.forAll2(Functional.not2((a, b) -> a > upperLimit && b > upperLimit), l, m)).isTrue();
     }
 
+    private final static <B, C> boolean fn(final B b, final C c) {
+        return b.equals(c);
+    }
+
+    private final static <B, C> Function<C, Boolean> curried_fn(final B b) {
+        return c -> fn(b, c);
+    }
+
     @Test
     void partitionTest1() {
         final Iterable2<Integer> m = IterableHelper.init(TriplingGenerator, 5);
         final Pair<List<Integer>, List<Integer>> r = Functional.partition(Functional.isOdd, m);
 
-        final Integer[] left = {3, 9, 15};
-        final Integer[] right = {6, 12};
-        assertThat(r.getLeft().toArray()).containsExactly(left);
-        assertThat(r.getRight().toArray()).containsExactly(right);
-    }
-
-    @Test
-    void partitionTest1a() {
-        final Iterable2<Integer> m = IterableHelper.init(TriplingGenerator, 5);
-        final Pair<List<Integer>, List<Integer>> r = m.partition(Functional.isOdd);
-
-        final Integer[] left = {3, 9, 15};
-        final Integer[] right = {6, 12};
-        assertThat(r.getLeft().toArray()).containsExactly(left);
-        assertThat(r.getRight().toArray()).containsExactly(right);
-    }
-
-    @Test
-    void partitionTest2() {
-        final Iterable2<Integer> l = IterableHelper.init(DoublingGenerator, 5);
-        final Pair<List<Integer>, List<Integer>> r = Functional.partition(Functional.isEven, l);
-        final Iterable2<Integer> expected = IterableHelper.init(DoublingGenerator, 5);
-        assertThat(r.getLeft()).containsExactlyElementsOf(expected);
-        assertThat(r.getRight().toArray()).containsExactly(new Integer[]{});
+        assertThat(r.getLeft()).containsExactly(3, 9, 15);
+        assertThat(r.getRight()).containsExactly(6, 12);
     }
 
     @Test
@@ -180,11 +166,29 @@ public class Iterable2Test {
     }
 
     @Test
+    void partitionTest1a() {
+        final Iterable2<Integer> m = IterableHelper.init(TriplingGenerator, 5);
+        final Pair<List<Integer>, List<Integer>> r = m.partition(Functional.isOdd);
+
+        assertThat(r.getLeft()).containsExactly(3, 9, 15);
+        assertThat(r.getRight()).containsExactly(6, 12);
+    }
+
+    @Test
+    void partitionTest2() {
+        final Iterable2<Integer> l = IterableHelper.init(DoublingGenerator, 5);
+        final Pair<List<Integer>, List<Integer>> r = Functional.partition(Functional.isEven, l);
+        final Iterable2<Integer> expected = IterableHelper.init(DoublingGenerator, 5);
+        assertThat(r.getLeft()).containsExactlyElementsOf(expected);
+        assertThat(r.getRight()).isEmpty();
+    }
+
+    @Test
     void toStringTest1() {
         final Iterable2<Integer> li = IterableHelper.init(DoublingGenerator, 5);
         final Iterable2<String> ls = li.map(Functional.dStringify());
         //String s = String.Join(",", ls);
-        assertThat(ls).containsExactlyElementsOf(IterableHelper.asList("2", "4", "6", "8", "10"));
+        assertThat(ls).containsExactly("2", "4", "6", "8", "10");
     }
 
     @Test
@@ -193,7 +197,7 @@ public class Iterable2Test {
         final Iterable2<String> o = li.choose(
                 i -> i % 2 == 0 ? Option.toOption(i.toString()) : Option.None());
         final Iterable2<String> expected = IterableHelper.asList("6", "12");
-        assertThat(expected).containsExactlyElementsOf(o);
+        assertThat(o).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -211,7 +215,7 @@ public class Iterable2Test {
         expected.put(6, "6");
         expected.put(12, "12");
         assertThat(expected.size() == o.size()).isTrue();
-        for (final Integer expectedKey : expected.keySet()) {
+        for (final int expectedKey : expected.keySet()) {
             assertThat(o.containsKey(expectedKey)).isTrue();
             final String expectedValue = expected.get(expectedKey);
             //assertThat("Expected '"+expectedValue+"' but got '"+o.get(expectedKey)+"'").isEqualTo(expectedValue,o.get(expectedKey));
@@ -219,17 +223,9 @@ public class Iterable2Test {
         }
     }
 
-    private final static <B, C> boolean Fn(final B b, final C c) {
-        return b.equals(c);
-    }
-
-    private final static <B, C> Function<C, Boolean> curried_fn(final B b) {
-        return c -> Fn(b, c);
-    }
-
     @Test
     void curriedFnTest1() {
-        final boolean test1a = Fn(1, 2);
+        final boolean test1a = fn(1, 2);
         final boolean test1b = curried_fn(1).apply(2);
         assertThat(test1b).isEqualTo(test1a);
     }
@@ -461,7 +457,7 @@ public class Iterable2Test {
         assertThat(output.getLeft()).isEqualTo(last);
         final List<Integer> keys = new ArrayList<>(missingPricesPerDate.keySet());
         Collections.sort(keys);
-        assertThat(Functional.map(myInt::i, output.getRight()).toArray()).containsExactly(keys.toArray());
+        assertThat(Functional.map(myInt::i, output.getRight())).containsExactlyElementsOf(keys);
     }
 
     @Test
@@ -513,7 +509,7 @@ public class Iterable2Test {
 
     @Test
     void testIn() {
-        final Integer a = 10;
+        final int a = 10;
         assertThat(Functional.in(a, Functional.isEven)).isTrue();
     }
 
@@ -584,7 +580,7 @@ public class Iterable2Test {
         expected.put(4, "4");
         expected.put(5, "5");
         assertThat(expected.size() == output.size()).isTrue();
-        for (final Integer expectedKey : expected.keySet()) {
+        for (final int expectedKey : expected.keySet()) {
             assertThat(output.containsKey(expectedKey)).isTrue();
             final String expectedValue = expected.get(expectedKey);
             //assertThat("Expected '"+expectedValue+"' but got '"+o.get(expectedKey)+"'").isEqualTo(expectedValue,o.get(expectedKey));
@@ -637,7 +633,7 @@ public class Iterable2Test {
 
         final ArrayIterable<Integer> ait = ArrayIterable.create(input);
         final List<Integer> output = new ArrayList<>();
-        for (final Integer i : ait) output.add(i);
+        for (final int i : ait) output.add(i);
         assertThat(output).containsExactlyElementsOf(expected);
     }
 
@@ -1299,8 +1295,8 @@ public class Iterable2Test {
     @Test
     void seqMapiTest1() {
         final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-        final Iterable<Pair<Integer, String>> output = IterableHelper.create(input).mapi((BiFunction<Integer, Integer, Pair<Integer, String>>) (pos, i) -> Pair.of(pos, i.toString()));
-        assertThat(Functional.map(Pair::getRight, output).toArray()).containsExactly("1", "2", "3", "4", "5");
+        final Iterable<Pair<Integer, String>> output = IterableHelper.create(input).mapi((pos, i) -> Pair.of(pos, i.toString()));
+        assertThat(Functional.map(Pair::getRight, output)).containsExactly("1", "2", "3", "4", "5");
     }
 
     @Test
@@ -1362,7 +1358,7 @@ public class Iterable2Test {
 
     @Test
     void toArrayEmptyListTest() {
-        assertThat(IterableHelper.createEmpty().toArray()).containsExactly(new Integer[]{});
+        assertThat(IterableHelper.createEmpty()).isEmpty();
     }
 
     @Test

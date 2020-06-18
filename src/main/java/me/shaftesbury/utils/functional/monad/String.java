@@ -1,6 +1,8 @@
 package me.shaftesbury.utils.functional.monad;
 
 import me.shaftesbury.utils.functional.monad.transformer.BooleanToOptionTransformer;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -36,6 +38,34 @@ public class String {
                 .filter(Objects::nonNull)
                 .map(java.lang.String::trim)
                 .filter(not(""::equals)));
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+
+        // There's a tweak to the auto-generated equals() here ....
+        if (o == null || o.getClass().getEnclosingClass() != String.class) return false;
+
+        final String string = (String) o;
+
+        return new EqualsBuilder()
+                .append(value, string.value)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(value)
+                .toHashCode();
+    }
+
+    @Override
+    public java.lang.String toString() {
+        return "String{" +
+                "value=" + value +
+                '}';
     }
 
     public boolean hasValue() {

@@ -6,7 +6,6 @@ import java.util.function.Function;
 
 import static me.shaftesbury.utils.functional.Functional.range;
 import static org.assertj.core.api.Assertions.assertThat;
-
 class Functional_Range_Test {
     @Test
     void rangeHasLowerBound() {

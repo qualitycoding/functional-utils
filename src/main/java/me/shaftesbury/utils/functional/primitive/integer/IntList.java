@@ -109,7 +109,7 @@ public class IntList implements IntIterable {
         throw new UnsupportedOperationException();
     }
 
-    public void add(final int index, final Integer element) {
+    public void add(final int index, final int element) {
 
     }
 

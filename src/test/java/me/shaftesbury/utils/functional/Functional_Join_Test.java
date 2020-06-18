@@ -1,11 +1,11 @@
 package me.shaftesbury.utils.functional;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThat;
 public class Functional_Join_Test {
     public Functional_Join_Test() {
     }
@@ -14,8 +14,8 @@ public class Functional_Join_Test {
     void joinTest1() {
         final Collection<Integer> ids = Functional.init(FunctionalTest.triplingGenerator, 5);
         final String expected = "3,6,9,12,15";
-        Assertions.assertThat(Functional.join(",", Functional.map(Functional.dStringify(), ids))).isEqualTo(expected);
-        Assertions.assertThat(Functional.join(",", ids)).isEqualTo(expected);
+        assertThat(Functional.join(",", Functional.map(Functional.dStringify(), ids))).isEqualTo(expected);
+        assertThat(Functional.join(",", ids)).isEqualTo(expected);
     }
 
     @Test
@@ -23,7 +23,7 @@ public class Functional_Join_Test {
         final Collection<Integer> ids = Functional.init(FunctionalTest.triplingGenerator, 5);
         final String expected = "'3','6','9','12','15'";
         final Function<Integer, String> f = id -> "'" + id + "'";
-        Assertions.assertThat(Functional.join(",", Functional.map(f, ids))).isEqualTo(expected);
-        Assertions.assertThat(Functional.join(",", ids, f)).isEqualTo(expected);
+        assertThat(Functional.join(",", Functional.map(f, ids))).isEqualTo(expected);
+        assertThat(Functional.join(",", ids, f)).isEqualTo(expected);
     }
 }

@@ -9,9 +9,6 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Created by Bob on 13/02/14.
- */
 public final class ExtendedGenericsFunctionalTest {
     @Test
     final void chooseTestParseStringToNumber() {
@@ -28,7 +25,7 @@ public final class ExtendedGenericsFunctionalTest {
         final List<Number> expected = Arrays.asList(Integer.valueOf(1), Integer.valueOf(2), Double.valueOf(4.5));
         final List<Number> output = Functional.choose(toNumber, Arrays.asList("1", "2", "at", "4.5"));
 
-        assertThat(output.toArray()).isEqualTo(expected.toArray());
+        assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -47,6 +44,6 @@ public final class ExtendedGenericsFunctionalTest {
         final List<Number> expected = Arrays.asList(Integer.valueOf(1), Integer.valueOf(2), Double.valueOf(4.5), Double.valueOf(4.5), Integer.valueOf(1), Integer.valueOf(10));
         final List<Number> output = Functional.choose(toNumber, Arrays.<Object>asList("1", "2", "at", "4.5", 4.5, 1, Integer.valueOf(10)));
 
-        assertThat(output.toArray()).isEqualTo(expected.toArray());
+        assertThat(output).containsExactlyElementsOf(expected);
     }
 }

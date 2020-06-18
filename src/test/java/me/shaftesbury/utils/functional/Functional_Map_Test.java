@@ -4,9 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.function.Function;
 
 import static me.shaftesbury.utils.functional.Functional.dStringify;
@@ -14,7 +16,7 @@ import static me.shaftesbury.utils.functional.Functional.map;
 import static me.shaftesbury.utils.functional.FunctionalTest.doublingGenerator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class Functional_Map_Test {
     @Test
@@ -102,6 +104,22 @@ class Functional_Map_Test {
             fail("Shouldn't reach this point");
         }
         assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(output::iterator);
+    }
+
+    @Test
+    void recMapTest1() {
+        final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
+        final Iterable<String> output = Functional.rec.map(Functional.dStringify(), input);
+        assertThat(output).isEqualTo(Arrays.asList("1", "2", "3", "4", "5"));
+    }
+
+    @Test
+    void setMapTest1() {
+        final Set<Integer> input = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5));
+        final Set<String> output = Functional.set.map(Functional.dStringify(), input);
+        final Set<String> expected = new HashSet<>(Arrays.asList("1", "2", "3", "4", "5"));
+        assertThat(expected.containsAll(output)).isTrue();
+        assertThat(output.containsAll(expected)).isTrue();
     }
 
 }

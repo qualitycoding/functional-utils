@@ -1,11 +1,11 @@
 package me.shaftesbury.utils.functional;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
 
+import static org.assertj.core.api.Assertions.assertThat;
 public class Functional_Exists_Test {
     public Functional_Exists_Test() {
     }
@@ -17,8 +17,8 @@ public class Functional_Exists_Test {
         final boolean anEven = Functional.exists(Functional.isEven, i);
         final boolean allOdd = Functional.exists(Functional.isOdd, i);
 
-        Assertions.assertThat(allOdd).isFalse();
-        Assertions.assertThat(anEven).isTrue();
+        assertThat(allOdd).isFalse();
+        assertThat(anEven).isTrue();
     }
 
     @Test
@@ -28,7 +28,7 @@ public class Functional_Exists_Test {
         final boolean anEven = Functional.exists(Functional.isEven).apply(i);
         final boolean allOdd = Functional.exists(Functional.isOdd).apply(i);
 
-        Assertions.assertThat(allOdd).isFalse();
-        Assertions.assertThat(anEven).isTrue();
+        assertThat(allOdd).isFalse();
+        assertThat(anEven).isTrue();
     }
 }
