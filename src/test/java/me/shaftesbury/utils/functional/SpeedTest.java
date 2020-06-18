@@ -32,7 +32,7 @@ public class SpeedTest {
 
 
     @Test
-    void MapTest1() {
+    void mapTest1() {
         final int howMany = 10;
         final Collection<Integer> input = Functional.init(Functional.constant(10), 1000000);
         {

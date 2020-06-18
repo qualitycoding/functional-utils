@@ -1,6 +1,10 @@
 package me.shaftesbury.utils.functional;
 
 import io.vavr.control.Either;
+import me.shaftesbury.utils.functional.function.ConsumerWithExceptionDeclaration;
+import me.shaftesbury.utils.functional.function.FunctionWithExceptionDeclaration;
+import me.shaftesbury.utils.functional.monad.Option;
+import me.shaftesbury.utils.functional.monad.OptionNoValueAccessException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -15,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -35,15 +40,8 @@ public final class Functional {
     private Functional() {
     }
 
-    /**
-     * A simple predicate which checks the contents of the string parameter.
-     *
-     * @param s the input string
-     * @return true if s is either null or s is the empty string; false otherwise.
-     */
-    @Deprecated // Use StringUtils instead of this please
-    public static boolean isNullOrEmpty(final String s) {
-        return s == null || s.isEmpty();
+    public static <T> Function<T, io.vavr.control.Option<T>> convertFlatMapFn(final Function<T, Optional<T>> tfm) {
+        return t -> io.vavr.control.Option.ofOptional(tfm.apply(t));
     }
 
     /**
@@ -1218,9 +1216,9 @@ public final class Functional {
      * @param startFrom the lower bound of the range
      * @return a function that returns a function that returns an integer from the range [startFrom+n, infinity)
      */
-    public static Function<Integer, Integer> range(final Integer startFrom) {
+    public static Function<Integer, Integer> range(final int startFrom) {
         return new Function<Integer, Integer>() {
-            private final Integer start = startFrom;
+            private final int start = startFrom;
 
             public Integer apply(final Integer input) {
                 return (start - 1) + input; // because init starts counting from 1

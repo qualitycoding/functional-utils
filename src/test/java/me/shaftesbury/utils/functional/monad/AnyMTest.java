@@ -1,4 +1,4 @@
-package me.shaftesbury.utils.functional;
+package me.shaftesbury.utils.functional.monad;
 
 import io.vavr.Function1;
 import io.vavr.Function2;
@@ -32,18 +32,19 @@ public class AnyMTest {
         <U, M extends AnyM<U>> M flatMap(final Function<T, M> f);
     }
 
-    @Test@Disabled("This test doesn't work yet - the types aren't matching")
+    @Test
+    @Disabled("This test doesn't work yet - the types aren't matching")
     public void test() {
-        final Map<String, String> map = HashMap.of("key", "value");
-        final MyOption<String> vvv = $(map.get("vvv"));
+        final Map<java.lang.String, java.lang.String> map = HashMap.of("key", "value");
+        final MyOption<java.lang.String> vvv = $(map.get("vvv"));
 //        final MyEither<Integer, String> strings = vvv.flatMap(s -> s.length() < 3 ? MyEither.right(s) : MyEither.left(s.length()));
     }
 
-    private MyOption<String> $(final Option<String> a) {
+    private MyOption<java.lang.String> $(final Option<java.lang.String> a) {
         return MyOption.of(a);
     }
 
-    private final Function<String, MyEither<Exception, Integer>> intValue = s -> {
+    private final Function<java.lang.String, MyEither<Exception, Integer>> intValue = s -> {
         try {
             return MyEither.right(Integer.valueOf(s));
         } catch (final NumberFormatException e) {
@@ -53,20 +54,23 @@ public class AnyMTest {
 
     private final Function<Integer, OptionalInt> add20IfLessThan20 = i -> i == null || i > 20 ? OptionalInt.empty() : OptionalInt.of(i + 20);
 
-    @Test void add20ToSmaller() {
+    @Test
+    void add20ToSmaller() {
         final OptionalIntT<Either<Exception, Integer>> result = intValue.apply("10").flatMapT(add20IfLessThan20::apply);
 
         assertThat(result.isPresent()).isTrue();
         assertThat(30).isEqualTo(result.getAsInt());
     }
 
-    @Test void add20ToLarger() {
+    @Test
+    void add20ToLarger() {
         final OptionalIntT<Either<Exception, Integer>> result = intValue.apply("100").flatMapT(add20IfLessThan20::apply);
 
         result.ifPresent(i -> fail("Expected empty but received " + i));
     }
 
-    @Test void dontAdd() {
+    @Test
+    void dontAdd() {
         final OptionalIntT<Either<Exception, Integer>> result = intValue.apply("string").flatMapT(add20IfLessThan20::apply);
 
         assertThat(result.isPresent()).isFalse();
@@ -74,7 +78,8 @@ public class AnyMTest {
         assertThat(result.liftM().swap().get() instanceof NumberFormatException).isTrue();
     }
 
-    @Test void combineTwoOptionalLists() {
+    @Test
+    void combineTwoOptionalLists() {
         final io.vavr.collection.List<Integer> is = getIntegers3(true, true);
 
         final io.vavr.collection.List<Integer> expected = io.vavr.collection.List.of(1, 2);
@@ -94,7 +99,8 @@ public class AnyMTest {
         return is;
     }
 
-    @Test void tryIt() {
+    @Test
+    void tryIt() {
         final Try<Boolean> booleans = Try.of(() -> {
             System.out.println("First try");
 //            throw new RuntimeException();
@@ -107,16 +113,17 @@ public class AnyMTest {
                 flatMap(k -> Try.of(() -> true).onFailure(l -> System.out.println("second onFailure")));
     }
 
-    @Test void currying() {
+    @Test
+    void currying() {
         final Function2<Integer, Integer, Integer> sum = Integer::sum;
         final Function1<Integer, Function1<Integer, Integer>> curriedSum = sum.curried();
 
-        final Function3<String, Integer, Double, String> fn3 = (a, b, c) -> Integer.toString(Integer.parseInt(a) + b + c.intValue());
-        final Function1<String, Function1<Integer, Function1<Double, String>>> curriedFn3 = fn3.curried();
+        final Function3<java.lang.String, Integer, Double, java.lang.String> fn3 = (a, b, c) -> Integer.toString(Integer.parseInt(a) + b + c.intValue());
+        final Function1<java.lang.String, Function1<Integer, Function1<Double, java.lang.String>>> curriedFn3 = fn3.curried();
     }
 }
 
-class MyOption<T> /*implements AnyM<T> */{
+class MyOption<T> /*implements AnyM<T> */ {
     private final T t;
 
     public MyOption(final T t) {
@@ -135,7 +142,7 @@ class MyOption<T> /*implements AnyM<T> */{
         return new MyOption<>();
     }
 
-//    @Override
+    //    @Override
     public <U> MyOption<U> map(final Function<T, U> f) {
         if (isNull(t)) return MyOption.empty();
         final U result = f.apply(t);

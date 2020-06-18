@@ -20,22 +20,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class LispListTest {
-    @Test void headTest1() {
+    @Test
+    void headTest1() {
         final List<Integer> l = list(1, LispList.nil());
         assertThat(l.head()).isEqualTo(Integer.valueOf(1));
     }
 
-    @Test void tailTest1() {
+    @Test
+    void tailTest1() {
         final List<Integer> l = list(1, list(2, LispList.nil()));
         assertThat(l.tail().head()).isEqualTo(Integer.valueOf(2));
     }
 
-    @Test void equalsTest1() {
+    @Test
+    void equalsTest1() {
         final List<Integer> l = list(1, list(2, LispList.nil()));
         assertThat(l.tail()).isEqualTo(list(2, LispList.nil()));
     }
 
-    @Test void mapTest1() {
+    @Test
+    void mapTest1() {
         final List<Integer> input = list(1, list(2, list(3, list(4, list(5, LispList.nil())))));
         final List<String> output = map(Functional.dStringify(), input);
         assertThat(output.head()).isEqualTo("1");
@@ -45,19 +49,22 @@ public class LispListTest {
         assertThat(output.tail().tail().tail().tail().head()).isEqualTo("5");
     }
 
-    @Test void equalsTest2() {
+    @Test
+    void equalsTest2() {
         final List<Integer> input = list(1, list(2, list(3, list(4, list(5, LispList.nil())))));
         final List<String> output = map(Functional.dStringify(), input);
         assertThat(output).isEqualTo(list("1", list("2", list("3", list("4", list("5", LispList.nil()))))));
     }
 
-    @Test void filterTest1() {
+    @Test
+    void filterTest1() {
         final List<Integer> input = list(2, list(4, list(6, list(8, list(10, LispList.nil())))));
         final List<Integer> oddElems = filter(Functional.isOdd, input);
         assertThat(oddElems).isEqualTo(LispList.<Integer>nil());
     }
 
-    @Test void filterTest2() {
+    @Test
+    void filterTest2() {
         final List<Integer> input = list(2, list(5, list(7, list(8, list(10, LispList.nil())))));
         final List<Integer> evenElems = filter(Functional.isEven, input);
 
@@ -66,7 +73,8 @@ public class LispListTest {
         assertThat(evenElems.tail().tail().head()).isEqualTo(Integer.valueOf(10));
     }
 
-    @Test void equalsTest3() {
+    @Test
+    void equalsTest3() {
         final List<Integer> input = list(2, list(5, list(7, list(8, list(10, LispList.nil())))));
         final List<Integer> evenElems = filter(Functional.isEven, input);
 
@@ -74,7 +82,8 @@ public class LispListTest {
         assertThat(evenElems).isEqualTo(expected);
     }
 
-    @Test void filterTest3() {
+    @Test
+    void filterTest3() {
         final List<Integer> input = list(2, list(4, list(6, list(8, list(10, LispList.nil())))));
         final Integer limit = 5;
         final List<Integer> highElems = filter(
@@ -84,7 +93,8 @@ public class LispListTest {
         assertThat(highElems).isEqualTo(expected);
     }
 
-    @Test void filterTest4() {
+    @Test
+    void filterTest4() {
         final List<Integer> input = list(2, list(4, list(6, list(8, list(10, LispList.nil())))));
         final Integer limit = 10;
         final List<Integer> output = filter(
@@ -93,7 +103,8 @@ public class LispListTest {
         assertThat(output.isEmpty()).isTrue();
     }
 
-    @Test void filterTest5() {
+    @Test
+    void filterTest5() {
         final List<Integer> input = list(2, list(4, list(6, list(8, list(10, list(12, list(14, list(16, list(18, list(20, LispList.nil()))))))))));
         final List<Integer> expected = list(4, list(8, list(12, list(16, list(20, LispList.nil())))));
         final List<Integer> output = filter(
@@ -102,7 +113,8 @@ public class LispListTest {
         assertThat(output).isEqualTo(expected);
     }
 
-    @Test void consTest1() {
+    @Test
+    void consTest1() {
         final List<Integer> input = cons(2, cons(4, cons(6, compose(8, 10))));
         assertThat(input.head()).isEqualTo(Integer.valueOf(2));
         assertThat(input.tail().head()).isEqualTo(Integer.valueOf(4));
@@ -111,43 +123,50 @@ public class LispListTest {
         assertThat(input.tail().tail().tail().tail().head()).isEqualTo(Integer.valueOf(10));
     }
 
-    @Test void carTest1() {
+    @Test
+    void carTest1() {
         final List<Integer> input = list(2, list(4, list(6, list(8, list(10, LispList.nil())))));
         assertThat(car(input)).isEqualTo(Integer.valueOf(2));
     }
 
-    @Test void cdrTest1() {
+    @Test
+    void cdrTest1() {
         final List<Integer> input = list(2, list(4, list(6, list(8, list(10, LispList.nil())))));
         assertThat(cdr(input)).isEqualTo(list(4, list(6, list(8, list(10, LispList.nil())))));
     }
 
-    @Test void cadrTest1() {
+    @Test
+    void cadrTest1() {
         final List<Integer> input = list(2, list(4, list(6, list(8, list(10, LispList.nil())))));
         assertThat(cadr(input)).isEqualTo(Integer.valueOf(4));
     }
 
-    @Test void reverseTest1() {
+    @Test
+    void reverseTest1() {
         final List<Integer> input = list(2, list(4, list(6, list(8, list(10, LispList.nil())))));
         final List<Integer> expected = list(10, list(8, list(6, compose(4, 2))));
         final List<Integer> output = reverse(input);
         assertThat(output).isEqualTo(expected);
     }
 
-    @Test void foldTest1() {
+    @Test
+    void foldTest1() {
         final List<Integer> input = list(2, list(4, list(6, list(8, list(10, LispList.nil())))));
         final Integer expected = 30;
         final Integer output = fold(Integer::sum, 0, input);
         assertThat(output).isEqualTo(expected);
     }
 
-    @Test void foldTest2() {
+    @Test
+    void foldTest2() {
         final List<String> input = list("2", list("4", list("6", list("8", LispList.nil()))));
         final String expected = "2468";
         final String output = fold((state, o) -> state + o, "", input);
         assertThat(output).isEqualTo(expected);
     }
 
-    @Test void foldRightTest1() {
+    @Test
+    void foldRightTest1() {
         final List<Integer> input = list(2, list(4, list(6, list(8, LispList.nil()))));
         final String expected = "8642";
         final String output = foldRight((o, state) -> state + o, "", input);

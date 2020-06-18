@@ -1,5 +1,8 @@
 package me.shaftesbury.utils.functional;
 
+import me.shaftesbury.utils.functional.function.UnaryFunction;
+import me.shaftesbury.utils.functional.monad.Option;
+import me.shaftesbury.utils.functional.monad.OptionNoValueAccessException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -1362,11 +1365,13 @@ public class Iterable2Test {
         assertThat(IterableHelper.createEmpty().toArray()).containsExactly(new Integer[]{});
     }
 
-    @Test void toSetEmptyListTest() {
+    @Test
+    void toSetEmptyListTest() {
         assertThat(IterableHelper.createEmpty().toSet()).isEqualTo(new HashSet<Integer>());
     }
 
-    @Test void toDictionaryEmptyListTest() {
+    @Test
+    void toDictionaryEmptyListTest() {
         assertThat(IterableHelper.<Integer>createEmpty().toDictionary((Function<Integer, Integer>) integer -> null, (Function<Integer, String>) integer -> null)).isEmpty();
     }
 

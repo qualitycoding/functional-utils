@@ -1,5 +1,8 @@
-package me.shaftesbury.utils.functional;
+package me.shaftesbury.utils.functional.monad;
 
+import me.shaftesbury.utils.functional.Functional;
+import me.shaftesbury.utils.functional.Iterable2;
+import me.shaftesbury.utils.functional.IterableHelper;
 import org.assertj.core.api.IterableAssert;
 import org.junit.jupiter.api.Test;
 
@@ -13,19 +16,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class OptionTest {
-    @Test void equalityTest1() {
-        final Option<String> a = Option.toOption("TEST");
+    @Test
+    void equalityTest1() {
+        final Option<java.lang.String> a = Option.toOption("TEST");
         //noinspection EqualsWithItself
         assertThat(a.equals(a)).isTrue();
     }
 
-    @Test void equalityTest2() {
-        final Option<String> a = Option.toOption("TEST");
-        final Option<String> b = Option.toOption("TEST");
+    @Test
+    void equalityTest2() {
+        final Option<java.lang.String> a = Option.toOption("TEST");
+        final Option<java.lang.String> b = Option.toOption("TEST");
         assertThat(a.equals(b)).isTrue();
     }
 
-    @Test void equalityTest3() {
+    @Test
+    void equalityTest3() {
         final Option<Integer> a = Option.toOption(1);
         final Option<Integer> b = Option.toOption(2);
         //noinspection EqualsWithItself
@@ -33,7 +39,8 @@ public class OptionTest {
         assertThat(a.equals(b)).isFalse();
     }
 
-    @Test void optionTestValueType1() {
+    @Test
+    void optionTestValueType1() {
         final int expected = 10;
         final Option<Integer> a = Option.toOption(expected);
         assertThat(a.isSome()).isTrue();
@@ -41,15 +48,17 @@ public class OptionTest {
         assertThat(a.Some()).isEqualTo((Integer) expected);
     }
 
-    @Test void optionTestStringType1() {
-        final String expected = "ll";
-        final Option<String> a = Option.toOption(expected);
+    @Test
+    void optionTestStringType1() {
+        final java.lang.String expected = "ll";
+        final Option<java.lang.String> a = Option.toOption(expected);
         assertThat(a.isSome()).isTrue();
         assertThat(a.isNone()).isFalse();
         assertThat(a.Some()).isEqualTo(expected);
     }
 
-    @Test void optionTestValueType2() {
+    @Test
+    void optionTestValueType2() {
         final Option<Integer> a = Option.None();
         assertThat(a.isNone()).isTrue();
         assertThat(a.isSome()).isFalse();
@@ -58,14 +67,16 @@ public class OptionTest {
     static class tmp {
     }
 
-    @Test void optionTestReferenceType1() {
+    @Test
+    void optionTestReferenceType1() {
         final Option<tmp> a = Option.toOption(new tmp());
         assertThat(a.isSome()).isTrue();
         assertThat(a.isNone()).isFalse();
         a.Some();
     }
 
-    @Test void optionTestReferenceType2() {
+    @Test
+    void optionTestReferenceType2() {
         final Option<tmp> a = Option.toOption(null);
         assertThat(a.isNone()).isTrue();
         assertThat(a.isSome()).isFalse();
@@ -77,39 +88,44 @@ public class OptionTest {
         assertThatExceptionOfType(OptionNoValueAccessException.class).isThrownBy(a::Some);
     }
 
-    @Test void compareOptionsForEqualityTest1() {
+    @Test
+    void compareOptionsForEqualityTest1() {
         final Option<Integer> some1 = Option.toOption(1);
         final Option<Integer> some2 = Option.toOption(1);
 
         assertThat(some2).isEqualTo(some1);
     }
 
-    @Test void compareOptionsForEqualityTest2() {
+    @Test
+    void compareOptionsForEqualityTest2() {
         final Option<Integer> some1 = Option.toOption(1);
         final Option<Integer> some2 = Option.toOption(2);
 
-        assertThat( some2).isNotEqualTo(some1);
+        assertThat(some2).isNotEqualTo(some1);
     }
 
-    @Test void compareOptionsForEqualityTest3() {
+    @Test
+    void compareOptionsForEqualityTest3() {
         final Option<Integer> some1 = Option.toOption(1);
         final Option<Double> some2 = Option.toOption(2.1);
 
-        assertThat( some2).isNotEqualTo(some1);
+        assertThat(some2).isNotEqualTo(some1);
     }
 
-    @Test void compareOptionsForEqualityTest4() {
+    @Test
+    void compareOptionsForEqualityTest4() {
         final Option<Integer> none1 = Option.None();
         final Option<Integer> none2 = Option.None();
 
         assertThat(none2).isEqualTo(none1);
     }
 
-    @Test void compareOptionsForEqualityTest5() {
+    @Test
+    void compareOptionsForEqualityTest5() {
         final Option<Integer> some = Option.toOption(2);
         final Integer theInt = 2;
 
-        assertThat( theInt).isNotEqualTo(some);
+        assertThat(theInt).isNotEqualTo(some);
     }
 
 //    @Test
@@ -153,19 +169,22 @@ public class OptionTest {
 //        assertThat(e.isSome()).isFalse();
 //    }
 
-    @Test void optionNoneisNoneTest1() {
+    @Test
+    void optionNoneisNoneTest1() {
         final Option<Integer> none = Option.None();
         assertThat(none.isNone()).isTrue();
         assertThat(none.isSome()).isFalse();
     }
 
-    @Test void optionNoneisNoneTest2() {
-        final Option<String> none = Option.None();
+    @Test
+    void optionNoneisNoneTest2() {
+        final Option<java.lang.String> none = Option.None();
         assertThat(none.isNone()).isTrue();
         assertThat(none.isSome()).isFalse();
     }
 
-    @Test void optionNoneisNoneTest3() {
+    @Test
+    void optionNoneisNoneTest3() {
         final Option<tmp> none = Option.None();
         assertThat(none.isNone()).isTrue();
         assertThat(none.isSome()).isFalse();
@@ -182,7 +201,8 @@ public class OptionTest {
 //        assertThat(none.isSome()).isFalse();
 //    }
 //
-    @Test void optionBindTest1() {
+    @Test
+    void optionBindTest1() {
         final Option<Integer> a = Option.toOption(1);
         final Option<Integer> b = a.bind(
                 integer -> Option.toOption(integer * 2));
@@ -190,14 +210,16 @@ public class OptionTest {
         assertThat(b.Some()).isEqualTo(Integer.valueOf(2));
     }
 
-    @Test void optionBindTest2() {
+    @Test
+    void optionBindTest2() {
         final Option<Integer> a = Option.None();
         final Option<Integer> b = a.bind(
                 integer -> Option.toOption(integer * 2));
         assertThat(b.isNone()).isTrue();
     }
 
-    @Test void optionBindTest3() {
+    @Test
+    void optionBindTest3() {
         final Iterable2<Integer> input = IterableHelper.asList(1, 2, 3, 4, 5, 6);
         final java.util.List<Integer> expected = Arrays.asList(2, 4, 6);
 
@@ -215,7 +237,8 @@ public class OptionTest {
 
     private static final BiFunction<Integer, Integer, Integer> plus = Integer::sum;
 
-    @Test void optionLiftTest1() {
+    @Test
+    void optionLiftTest1() {
         final Option<Integer> a = Option.toOption(10);
         final Option<Integer> b = Option.toOption(100);
         final Option<Integer> c = Option.lift(plus, a, b);
@@ -224,7 +247,8 @@ public class OptionTest {
         assertThat(c.Some()).isEqualTo(Integer.valueOf(110));
     }
 
-    @Test void optionLiftTest2() {
+    @Test
+    void optionLiftTest2() {
         final Option<Integer> a = Option.toOption(10);
         final Option<Integer> b = Option.None();
         final Option<Integer> c = Option.lift(plus, a, b);
@@ -232,7 +256,8 @@ public class OptionTest {
         assertThat(c.isNone()).isTrue();
     }
 
-    @Test void optionLiftTest3() {
+    @Test
+    void optionLiftTest3() {
         final Option<Integer> a = Option.None();
         final Option<Integer> b = Option.toOption(10);
         final Option<Integer> c = Option.lift(plus, a, b);
@@ -240,7 +265,8 @@ public class OptionTest {
         assertThat(c.isNone()).isTrue();
     }
 
-    @Test void optionLiftTest4() {
+    @Test
+    void optionLiftTest4() {
         final Option<Integer> a = Option.None();
         final Option<Integer> b = Option.None();
         final Option<Integer> c = Option.lift(plus, a, b);
@@ -248,11 +274,12 @@ public class OptionTest {
         assertThat(c.isNone()).isTrue();
     }
 
-    @Test void optionToStringTest() {
-        final Option<String> a = Option.toOption("string");
+    @Test
+    void optionToStringTest() {
+        final Option<java.lang.String> a = Option.toOption("string");
         final Option<Integer> b = Option.toOption(10);
         final Option<Boolean> c = Option.toOption(false);
-        final Option<String> d = Option.None();
+        final Option<java.lang.String> d = Option.None();
 
         assertThat(a.toString()).isEqualTo("Option( string )");
         assertThat(b.toString()).isEqualTo("Option( 10 )");
@@ -260,7 +287,8 @@ public class OptionTest {
         assertThat(d.toString()).isEqualTo("None");
     }
 
-    @Test void optionSomeCreatorTestValueType1() {
+    @Test
+    void optionSomeCreatorTestValueType1() {
         final int expected = 10;
         final Option<Integer> a = Option.Some(expected);
         assertThat(a.isSome()).isTrue();
@@ -268,9 +296,10 @@ public class OptionTest {
         assertThat(a.Some()).isEqualTo((Integer) expected);
     }
 
-    @Test void optionSomeCreatorTestStringType1() {
-        final String expected = "ll";
-        final Option<String> a = Option.Some(expected);
+    @Test
+    void optionSomeCreatorTestStringType1() {
+        final java.lang.String expected = "ll";
+        final Option<java.lang.String> a = Option.Some(expected);
         assertThat(a.isSome()).isTrue();
         assertThat(a.isNone()).isFalse();
         assertThat(a.Some()).isEqualTo(expected);
@@ -278,10 +307,11 @@ public class OptionTest {
 
     @Test
     void optionSomeCreatorTestValueType2() {
-        assertThatExceptionOfType(OptionNoValueAccessException.class).isThrownBy(()->Option.Some(null));
+        assertThatExceptionOfType(OptionNoValueAccessException.class).isThrownBy(() -> Option.Some(null));
     }
 
-    @Test void collectionOfOption() {
+    @Test
+    void collectionOfOption() {
         final Map<Option<Integer>, Integer> map = new HashMap<>();
         map.put(Option.toOption(1), 1);
         assertThat(map.get(Option.toOption(1))).isEqualTo(Integer.valueOf(1));

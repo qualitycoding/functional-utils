@@ -30,7 +30,7 @@ public class Using2<X, Y> {
         }
     }
 
-    public <Y2, Z2,A,Z, R> R in(final Function4<X, Y2, Z2, A, R> f) {
+    public <Y2, Z2, A, Z, R> R in(final Function4<X, Y2, Z2, A, R> f) {
         requireNonNull(f, "f must not be null");
         try {
             return ((Using2<Y2, Z>) this.y.getValue().get()).in(f.apply(x.getValue().get()));

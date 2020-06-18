@@ -1,5 +1,8 @@
-package me.shaftesbury.utils.functional;
+package me.shaftesbury.utils.functional.monad;
 
+import me.shaftesbury.utils.functional.Functional;
+import me.shaftesbury.utils.functional.Iterable2;
+import me.shaftesbury.utils.functional.IterableHelper;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class MExceptionTest {
-    @Test void returnTest1() {
+    @Test
+    void returnTest1() {
         final MException<Object> mex = MException.toMException(
                 () -> null
         );
@@ -29,7 +33,8 @@ public class MExceptionTest {
         assertThatExceptionOfType(RuntimeException.class).isThrownBy(m::read);
     }
 
-    @Test void returnTest2() {
+    @Test
+    void returnTest2() {
         final MException<Integer> mex = MException.toMException(
                 () -> 10
         );
@@ -38,7 +43,8 @@ public class MExceptionTest {
         assertThat(mex.read()).isEqualTo(Integer.valueOf(10));
     }
 
-    @Test void returnWithFuncTest1() {
+    @Test
+    void returnWithFuncTest1() {
         for (int i = 0; i < 10; ++i) {
             final int ii = i;
             final Supplier<Integer> f = () -> ii;
@@ -51,7 +57,8 @@ public class MExceptionTest {
     private static Function<Integer, Integer> DoublingGenerator =
             a -> 2 * a;
 
-    @Test void returnWithFuncTest2() {
+    @Test
+    void returnWithFuncTest2() {
         final Iterable2<Integer> it = IterableHelper.init(DoublingGenerator, 10);
         final java.util.List<MException<Integer>> l = it.map(
                 ii -> {
@@ -67,7 +74,8 @@ public class MExceptionTest {
             else assertThat(l.get(i - 1).hasException()).isTrue();
     }
 
-    @Test void bindTest1() {
+    @Test
+    void bindTest1() {
         final java.util.List<MException<Integer>> l = new ArrayList<>();
         for (int i = 1; i < 4; ++i) {
             final int ii = i;
@@ -88,7 +96,8 @@ public class MExceptionTest {
         assertThat(IterableHelper.create(l).filter(MException::hasException).toList().size()).isEqualTo(3);
     }
 
-    @Test void bindTestExceptionThrownInFunc() {
+    @Test
+    void bindTestExceptionThrownInFunc() {
         final MException<Integer> m = MException.toMException(() -> 1);
 
         final MException<Integer> m1 = m.bind(integer -> {
@@ -100,7 +109,8 @@ public class MExceptionTest {
         assertThat(exceptionWithStackTrace.getLeft().getMessage()).isEqualTo("Argh");
     }
 
-    @Test void bindTestThisMExceptionHasExceptionAlready() {
+    @Test
+    void bindTestThisMExceptionHasExceptionAlready() {
         final MException<Integer> m = MException.toMException(
                 () -> {
                     throw new RuntimeException("Argh");
@@ -115,7 +125,8 @@ public class MExceptionTest {
         assertThat(exceptionWithStackTrace.getLeft().getMessage()).isEqualTo("Argh");
     }
 
-    @Test void liftTest1() {
+    @Test
+    void liftTest1() {
         final int value = 10;
         final MException<Integer> a = MException.toMException(() -> 10 / value);
         final MException<Integer> b = MException.toMException(() -> 20 / value);

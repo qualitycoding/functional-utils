@@ -107,7 +107,7 @@ class UsingWrapperTest {
         final java.lang.String value2 = "glkjdf";
         final Integer value3 = 678;
 
-        final Tuple3<Object, java.lang.String, Integer> actual = using(value1, value2, value3).in(Tuple3<Object,java.lang.String,Integer>::new);
+        final Tuple3<Object, java.lang.String, Integer> actual = using(value1, value2, value3).in(Tuple3<Object, java.lang.String, Integer>::new);
 
         assertThat(actual).isEqualTo(new Tuple3<>(value1, value2, value3));
     }
@@ -119,7 +119,7 @@ class UsingWrapperTest {
         final Integer value3 = 678;
         final java.lang.String value4 = "glygv;jbn";
 
-        final Tuple4<Object, java.lang.String, Integer, java.lang.String> actual = using(value1, value2, value3, value4).in(Tuple4<Object,java.lang.String,Integer,java.lang.String>::new);
+        final Tuple4<Object, java.lang.String, Integer, java.lang.String> actual = using(value1, value2, value3, value4).in(Tuple4<Object, java.lang.String, Integer, java.lang.String>::new);
 
         assertThat(actual).isEqualTo(new Tuple4<>(value1, value2, value3, value4));
     }

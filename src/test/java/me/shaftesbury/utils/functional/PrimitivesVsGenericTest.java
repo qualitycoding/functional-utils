@@ -7,14 +7,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Math.pow;
-import static me.shaftesbury.utils.functional.FunctionalTest.DoublingGenerator;
 import static me.shaftesbury.utils.functional.FunctionalTest.doublingGenerator;
+import static me.shaftesbury.utils.functional.FunctionalTest.doublingGenerator_f;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PrimitivesVsGenericTest {
     private static double oneMillion = pow(10, 6);
 
-    @Test void integerListVsPrimitiveListToString() {
+    @Test
+    void integerListVsPrimitiveListToString() {
         for (final int howMany : new int[]{1000, 10000, 100000, 1000000, 10000000}) {
             System.out.println("Testing stringify with " + howMany + " elements");
             final String s1, s2, s3;
@@ -71,7 +72,8 @@ public class PrimitivesVsGenericTest {
         }
     }
 
-    @Test void primitiveVsGenericFindLast() {
+    @Test
+    void primitiveVsGenericFindLast() {
         for (final int howMany : new int[]{1000, 10000, 100000, 1000000, 10000000}) {
             System.out.println("Testing findLast with " + howMany + " elements");
             int s1 = Integer.MIN_VALUE;
@@ -99,7 +101,7 @@ public class PrimitivesVsGenericTest {
             {
                 final long beforeInitialisation = System.nanoTime();
 
-                final IntList ints = me.shaftesbury.utils.functional.primitive.integer.Functional.init(doublingGenerator, howMany);
+                final IntList ints = me.shaftesbury.utils.functional.primitive.integer.Functional.init(doublingGenerator_f, howMany);
 
                 final long beforeTransformation = System.nanoTime();
 
@@ -113,7 +115,7 @@ public class PrimitivesVsGenericTest {
             {
                 final long beforeInitialisation = System.nanoTime();
 
-                final List<Integer> ints = Functional.init(DoublingGenerator, howMany);
+                final List<Integer> ints = Functional.init(doublingGenerator, howMany);
 
                 final long beforeTransformation = System.nanoTime();
 

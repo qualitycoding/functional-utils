@@ -19,8 +19,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <assertj-core.version>3.16.2-SNAPSHOT</assertj-core.version>
+        <assertj-vavr.version>0.2.0</assertj-vavr.version>
         <commons-lang3.version>3.10</commons-lang3.version>
         <junit-jupiter.version>5.7.0-M1</junit-jupiter.version>
+        <mockito-core.version>3.3.3</mockito-core.version>
         <vavr.version>1.0.0-alpha-3</vavr.version>
         <vavr-test.version>0.10.3</vavr-test.version>
 
@@ -150,6 +152,19 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj-core.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-vavr</artifactId>
+            <version>${assertj-vavr.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-core.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

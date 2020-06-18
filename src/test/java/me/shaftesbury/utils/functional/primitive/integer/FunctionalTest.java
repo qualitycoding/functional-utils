@@ -1,7 +1,7 @@
 package me.shaftesbury.utils.functional.primitive.integer;
 
-import me.shaftesbury.utils.functional.Option;
-import me.shaftesbury.utils.functional.OptionNoValueAccessException;
+import me.shaftesbury.utils.functional.monad.Option;
+import me.shaftesbury.utils.functional.monad.OptionNoValueAccessException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
@@ -27,23 +27,27 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class FunctionalTest {
     public static Func_int_int DoublingGenerator = a -> 2 * a;
 
-    @Test void initTest1() {
+    @Test
+    void initTest1() {
         final IntList output = Functional.init(DoublingGenerator, 5);
         assertThat(output.toArray()).containsExactly(2, 4, 6, 8, 10);
     }
 
-    @Test void rangeTest1() {
+    @Test
+    void rangeTest1() {
         final IntList output = Functional.init(Functional.range(0), 5);
         assertThat(output.toArray()).containsExactly(0, 1, 2, 3, 4);
     }
 
-    @Test void mapTest1() {
+    @Test
+    void mapTest1() {
         final IntList input = new IntList(new int[]{1, 2, 3, 4, 5});
         final Collection<String> output = Functional.map(Functional.dStringify(), input);
         assertThat(output.toArray()).containsExactly(new String[]{"1", "2", "3", "4", "5"});
     }
 
-    @Test void mapiTest1() {
+    @Test
+    void mapiTest1() {
         final IntList input = new IntList(new int[]{1, 2, 3, 4, 5});
         final Collection<Pair<Integer, String>> output = Functional.mapi((pos, i) -> Pair.of(pos, Integer.toString(i)), input);
         assertThat(me.shaftesbury.utils.functional.Functional.map(Pair::getRight, output).toArray()).containsExactly(new String[]{"1", "2", "3", "4", "5"});
@@ -119,7 +123,8 @@ public class FunctionalTest {
     }
 
 
-    @Test void forAll2Test1() {
+    @Test
+    void forAll2Test1() {
         final IntList l = Functional.init(DoublingGenerator, 5);
         final IntList m = Functional.init(QuadruplingGenerator, 5);
         try {
@@ -156,14 +161,16 @@ public class FunctionalTest {
 
     private static Func2_int_int_T<Boolean> dBothAreLessThan10 = FunctionalTest::BothAreLessThan10;
 
-    @Test void forAll2Test2() {
+    @Test
+    void forAll2Test2() {
         final IntList l = Functional.init(DoublingGenerator, 5);
         final IntList m = Functional.init(TriplingGenerator, 5);
 
         assertThat(Functional.forAll2(dBothAreLessThan10, l, m)).isFalse();
     }
 
-    @Test void forAll2Test3() {
+    @Test
+    void forAll2Test3() {
         final IntList l = Functional.init(DoublingGenerator, 5);
         final IntList m = Functional.init(QuadruplingGenerator, 7);
 
@@ -196,7 +203,8 @@ public class FunctionalTest {
 //                }, l, m).isNone());
 //    }
 
-    @Test void compositionTest1A() {
+    @Test
+    void compositionTest1A() {
         final IntList i = new IntList(new int[]{1, 2, 3, 45, 56, 6});
 
         final boolean allOdd = Functional.forAll(Functional.isOdd, i);
@@ -206,7 +214,8 @@ public class FunctionalTest {
         assertThat(notAllOdd).isTrue();
     }
 
-    @Test void compositionTest2() {
+    @Test
+    void compositionTest2() {
         final IntList l = Functional.init(DoublingGenerator, 5);
         final IntList m = Functional.init(TriplingGenerator, 5);
         assertThat(Functional.forAll2(Functional.not2(dBothAreLessThan10), l, m)).isFalse();
@@ -226,7 +235,8 @@ public class FunctionalTest {
                         ), l, m)).isTrue();
     }
 
-    @Test void partitionTest1() {
+    @Test
+    void partitionTest1() {
         final IntList m = Functional.init(TriplingGenerator, 5);
         final Pair<List<Integer>, List<Integer>> r = Functional.partition(Functional.isOdd, m);
 
@@ -236,34 +246,39 @@ public class FunctionalTest {
         assertThat(r.getRight().toArray()).containsExactly(right);
     }
 
-    @Test void partitionTest2() {
+    @Test
+    void partitionTest2() {
         final IntList l = Functional.init(DoublingGenerator, 5);
         final Pair<List<Integer>, List<Integer>> r = Functional.partition(Functional.isEven, l);
         assertThat(r.getLeft().toArray()).containsExactly(l.toArray(new Integer[0]));
         assertThat(r.getRight().toArray()).containsExactly(new Integer[]{});
     }
 
-    @Test void partitionTest3() {
+    @Test
+    void partitionTest3() {
         final IntList l = Functional.init(DoublingGenerator, 5);
         final Pair<List<Integer>, List<Integer>> r = Functional.partition(Functional.isEven, l);
         assertThat(r.getLeft().toArray()).containsExactly(Functional.filter(Functional.isEven, l).toArray(new Integer[0]));
     }
 
-    @Test void toStringTest1() {
+    @Test
+    void toStringTest1() {
         final IntList li = Functional.init(DoublingGenerator, 5);
         final Collection<String> ls = Functional.map(Functional.dStringify(), li);
         //String s = String.Join(",", ls);
         assertThat(ls.toArray()).containsExactly(new String[]{"2", "4", "6", "8", "10"});
     }
 
-    @Test void chooseTest1B() throws OptionNoValueAccessException {
+    @Test
+    void chooseTest1B() throws OptionNoValueAccessException {
         final IntList li = Functional.init(TriplingGenerator, 5);
         final Collection<String> o = Functional.choose((Func_int_T<Option<String>>) i -> i % 2 == 0 ? Option.toOption(Integer.toString(i)) : Option.None(), li);
         final String[] expected = {"6", "12"};
         assertThat(expected).containsExactlyElementsOf(o);
     }
 
-    @Test void chooseTest2A() //throws OptionNoValueAccessException
+    @Test
+    void chooseTest2A() //throws OptionNoValueAccessException
     {
         Map<Integer, String> o = null;
         final IntList li = Functional.init(TriplingGenerator, 5);
@@ -335,7 +350,8 @@ public class FunctionalTest {
         return StringUtils.isEmpty(state) ? "" + a : state + "," + a;
     }
 
-    @Test void foldvsMapTest1() {
+    @Test
+    void foldvsMapTest1() {
         final IntList li = Functional.init(DoublingGenerator, 5);
         final String s1 = me.shaftesbury.utils.functional.Functional.join(",", Functional.map(Functional.dStringify(), li));
         assertThat(s1).isEqualTo("2,4,6,8,10");
@@ -346,7 +362,8 @@ public class FunctionalTest {
     private final Function<IntList, String> concatenate =
             l -> Functional.fold(FunctionalTest::csv, "", l);
 
-    @Test void fwdPipelineTest1() {
+    @Test
+    void fwdPipelineTest1() {
         final IntList li = Functional.init(DoublingGenerator, 5);
         final String s1 = in(li, concatenate);
         assertThat(s1).isEqualTo("2,4,6,8,10");
@@ -355,7 +372,8 @@ public class FunctionalTest {
     private final Function<IntList, IntList> evens_f =
             l -> Functional.filter(Functional.isEven, l);
 
-    @Test void fwdPipelineTest2() {
+    @Test
+    void fwdPipelineTest2() {
         final IntList li = Functional.init(TriplingGenerator, 5);
         final IntList evens = me.shaftesbury.utils.functional.Functional.in(li, evens_f);
         final String s1 = in(evens, concatenate);
@@ -364,19 +382,22 @@ public class FunctionalTest {
         assertThat(s1).isEqualTo(s2);
     }
 
-    @Test void compositionTest3() {
+    @Test
+    void compositionTest3() {
         final IntList li = Functional.init(TriplingGenerator, 5);
         final String s = in(li, then(evens_f, concatenate));
         assertThat(s).isEqualTo("6,12");
     }
 
-    @Test void compositionTest4() {
+    @Test
+    void compositionTest4() {
         final IntList li = Functional.init(TriplingGenerator, 5);
         final String s = then(evens_f, concatenate).apply(li);
         assertThat(s).isEqualTo("6,12");
     }
 
-    @Test void indentTest1() {
+    @Test
+    void indentTest1() {
         final int level = 5;
         final String expectedResult = "     ";
 
@@ -391,7 +412,8 @@ public class FunctionalTest {
         assertThat(me.shaftesbury.utils.functional.Functional.join("", indentation)).isEqualTo("     ");
     }
 
-    @Test void chooseTest3A() throws OptionNoValueAccessException {
+    @Test
+    void chooseTest3A() throws OptionNoValueAccessException {
         final IntList li = Functional.init(TriplingGenerator, 5);
         final IntList o =
                 Functional.choose(
@@ -477,7 +499,8 @@ public class FunctionalTest {
     }
 
 
-    @Test void foldAndChooseTest1() {
+    @Test
+    void foldAndChooseTest1() {
         final Map<Integer, Double> missingPricesPerDate = new Hashtable<>();
         final IntList openedDays = Functional.init(TriplingGenerator, 5);
         Double last = 10.0;
@@ -508,14 +531,16 @@ public class FunctionalTest {
                 .containsExactlyElementsOf(keys);
     }
 
-    @Test void joinTest1() {
+    @Test
+    void joinTest1() {
         final IntList ids = Functional.init(TriplingGenerator, 5);
         final String expected = "3,6,9,12,15";
         assertThat(me.shaftesbury.utils.functional.Functional.join(",", Functional.map(Functional.dStringify(), ids))).isEqualTo(expected);
         assertThat(Functional.join(",", ids)).isEqualTo(expected);
     }
 
-    @Test void joinTest2() {
+    @Test
+    void joinTest2() {
         final IntList ids = Functional.init(TriplingGenerator, 5);
         final String expected = "'3','6','9','12','15'";
         final Func_int_T<String> f =
@@ -524,12 +549,14 @@ public class FunctionalTest {
         assertThat(Functional.join(",", ids, f)).isEqualTo(expected);
     }
 
-    @Test void betweenTest1() {
+    @Test
+    void betweenTest1() {
         final int lowerBound = 2, upperBound = 4;
         assertThat(Functional.between(lowerBound, upperBound, 3)).isTrue();
     }
 
-    @Test void betweenTest2() {
+    @Test
+    void betweenTest2() {
         final int lowerBound = 2, upperBound = 4;
         assertThat(Functional.between(lowerBound, upperBound, 1)).isFalse();
     }
@@ -541,7 +568,8 @@ public class FunctionalTest {
 //        assertThat().isTrue()(Functional.between(lowerBound, upperBound, 2.55));
 //    }
 
-    @Test void testIsEven_withEvenNum() {
+    @Test
+    void testIsEven_withEvenNum() {
         assertThat(Functional.isEven.apply(2)).isTrue();
     }
 
@@ -667,13 +695,15 @@ public class FunctionalTest {
 //        Assert.fail("Should not reach this point");
 //    }
 //
-    @Test void findLastTest1() {
+    @Test
+    void findLastTest1() {
         final IntList l = Functional.init(DoublingGenerator, 5);
         assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(() -> Functional.findLast(Functional.isOdd, l));
     }
 
-    @Test void findLastTest2() {
+    @Test
+    void findLastTest2() {
         final IntList l = Functional.init(DoublingGenerator, 5);
         assertThat(Functional.findLast(Functional.isEven, l)).isEqualTo(10);
     }
@@ -743,7 +773,8 @@ public class FunctionalTest {
 //            assertThat().isEqualTo(expected.get(i), output[i]);
 //    }
 //
-    @Test void lastTest1() {
+    @Test
+    void lastTest1() {
         final IntList input = new IntList(new int[]{1, 2, 3, 4, 5});
         assertThat((long) Functional.last(input)).isEqualTo(5);
     }
@@ -756,13 +787,15 @@ public class FunctionalTest {
 //        assertThat().isEqualTo("5", Functional.last(strs));
 //    }
 
-    @Test void lastTest3() {
+    @Test
+    void lastTest3() {
         final IntList input = new IntList(new int[]{});
         assertThatIllegalArgumentException().isThrownBy(() -> Functional.last(input));
     }
 
 
-    @Test void concatTest1() {
+    @Test
+    void concatTest1() {
         final IntList input = new IntList(new int[]{1, 2, 3, 4, 5});
         final int[] expected = new int[]{1, 2, 3, 4, 5, 1, 2, 3, 4, 5};
         assertThat(Functional.concat(input, input).toArray()).containsExactly(expected);
@@ -932,7 +965,8 @@ public class FunctionalTest {
 //        Assert.fail("Should not reach this point");
 //    }
 //
-    @Test void fwdPipelineTest3() {
+    @Test
+    void fwdPipelineTest3() {
         final IntList input = Functional.init(DoublingGenerator, 5);
         final Collection<String> output = in(input,
                 (Function<IntList, Collection<String>>) integers -> Functional.map(Functional.dStringify(), integers));

@@ -7,26 +7,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-public class CircularArrayList<T> implements List<T>
-{
+public class CircularArrayList<T> implements List<T> {
     private final int bufferSize;
     private final ArrayList<T> buffer;
-    public CircularArrayList(final Iterable<T> input, final int howMany)
-    {
+
+    public CircularArrayList(final Iterable<T> input, final int howMany) {
         this.bufferSize = howMany;
         this.buffer = new ArrayList<>(howMany);
-        int counter=0;
+        int counter = 0;
         final Iterator<T> iterator = input.iterator();
-        while(counter<howMany && iterator.hasNext())
-        {
+        while (counter < howMany && iterator.hasNext()) {
             buffer.add(iterator.next());
             ++counter;
         }
-        while(counter<howMany)
-        {
+        while (counter < howMany) {
             final Iterator<T> iterator1 = buffer.iterator();
-            while(counter<howMany && iterator1.hasNext())
-            {
+            while (counter < howMany && iterator1.hasNext()) {
                 buffer.add(iterator1.next());
                 ++counter;
             }
@@ -60,7 +56,7 @@ public class CircularArrayList<T> implements List<T>
 
     @SuppressWarnings("unchecked")
 
-    public <T1>T1[] toArray(final T1[] a) {
+    public <T1> T1[] toArray(final T1[] a) {
         if (a.length < bufferSize)
             // Make a new array of a's runtime type, but my contents:
             return (T1[]) Arrays.copyOf(buffer.toArray(), bufferSize, a.getClass());
