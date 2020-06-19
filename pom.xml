@@ -53,9 +53,9 @@
     </build>
 
     <scm>
-        <connection>scm:git:https://github.com/rpolton/functional-utils-csharp.git</connection>
-        <developerConnection>scm:git:https://github.com/rpolton/functional-utils-csharp.git</developerConnection>
-        <url>https://github.com/rpolton/functional-utils-csharp</url>
+        <connection>scm:git:https://github.com/rpolton/functional-utils-java.git</connection>
+        <developerConnection>scm:git:https://github.com/rpolton/functional-utils-java.git</developerConnection>
+        <url>https://github.com/rpolton/functional-utils-java</url>
     </scm>
 
     <profiles>
@@ -145,6 +145,7 @@
             <groupId>io.vavr</groupId>
             <artifactId>vavr-test</artifactId>
             <version>${vavr-test.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
