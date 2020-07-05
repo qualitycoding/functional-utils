@@ -193,7 +193,7 @@ class IOrTest {
         @Test
         void mapWhenLeftIsMissing() {
             final Object input = new Object();
-            final IOr<Object, Object> right = IOr.right(new Object());
+            final IOr<Object, Object> right = IOr.right(input);
             final Function<Object, Object> tfm = mock(Function.class);
             final Object expectedRight = new Object();
             final IOr<Object, Object> expected = IOr.right(expectedRight);
@@ -201,7 +201,7 @@ class IOrTest {
             when(tfm.apply(input)).thenReturn(expectedRight);
 
             assertThat(right.map(tfm)).isEqualTo(expected);
-            verify(tfm).apply(right);
+            verify(tfm).apply(input);
         }
 
         @Test
@@ -243,7 +243,7 @@ class IOrTest {
         @Test
         void whenRightIsMissing() {
             final Object input = new Object();
-            final IOr<Object, Object> left = IOr.left(new Object());
+            final IOr<Object, Object> left = IOr.left(input);
             final Function<Object, Object> tfm = mock(Function.class);
             final Object expectedLeft = new Object();
             final IOr<Object, Object> expected = IOr.left(expectedLeft);
@@ -251,7 +251,7 @@ class IOrTest {
             when(tfm.apply(input)).thenReturn(expectedLeft);
 
             assertThat(left.mapLeft(tfm)).isEqualTo(expected);
-            verify(tfm).apply(left);
+            verify(tfm).apply(input);
         }
 
         @Test
@@ -261,7 +261,7 @@ class IOrTest {
 
         @Test
         void tfmShouldNotReturnNull() {
-            assertThatNullPointerException().isThrownBy(() -> IOr.left(new Object()).map(x -> null)).withMessage("left must not be null");
+            assertThatNullPointerException().isThrownBy(() -> IOr.left(new Object()).mapLeft(x -> null)).withMessage("left must not be null");
         }
     }
 
@@ -312,7 +312,7 @@ class IOrTest {
                 final Object expectedLeft = new Object();
                 final IOr<Object, Object> expected = IOr.left(expectedLeft);
 
-                when(rightTfm.apply(left)).thenReturn(expectedLeft);
+                when(leftTfm.apply(left)).thenReturn(expectedLeft);
 
                 assertThat(IOr.left(left).mapBoth(leftTfm, rightTfm)).isEqualTo(expected);
 
@@ -327,7 +327,7 @@ class IOrTest {
 
             @Test
             void mapBothThrowsWhenSuppliedNullAsRight() {
-                assertThatNullPointerException().isThrownBy(() -> IOr.both(new Object(), new Object()).mapBoth(Function.identity(), null)).withMessage("leftTfm must not be null");
+                assertThatNullPointerException().isThrownBy(() -> IOr.both(new Object(), new Object()).mapBoth(Function.identity(), null)).withMessage("rightTfm must not be null");
             }
 
             @Test
@@ -412,7 +412,7 @@ class IOrTest {
     class HasBoth {
         @Test
         void right() {
-            assertThat(IOr.right(new Object()).hasBoth()).isTrue();
+            assertThat(IOr.right(new Object()).hasBoth()).isFalse();
         }
 
         @Test
@@ -422,7 +422,7 @@ class IOrTest {
 
         @Test
         void left() {
-            assertThat(IOr.left(new Object()).hasBoth()).isTrue();
+            assertThat(IOr.left(new Object()).hasBoth()).isFalse();
         }
     }
 }

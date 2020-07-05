@@ -5,7 +5,6 @@ import me.shaftesbury.utils.functional.monad.OptionNoValueAccessException;
 import me.shaftesbury.utils.functional.primitive.integer.Func_int_int;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -43,8 +42,8 @@ class FunctionalTest {
         final Optional<Integer> i1 = Optional.of(expected);
         final io.vavr.control.Option<Integer> i2 = io.vavr.control.Option.some(expected);
         assertThat(i1.flatMap(f1)).hasValue(expected);
-        VavrAssertions.assertThat(i2.flatMap(f2)).contains(expected);
-        VavrAssertions.assertThat(Functional.convertFlatMapFn(f1).apply(expected)).contains(expected);
+        assertThat(i2.flatMap(f2)).contains(expected);
+        assertThat(Functional.convertFlatMapFn(f1).apply(expected)).contains(expected);
     }
 
     static boolean bothAreEven(final int a, final int b) {
