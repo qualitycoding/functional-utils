@@ -10,6 +10,8 @@ import io.vavr.collection.Map;
 import io.vavr.collection.Seq;
 import io.vavr.control.Option;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
 import java.util.Random;
@@ -162,7 +164,7 @@ public class CircularList<T> implements LinearSeq<T> {
 
     @Override
     public <U> LinearSeq<U> flatMap(final Function<? super T, ? extends Iterable<? extends U>> mapper) {
-        throw new UnsupportedOperationException("flatMap() is not currently supported");
+        return of(buffer.flatMap(mapper));
     }
 
     @Override
@@ -242,7 +244,7 @@ public class CircularList<T> implements LinearSeq<T> {
 
     @Override
     public <U> LinearSeq<U> map(final Function<? super T, ? extends U> mapper) {
-        throw new UnsupportedOperationException("map() is not currently supported");
+        return of(buffer.map(mapper));
     }
 
     @Override
@@ -472,7 +474,16 @@ public class CircularList<T> implements LinearSeq<T> {
 
     @Override
     public LinearSeq<T> take(final int n) {
-        throw new UnsupportedOperationException("take() is not currently supported");
+        if (n > buffer.size()) {
+            final java.util.List<T> reduced = Collections.nCopies(n / buffer.size(), buffer.toJavaList()).stream()
+                    .reduce(new ArrayList<>(), (a, b) -> {
+                        a.addAll(b);
+                        return a;
+                    });
+            reduced.addAll(buffer.take(n % buffer.size()).toJavaList());
+            return List.ofAll(reduced);
+        } else
+            return buffer.take(n);
     }
 
     @Override
@@ -549,6 +560,7 @@ public class CircularList<T> implements LinearSeq<T> {
     public Iterator<T> iterator() {
         return new Iterator<T>() {
             private int currentPos = 0;
+
             @Override
             public boolean hasNext() {
                 return !buffer.isEmpty();
@@ -556,7 +568,7 @@ public class CircularList<T> implements LinearSeq<T> {
 
             @Override
             public T next() {
-                if(hasNext())
+                if (hasNext())
                     return buffer.get(currentPos++ % buffer.size());
                 else
                     throw new NoSuchElementException();
