@@ -100,6 +100,10 @@ class CircularListTest {
     }
 
     @Nested
+    @Disabled("it doesn't make sense to fold over an infinite sequence because folding is a terminating operation" +
+            " - the sequence needs to end in order for fold to return a value. I see there being two choices: either return" +
+            " a partial result or require the sequence to be truncated, as is done in the examples below. However, scan()" +
+            " does make sense.")
     class Fold {
         @Test
         void foldAndTake1() {
@@ -147,6 +151,15 @@ class CircularListTest {
             assertThat(output.flatMap(List::of).take(5))
                     .containsSequence(1, 2, 3, 4, 5)
                     .isInstanceOf(List.class);
+        }
+    }
+
+    @Nested
+    class Scan {
+        @Test@Disabled("not working yet")
+        void scan() {
+            final CircularList<Integer> output = CircularList.of(List.of(1, 2, 3, 4, 5));
+            assertThat(output.scan(100, Integer::sum)).containsSequence(101, 103, 106, 110, 115);
         }
     }
 }
