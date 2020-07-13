@@ -49,7 +49,7 @@ public class CircularList<T> implements LinearSeq<T> {
 
     @Override
     public LinearSeq<T> appendAll(final Iterable<? extends T> elements) {
-        throw new UnsupportedOperationException("appendAll() is not supported");
+        return of(buffer.appendAll(elements));
     }
 
     @Override
@@ -299,7 +299,7 @@ public class CircularList<T> implements LinearSeq<T> {
 
     @Override
     public LinearSeq<T> prependAll(final Iterable<? extends T> elements) {
-        throw new UnsupportedOperationException("prependAll() is not currently supported");
+        return of(buffer.prependAll(elements));
     }
 
     @Override

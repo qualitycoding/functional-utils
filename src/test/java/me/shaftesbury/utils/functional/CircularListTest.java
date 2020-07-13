@@ -44,6 +44,28 @@ class CircularListTest {
                     .containsSequence(4, 0, 1, 2, 3)
                     .containsSequence(0, 1, 2, 3, 4);
         }
+
+        @Test
+        void appendAllElements() {
+            final CircularList<Integer> output = CircularList.of(List.of(1, 2, 3, 4));
+            assertThat(output.appendAll(List.of(5, 6, 7, 8)))
+                    .containsSequence(1, 2, 3, 4, 5, 6, 7, 8)
+                    .containsSequence(2, 3, 4, 5, 6, 7, 8, 1)
+                    .containsSequence(3, 4, 5, 6, 7, 8, 1, 2)
+                    .containsSequence(4, 5, 6, 7, 8, 1, 2, 3)
+                    .containsSequence(5, 6, 7, 8, 1, 2, 3, 4);
+        }
+
+        @Test
+        void prependAllElements() {
+            final CircularList<Integer> output = CircularList.of(List.of(1, 2, 3, 4));
+            assertThat(output.prependAll(List.of(5, 6, 7, 8)))
+                    .containsSequence(1, 2, 3, 4, 5, 6, 7, 8)
+                    .containsSequence(2, 3, 4, 5, 6, 7, 8, 1)
+                    .containsSequence(3, 4, 5, 6, 7, 8, 1, 2)
+                    .containsSequence(4, 5, 6, 7, 8, 1, 2, 3)
+                    .containsSequence(5, 6, 7, 8, 1, 2, 3, 4);
+        }
     }
 
     @Nested
@@ -73,6 +95,39 @@ class CircularListTest {
             assertThat(output.take(6))
                     .isInstanceOf(List.class)
                     .containsSequence(1, 2, 3, 4, 5, 1);
+        }
+    }
+
+    @Nested
+    class Drop {
+        @Test
+        void dropFewer() {
+            final CircularList<Integer> output = CircularList.of(List.of(1, 2, 3, 4, 5));
+            assertThat(output.drop(3))
+                    .isInstanceOf(CircularList.class)
+                    .containsSequence(4, 5, 1, 2, 3, 4, 5);
+        }
+
+        @Test
+        void dropMore() {
+            final CircularList<Integer> output = CircularList.of(List.of(1, 2, 3, 4, 5));
+            assertThat(output.drop(6))
+                    .isInstanceOf(CircularList.class)
+                    .containsSequence(2, 3, 4, 5, 1);
+        }
+
+        @Test
+        void dropFewerAndTake() {
+            final CircularList<Integer> output = CircularList.of(List.of(1, 2, 3, 4, 5));
+            assertThat(output.drop(3).take(7))
+                    .containsExactly(4, 5, 1, 2, 3, 4, 5);
+        }
+
+        @Test
+        void dropMoreAndTake() {
+            final CircularList<Integer> output = CircularList.of(List.of(1, 2, 3, 4, 5));
+            assertThat(output.drop(6).take(7))
+                    .containsExactly(2, 3, 4, 5, 1, 2, 3);
         }
     }
 
@@ -156,7 +211,8 @@ class CircularListTest {
 
     @Nested
     class Scan {
-        @Test@Disabled("not working yet")
+        @Test
+        @Disabled("for the same reason as fold(), it doesn't make sense to implement this is scan() is a terminating function")
         void scan() {
             final CircularList<Integer> output = CircularList.of(List.of(1, 2, 3, 4, 5));
             assertThat(output.scan(100, Integer::sum)).containsSequence(101, 103, 106, 110, 115);
