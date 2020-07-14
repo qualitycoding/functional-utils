@@ -23,6 +23,8 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
+// This 'inheritance' is wrong. The circular list can't implement a general linear sequence because there are
+// functions in the general class that this can't do, eg append()
 public class CircularList<T> implements LinearSeq<T> {
     private final List<T> buffer;
 
@@ -42,14 +44,16 @@ public class CircularList<T> implements LinearSeq<T> {
 //    public CircularList<T> withSize(final int bufferSize) {
 //    }
 
+    // it doesn't make sense to append to an infinite sequence ...
     @Override
     public LinearSeq<T> append(final T element) {
-        return of(buffer.append(element));
+        throw new UnsupportedOperationException("append() is not supported");
     }
 
+    // it doesn't make sense to append to an infinite sequence ...
     @Override
     public LinearSeq<T> appendAll(final Iterable<? extends T> elements) {
-        return of(buffer.appendAll(elements));
+        throw new UnsupportedOperationException("appendAll() is not supported");
     }
 
     @Override
@@ -119,7 +123,12 @@ public class CircularList<T> implements LinearSeq<T> {
 
     @Override
     public LinearSeq<T> drop(final int n) {
-        throw new UnsupportedOperationException("drop() is not currently supported");
+        throw new UnimplementedException("drop() isn't implemented yet. Please call back later");
+        if (n > buffer.size()) {
+            ;
+        }
+        final List<T> prefix = buffer.drop(n);
+        return fixedList(prefix).followedBy(this);
     }
 
     @Override
@@ -575,6 +584,520 @@ public class CircularList<T> implements LinearSeq<T> {
             }
         };
     }
+
+    private LSeq<T> fixedList(final List<T> prefix) {
+        return circ -> new LinearSeq<T>() {
+            @Override
+            public LinearSeq<T> append(final T element) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> appendAll(final Iterable<? extends T> elements) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> asJava(final Consumer<? super java.util.List<T>> action) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> asJavaMutable(final Consumer<? super java.util.List<T>> action) {
+                return null;
+            }
+
+            @Override
+            public <R> LinearSeq<R> collect(final PartialFunction<? super T, ? extends R> partialFunction) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<? extends LinearSeq<T>> combinations() {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<? extends LinearSeq<T>> combinations(final int k) {
+                return null;
+            }
+
+            @Override
+            public Iterator<? extends LinearSeq<T>> crossProduct(final int power) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> distinct() {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> distinctBy(final Comparator<? super T> comparator) {
+                return null;
+            }
+
+            @Override
+            public <U> LinearSeq<T> distinctBy(final Function<? super T, ? extends U> keyExtractor) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> drop(final int n) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> dropUntil(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> dropWhile(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> dropRight(final int n) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> dropRightUntil(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> dropRightWhile(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> filter(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> filterNot(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> reject(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public <U> LinearSeq<U> flatMap(final Function<? super T, ? extends Iterable<? extends U>> mapper) {
+                return null;
+            }
+
+            @Override
+            public <C> Map<C, ? extends LinearSeq<T>> groupBy(final Function<? super T, ? extends C> classifier) {
+                return null;
+            }
+
+            @Override
+            public Iterator<? extends LinearSeq<T>> grouped(final int size) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> init() {
+                return null;
+            }
+
+            @Override
+            public Option<? extends LinearSeq<T>> initOption() {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> insert(final int index, final T element) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> insertAll(final int index, final Iterable<? extends T> elements) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> intersperse(final T element) {
+                return null;
+            }
+
+            @Override
+            public <U> LinearSeq<U> map(final Function<? super T, ? extends U> mapper) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> orElse(final Iterable<? extends T> other) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> orElse(final Supplier<? extends Iterable<? extends T>> supplier) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> padTo(final int length, final T element) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> patch(final int from, final Iterable<? extends T> that, final int replaced) {
+                return null;
+            }
+
+            @Override
+            public Tuple2<? extends LinearSeq<T>, ? extends LinearSeq<T>> partition(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> peek(final Consumer<? super T> action) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<? extends LinearSeq<T>> permutations() {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> prepend(final T element) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> prependAll(final Iterable<? extends T> elements) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> remove(final T element) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> removeFirst(final Predicate<T> predicate) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> removeLast(final Predicate<T> predicate) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> removeAt(final int index) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> removeAll(final T element) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> removeAll(final Iterable<? extends T> elements) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> removeAll(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> replace(final T currentElement, final T newElement) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> replaceAll(final T currentElement, final T newElement) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> retainAll(final Iterable<? extends T> elements) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> reverse() {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> rotateLeft(final int n) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> rotateRight(final int n) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> shuffle() {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> shuffle(final Random random) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> scan(final T zero, final BiFunction<? super T, ? super T, ? extends T> operation) {
+                return null;
+            }
+
+            @Override
+            public <U> LinearSeq<U> scanLeft(final U zero, final BiFunction<? super U, ? super T, ? extends U> operation) {
+                return null;
+            }
+
+            @Override
+            public <U> LinearSeq<U> scanRight(final U zero, final BiFunction<? super T, ? super U, ? extends U> operation) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> slice(final int beginIndex, final int endIndex) {
+                return null;
+            }
+
+            @Override
+            public Iterator<? extends LinearSeq<T>> slideBy(final Function<? super T, ?> classifier) {
+                return null;
+            }
+
+            @Override
+            public Iterator<? extends LinearSeq<T>> sliding(final int size) {
+                return null;
+            }
+
+            @Override
+            public Iterator<? extends LinearSeq<T>> sliding(final int size, final int step) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> sorted() {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> sorted(final Comparator<? super T> comparator) {
+                return null;
+            }
+
+            @Override
+            public <U extends Comparable<? super U>> LinearSeq<T> sortBy(final Function<? super T, ? extends U> mapper) {
+                return null;
+            }
+
+            @Override
+            public <U> LinearSeq<T> sortBy(final Comparator<? super U> comparator, final Function<? super T, ? extends U> mapper) {
+                return null;
+            }
+
+            @Override
+            public Tuple2<? extends LinearSeq<T>, ? extends LinearSeq<T>> span(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> subSequence(final int beginIndex) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> subSequence(final int beginIndex, final int endIndex) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> tail() {
+                return null;
+            }
+
+            @Override
+            public Option<? extends LinearSeq<T>> tailOption() {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> take(final int n) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> takeUntil(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> takeWhile(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> takeRight(final int n) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> takeRightUntil(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> takeRightWhile(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public <T1, T2> Tuple2<? extends LinearSeq<T1>, ? extends LinearSeq<T2>> unzip(final Function<? super T, Tuple2<? extends T1, ? extends T2>> unzipper) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> update(final int index, final T element) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<T> update(final int index, final Function<? super T, ? extends T> updater) {
+                return null;
+            }
+
+            @Override
+            public <U> LinearSeq<Tuple2<T, U>> zip(final Iterable<? extends U> that) {
+                return null;
+            }
+
+            @Override
+            public <U, R> LinearSeq<R> zipWith(final Iterable<? extends U> that, final BiFunction<? super T, ? super U, ? extends R> mapper) {
+                return null;
+            }
+
+            @Override
+            public <U> LinearSeq<Tuple2<T, U>> zipAll(final Iterable<? extends U> that, final T thisElem, final U thatElem) {
+                return null;
+            }
+
+            @Override
+            public LinearSeq<Tuple2<T, Integer>> zipWithIndex() {
+                return null;
+            }
+
+            @Override
+            public <U> LinearSeq<U> zipWithIndex(final BiFunction<? super T, ? super Integer, ? extends U> mapper) {
+                return null;
+            }
+
+            @Override
+            public java.util.List<T> asJava() {
+                return null;
+            }
+
+            @Override
+            public java.util.List<T> asJavaMutable() {
+                return null;
+            }
+
+            @Override
+            public T get(final int index) {
+                return null;
+            }
+
+            @Override
+            public int indexOf(final T element, final int from) {
+                return 0;
+            }
+
+            @Override
+            public int lastIndexOf(final T element, final int end) {
+                return 0;
+            }
+
+            @Override
+            public Seq<T> leftPadTo(final int length, final T element) {
+                return null;
+            }
+
+            @Override
+            public Tuple2<? extends Seq<T>, ? extends Seq<T>> splitAt(final int n) {
+                return null;
+            }
+
+            @Override
+            public Tuple2<? extends Seq<T>, ? extends Seq<T>> splitAt(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public Tuple2<? extends Seq<T>, ? extends Seq<T>> splitAtInclusive(final Predicate<? super T> predicate) {
+                return null;
+            }
+
+            @Override
+            public <T1, T2, T3> Tuple3<? extends Seq<T1>, ? extends Seq<T2>, ? extends Seq<T3>> unzip3(final Function<? super T, Tuple3<? extends T1, ? extends T2, ? extends T3>> unzipper) {
+                return null;
+            }
+
+            @Override
+            public boolean hasDefiniteSize() {
+                return false;
+            }
+
+            @Override
+            public T head() {
+                return null;
+            }
+
+            @Override
+            public boolean isTraversableAgain() {
+                return false;
+            }
+
+            @Override
+            public T last() {
+                return null;
+            }
+
+            @Override
+            public int length() {
+                return 0;
+            }
+
+            @Override
+            public boolean isAsync() {
+                return false;
+            }
+
+            @Override
+            public boolean isLazy() {
+                return false;
+            }
+
+            @Override
+            public String stringPrefix() {
+                return null;
+            }
+        };
+    }
+
+    public interface LSeq<T> {
+        LinearSeq<T> followedBy(CircularList<T> circularList);
+    }
+
 
     // this provides the maximum size of the list but if the the input data is fewer elements then the size of the input data
     // will be used instead

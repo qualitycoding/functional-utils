@@ -22,7 +22,7 @@ class CircularListTest {
     }
 
     @Nested
-    class PrependOrAppend {
+    class Prepend {
         @Test
         void prependAnElement() {
             final CircularList<Integer> output = CircularList.of(List.of(1, 2, 3, 4));
@@ -32,28 +32,6 @@ class CircularListTest {
                     .containsSequence(2, 3, 4, 0, 1)
                     .containsSequence(3, 4, 0, 1, 2)
                     .containsSequence(4, 0, 1, 2, 3);
-        }
-
-        @Test
-        void appendAnElement() {
-            final CircularList<Integer> output = CircularList.of(List.of(1, 2, 3, 4));
-            assertThat(output.append(0))
-                    .containsSequence(1, 2, 3, 4, 0)
-                    .containsSequence(2, 3, 4, 0, 1)
-                    .containsSequence(3, 4, 0, 1, 2)
-                    .containsSequence(4, 0, 1, 2, 3)
-                    .containsSequence(0, 1, 2, 3, 4);
-        }
-
-        @Test
-        void appendAllElements() {
-            final CircularList<Integer> output = CircularList.of(List.of(1, 2, 3, 4));
-            assertThat(output.appendAll(List.of(5, 6, 7, 8)))
-                    .containsSequence(1, 2, 3, 4, 5, 6, 7, 8)
-                    .containsSequence(2, 3, 4, 5, 6, 7, 8, 1)
-                    .containsSequence(3, 4, 5, 6, 7, 8, 1, 2)
-                    .containsSequence(4, 5, 6, 7, 8, 1, 2, 3)
-                    .containsSequence(5, 6, 7, 8, 1, 2, 3, 4);
         }
 
         @Test
