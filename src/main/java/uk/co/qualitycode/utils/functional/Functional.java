@@ -25,6 +25,7 @@ import java.util.Spliterators;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -77,15 +78,7 @@ public final class Functional {
      */
     public static <T> String join(final String delimiter, final Iterable<T> strs) {
         if (strs == null) return "";
-        final Iterator<T> it = strs.iterator();
-        final StringBuilder sb = new StringBuilder();
-        boolean isFirst = true;
-        while (it.hasNext()) {
-            if (!isFirst) sb.append(delimiter);
-            sb.append(it.next());
-            isFirst = false;
-        }
-        return sb.toString();
+        return asStream(strs).map(T::toString).collect(Collectors.joining(delimiter));
     }
 
     /**
@@ -115,19 +108,36 @@ public final class Functional {
      */
     public static <A, B> Tuple2<A, List<B>> foldAndChoose(
             final BiFunction<A, B, Tuple2<A, Option<B>>> f,
-            final A initialValue, final Iterable<B> input) throws OptionNoValueAccessException {
+            final A initialValue,
+            final Iterable<B> input) throws OptionNoValueAccessException {
         if (f == null) throw new IllegalArgumentException("f");
         if (input == null) throw new IllegalArgumentException("input");
 
-        A state = initialValue;
-        final List<B> results = new ArrayList<>();
-        for (final B b : input) {
-            final Tuple2<A, Option<B>> intermediate = f.apply(state, b);
-            state = intermediate._1();
-            if (intermediate._2().isSome())
-                results.add(intermediate._2().get());
-        }
-        return new Tuple2<>(state, Collections.unmodifiableList(results));
+        final Tuple2<A, List<B>> initial = new Tuple2<>(initialValue, new ArrayList<>());
+        return fold((state, b) -> {
+                    final Tuple2<A, Option<B>> intermediate = f.apply(state._1, b);
+                    if (intermediate._2.isSome()) {
+                        state._2.add(intermediate._2.get());
+                    }
+                    return new Tuple2<>(intermediate._1, state._2);
+                },
+                initial,
+                input);
+//
+//
+//        A state = initialValue;
+//        final List<B> results = new ArrayList<>();
+//        for (final B b : input) {
+//            final Tuple2<A, Option<B>> intermediate = f.apply(state, b);
+//            state = intermediate._1();
+//            if (intermediate._2().isSome())
+//                results.add(intermediate._2().get());
+//        }
+//        return new Tuple2<>(state, Collections.unmodifiableList(results));
+    }
+
+    private static <B> Stream<B> asStream(final Iterable<B> input) {
+        return StreamSupport.stream(input.spliterator(), false);
     }
 
     /**
