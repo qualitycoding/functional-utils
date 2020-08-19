@@ -602,8 +602,7 @@ class FunctionalTest {
         final Collection<Integer> li = Functional.init(doublingGenerator, 5);
         final String s1 = join(",", Functional.rec.map(Functional.dStringify(), li));
         assertThat(s1).isEqualTo("2,4,6,8,10");
-        final String s2 = Functional.rec.fold(
-                FunctionalTest::csv, "", li);
+        final String s2 = Functional.rec.fold(FunctionalTest::csv, "", li);
         assertThat(s2).isEqualTo(s1);
     }
 

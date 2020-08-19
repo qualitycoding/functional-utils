@@ -6,7 +6,6 @@ import io.vavr.control.Either;
 import uk.co.qualitycode.utils.functional.function.ConsumerWithExceptionDeclaration;
 import uk.co.qualitycode.utils.functional.function.FunctionWithExceptionDeclaration;
 import uk.co.qualitycode.utils.functional.monad.Option;
-import uk.co.qualitycode.utils.functional.monad.OptionNoValueAccessException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
@@ -71,14 +71,43 @@ public final class Functional {
     /**
      * Concatenate all of the input elements into a single string where each element is separated from the next by the supplied delimiter
      *
-     * @param delimiter used to separate consecutive elements in the output
+     * @param delimiter used to separate consecutive elements in the output, if null it will be replaced with empty string ""
+     * @param <T>       the type of the element in the input sequence
+     * @return a string containing the string representation of each input element separated by the supplied delimiter
+     */
+    public static <T> Function<Iterable<T>,String> join(final String delimiter) {
+        return strs -> {
+            if (strs == null) return "";
+            return asStream(strs).map(T::toString).collect(Collectors.joining(Objects.isNull(delimiter) ? "" : delimiter));
+        };
+    }
+
+    /**
+     * Concatenate all of the input elements into a single string where each element is separated from the next by the supplied delimiter
+     *
+     * @param delimiter used to separate consecutive elements in the output, if null it will be replaced with empty string ""
      * @param strs      input sequence, each element of which must be convertible to a string
      * @param <T>       the type of the element in the input sequence
      * @return a string containing the string representation of each input element separated by the supplied delimiter
      */
     public static <T> String join(final String delimiter, final Iterable<T> strs) {
-        if (strs == null) return "";
-        return asStream(strs).map(T::toString).collect(Collectors.joining(delimiter));
+        return Functional.<T>join(delimiter).apply(strs);
+    }
+
+    /**
+     * Analogue of string.Join for List<T> with the addition of a user-defined map function
+     *
+     * @param <T>       the type of the element in the input sequence
+     * @param separator inserted between each transformed element
+     * @param l         the input sequence
+     * @param fn        map function (see <tt>map</tt>) which is used to transform the input sequence
+     * @return a string containing the transformed string value of each input element separated by the supplied separator
+     */
+    public static <T> String join(final String separator, final Iterable<T> l, final Function<? super T, String> fn) {
+        if (l == null) throw new IllegalArgumentException("l");
+        if (fn == null) throw new IllegalArgumentException("fn");
+
+        return join(separator, map(fn, l));
     }
 
     /**
@@ -104,12 +133,11 @@ public final class Functional {
      * @param initialValue the seed for the fold function
      * @param input        the input sequence
      * @return the folded value paired with those transformed elements which are Some
-     * @throws OptionNoValueAccessException
      */
     public static <A, B> Tuple2<A, List<B>> foldAndChoose(
             final BiFunction<A, B, Tuple2<A, Option<B>>> f,
             final A initialValue,
-            final Iterable<B> input) throws OptionNoValueAccessException {
+            final Iterable<B> input) {
         if (f == null) throw new IllegalArgumentException("f");
         if (input == null) throw new IllegalArgumentException("input");
 
@@ -123,37 +151,6 @@ public final class Functional {
                 },
                 initial,
                 input);
-//
-//
-//        A state = initialValue;
-//        final List<B> results = new ArrayList<>();
-//        for (final B b : input) {
-//            final Tuple2<A, Option<B>> intermediate = f.apply(state, b);
-//            state = intermediate._1();
-//            if (intermediate._2().isSome())
-//                results.add(intermediate._2().get());
-//        }
-//        return new Tuple2<>(state, Collections.unmodifiableList(results));
-    }
-
-    private static <B> Stream<B> asStream(final Iterable<B> input) {
-        return StreamSupport.stream(input.spliterator(), false);
-    }
-
-    /**
-     * Analogue of string.Join for List<T> with the addition of a user-defined map function
-     *
-     * @param <T>       the type of the element in the input sequence
-     * @param separator inserted between each transformed element
-     * @param l         the input sequence
-     * @param fn        map function (see <tt>map</tt>) which is used to transform the input sequence
-     * @return a string containing the transformed string value of each input element separated by the supplied separator
-     */
-    public static <T> String join(final String separator, final Iterable<T> l, final Function<? super T, String> fn) {
-        if (l == null) throw new IllegalArgumentException("l");
-        if (fn == null) throw new IllegalArgumentException("fn");
-
-        return join(separator, map(fn, l));
     }
 
     /**
@@ -3509,5 +3506,9 @@ public final class Functional {
 
         final Spliterator<C> split = Spliterators.spliterator(cIterator, zipSize, characteristics);
         return StreamSupport.stream(split, (a.isParallel() || b.isParallel()));
+    }
+
+    private static <B> Stream<B> asStream(final Iterable<B> input) {
+        return StreamSupport.stream(input.spliterator(), false);
     }
 }
