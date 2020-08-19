@@ -874,6 +874,26 @@ public final class Functional {
         return input -> Functional.fold(f, initialValue, input);
     }
 
+        /**
+     * See <a href="http://en.wikipedia.org/wiki/Fold_(higher-order_function)">Fold</a>
+     * fold: aggregate the elements of the input sequence given a seed and an aggregation function.
+     * This is the curried implementation
+     * fold: (A -> B -> A) -> A -> B list -> A
+     *
+     * @param <A>          the type of the initialValue / seed
+     * @param <B>          the type of the element in the output sequence
+     * @param f            aggregation function
+     * @return aggregated value
+     * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
+     */
+    public static <A, B> WithInitialValue<A, Function<Iterable<B>, A>> fold(final BiFunction<? super A, ? super B, ? extends A> f) {
+        return initialValue -> input -> Functional.fold(f, initialValue, input);
+    }
+
+    public interface WithInitialValue<A, F extends Function<?,A>> {
+        F withInitialValue(final A initialValue);
+    }
+
     /**
      * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a> and
      * <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>

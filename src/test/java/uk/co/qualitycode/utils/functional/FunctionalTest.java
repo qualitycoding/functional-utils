@@ -24,7 +24,6 @@ import java.util.function.Function;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static uk.co.qualitycode.utils.functional.Functional.isEven;
-import static uk.co.qualitycode.utils.functional.Functional.join;
 
 class FunctionalTest {
     public static Func_int_int doublingGenerator_f = a -> 2 * a;
@@ -134,26 +133,8 @@ class FunctionalTest {
         assertThat(c).containsExactlyElementsOf(b);
     }
 
-    private static String csv(final String state, final Integer a) {
+    static String csv(final String state, final Integer a) {
         return StringUtils.isEmpty(state) ? a.toString() : state + "," + a;
-    }
-
-    @Test
-    void foldvsMapTest1() {
-        final Collection<Integer> li = Functional.init(doublingGenerator, 5);
-        final String s1 = join(",", Functional.map(Functional.dStringify(), li));
-        assertThat(s1).isEqualTo("2,4,6,8,10");
-        final String s2 = Functional.fold(FunctionalTest::csv, "", li);
-        assertThat(s2).isEqualTo(s1);
-    }
-
-    @Test
-    void curriedFoldvsMapTest1() {
-        final Collection<Integer> li = Functional.init(doublingGenerator, 5);
-        final String s1 = join(",", Functional.map(Functional.dStringify(), li));
-        assertThat(s1).isEqualTo("2,4,6,8,10");
-        final String s2 = Functional.fold(FunctionalTest::csv, "").apply(li);
-        assertThat(s2).isEqualTo(s1);
     }
 
     final Function<Collection<Integer>, String> concatenate = l -> Functional.fold(FunctionalTest::csv, "", l);
@@ -174,35 +155,6 @@ class FunctionalTest {
         assertThat(s).isEqualTo("6,12");
     }
 
-    @Test
-    void indentTest1() {
-        final int level = 5;
-        final String expectedResult = "     ";
-
-        String indentedName = "";
-        for (int i = 0; i < level; ++i) {
-            indentedName += " ";
-        }
-        assertThat(expectedResult).isEqualTo(indentedName);
-
-        final Collection<String> indentation = Functional.init(integer -> " ", level);
-        assertThat("     ").isEqualTo(join("", indentation));
-
-        final String s = Functional.fold((state, str) -> state + str, "", indentation);
-        assertThat(expectedResult).isEqualTo(s);
-
-        final Function<Collection<String>, String> folder = l -> Functional.fold((BiFunction<String, String, String>) (state, str) -> state + str, "", l);
-
-        final String s1 = Functional.in(indentation, folder);
-        assertThat(expectedResult).isEqualTo(s1);
-    }
-
-    @Test
-    void indentTest2() {
-        final int level = 5;
-        final String expectedResult = "     BOB";
-        assertThat(Functional.indentBy(level, " ", "BOB")).isEqualTo(expectedResult);
-    }
 
     @Test
     void chooseTest3A() throws OptionNoValueAccessException {
@@ -596,17 +548,6 @@ class FunctionalTest {
         return integer -> Functional.init((Function<Integer, Integer>) counter -> integer, howMany);
     }
 
-
-    @Test
-    void recFoldvsMapTest1() {
-        final Collection<Integer> li = Functional.init(doublingGenerator, 5);
-        final String s1 = join(",", Functional.rec.map(Functional.dStringify(), li));
-        assertThat(s1).isEqualTo("2,4,6,8,10");
-        final String s2 = Functional.rec.fold(FunctionalTest::csv, "", li);
-        assertThat(s2).isEqualTo(s1);
-    }
-
-
     @Test
     void mapInTermsOfFoldTest1() {
         final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
@@ -686,20 +627,6 @@ class FunctionalTest {
         assertThat(output.containsAll(expected)).isTrue();
         output.add("24");
         assertThat(output.contains("24")).isTrue();
-    }
-
-    @Test
-    void countTest() {
-        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-        final int howMany = Functional.fold(Functional.count, 0, input);
-        assertThat(howMany).isEqualTo(input.size());
-    }
-
-    @Test
-    void sumTest() {
-        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-        final int sum = Functional.fold(Functional.sum, 0, input);
-        assertThat(sum).isEqualTo(15);
     }
 
     @Test
