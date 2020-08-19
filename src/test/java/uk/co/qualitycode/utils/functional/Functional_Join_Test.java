@@ -34,7 +34,6 @@ class Functional_Join_Test {
 
     @Test
     void joinWithNullSequence() {
-        final Collection<Integer> ids = Functional.init(FunctionalTest.triplingGenerator, 5);
         assertThat(Functional.join("", null)).isEqualTo("");
     }
 

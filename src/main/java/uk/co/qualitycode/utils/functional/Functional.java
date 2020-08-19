@@ -75,7 +75,7 @@ public final class Functional {
      * @param <T>       the type of the element in the input sequence
      * @return a string containing the string representation of each input element separated by the supplied delimiter
      */
-    public static <T> Function<Iterable<T>,String> join(final String delimiter) {
+    public static <T> Function<Iterable<T>, String> join(final String delimiter) {
         return strs -> {
             if (strs == null) return "";
             return asStream(strs).map(T::toString).collect(Collectors.joining(Objects.isNull(delimiter) ? "" : delimiter));
@@ -119,8 +119,11 @@ public final class Functional {
      * @return a string indenting the input string by the indicated number of units
      */
     public static String indentBy(final int howMany, final String unitOfIndentation, final String indentThis) {
-        final Collection<String> indentation = init(integer -> unitOfIndentation, howMany);
-        return fold((state, str) -> str + state, indentThis, indentation);
+        if (howMany < 0) throw new IllegalArgumentException("Negative numbers must not be supplied as 'howMany'");
+        if (unitOfIndentation == null) throw new IllegalArgumentException("unitOfIndentation must not be null");
+        if (indentThis == null) throw new IllegalArgumentException("indentThis must not be null");
+
+        return fold((state, str) -> str + state, indentThis, init(integer -> unitOfIndentation, howMany));
     }
 
     /**
