@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -230,7 +229,7 @@ class FunctionalTest {
 
      */
 
-    private class myInt {
+    static class myInt {
         private final int _i;
 
         public myInt(final int i) {
@@ -240,36 +239,6 @@ class FunctionalTest {
         public int i() {
             return _i;
         }
-    }
-
-
-    @Test
-    void foldAndChooseTest1() {
-        final Map<Integer, Double> missingPricesPerDate = new Hashtable<>();
-        final Collection<Integer> openedDays = Functional.init(triplingGenerator, 5);
-        Double last = 10.0;
-        for (final int day : openedDays) {
-            final Double value = day % 2 == 0 ? (Double) ((double) (day / 2)) : null;
-            if (value != null)
-                last = value;
-            else
-                missingPricesPerDate.put(day, last);
-        }
-
-        final Collection<myInt> openedDays2 = Functional.init(
-                a -> new myInt(3 * a), 5);
-        final Tuple2<Double, List<myInt>> output = Functional.foldAndChoose(
-                (state, day) -> {
-                    final Double value = day.i() % 2 == 0 ? (Double) ((double) (day.i() / 2)) : null;
-                    return value != null
-                            ? new Tuple2<>(value, Option.none())
-                            : new Tuple2<>(state, Option.of(day));
-                }, 10.0, openedDays2);
-
-        assertThat(output._1()).isEqualTo(last);
-        final List<Integer> keys = new ArrayList<>(missingPricesPerDate.keySet());
-        Collections.sort(keys);
-        assertThat(Functional.map(myInt::i, output._2())).containsExactlyElementsOf(keys);
     }
 
     @Test
