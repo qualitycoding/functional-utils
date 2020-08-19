@@ -25,6 +25,7 @@ import java.util.Spliterators;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -164,9 +165,32 @@ public final class Functional {
      * @return lowerBound < val < upperBound
      */
     public static <T extends Comparable<T>> boolean between(final T lowerBound, final T upperBound, final T val) {
-        if (val == null) throw new IllegalArgumentException("val");
+        if(lowerBound==null) throw new IllegalArgumentException("lower bound must not be null");
+        if(upperBound==null) throw new IllegalArgumentException("upper bound must not be null");
+        if(lowerBound.compareTo(upperBound)!=-1) throw new IllegalArgumentException("lower bound must be less than upper bound");
+        if (val == null) throw new IllegalArgumentException("value must not be null");
 
         return val.compareTo(lowerBound) == 1 && val.compareTo(upperBound) == -1;
+    }
+
+    /**
+     * @param bounds is a Tuple2 of (lowerBound, upperBound)
+     * @param val
+     * @param <T>    the type of the input element
+     * @return lowerBound < val < upperBound
+     */
+    public static <T extends Comparable<T>> boolean between(final Tuple2<T, T> bounds, final T val) {
+        if(bounds==null) throw new IllegalArgumentException("bounds must not be null");
+        return between(bounds._1, bounds._2, val);
+    }
+
+    /**
+     * @param bounds is a Tuple2 of (lowerBound, upperBound)
+     * @param <T>    the type of the input element
+     * @return lowerBound < val < upperBound
+     */
+    public static <T extends Comparable<T>> Predicate<T> between(final Tuple2<T, T> bounds) {
+        return val -> between(bounds, val);
     }
 
     /**
@@ -874,15 +898,15 @@ public final class Functional {
         return input -> Functional.fold(f, initialValue, input);
     }
 
-        /**
+    /**
      * See <a href="http://en.wikipedia.org/wiki/Fold_(higher-order_function)">Fold</a>
      * fold: aggregate the elements of the input sequence given a seed and an aggregation function.
      * This is the curried implementation
      * fold: (A -> B -> A) -> A -> B list -> A
      *
-     * @param <A>          the type of the initialValue / seed
-     * @param <B>          the type of the element in the output sequence
-     * @param f            aggregation function
+     * @param <A> the type of the initialValue / seed
+     * @param <B> the type of the element in the output sequence
+     * @param f   aggregation function
      * @return aggregated value
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
@@ -890,7 +914,7 @@ public final class Functional {
         return initialValue -> input -> Functional.fold(f, initialValue, input);
     }
 
-    public interface WithInitialValue<A, F extends Function<?,A>> {
+    public interface WithInitialValue<A, F extends Function<?, A>> {
         F withInitialValue(final A initialValue);
     }
 

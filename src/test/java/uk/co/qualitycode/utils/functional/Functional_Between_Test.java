@@ -93,19 +93,19 @@ class Functional_Between_Test {
         @Test
         void betweenTest1() {
             final int lowerBound = 2, upperBound = 4;
-            assertThat(Functional.between(new Tuple2<>(lowerBound, upperBound)).withValue( 3)).isTrue();
+            assertThat(Functional.between(new Tuple2<>(lowerBound, upperBound)).test( 3)).isTrue();
         }
 
         @Test
         void betweenTest2() {
             final int lowerBound = 2, upperBound = 4;
-            assertThat(Functional.between(new Tuple2<>(lowerBound, upperBound)).withValue( 1)).isFalse();
+            assertThat(Functional.between(new Tuple2<>(lowerBound, upperBound)).test( 1)).isFalse();
         }
 
         @Test
         void betweenTest3() {
             final double lowerBound = 2.5, upperBound = 2.6;
-            assertThat(Functional.between(new Tuple2<>(lowerBound, upperBound)).withValue( 2.55)).isTrue();
+            assertThat(Functional.between(new Tuple2<>(lowerBound, upperBound)).test( 2.55)).isTrue();
         }
     }
 }
