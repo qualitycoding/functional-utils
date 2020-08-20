@@ -23,20 +23,4 @@ class Functional_FindIndex_Test {
         final Collection<String> ls = Functional.map(Functional.dStringify(), li);
         assertThatIllegalArgumentException().isThrownBy(() -> Functional.findIndex(s -> s.equals(falseMatch), ls));
     }
-
-    @Test
-    void findIndexNoExceptionTest1() {
-        final String trueMatch = "6";
-        final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
-        final Collection<String> ls = Functional.map(Functional.dStringify(), li);
-        assertThat(Functional.noException.findIndex(s -> s.equals(trueMatch), ls).get()).isEqualTo((Integer) 2);
-    }
-
-    @Test
-    void findIndexNoExceptionTest2() {
-        final String falseMatch = "7";
-        final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
-        final Collection<String> ls = Functional.map(Functional.dStringify(), li);
-        assertThat(Functional.noException.findIndex(s -> s.equals(falseMatch), ls).isNone()).isTrue();
-    }
 }

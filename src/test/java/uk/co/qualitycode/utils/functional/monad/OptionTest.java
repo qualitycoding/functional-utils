@@ -1,7 +1,6 @@
 package uk.co.qualitycode.utils.functional.monad;
 
 import org.assertj.core.api.IterableAssert;
-import org.assertj.vavr.api.VavrAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import uk.co.qualitycode.utils.functional.Functional;
@@ -64,7 +63,7 @@ class OptionTest {
 
         @Test
         void noneToVavrOption() {
-            VavrAssertions.assertThat(Option.none().toVavrOption()).isEmpty();
+            assertThat(Option.none().toVavrOption().isEmpty()).isTrue();
         }
     }
 

@@ -1,53 +1,66 @@
 package uk.co.qualitycode.utils.functional;
 
 import org.junit.jupiter.api.Test;
+import uk.co.qualitycode.utils.functional.monad.Option;
 
 import java.util.Collection;
-import java.util.NoSuchElementException;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static uk.co.qualitycode.utils.functional.Functional.find;
+import static uk.co.qualitycode.utils.functional.Functional.init;
+import static uk.co.qualitycode.utils.functional.OptionAssert.assertThat;
 
 class Functional_Find_Test {
     @Test
-    void findTest1() {
-        final String trueMatch = "6";
-        final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
-        final Collection<String> ls = Functional.map(Functional.dStringify(), li);
-        assertThat(Functional.find(s -> s.equals(trueMatch), ls)).isEqualTo(trueMatch);
+    void findTestUsingFunction() {
+        final Integer trueMatch = 6;
+        final Collection<Integer> li = init(FunctionalTest.doublingGenerator, 5);
+
+        final Function<Integer,Boolean> equals = trueMatch::equals;
+
+        assertThat(find(equals, li)).hasValue(trueMatch);
     }
 
     @Test
-    void curriedFindTest1() {
-        final String trueMatch = "6";
-        final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
-        final Collection<String> ls = Functional.map(Functional.dStringify(), li);
-        final Function<Iterable<String>, String> findFunc = Functional.find(s -> s.equals(trueMatch));
-        assertThat(findFunc.apply(ls)).isEqualTo(trueMatch);
+    void findTestUsingPredicate() {
+        final Integer trueMatch = 6;
+        final Collection<Integer> li = init(FunctionalTest.doublingGenerator, 5);
+
+        final Predicate<Integer> equals = trueMatch::equals;
+
+        assertThat(find(equals, li)).hasValue(trueMatch);
     }
 
     @Test
-    void findTest2() {
-        final String falseMatch = "7";
-        final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
-        final Collection<String> ls = Functional.map(Functional.dStringify(), li);
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> Functional.find(s -> s.equals(falseMatch), ls));
+    void curriedFindTestUsingFunction() {
+        final Integer trueMatch = 6;
+        final Collection<Integer> li = init(FunctionalTest.doublingGenerator, 5);
+        final Function<Integer,Boolean> equals = trueMatch::equals;
+
+        final Function<Iterable<Integer>, Option<Integer>> result = find(equals);
+
+        assertThat(result.apply(li)).hasValue(trueMatch);
     }
 
     @Test
-    void findNoExceptionTest1() {
-        final String trueMatch = "6";
-        final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
-        final Collection<String> ls = Functional.map(Functional.dStringify(), li);
-        assertThat(Functional.noException.find(s -> s.equals(trueMatch), ls).get()).isEqualTo(trueMatch);
+    void curriedFindTestUsingPredicate() {
+        final Integer trueMatch = 6;
+        final Collection<Integer> li = init(FunctionalTest.doublingGenerator, 5);
+        final Predicate<Integer> equals = trueMatch::equals;
+
+        final Function<Iterable<Integer>, Option<Integer>> result = find(equals);
+
+        assertThat(result.apply(li)).hasValue(trueMatch);
     }
 
     @Test
-    void findNoExceptionTest2() {
-        final String falseMatch = "7";
-        final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
-        final Collection<String> ls = Functional.map(Functional.dStringify(), li);
-        assertThat(Functional.noException.find(s -> s.equals(falseMatch), ls).isNone()).isTrue();
+    void findResultHasNoValue() {
+        final Integer falseMatch = 7;
+        final Collection<Integer> li = init(FunctionalTest.doublingGenerator, 5);
+
+        final Option<Integer> actual = find(falseMatch::equals, li);
+
+        assertThat(actual).isEmpty();
     }
 }

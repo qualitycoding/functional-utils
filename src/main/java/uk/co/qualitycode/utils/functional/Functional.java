@@ -165,9 +165,10 @@ public final class Functional {
      * @return lowerBound < val < upperBound
      */
     public static <T extends Comparable<T>> boolean between(final T lowerBound, final T upperBound, final T val) {
-        if(lowerBound==null) throw new IllegalArgumentException("lower bound must not be null");
-        if(upperBound==null) throw new IllegalArgumentException("upper bound must not be null");
-        if(lowerBound.compareTo(upperBound)!=-1) throw new IllegalArgumentException("lower bound must be less than upper bound");
+        if (lowerBound == null) throw new IllegalArgumentException("lower bound must not be null");
+        if (upperBound == null) throw new IllegalArgumentException("upper bound must not be null");
+        if (lowerBound.compareTo(upperBound) != -1)
+            throw new IllegalArgumentException("lower bound must be less than upper bound");
         if (val == null) throw new IllegalArgumentException("value must not be null");
 
         return val.compareTo(lowerBound) == 1 && val.compareTo(upperBound) == -1;
@@ -180,7 +181,7 @@ public final class Functional {
      * @return lowerBound < val < upperBound
      */
     public static <T extends Comparable<T>> boolean between(final Tuple2<T, T> bounds, final T val) {
-        if(bounds==null) throw new IllegalArgumentException("bounds must not be null");
+        if (bounds == null) throw new IllegalArgumentException("bounds must not be null");
         return between(bounds._1, bounds._2, val);
     }
 
@@ -195,39 +196,72 @@ public final class Functional {
 
     /**
      * Find the first element from the input sequence for which the supplied predicate returns true
-     * find: (A -> bool) -> A list -> A
+     * find: (A -> bool) -> A list -> A option
      *
      * @param f     predicate
      * @param input sequence
      * @param <A>   the type of the element in the input sequence
-     * @return the first element from the input sequence for which the supplied predicate returns true
+     * @return Option.of(the first element) from the input sequence for which the supplied predicate returns true
+     * or Option.none() if no match is found
      * @throws java.lang.IllegalArgumentException if f or input are null
-     * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
-    public static <A> A find(final Function<? super A, Boolean> f, final Iterable<A> input) {
+    public static <A> Option<A> find(final Predicate<? super A> f, final Iterable<A> input) {
         if (f == null) throw new IllegalArgumentException("f");
         if (input == null) throw new IllegalArgumentException("input");
 
-        for (final A a : input)
-            if (f.apply((a)))
-                return a;
-        throw new NoSuchElementException();
+        for (final A a : input) {
+            if (f.test((a)))
+                return Option.of(a);
+        }
+        return Option.none();
+    }
+
+    /**
+     * Find the first element from the input sequence for which the supplied predicate returns true
+     * find: (A -> bool) -> A list -> A option
+     *
+     * @param f     predicate
+     * @param input sequence
+     * @param <A>   the type of the element in the input sequence
+     * @return Option.of(the first element) from the input sequence for which the supplied predicate returns true
+     * or Option.none() if no match is found
+     * @throws java.lang.IllegalArgumentException if f or input are null
+     */
+    public static <A> Option<A> find(final Function<? super A, Boolean> f, final Iterable<A> input) {
+        if (f == null) throw new IllegalArgumentException("f");
+
+        return find((Predicate<? super A>) (x -> f.apply(x)), input);
     }
 
     /**
      * Curried find.
      * Find the first element from the input sequence for which the supplied predicate returns true
-     * find: (A -> bool) -> A list -> A
+     * find: (A -> bool) -> A list -> A option
      *
      * @param f   predicate
      * @param <A> the type of the element in the input sequence
-     * @return a curried function that expects an input sequence which it feeds to the predicate f
-     * which returns the first element from the input sequence for which the supplied predicate returns true
+     * @return Option.of(the first element) from the input sequence for which the supplied predicate returns true
+     * or Option.none() if no match is found
      * @throws java.lang.IllegalArgumentException if f or input are null
-     * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
-    public static <A> Function<Iterable<A>, A> find(final Function<? super A, Boolean> f) {
+    public static <A> Function<Iterable<A>, Option<A>> find(final Predicate<? super A> f) {
+        return input -> Functional.find(f, input);
+    }
+
+    /**
+     * Curried find.
+     * Find the first element from the input sequence for which the supplied predicate returns true
+     * find: (A -> bool) -> A list -> A option
+     *
+     * @param f   predicate
+     * @param <A> the type of the element in the input sequence
+     * @return Option.of(the first element) from the input sequence for which the supplied predicate returns true
+     * or Option.none() if no match is found
+     * @throws java.lang.IllegalArgumentException if f or input are null
+     * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
+     */
+    public static <A> Function<Iterable<A>, Option<A>> find(final Function<? super A, Boolean> f) {
         return input -> Functional.find(f, input);
     }
 
@@ -3124,96 +3158,6 @@ public final class Functional {
         }
 
         /**
-         * Find the first element from the input sequence for which the supplied predicate returns true
-         * find: (A -> bool) -> A list -> A option
-         *
-         * @param f     predicate
-         * @param input sequence
-         * @param <A>   the type of the element in the input sequence
-         * @return the first element from the input sequence for which the supplied predicate returns true or None
-         * if no element is found that satisfies the predicate
-         * @throws java.lang.IllegalArgumentException if f or input are null
-         */
-        public static <A> Option<A> find(final Function<? super A, Boolean> f, final Iterable<A> input) {
-            if (f == null) throw new IllegalArgumentException("f");
-            if (input == null) throw new IllegalArgumentException("input");
-
-            for (final A a : input)
-                if (f.apply((a)))
-                    return Option.of(a);
-            return Option.none();
-        }
-
-        /**
-         * As <tt>find</tt> except that here we return the zero-based position in the input sequence of the found element
-         * findIndex: (A -> bool) -> A list -> int option
-         *
-         * @param f     predicate
-         * @param input sequence
-         * @param <A>   the type of the element in the input sequence
-         * @return the position in the input sequence of the first element from the input sequence for which the supplied predicate
-         * returns true or None if no element is found that satisfies the predicate
-         * @throws java.lang.IllegalArgumentException if f or input are null
-         */
-        public static <A> Option<Integer> findIndex(final Function<A, Boolean> f, final Iterable<? extends A> input) {
-            if (f == null) throw new IllegalArgumentException("f");
-            if (input == null) throw new IllegalArgumentException("input");
-
-            int pos = 0;
-            for (final A a : input)
-                if (f.apply(a))
-                    return Option.of(pos);
-                else pos++;
-            return Option.none();
-        }
-
-        /**
-         * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
-         * findLast: (A -> bool) -> A seq -> A option
-         *
-         * @param f     predicate
-         * @param input sequence
-         * @param <A>   the type of the element in the input sequence
-         * @return the last element in the input sequence for which the supplied predicate returns true or None
-         * if no element is found that satisfies the predicate
-         * @throws java.lang.IllegalArgumentException if f or input are null
-         */
-        public static <A> Option<A> findLast(final Function<? super A, Boolean> f, final Iterable<A> input) {
-            if (f == null) throw new IllegalArgumentException("f");
-            if (input == null) throw new IllegalArgumentException("input");
-
-            final Tuple2<List<A>, Iterable<A>> p = takeNAndYield(input, 1);
-            if (p._1().isEmpty()) return Option.none();
-            final Tuple2<A, Boolean> seed = new Tuple2<>(p._1().get(0), f.apply(p._1().get(0)));
-            final Tuple2<A, Boolean> result = fold((state, item) -> f.apply(item) ? new Tuple2<>(item, true) : state, seed, p._2());
-
-            if (result._2()) return Option.of(result._1());
-            return Option.none();
-        }
-
-        /**
-         * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
-         * findLast: (A -> bool) -> A list -> A option
-         *
-         * @param f     predicate
-         * @param input sequence
-         * @param <A>   the type of the element in the input sequence
-         * @return the last element in the input sequence for which the supplied predicate returns true or None
-         * if no element is found that satisfies the predicate
-         * @throws java.lang.IllegalArgumentException if f or input are null
-         */
-        public static <A> Option<A> findLast(final Function<? super A, Boolean> f, final List<A> input) {
-            if (f == null) throw new IllegalArgumentException("f");
-            if (input == null) throw new IllegalArgumentException("input");
-
-            if (input.isEmpty()) return Option.none();
-            for (final A a : Iterators.reverse(input))
-                if (f.apply(a))
-                    return Option.of(a);
-            return Option.none();
-        }
-
-        /**
          * Return the final element from the input sequence
          *
          * @param input input sequence
@@ -3428,8 +3372,8 @@ public final class Functional {
      * @param <B>         the type of the result
      * @return the result of the appropriate Case or the result of the 'defaultCase' function
      */
-    public static <A, B> B Switch(final A input, final Iterable<Case<A, B>> cases, final Function<A, B> defaultCase) {
-        return Switch(input, Iterable2.of(cases), defaultCase);
+    public static <A, B> B switchBetween(final A input, final Iterable<Case<A, B>> cases, final Function<A, B> defaultCase) {
+        return switchBetween(input, Iterable2.of(cases), defaultCase);
     }
 
     /**
@@ -3442,17 +3386,15 @@ public final class Functional {
      * @param <B>         the type of the result
      * @return the result of the appropriate Case or the result of the 'defaultCase' function
      */
-    public static <A, B> B Switch(final A input, final Iterable2<Case<A, B>> cases, final Function<A, B> defaultCase) {
+    public static <A, B> B switchBetween(final A input, final Iterable2<Case<A, B>> cases, final Function<A, B> defaultCase) {
         if (input == null) throw new IllegalArgumentException("input");
         if (cases == null) throw new IllegalArgumentException("cases");
         if (defaultCase == null) throw new IllegalArgumentException("defaultCase");
 
-        //return Try<InvalidOperationException>.ToTry(input, a => cases.First(chk => chk.check(a)).results(a), defaultCase);
-        try {
-            return cases.find(abCase -> abCase.predicate(input)).results(input);
-        } catch (final NoSuchElementException k) {
-            return defaultCase.apply(input);
-        }
+        return cases
+                .find(abCase -> abCase.predicate(input)).toVavrOption()
+                .map(c->c.results(input))
+                .getOrElse(() -> defaultCase.apply(input));
     }
 
     /**

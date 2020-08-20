@@ -939,7 +939,7 @@ class Iterable2Test {
         final String trueMatch = "6";
         final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
         final Iterable2<String> ls = li.map(Functional.dStringify());
-        assertThat(ls.find(s -> s.equals(trueMatch))).isEqualTo(trueMatch);
+        OptionAssert.assertThat(ls.find(s -> s.equals(trueMatch))).hasValue(trueMatch);
     }
 
     @Test
@@ -947,7 +947,7 @@ class Iterable2Test {
         final String falseMatch = "7";
         final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
         final Iterable2<String> ls = li.map(Functional.dStringify());
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> ls.find(s -> s.equals(falseMatch)));
+        OptionAssert.assertThat(ls.find(s -> s.equals(falseMatch))).isEmpty();
     }
 
     @Test

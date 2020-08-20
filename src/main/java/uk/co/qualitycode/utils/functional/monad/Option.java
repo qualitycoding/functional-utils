@@ -5,8 +5,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * Option is an facade over the Vavr Option that supplies {@link #bind(Function)} and {@link #lift(BiFunction, Option, Option)}.
  * See http://en.wikipedia.org/wiki/Option_type
@@ -24,12 +22,11 @@ public final class Option<T> {
     }
 
     public static <T> Option<T> of(final Optional<T> t) {
-        return new Option<>(io.vavr.control.Option.ofOptional(t));
+        return t==null?none():new Option<>(io.vavr.control.Option.ofOptional(t));
     }
 
     public static <T> Option<T> of(final io.vavr.control.Option<T> t) {
-        requireNonNull(t, "t must not be null");
-        return new Option<>(t);
+        return t==null?none():new Option<>(t);
     }
 
     public static <T> Option<T> none() {

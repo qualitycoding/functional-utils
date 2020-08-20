@@ -46,7 +46,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
 
     Iterable2<T> concat(final Iterable2<T> list2);
 
-    T find(Function<? super T, Boolean> f);
+    Option<T> find(Function<? super T, Boolean> f);
 
     int findIndex(Function<? super T, Boolean> f);
 
@@ -153,7 +153,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
                 return of(Functional.seq.concat(i, list2));
             }
 
-            public T find(final Function<? super T, Boolean> f) {
+            public Option<T> find(final Function<? super T, Boolean> f) {
                 return Functional.find(f, i);
             }
 
@@ -302,7 +302,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             return list2;
         }
 
-        public T find(final Function<? super T, Boolean> f) {
+        public Option<T> find(final Function<? super T, Boolean> f) {
             throw new NoSuchElementException();
         }
 

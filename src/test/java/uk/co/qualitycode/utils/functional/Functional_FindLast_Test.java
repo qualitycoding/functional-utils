@@ -32,30 +32,6 @@ class Functional_FindLast_Test {
     }
 
     @Test
-    void findLastNoExceptionTest1() {
-        final List<Integer> l = Functional.init(FunctionalTest.doublingGenerator, 5);
-        assertThat(Functional.noException.findLast(Functional.isOdd, l).isNone()).isTrue();
-    }
-
-    @Test
-    void findLastNoExceptionTest2() {
-        final List<Integer> l = Functional.init(FunctionalTest.doublingGenerator, 5);
-        assertThat(Functional.noException.findLast(Functional.isEven, l).get()).isEqualTo((Integer) 10);
-    }
-
-    @Test
-    void iterableFindLastNoExceptionTest1() {
-        final Iterable<Integer> l = Functional.seq.init(FunctionalTest.doublingGenerator, 5);
-        assertThat(Functional.noException.findLast(Functional.isOdd, l).isNone()).isTrue();
-    }
-
-    @Test
-    void iterableFindLastNoExceptionTest2() {
-        final Iterable<Integer> l = Functional.seq.init(FunctionalTest.doublingGenerator, 5);
-        assertThat(Functional.noException.findLast(Functional.isEven, l).get()).isEqualTo((Integer) 10);
-    }
-
-    @Test
     void lastNoExceptionTest1() {
         final List<Integer> l = new ArrayList<Integer>(Functional.init(FunctionalTest.doublingGenerator, 5));
         final Option<Integer> last = Functional.noException.last(l);
