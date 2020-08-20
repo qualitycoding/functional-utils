@@ -1,5 +1,6 @@
 package uk.co.qualitycode.utils.functional;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
@@ -8,30 +9,35 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static uk.co.qualitycode.utils.functional.Functional.fold;
+import static uk.co.qualitycode.utils.functional.Functional.in;
+import static uk.co.qualitycode.utils.functional.Functional.indentBy;
+import static uk.co.qualitycode.utils.functional.Functional.init;
 import static uk.co.qualitycode.utils.functional.Functional.join;
+import static uk.co.qualitycode.utils.functional.IndentBy.indent;
 
 class Functional_IndentBy_Test {
     @Test
     void defaultParamsBehaviour_throwsWhenHowManyIsNegative() {
-        assertThatIllegalArgumentException().isThrownBy(()-> Functional.indentBy(-1, "d", "hhljj"))
+        assertThatIllegalArgumentException().isThrownBy(()-> indentBy(-1, "d", "hhljj"))
                 .withMessage("Negative numbers must not be supplied as 'howMany'");
     }
 
     @Test
     void defaultParamsBehaviour_throwsWhenUnitOfIndentationIsNull() {
-        assertThatIllegalArgumentException().isThrownBy(()-> Functional.indentBy(0, null, "hhljj"))
+        assertThatIllegalArgumentException().isThrownBy(()-> indentBy(0, null, "hhljj"))
                 .withMessage("unitOfIndentation must not be null");
     }
 
     @Test
     void defaultParamsBehaviour_throwsWhenUnitOfIndentThisIsNull() {
-        assertThatIllegalArgumentException().isThrownBy(()-> Functional.indentBy(0, "d", null))
+        assertThatIllegalArgumentException().isThrownBy(()-> indentBy(0, "d", null))
                 .withMessage("indentThis must not be null");
     }
 
     @Test
-    void indent() {
-        final String actual = Functional.indentBy(5, "a", " string");
+    void indentString() {
+        final String actual = indentBy(5, "a", " string");
 
         assertThat(actual).isEqualTo("aaaaa string");
     }
@@ -47,15 +53,15 @@ class Functional_IndentBy_Test {
         }
         assertThat(expectedResult).isEqualTo(indentedName);
 
-        final Collection<String> indentation = Functional.init(integer -> " ", level);
+        final Collection<String> indentation = init(integer -> " ", level);
         assertThat("     ").isEqualTo(join("", indentation));
 
-        final String s = Functional.fold((state, str) -> state + str, "", indentation);
+        final String s = fold((state, str) -> state + str, "", indentation);
         assertThat(expectedResult).isEqualTo(s);
 
-        final Function<Collection<String>, String> folder = l -> Functional.fold((BiFunction<String, String, String>) (state, str) -> state + str, "", l);
+        final Function<Collection<String>, String> folder = l -> fold((BiFunction<String, String, String>) (state, str) -> state + str, "", l);
 
-        final String s1 = Functional.in(indentation, folder);
+        final String s1 = in(indentation, folder);
         assertThat(expectedResult).isEqualTo(s1);
     }
 
@@ -63,6 +69,15 @@ class Functional_IndentBy_Test {
     void indentTest2() {
         final int level = 5;
         final String expectedResult = "     BOB";
-        assertThat(Functional.indentBy(level, " ", "BOB")).isEqualTo(expectedResult);
+        assertThat(indentBy(level, " ", "BOB")).isEqualTo(expectedResult);
+    }
+
+    @Nested
+    class Monadic {
+        @Test
+        void indentBy() {
+            final String result = indent("a").with(5).of("0");
+            assertThat(result).isEqualTo("00000a");
+        }
     }
 }
