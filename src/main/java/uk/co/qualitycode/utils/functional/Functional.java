@@ -277,16 +277,33 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if f or input are null
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
-    public static <A> int findIndex(final Function<A, Boolean> f, final Iterable<? extends A> input) {
+    public static <A> int findIndex(final Predicate<A> f, final Iterable<? extends A> input) {
         if (f == null) throw new IllegalArgumentException("f");
         if (input == null) throw new IllegalArgumentException("input");
 
         int pos = 0;
         for (final A a : input)
-            if (f.apply(a))
+            if (f.test(a))
                 return pos;
             else pos++;
         throw new IllegalArgumentException();
+    }
+
+    /**
+     * As <tt>find</tt> except that here we return the zero-based position in the input sequence of the found element
+     * findIndex: (A -> bool) -> A list -> int
+     *
+     * @param f     predicate
+     * @param input sequence
+     * @param <A>   the type of the element in the input sequence
+     * @return the position in the input sequence of the first element from the input sequence for which the supplied predicate
+     * returns true
+     * @throws java.lang.IllegalArgumentException if f or input are null
+     * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
+     */
+    public static <A> int findIndex(final Function<A, Boolean> f, final Iterable<? extends A> input) {
+        if (f == null) throw new IllegalArgumentException("f");
+        return findIndex((Predicate<A>)x->f.apply(x), input);
     }
 
     /**
