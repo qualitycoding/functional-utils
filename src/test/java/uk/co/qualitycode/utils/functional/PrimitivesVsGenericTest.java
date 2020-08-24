@@ -1,10 +1,12 @@
 package uk.co.qualitycode.utils.functional;
 
 import org.junit.jupiter.api.Test;
+import uk.co.qualitycode.utils.functional.monad.Option;
 import uk.co.qualitycode.utils.functional.primitive.integer.IntList;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static java.lang.Math.pow;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -77,7 +79,8 @@ class PrimitivesVsGenericTest {
         for (final int howMany : new int[]{1000, 10000, 100000, 1000000, 10000000}) {
             System.out.println("Testing findLast with " + howMany + " elements");
             int s1 = Integer.MIN_VALUE;
-            final int s2, s3;
+            final int s2;
+            final Option<Integer> s3;
             {
                 final long beforeInitialisation = System.nanoTime();
 
@@ -119,7 +122,8 @@ class PrimitivesVsGenericTest {
 
                 final long beforeTransformation = System.nanoTime();
 
-                s3 = Functional.findLast(a -> a < howMany / 2, ints);
+                final Predicate<Integer> f = a -> a < howMany / 2;
+                s3 = Functional.findLast(f, ints);
 
                 final long afterTransformation = System.nanoTime();
                 System.out.println("Generic list initialisation time " + (beforeTransformation - beforeInitialisation) / oneMillion + " ms");

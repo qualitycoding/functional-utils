@@ -303,7 +303,7 @@ public final class Functional {
      */
     public static <A> int findIndex(final Function<A, Boolean> f, final Iterable<? extends A> input) {
         if (f == null) throw new IllegalArgumentException("f must not be null");
-        return findIndex((Predicate<A>)x->f.apply(x), input);
+        return findIndex((Predicate<A>) x -> f.apply(x), input);
     }
 
     /**
@@ -317,16 +317,31 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if f or input are null
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
-    public static <A> A findLast(final Function<? super A, Boolean> f, final Iterable<A> input) {
-        if (f == null) throw new IllegalArgumentException("f");
-        if (input == null) throw new IllegalArgumentException("input");
+    public static <A> Option<A> findLast(final Function<A, Boolean> f, final Iterable<? extends A> input) {
+        if (f == null) throw new IllegalArgumentException("f must not be null");
+        return findLast((Predicate<A>) x -> f.apply(x), input);
+    }
 
-        final Tuple2<List<A>, Iterable<A>> p = takeNAndYield(input, 1);
-        final Tuple2<A, Boolean> seed = new Tuple2<>(p._1().get(0), f.apply(p._1().get(0)));
-        final Tuple2<A, Boolean> result = fold((state, item) -> f.apply(item) ? new Tuple2<>(item, true) : state, seed, p._2());
+    /**
+     * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
+     * findLast: (A -> bool) -> A seq -> A
+     *
+     * @param f     predicate
+     * @param input sequence
+     * @param <A>   the type of the element in the input sequence
+     * @return the last element in the input sequence for which the supplied predicate returns true
+     * @throws java.lang.IllegalArgumentException if f or input are null
+     * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
+     */
+    public static <A> Option<A> findLast(final Predicate<A> f, final Iterable<? extends A> input) {
+        if (f == null) throw new IllegalArgumentException("f must not be null");
+        if (input == null) throw new IllegalArgumentException("input must not be null");
 
-        if (result._2()) return result._1();
-        throw new NoSuchElementException();
+        final Tuple2<? extends List<? extends A>, ? extends Iterable<? extends A>> p = takeNAndYield(input, 1);
+        final Tuple2<A, Boolean> seed = new Tuple2<>(p._1().get(0), f.test(p._1().get(0)));
+        final Tuple2<A, Boolean> result = fold((state, item) -> f.test(item) ? new Tuple2<>(item, true) : state, seed, p._2());
+
+        return result._2() ? Option.of(result._1()) : Option.none();
     }
 
     /**
@@ -340,14 +355,31 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if f or input are null
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
-    public static <A> A findLast(final Function<? super A, Boolean> f, final List<A> input) {
-        if (f == null) throw new IllegalArgumentException("f");
-        if (input == null) throw new IllegalArgumentException("input");
+    public static <A> Option<A> findLast(final Function<A, Boolean> f, final List<? extends A> input) {
+        if (f == null) throw new IllegalArgumentException("f must not be null");
+        return findLast((Predicate<A>) x -> f.apply(x), input);
+    }
 
-        for (final A a : Iterators.reverse(input))
-            if (f.apply(a))
-                return a;
-        throw new NoSuchElementException();
+    /**
+     * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
+     * findLast: (A -> bool) -> A list -> A
+     *
+     * @param f     predicate
+     * @param input sequence
+     * @param <A>   the type of the element in the input sequence
+     * @return the last element in the input sequence for which the supplied predicate returns true
+     * @throws java.lang.IllegalArgumentException if f or input are null
+     * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
+     */
+    public static <A> Option<A> findLast(final Predicate<A> f, final List<? extends A> input) {
+        if (f == null) throw new IllegalArgumentException("f must not be null");
+        if (input == null) throw new IllegalArgumentException("input must not be null");
+
+        for (final A a : Iterators.reverse(input)) {
+            if (f.test(a))
+                return Option.of(a);
+        }
+        return Option.none();
     }
 
     /**
@@ -362,8 +394,24 @@ public final class Functional {
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
-    public static <A> Function<List<A>, A> findLast(final Function<A, Boolean> f) {
-        return input -> Functional.findLast(f, input);
+    public static <A> Function<Iterable<A>, Option<A>> findLast(final Function<A, Boolean> f) {
+        return input -> input instanceof List ? Functional.findLast(f, (List<A>)input) : Functional.findLast(f, input);
+    }
+
+    /**
+     * A curried version of findLast.
+     * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
+     * findLast: (A -> bool) -> A list -> A
+     *
+     * @param f   predicate
+     * @param <A> the type of the element in the input sequence
+     * @return the last element in the input sequence for which the supplied predicate returns true
+     * @throws java.lang.IllegalArgumentException if f or input are null
+     * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
+     * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
+     */
+    public static <A> Function<Iterable<A>, Option<A>> findLast(final Predicate<A> f) {
+        return input -> input instanceof List ? Functional.findLast(f, (List<A>)input) : Functional.findLast(f, input);
     }
 
     /**
@@ -3175,23 +3223,6 @@ public final class Functional {
         }
 
         /**
-         * Return the final element from the input sequence
-         *
-         * @param input input sequence
-         * @param <T>   the type of the element in the input sequence
-         * @return the last element from the input sequence
-         * @throws java.lang.IllegalArgumentException if the input sequence is null or empty
-         */
-        public static <T> Option<T> last(final Iterable<T> input) {
-            if (input == null) throw new IllegalArgumentException("Functional.last(Iterable<T>): input is null");
-
-            T state = null;
-            for (final T element : input) state = element;
-
-            return state == null ? Option.none() : Option.of(state);
-        }
-
-        /**
          * 'pick' is an analogue of <tt>find</tt>. Instead of a predicate, 'pick' is passed a map function which returns an <tt>Option</tt>.
          * Each element of the input sequence is supplied in turn to the map function 'f' and the first non-None Option to be returned from
          * the map function is returned by 'pick' to the calling code.
@@ -3410,7 +3441,7 @@ public final class Functional {
 
         return cases
                 .find(abCase -> abCase.predicate(input)).toVavrOption()
-                .map(c->c.results(input))
+                .map(c -> c.results(input))
                 .getOrElse(() -> defaultCase.apply(input));
     }
 

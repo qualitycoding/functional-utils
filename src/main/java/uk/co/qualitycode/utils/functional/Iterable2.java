@@ -64,7 +64,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
 
     String join(final String delimiter);
 
-    T findLast(final Function<? super T, Boolean> f);
+    Option<T> findLast(final Function<T, Boolean> f);
 
     Tuple2<List<T>, List<T>> partition(final Function<? super T, Boolean> f);
 
@@ -187,7 +187,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
                 return Functional.join(delimiter, i);
             }
 
-            public T findLast(final Function<? super T, Boolean> f) {
+            public Option<T> findLast(final Function<T, Boolean> f) {
                 return Functional.findLast(f, i);
             }
 
@@ -334,7 +334,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             return Functional.join(delimiter, this);
         }
 
-        public T findLast(final Function<? super T, Boolean> f) {
+        public Option<T> findLast(final Function<T, Boolean> f) {
             throw new NoSuchElementException();
         }
 
