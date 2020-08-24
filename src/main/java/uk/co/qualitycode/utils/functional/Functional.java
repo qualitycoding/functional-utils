@@ -167,11 +167,11 @@ public final class Functional {
     public static <T extends Comparable<T>> boolean between(final T lowerBound, final T upperBound, final T val) {
         if (lowerBound == null) throw new IllegalArgumentException("lower bound must not be null");
         if (upperBound == null) throw new IllegalArgumentException("upper bound must not be null");
-        if (lowerBound.compareTo(upperBound) != -1)
+        if (lowerBound.compareTo(upperBound) > -1)
             throw new IllegalArgumentException("lower bound must be less than upper bound");
         if (val == null) throw new IllegalArgumentException("value must not be null");
 
-        return val.compareTo(lowerBound) == 1 && val.compareTo(upperBound) == -1;
+        return val.compareTo(lowerBound) > 0 && val.compareTo(upperBound) < 0;
     }
 
     /**
