@@ -4,20 +4,32 @@ import org.junit.jupiter.api.Test;
 import uk.co.qualitycode.utils.functional.monad.Option;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static uk.co.qualitycode.utils.functional.Functional.find;
 import static uk.co.qualitycode.utils.functional.Functional.init;
 import static uk.co.qualitycode.utils.functional.OptionAssert.assertThat;
 
 class Functional_Find_Test {
     @Test
+    void preconditions() {
+        assertAll(
+                () -> assertThatIllegalArgumentException().isThrownBy(() -> find((Predicate) null, Collections.emptySet())).withMessage("f must not be null"),
+                () -> assertThatIllegalArgumentException().isThrownBy(() -> find((Function) null, Collections.emptySet())).withMessage("f must not be null"),
+                () -> assertThatIllegalArgumentException().isThrownBy(() -> find((Predicate) x -> x.equals(new Object()), null)).withMessage("input must not be null"),
+                () -> assertThatIllegalArgumentException().isThrownBy(() -> find((Function) x -> x.equals(new Object()), null)).withMessage("input must not be null"));
+    }
+
+    @Test
     void findTestUsingFunction() {
         final Integer trueMatch = 6;
         final Collection<Integer> li = init(FunctionalTest.doublingGenerator, 5);
 
-        final Function<Integer,Boolean> equals = trueMatch::equals;
+        final Function<Integer, Boolean> equals = trueMatch::equals;
 
         assertThat(find(equals, li)).hasValue(trueMatch);
     }
@@ -36,7 +48,7 @@ class Functional_Find_Test {
     void curriedFindTestUsingFunction() {
         final Integer trueMatch = 6;
         final Collection<Integer> li = init(FunctionalTest.doublingGenerator, 5);
-        final Function<Integer,Boolean> equals = trueMatch::equals;
+        final Function<Integer, Boolean> equals = trueMatch::equals;
 
         final Function<Iterable<Integer>, Option<Integer>> result = find(equals);
 

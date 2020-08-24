@@ -206,8 +206,8 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if f or input are null
      */
     public static <A> Option<A> find(final Predicate<? super A> f, final Iterable<A> input) {
-        if (f == null) throw new IllegalArgumentException("f");
-        if (input == null) throw new IllegalArgumentException("input");
+        if (f == null) throw new IllegalArgumentException("f must not be null");
+        if (input == null) throw new IllegalArgumentException("input must not be null");
 
         for (final A a : input) {
             if (f.test((a)))
@@ -228,7 +228,7 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if f or input are null
      */
     public static <A> Option<A> find(final Function<? super A, Boolean> f, final Iterable<A> input) {
-        if (f == null) throw new IllegalArgumentException("f");
+        if (f == null) throw new IllegalArgumentException("f must not be null");
 
         return find((Predicate<? super A>) (x -> f.apply(x)), input);
     }
