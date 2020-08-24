@@ -531,13 +531,13 @@ class Iterable2Test {
     @Test
     void findLastTest1() {
         final Iterable2<Integer> l = Iterable2.init(DoublingGenerator, 5);
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> Functional.findLast(Functional.isOdd, l));
+        OptionAssert.assertThat(Functional.findLast(Functional.isOdd, l)).isEmpty();
     }
 
     @Test
     void findLastTest2() {
         final Iterable2<Integer> l = Iterable2.init(DoublingGenerator, 5);
-        assertThat(l.findLast(Functional.isEven)).isEqualTo((Integer) 10);
+        OptionAssert.assertThat(l.findLast(Functional.isEven)).hasValue(10);
     }
 
     @Test

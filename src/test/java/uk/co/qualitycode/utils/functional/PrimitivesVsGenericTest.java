@@ -131,7 +131,7 @@ class PrimitivesVsGenericTest {
             }
 
             assertThat(s2).isEqualTo(s1);
-            assertThat(s3).isEqualTo(s1);
+            OptionAssert.assertThat(s3).hasValue(s1);
             System.out.println("-----------------");
         }
     }
