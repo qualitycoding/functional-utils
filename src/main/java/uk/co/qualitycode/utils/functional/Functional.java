@@ -308,7 +308,7 @@ public final class Functional {
 
     /**
      * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
-     * findLast: (A -> bool) -> A seq -> A
+     * findLast: (A -> bool) -> A seq -> A option
      *
      * @param f     predicate
      * @param input sequence
@@ -324,7 +324,7 @@ public final class Functional {
 
     /**
      * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
-     * findLast: (A -> bool) -> A seq -> A
+     * findLast: (A -> bool) -> A seq -> A option
      *
      * @param f     predicate
      * @param input sequence
@@ -346,7 +346,7 @@ public final class Functional {
 
     /**
      * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
-     * findLast: (A -> bool) -> A list -> A
+     * findLast: (A -> bool) -> A list -> A option
      *
      * @param f     predicate
      * @param input sequence
@@ -362,7 +362,7 @@ public final class Functional {
 
     /**
      * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
-     * findLast: (A -> bool) -> A list -> A
+     * findLast: (A -> bool) -> A list -> A option
      *
      * @param f     predicate
      * @param input sequence
@@ -385,7 +385,7 @@ public final class Functional {
     /**
      * A curried version of findLast.
      * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
-     * findLast: (A -> bool) -> A list -> A
+     * findLast: (A -> bool) -> A list -> A option
      *
      * @param f   predicate
      * @param <A> the type of the element in the input sequence
@@ -401,7 +401,7 @@ public final class Functional {
     /**
      * A curried version of findLast.
      * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
-     * findLast: (A -> bool) -> A list -> A
+     * findLast: (A -> bool) -> A list -> A option
      *
      * @param f   predicate
      * @param <A> the type of the element in the input sequence
