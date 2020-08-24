@@ -278,8 +278,8 @@ public final class Functional {
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
     public static <A> int findIndex(final Predicate<A> f, final Iterable<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("f");
-        if (input == null) throw new IllegalArgumentException("input");
+        if (f == null) throw new IllegalArgumentException("f must not be null");
+        if (input == null) throw new IllegalArgumentException("input must not be null");
 
         int pos = 0;
         for (final A a : input)
@@ -302,7 +302,7 @@ public final class Functional {
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
     public static <A> int findIndex(final Function<A, Boolean> f, final Iterable<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("f");
+        if (f == null) throw new IllegalArgumentException("f must not be null");
         return findIndex((Predicate<A>)x->f.apply(x), input);
     }
 
