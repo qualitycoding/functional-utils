@@ -7,7 +7,6 @@ import uk.co.qualitycode.utils.functional.monad.Option;
 import uk.co.qualitycode.utils.functional.monad.OptionNoValueAccessException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,8 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.junit.jupiter.api.Assertions.fail;
-import static uk.co.qualitycode.utils.functional.Functional.in;
-import static uk.co.qualitycode.utils.functional.Functional.then;
 
 class FunctionalTest {
     private static final Func2_int_int_T<Boolean> dBothAreLessThan10 = FunctionalTest::bothAreLessThan10;
@@ -350,39 +347,8 @@ class FunctionalTest {
     private final Function<IntList, String> concatenate =
             l -> Functional.fold(FunctionalTest::csv, "", l);
 
-    @Test
-    void fwdPipelineTest1() {
-        final IntList li = Functional.init(doublingGenerator, 5);
-        final String s1 = in(li, concatenate);
-        assertThat(s1).isEqualTo("2,4,6,8,10");
-    }
-
     private final Function<IntList, IntList> evens_f =
             l -> Functional.filter(Functional.isEven, l);
-
-    @Test
-    void fwdPipelineTest2() {
-        final IntList li = Functional.init(TriplingGenerator, 5);
-        final IntList evens = uk.co.qualitycode.utils.functional.Functional.in(li, evens_f);
-        final String s1 = in(evens, concatenate);
-        final String s2 = in(li, then(evens_f, concatenate));
-        assertThat(s1).isEqualTo("6,12");
-        assertThat(s1).isEqualTo(s2);
-    }
-
-    @Test
-    void compositionTest3() {
-        final IntList li = Functional.init(TriplingGenerator, 5);
-        final String s = in(li, then(evens_f, concatenate));
-        assertThat(s).isEqualTo("6,12");
-    }
-
-    @Test
-    void compositionTest4() {
-        final IntList li = Functional.init(TriplingGenerator, 5);
-        final String s = then(evens_f, concatenate).apply(li);
-        assertThat(s).isEqualTo("6,12");
-    }
 
     @Test
     void indentTest1() {
@@ -953,15 +919,7 @@ class FunctionalTest {
 //        Assert.fail("Should not reach this point");
 //    }
 //
-    @Test
-    void fwdPipelineTest3() {
-        final IntList input = Functional.init(doublingGenerator, 5);
-        final Collection<String> output = in(input,
-                (Function<IntList, Collection<String>>) integers -> Functional.map(Functional.dStringify(), integers));
 
-        final Collection<String> expected = Arrays.asList("2", "4", "6", "8", "10");
-        assertThat(output).containsExactlyElementsOf(expected);
-    }
 //
 //    @Test
 //    public void fwdPipelineTest4()

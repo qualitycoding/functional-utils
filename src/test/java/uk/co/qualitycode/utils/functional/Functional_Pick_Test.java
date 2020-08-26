@@ -29,17 +29,17 @@ class Functional_Pick_Test {
     }
 
     @Test
+    void pickReturnsNone() {
+        final int falseMatch = 7;
+        final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
+        assertThat(pick(a -> a.equals(falseMatch) ? Option.of(a) : Option.none(), li)).isEmpty();
+    }
+
+    @Test
     void curriedPickReturnsValue() {
         final int trueMatch = 6;
         final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
         final Function<Iterable<Integer>, Option<Integer>> pickFunc = pick(a -> a.equals(trueMatch) ? Option.of(a) : Option.none());
         assertThat(pickFunc.apply(li)).hasValue(trueMatch);
-    }
-
-    @Test
-    void pickReturnsNone() {
-        final int falseMatch = 7;
-        final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
-        assertThat(pick(a -> a.equals(falseMatch) ? Option.of(a) : Option.none(), li)).isEmpty();
     }
 }

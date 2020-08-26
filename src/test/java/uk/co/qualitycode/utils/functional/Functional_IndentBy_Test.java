@@ -4,17 +4,15 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static uk.co.qualitycode.utils.functional.Functional.fold;
-import static uk.co.qualitycode.utils.functional.Functional.in;
 import static uk.co.qualitycode.utils.functional.Functional.indentBy;
 import static uk.co.qualitycode.utils.functional.Functional.init;
 import static uk.co.qualitycode.utils.functional.Functional.join;
 import static uk.co.qualitycode.utils.functional.IndentBy.indent;
+import static uk.co.qualitycode.utils.functional.UsingWrapper.using;
 
 class Functional_IndentBy_Test {
     @Test
@@ -59,9 +57,7 @@ class Functional_IndentBy_Test {
         final String s = fold((state, str) -> state + str, "", indentation);
         assertThat(expectedResult).isEqualTo(s);
 
-        final Function<Collection<String>, String> folder = l -> fold((BiFunction<String, String, String>) (state, str) -> state + str, "", l);
-
-        final String s1 = in(indentation, folder);
+        final String s1 = using(indentation).in(l -> fold((state, str) -> state + str, "", l));
         assertThat(expectedResult).isEqualTo(s1);
     }
 

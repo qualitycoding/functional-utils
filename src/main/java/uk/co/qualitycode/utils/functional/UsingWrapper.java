@@ -4,6 +4,11 @@ import io.vavr.Function0;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Used for functional composition. This is the simple reversal function. y(x) is equivalent to using(x).in(y)
+ * See <a href="http://en.wikipedia.org/wiki/Function_composition_(computer_science)">Function Composition</a>
+ * @param <T>
+ */
 public class UsingWrapper<T> {
     public static <T> Using<T> using(final T value) {
         return new Using<>(() -> value);

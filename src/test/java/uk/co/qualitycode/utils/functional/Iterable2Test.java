@@ -507,12 +507,6 @@ class Iterable2Test {
         assertThat(Functional.isEven.apply(2)).isTrue();
     }
 
-    @Test
-    void testIn() {
-        final int a = 10;
-        assertThat(Functional.in(a, Functional.isEven)).isTrue();
-    }
-
 
     /*@Test void testThen() {
         // mult(two,three).then(add(four)) =>

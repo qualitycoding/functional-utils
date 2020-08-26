@@ -458,37 +458,6 @@ public final class Functional {
     }
 
     /**
-     * In, used for functional composition. This is the simple reversal function. y(x) is equivalent to x.In(y)
-     * See <a href="http://en.wikipedia.org/wiki/Function_composition_(computer_science)">Function Composition</a>
-     *
-     * @param input the object which we wish to pass to the function parameter
-     * @param f     the function we wish to evaluate
-     * @param <A>   the base type of the input element. That is <tt>AA extends A</tt>
-     * @param <B>   the type of the output of the function <tt>f</tt>
-     * @param <AA>  the type of the input
-     * @return f(input)
-     */
-    public static <A, B, AA extends A> B in(final AA input, final Function<A, B> f) {
-        return f.apply(input);
-    }
-
-    /**
-     * Then, the functional composition operator. Execute the first function then execute the second, passing the results
-     * of the first as the input to the second.
-     * See <a href="http://en.wikipedia.org/wiki/Function_composition_(computer_science)">Function Composition</a>
-     *
-     * @param f   the first function to execute.
-     * @param g   the second function to execute. The input to this function will be the result of the first function, f
-     * @param <A> the type of the input to <tt>f</tt>
-     * @param <B> the type of the input to <tt>g</tt> and a base class of the output of <tt>f</tt>
-     * @param <C> the type of the output of <tt>g</tt>
-     * @return a function equivalent to g(f(x))
-     */
-    public static <A, B, C> Function<A, C> then(final Function<A, ? extends B> f, final Function<B, C> g) {
-        return x -> g.apply(f.apply(x));
-    }
-
-    /**
      * Convolution of functions. That is, apply two transformation functions 'simultaneously' and return a list of pairs,
      * each of which contains one part of the results.
      *

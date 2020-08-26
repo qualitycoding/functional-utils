@@ -141,21 +141,6 @@ class FunctionalTest {
     final Function<Collection<Integer>, Collection<Integer>> evens_f = l -> Functional.filter(isEven, l);
 
     @Test
-    void compositionTest3() {
-        final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-        final String s = Functional.in(li, Functional.then(evens_f, concatenate));
-        assertThat(s).isEqualTo("6,12");
-    }
-
-    @Test
-    void compositionTest4() {
-        final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-        final String s = Functional.then(evens_f, concatenate).apply(li);
-        assertThat(s).isEqualTo("6,12");
-    }
-
-
-    @Test
     void chooseTest3A() throws OptionNoValueAccessException {
         final Collection<Integer> li = Functional.init(triplingGenerator, 5);
         final Collection<Integer> o =
@@ -245,13 +230,6 @@ class FunctionalTest {
     void testIsEven_withEvenNum() {
         assertThat(isEven.apply(2)).isTrue();
     }
-
-    @Test
-    void testIn() {
-        final Integer a = 10;
-        assertThat(Functional.in(a, isEven)).isTrue();
-    }
-
 
     /*@Test void testThen()
     {
