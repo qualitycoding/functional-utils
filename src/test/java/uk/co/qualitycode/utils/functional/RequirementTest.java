@@ -1,10 +1,10 @@
-package uk.co.qualitycode.utils.functional.monad;
+package uk.co.qualitycode.utils.functional;
 
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static uk.co.qualitycode.utils.functional.monad.Requirement.require;
+import static uk.co.qualitycode.utils.functional.Requirement.require;
 
 class RequirementTest {
     @Test

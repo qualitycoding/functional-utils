@@ -1,6 +1,6 @@
-package uk.co.qualitycode.utils.functional.monad;
+package uk.co.qualitycode.utils.functional;
 
-import uk.co.qualitycode.utils.functional.IsBetween;
+import uk.co.qualitycode.utils.functional.monad.Option;
 
 public class Requirement {
     public static <T extends Comparable<T>> Require<T> require(final T t) {
