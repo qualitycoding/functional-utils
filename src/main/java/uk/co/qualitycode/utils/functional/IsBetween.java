@@ -23,12 +23,12 @@ public class IsBetween<T extends Comparable<T>> {
         return new IsBetween<>(value, Not.NOT);
     }
 
-    public IsIt<T> between(final T lower) {
+    public IsIt<T,Boolean> between(final T lower) {
         return upper -> isOrIsNot(Functional.between(lower, upper, value));
     }
 
-    public interface IsIt<T> {
-        boolean and(final T upper);
+    public interface IsIt<T,R> {
+        R and(final T upper);
     }
 
     private boolean isOrIsNot(final boolean value) {
