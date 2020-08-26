@@ -4,46 +4,42 @@ import org.junit.jupiter.api.Test;
 import uk.co.qualitycode.utils.functional.monad.Option;
 
 import java.util.Collection;
-import java.util.NoSuchElementException;
 import java.util.function.Function;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.mock;
+import static uk.co.qualitycode.utils.functional.Functional.pick;
+import static uk.co.qualitycode.utils.functional.OptionAssert.assertThat;
 
 class Functional_Pick_Test {
     @Test
-    void pickTest1() {
-        final int trueMatch = 6;
-        final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
-        assertThat(Functional.pick((Function<Integer, Option<String>>) a -> a == trueMatch ? Option.of(a.toString()) : Option.none(), li)).isEqualTo(((Integer) trueMatch).toString());
+    void preconditions() {
+        assertAll(
+                () -> assertThatIllegalArgumentException().isThrownBy(() -> pick(null, mock(Iterable.class))).withMessage("f must not be null"),
+                () -> assertThatIllegalArgumentException().isThrownBy(() -> pick(Function.identity(), null)).withMessage("input must not be null"));
     }
 
     @Test
-    void curriedPickTest1() {
+    void pickReturnsValue() {
         final int trueMatch = 6;
         final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
-        final Function<Iterable<Integer>, String> pickFunc = Functional.pick(a -> a == trueMatch ? Option.of(a.toString()) : Option.none());
-        assertThat(pickFunc.apply(li)).isEqualTo(((Integer) trueMatch).toString());
+        final Option<Integer> pick = pick(a -> a.equals(trueMatch) ? Option.of(a) : Option.none(), li);
+        assertThat(pick).hasValue(trueMatch);
     }
 
     @Test
-    void pickTest2() {
+    void curriedPickReturnsValue() {
+        final int trueMatch = 6;
+        final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
+        final Function<Iterable<Integer>, Option<Integer>> pickFunc = pick(a -> a.equals(trueMatch) ? Option.of(a) : Option.none());
+        assertThat(pickFunc.apply(li)).hasValue(trueMatch);
+    }
+
+    @Test
+    void pickReturnsNone() {
         final int falseMatch = 7;
         final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> Functional.pick(a -> a == falseMatch ? Option.of(a.toString()) : Option.none(), li));
-    }
-
-    @Test
-    void pickNoExceptionTest1() {
-        final int trueMatch = 6;
-        final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
-        assertThat(Functional.noException.pick(a -> a == trueMatch ? Option.of(a.toString()) : Option.none(), li).get()).isEqualTo(((Integer) trueMatch).toString());
-    }
-
-    @Test
-    void pickNoExceptionTest2() {
-        final int falseMatch = 7;
-        final Collection<Integer> li = Functional.init(FunctionalTest.doublingGenerator, 5);
-        assertThat(Functional.noException.pick(a -> a == falseMatch ? Option.of(a.toString()) : Option.none(), li).isNone()).isTrue();
+        assertThat(pick(a -> a.equals(falseMatch) ? Option.of(a) : Option.none(), li)).isEmpty();
     }
 }

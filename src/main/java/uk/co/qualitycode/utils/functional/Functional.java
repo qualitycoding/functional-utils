@@ -418,7 +418,7 @@ public final class Functional {
      * 'pick' is an analogue of <tt>find</tt>. Instead of a predicate, 'pick' is passed a map function which returns an <tt>Option</tt>.
      * Each element of the input sequence is supplied in turn to the map function 'f' and the first non-None Option to be returned from
      * the map function is returned by 'pick' to the calling code.
-     * pick: (A -> B option) -> A seq -> B
+     * pick: (A -> B option) -> A seq -> B option
      *
      * @param f     the map function.
      * @param input the input sequence
@@ -426,16 +426,16 @@ public final class Functional {
      * @param <B>   the type of the output element
      * @return the first non-None transformed element of the input sequence
      */
-    public static <A, B> B pick(final Function<A, Option<B>> f, final Iterable<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("f");
-        if (input == null) throw new IllegalArgumentException("input");
+    public static <A, B> Option<B> pick(final Function<? super A, Option<B>> f, final Iterable<A> input) {
+        if (f == null) throw new IllegalArgumentException("f must not be null");
+        if (input == null) throw new IllegalArgumentException("input must not be null");
 
         for (final A a : input) {
             final Option<B> intermediate = f.apply(a); // which is, effectively, if(f(a)) return f(a), but without evaluating f twice
             if (intermediate.isSome())
-                return intermediate.get();
+                return intermediate;
         }
-        throw new NoSuchElementException();
+        return Option.none();
     }
 
     /**
@@ -445,7 +445,7 @@ public final class Functional {
      * <p>
      * This is a curried implementation of 'pick'
      * <p>
-     * pick: (A -> B option) -> A seq -> B
+     * pick: (A -> B option) -> A seq -> B option
      *
      * @param f   the map function.
      * @param <A> the type of the element in the input sequence
@@ -453,7 +453,7 @@ public final class Functional {
      * @return the first non-None transformed element of the input sequence
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
-    public static <A, B> Function<Iterable<A>, B> pick(final Function<? super A, Option<B>> f) {
+    public static <A, B> Function<Iterable<A>, Option<B>> pick(final Function<? super A, Option<B>> f) {
         return input -> Functional.pick(f, input);
     }
 
@@ -3220,30 +3220,6 @@ public final class Functional {
      */
     public static class noException {
         private noException() {
-        }
-
-        /**
-         * 'pick' is an analogue of <tt>find</tt>. Instead of a predicate, 'pick' is passed a map function which returns an <tt>Option</tt>.
-         * Each element of the input sequence is supplied in turn to the map function 'f' and the first non-None Option to be returned from
-         * the map function is returned by 'pick' to the calling code.
-         * pick: (A -> B option) -> A seq -> B option
-         *
-         * @param f     the map function.
-         * @param input the input sequence
-         * @param <A>   the type of the element in the input sequence
-         * @param <B>   the type of the output element
-         * @return the first non-None transformed element of the input sequence or None if no such element exists
-         */
-        public static <A, B> Option<B> pick(final Function<A, Option<B>> f, final Iterable<? extends A> input) {
-            if (f == null) throw new IllegalArgumentException("f");
-            if (input == null) throw new IllegalArgumentException("input");
-
-            for (final A a : input) {
-                final Option<B> intermediate = f.apply(a); // which is, effectively, if(f(a)) return f(a), but without evaluating f twice
-                if (!intermediate.isNone())
-                    return intermediate;
-            }
-            return Option.none();
         }
 
         /**

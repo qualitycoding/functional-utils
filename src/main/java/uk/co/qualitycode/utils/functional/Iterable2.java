@@ -50,7 +50,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
 
     int findIndex(Function<? super T, Boolean> f);
 
-    <U> U pick(final Function<? super T, Option<U>> f);
+    <U> Option<U> pick(final Function<? super T, Option<U>> f);
 
     <U> Iterable2<U> collect(final Function<? super T, ? extends Iterable<U>> f);
 
@@ -161,7 +161,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
                 return Functional.findIndex(f, i);
             }
 
-            public <B> B pick(final Function<? super T, Option<B>> f) {
+            public <B> Option<B> pick(final Function<? super T, Option<B>> f) {
                 return Functional.pick(f, i);
             }
 
@@ -310,7 +310,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             throw new NoSuchElementException();
         }
 
-        public <B> B pick(final Function<? super T, Option<B>> f) {
+        public <B> Option<B> pick(final Function<? super T, Option<B>> f) {
             throw new NoSuchElementException();
         }
 

@@ -970,14 +970,14 @@ class Iterable2Test {
     void pickTest1() {
         final int trueMatch = 6;
         final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
-        assertThat(li.pick((Function<Integer, Option<String>>) a -> a == trueMatch ? Option.of(a.toString()) : Option.none())).isEqualTo(String.valueOf(trueMatch));
+        OptionAssert.assertThat(li.pick(a -> a.equals(trueMatch) ? Option.of(a.toString()) : Option.none())).hasValue(String.valueOf(trueMatch));
     }
 
     @Test
     void pickTest2() {
         final int falseMatch = 7;
         final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> li.pick(a -> a == falseMatch ? Option.of(a.toString()) : Option.none()));
+        OptionAssert.assertThat(li.pick(a -> a.equals(falseMatch) ? Option.of(a.toString()) : Option.none())).isEmpty();
     }
 
     @Test
