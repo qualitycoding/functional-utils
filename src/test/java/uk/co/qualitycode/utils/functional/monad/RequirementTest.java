@@ -18,4 +18,17 @@ class RequirementTest {
                 .isThrownBy(() -> require(0).toBe().between(1).and(6))
                 .withMessage("'0' is not between '1' and '6'");
     }
+
+    @Test
+    void requireNonNullReturnsCheckedValue() {
+        final java.lang.String value = "ggl";
+        assertThat(require(value).toBe().nonNull()).isEqualTo(value);
+    }
+
+    @Test
+    void requireNonNullThrows() {
+        assertThatExceptionOfType(RequirementException.class)
+                .isThrownBy(()->require(null).toBe().nonNull())
+                .withMessage("value must not be null");
+    }
 }

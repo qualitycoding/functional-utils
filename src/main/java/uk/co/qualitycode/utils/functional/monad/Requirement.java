@@ -24,5 +24,9 @@ public class Requirement {
                 throw new RequirementException(java.lang.String.format("'%s' is not between '%s' and '%s'", t, lower, upper));
             };
         }
+
+        public T nonNull() {
+            return Option.of(t).toVavrOption().getOrElseThrow(()->new RequirementException("value must not be null"));
+        }
     }
 }
