@@ -178,7 +178,7 @@ class SpeedTest {
     @Test
     void filterTestWithHalfSizeResultsAndIterable() {
         final int howMany = 10;
-        final Collection<Integer> input = Functional.init(Functional.identity(), 10000000);
+        final Collection<Integer> input = Functional.init(Function.identity(), 10000000);
 
         {
             final long start = System.currentTimeMillis();
@@ -197,7 +197,7 @@ class SpeedTest {
     @Test
     void filterTestWithHalfSizeResultsAndCollection() {
         final int howMany = 10;
-        final Collection<Integer> input = Functional.init(Functional.identity(), 10000000);
+        final Collection<Integer> input = Functional.init(Function.identity(), 10000000);
 
         {
             final long start = System.currentTimeMillis();
@@ -216,7 +216,7 @@ class SpeedTest {
     @Test
     void filterTestWithHalfSizeResultsAndInstanceOf() {
         final int howMany = 10;
-        final Collection<Integer> input = Functional.init(Functional.identity(), 10000000);
+        final Collection<Integer> input = Functional.init(Function.identity(), 10000000);
 
         {
             final long start = System.currentTimeMillis();
@@ -235,7 +235,7 @@ class SpeedTest {
     @Test
     void filterTestWithHalfSizeResultsAndHalfSizeCollection() {
         final int howMany = 10;
-        final Collection<Integer> input = Functional.init(Functional.identity(), 10000000);
+        final Collection<Integer> input = Functional.init(Function.identity(), 10000000);
 
         {
             final long start = System.currentTimeMillis();

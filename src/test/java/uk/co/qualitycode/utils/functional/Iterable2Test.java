@@ -206,7 +206,7 @@ class Iterable2Test {
         Map<Integer, String> o = null;
         try {
             final Iterable2<Integer> li = Iterable2.init(TriplingGenerator, 5);
-            o = Functional.toDictionary(Functional.identity(), Functional.dStringify(),
+            o = Functional.toDictionary(Function.identity(), Functional.dStringify(),
                     li.choose(
                             i -> i % 2 == 0 ? Option.of(i) : Option.none()));
         } catch (final Exception e) {
@@ -565,7 +565,7 @@ class Iterable2Test {
     @Test
     void toDictionaryTest() {
         final Iterable2<Integer> input = Iterable2.asList(1, 2, 3, 4, 5);
-        final Map<Integer, String> output = input.toDictionary(Functional.identity(), Functional.dStringify());
+        final Map<Integer, String> output = input.toDictionary(Function.identity(), Functional.dStringify());
 
         final Map<Integer, String> expected = new HashMap<>();
         expected.put(1, "1");
@@ -1283,7 +1283,7 @@ class Iterable2Test {
         expected.put("d", Arrays.asList("def"));
         assertThat(output.get("a")).containsExactlyElementsOf(expected.get("a"));
         assertThat(output.get("d")).containsExactlyElementsOf(expected.get("d"));
-        assertThat(new TreeSet<String>(output.keySet())).containsExactlyElementsOf(new TreeSet<String>(expected.keySet()));
+        assertThat(new TreeSet<>(output.keySet())).containsExactlyElementsOf(new TreeSet<>(expected.keySet()));
     }
 
     @Test

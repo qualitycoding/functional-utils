@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -67,7 +68,7 @@ class Functional_Partition_Test {
         // Store the ranges in a map to exercise the hashCode()
         final Map<Functional.Range<Integer>, Tuple2<Integer, Integer>> map =
                 Functional.toDictionary(
-                        Functional.identity(),
+                        Function.identity(),
                         range -> new Tuple2<>(range.from(), range.to()), partitions);
 
         final List<Functional.Range<Integer>> extractedRanges = Functional.map(Map.Entry::getKey, map.entrySet());
@@ -83,7 +84,7 @@ class Functional_Partition_Test {
         final List<Functional.Range<Integer>> partitions = Functional.toList(Functional.seq.partition(noElems, noPartitions));
 
         // Store the ranges in a map to exercise the hashCode()
-        final Map<Integer, Functional.Range<Integer>> map = Functional.toDictionary(Functional.Range::from, Functional.identity(), partitions);
+        final Map<Integer, Functional.Range<Integer>> map = Functional.toDictionary(Functional.Range::from, Function.identity(), partitions);
 
         final List<Functional.Range<Integer>> extractedRanges = Functional.map(Map.Entry::getValue, map.entrySet());
 
@@ -153,8 +154,8 @@ class Functional_Partition_Test {
         final List<Functional.Range<Integer>> expected =
                 Functional.concat(
                         Functional.map(
-                                pair -> new Functional.Range<Integer>(pair._1(), pair._2()), Functional.zip(expectedStart, expectedEnd)),
-                        Functional.init(Functional.constant(new Functional.Range<Integer>(7, 7)), 3));
+                                pair -> new Functional.Range<>(pair._1(), pair._2()), Functional.zip(expectedStart, expectedEnd)),
+                        Functional.init(Functional.constant(new Functional.Range<>(7, 7)), 3));
 
         assertThat(partitions).containsExactlyElementsOf(expected);
     }
@@ -218,7 +219,7 @@ class Functional_Partition_Test {
         final List<String> expectedEnd = Arrays.asList("3", "6", "9", "11", "13");
         final List<Tuple2<String, String>> expected_ = Functional.zip(expectedStart, expectedEnd);
 
-        final List<Functional.Range<String>> expected = Functional.map(pair -> new Functional.Range<String>(pair._1(), pair._2()), expected_);
+        final List<Functional.Range<String>> expected = Functional.map(pair -> new Functional.Range<>(pair._1(), pair._2()), expected_);
         final Iterator<Functional.Range<String>> iterator = output.iterator();
 
         for (int i = 0; i < 20; ++i)

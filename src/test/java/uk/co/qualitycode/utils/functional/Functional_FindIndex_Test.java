@@ -16,10 +16,18 @@ class Functional_FindIndex_Test {
     @Test
     void preconditions() {
         assertAll(
-                () -> assertThatIllegalArgumentException().isThrownBy(()->findIndex((Function) null, mock(Iterable.class))).withMessage("f must not be null"),
-                () -> assertThatIllegalArgumentException().isThrownBy(()->findIndex((Predicate) null, mock(Iterable.class))).withMessage("f must not be null"),
-                () -> assertThatIllegalArgumentException().isThrownBy(()->findIndex((Function) x -> true, null)).withMessage("input must not be null"),
-                () -> assertThatIllegalArgumentException().isThrownBy(()->findIndex((Predicate) x -> true, null)).withMessage("input must not be null")
+                () -> assertThatIllegalArgumentException()
+                        .isThrownBy(() -> findIndex((Function) null, mock(Iterable.class)))
+                        .withMessage("f must not be null"),
+                () -> assertThatIllegalArgumentException()
+                        .isThrownBy(() -> findIndex((Predicate) null, mock(Iterable.class)))
+                        .withMessage("f must not be null"),
+                () -> assertThatIllegalArgumentException()
+                        .isThrownBy(() -> findIndex((Function) x -> true, null))
+                        .withMessage("input must not be null"),
+                () -> assertThatIllegalArgumentException()
+                        .isThrownBy(() -> findIndex((Predicate) x -> true, null))
+                        .withMessage("input must not be null")
         );
     }
 

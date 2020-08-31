@@ -31,7 +31,7 @@ class Functional_Last_Test {
 
     @Test
     void lastTest3() {
-        final List<Integer> input = new ArrayList<Integer>();
+        final List<Integer> input = new ArrayList<>();
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> Functional.last(input));
     }
 }

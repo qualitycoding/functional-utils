@@ -267,7 +267,7 @@ class FunctionalTest {
     void chooseTest2A() //throws OptionNoValueAccessException
     {
         final IntList li = Functional.init(TriplingGenerator, 5);
-        final Map<Integer, String> o = Functional.toDictionary(Functional.identity(), Functional.dStringify(),
+        final Map<Integer, String> o = Functional.toDictionary(i->i, Functional.dStringify(),
                 Functional.filter(i -> i % 2 == 0, li));
         final Map<Integer, String> expected = new HashMap<>();
         expected.put(6, "6");

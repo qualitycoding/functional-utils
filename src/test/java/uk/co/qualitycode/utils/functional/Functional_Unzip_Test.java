@@ -10,12 +10,22 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class Functional_Unzip_Test {
     @Test
-    void unzipTest1() {
-        final Collection<Tuple2<String, Integer>> input =
-                new ArrayList<Tuple2<String, Integer>>();
+    void preconditions() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.unzip(null))
+                .withMessage("Functional.unzip(Iterable<Tuple2<A,B>>): input must not be null");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.unzip3(null))
+                .withMessage("Functional.unzip3(Iterable<Tuple3<A,B,C>>): input must not be null");
+    }
+
+    @Test
+    void unzipReturnsTwoLists() {
+        final Collection<Tuple2<String, Integer>> input = new ArrayList<>();
         input.add(new Tuple2<>("1", 1));
         input.add(new Tuple2<>("2", 2));
 
@@ -26,32 +36,16 @@ class Functional_Unzip_Test {
 
         final Tuple2<List<String>, List<Integer>> output = Functional.unzip(input);
 
-        assertThat(output._1()).containsExactlyElementsOf(expected._1());
-        assertThat(output._2()).containsExactlyElementsOf(expected._2());
+        assertThat(output).satisfies(__ -> {
+            assertThat(output._1()).containsExactlyElementsOf(expected._1());
+            assertThat(output._2()).containsExactlyElementsOf(expected._2());
+        });
     }
 
     @Test
-    void iterableUnzipTest1() {
-        final Collection<Tuple2<String, Integer>> input =
-                new ArrayList<Tuple2<String, Integer>>();
-        input.add(new Tuple2<>("1", 1));
-        input.add(new Tuple2<>("2", 2));
-
-        final Tuple2<Collection<String>, Collection<Integer>> expected =
-                new Tuple2<>(
-                        Arrays.asList("1", "2"),
-                        Arrays.asList(1, 2));
-
-        final Tuple2<List<String>, List<Integer>> output = Functional.unzip(Iterable2.of(input));
-
-        assertThat(output._1()).containsExactlyElementsOf(expected._1());
-        assertThat(output._2()).containsExactlyElementsOf(expected._2());
-    }
-
-    @Test
-    void unzip3Test1() {
+    void unzip3ReturnsThreeLists() {
         final Collection<Tuple3<String, Integer, String>> input =
-                new ArrayList<Tuple3<String, Integer, String>>();
+                new ArrayList<>();
         input.add(new Tuple3<>("1", 1, "L"));
         input.add(new Tuple3<>("2", 2, "M"));
         input.add(new Tuple3<>("3", 3, "K"));
@@ -64,29 +58,10 @@ class Functional_Unzip_Test {
 
         final Tuple3<List<String>, List<Integer>, List<String>> output = Functional.unzip3(input);
 
-        assertThat(output._1()).containsExactlyElementsOf(expected._1());
-        assertThat(output._2()).containsExactlyElementsOf(expected._2());
-        assertThat(output._2()).containsExactlyElementsOf(expected._2());
-    }
-
-    @Test
-    void iterableUnzip3Test1() {
-        final Collection<Tuple3<String, Integer, String>> input =
-                new ArrayList<Tuple3<String, Integer, String>>();
-        input.add(new Tuple3<>("1", 1, "L"));
-        input.add(new Tuple3<>("2", 2, "M"));
-        input.add(new Tuple3<>("3", 3, "K"));
-
-        final Tuple3<Collection<String>, Collection<Integer>, Collection<String>> expected =
-                new Tuple3<>(
-                        Arrays.asList("1", "2", "3"),
-                        Arrays.asList(1, 2, 3),
-                        Arrays.asList("L", "M", "K"));
-
-        final Tuple3<List<String>, List<Integer>, List<String>> output = Functional.unzip3(Iterable2.of(input));
-
-        assertThat(output._1()).containsExactlyElementsOf(expected._1());
-        assertThat(output._2()).containsExactlyElementsOf(expected._2());
-        assertThat(output._2()).containsExactlyElementsOf(expected._2());
+        assertThat(output).satisfies(__ -> {
+            assertThat(output._1()).containsExactlyElementsOf(expected._1());
+            assertThat(output._2()).containsExactlyElementsOf(expected._2());
+            assertThat(output._2()).containsExactlyElementsOf(expected._2());
+        });
     }
 }

@@ -53,12 +53,12 @@ class Functional_Skip_Test {
             assertThat(output).containsExactlyElementsOf(expected);
         }
         {
-            final List<Integer> expected = new ArrayList<Integer>();
+            final List<Integer> expected = new ArrayList<>();
             final List<Integer> output = Functional.skip(5, l);
             assertThat(output).containsExactlyElementsOf(expected);
         }
         {
-            final List<Integer> expected = new ArrayList<Integer>();
+            final List<Integer> expected = new ArrayList<>();
             final List<Integer> output = Functional.skip(6, l);
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -99,12 +99,12 @@ class Functional_Skip_Test {
             assertThat(output).containsExactlyElementsOf(expected);
         }
         {
-            final List<Integer> expected = new ArrayList<Integer>();
+            final List<Integer> expected = new ArrayList<>();
             final Iterable<Integer> output = Functional.seq.skip(5, l);
             assertThat(output).containsExactlyElementsOf(expected);
         }
         {
-            final List<Integer> expected = new ArrayList<Integer>();
+            final List<Integer> expected = new ArrayList<>();
             final Iterable<Integer> output = Functional.seq.skip(6, l);
             assertThat(output).containsExactlyElementsOf(expected);
         }

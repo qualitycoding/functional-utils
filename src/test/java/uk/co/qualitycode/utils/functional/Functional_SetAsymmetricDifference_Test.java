@@ -12,9 +12,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class Functional_SetAsymmetricDifference_Test {
     @Test
     void setAsymmetricDifferenceTest1() {
-        final Set<Integer> input1 = new HashSet<Integer>(Arrays.asList(1, 2, 3, 4, 5));
-        final Set<Integer> input2 = new HashSet<Integer>(Arrays.asList(4, 5, 6, 7, 8));
-        final Set<Integer> expected = new HashSet<Integer>(Arrays.asList(1, 2, 3));
+        final Set<Integer> input1 = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5));
+        final Set<Integer> input2 = new HashSet<>(Arrays.asList(4, 5, 6, 7, 8));
+        final Set<Integer> expected = new HashSet<>(Arrays.asList(1, 2, 3));
 
         final Set<Integer> diff = Functional.set.asymmetricDifference(input1, input2);
         assertThat(diff.containsAll(expected)).isTrue();
@@ -24,8 +24,8 @@ class Functional_SetAsymmetricDifference_Test {
 
     @Test
     void setAsymmetricDifferenceTest2() {
-        final Set<Integer> input1 = new HashSet<Integer>(Arrays.asList(1, 2, 3, 4, 5));
-        final Set<Integer> input2 = new HashSet<Integer>(Arrays.asList(6, 7, 8));
+        final Set<Integer> input1 = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5));
+        final Set<Integer> input2 = new HashSet<>(Arrays.asList(6, 7, 8));
         final Set<Integer> expected = Collections.emptySet();
 
         final Set<Integer> diff = Functional.set.asymmetricDifference(input1, input2);

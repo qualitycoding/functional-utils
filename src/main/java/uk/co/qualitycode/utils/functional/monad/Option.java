@@ -91,6 +91,6 @@ public final class Option<T> {
     public static <A, B, C> Option<C> lift(final BiFunction<A, B, C> f, final Option<A> o1, final Option<B> o2) {
         return o1.toVavrOption().isDefined() && o2.toVavrOption().isDefined()
                 ? of(f.apply(o1.toVavrOption().get(), o2.toVavrOption().get()))
-                : new Option<C>(io.vavr.control.Option.none());
+                : new Option<>(io.vavr.control.Option.none());
     }
 }

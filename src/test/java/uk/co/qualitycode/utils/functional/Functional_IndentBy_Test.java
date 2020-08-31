@@ -17,19 +17,22 @@ import static uk.co.qualitycode.utils.functional.UsingWrapper.using;
 class Functional_IndentBy_Test {
     @Test
     void defaultParamsBehaviour_throwsWhenHowManyIsNegative() {
-        assertThatIllegalArgumentException().isThrownBy(()-> indentBy(-1, "d", "hhljj"))
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> indentBy(-1, "d", "hhljj"))
                 .withMessage("Negative numbers must not be supplied as 'howMany'");
     }
 
     @Test
     void defaultParamsBehaviour_throwsWhenUnitOfIndentationIsNull() {
-        assertThatIllegalArgumentException().isThrownBy(()-> indentBy(0, null, "hhljj"))
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> indentBy(0, null, "hhljj"))
                 .withMessage("unitOfIndentation must not be null");
     }
 
     @Test
     void defaultParamsBehaviour_throwsWhenUnitOfIndentThisIsNull() {
-        assertThatIllegalArgumentException().isThrownBy(()-> indentBy(0, "d", null))
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> indentBy(0, "d", null))
                 .withMessage("indentThis must not be null");
     }
 

@@ -18,7 +18,7 @@ class Functional_TakeWhile_Test {
     void curriedTakeWhileTest1() {
         final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
         {
-            final List<Integer> expected = new ArrayList<Integer>();
+            final List<Integer> expected = new ArrayList<>();
             final List<Integer> output = Functional.takeWhile(Functional.isEven).apply(l);
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -28,7 +28,7 @@ class Functional_TakeWhile_Test {
     void takeWhileTest1() {
         final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
         {
-            final List<Integer> expected = new ArrayList<Integer>();
+            final List<Integer> expected = new ArrayList<>();
             final List<Integer> output = Functional.takeWhile(Functional.isEven, l);
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -59,7 +59,7 @@ class Functional_TakeWhile_Test {
     void seqTakeWhileTest1() {
         final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
         {
-            final List<Integer> expected = new ArrayList<Integer>();
+            final List<Integer> expected = new ArrayList<>();
             final List<Integer> output = Functional.toList(Functional.seq.takeWhile(Functional.isEven, l));
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -140,7 +140,7 @@ class Functional_TakeWhile_Test {
     void curriedSeqTakeWhileTest1() {
         final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
         {
-            final List<Integer> expected = new ArrayList<Integer>();
+            final List<Integer> expected = new ArrayList<>();
             final List<Integer> output = Functional.toList(Functional.seq.takeWhile(Functional.isEven).apply(l));
             assertThat(output).containsExactlyElementsOf(expected);
         }

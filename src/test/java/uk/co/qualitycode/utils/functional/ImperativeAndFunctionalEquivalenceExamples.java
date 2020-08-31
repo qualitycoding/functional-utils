@@ -33,7 +33,7 @@ public final class ImperativeAndFunctionalEquivalenceExamples {
         }
 
         private static int functional(final int n) {
-            return fold(sum, 0, init(Functional.identity(), n));
+            return fold(sum, 0, init(Function.identity(), n));
         }
 
         @Test

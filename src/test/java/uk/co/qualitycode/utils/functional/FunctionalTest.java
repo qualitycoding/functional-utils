@@ -2,6 +2,7 @@ package uk.co.qualitycode.utils.functional;
 
 import io.vavr.Tuple2;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import uk.co.qualitycode.utils.functional.monad.Option;
 import uk.co.qualitycode.utils.functional.monad.OptionNoValueAccessException;
@@ -22,6 +23,8 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static uk.co.qualitycode.utils.functional.Functional.isEven;
 
 class FunctionalTest {
@@ -30,30 +33,54 @@ class FunctionalTest {
     public static Function<Integer, Integer> triplingGenerator = a -> 3 * a;
     public static Function<Integer, Integer> quadruplingGenerator = a -> 4 * a;
 
-    @Test
-    void convertFlatMapFnFromOptional() {
-        final Function<Integer, Optional<Integer>> f1 = Optional::of;
-        final Function<Integer, io.vavr.control.Option<Integer>> f2 = io.vavr.control.Option::some;
+    @Nested
+    class ConvertFlatMap {
+        @Test
+        void preconditions() {
+            assertAll(
+                    () -> assertThatIllegalArgumentException()
+                            .isThrownBy(() -> Functional.ConvertFlatMapOptionalToOption.convert(null))
+                            .withMessage("convert(Function<T,Optional<T>>): tfm must not be null"),
+                    () -> assertThatIllegalArgumentException()
+                            .isThrownBy(() -> Functional.ConvertFlatMapOptionToOptional.convert(null))
+                            .withMessage("convert(Function<T,Option<T>>): tfm must not be null"));
+        }
 
-        final int expected = 2;
-        final Optional<Integer> i1 = Optional.of(expected);
-        final io.vavr.control.Option<Integer> i2 = io.vavr.control.Option.some(expected);
-        assertThat(i1.flatMap(f1)).hasValue(expected);
-        assertThat(i2.flatMap(f2)).contains(expected);
-        assertThat(Functional.ConvertFlatMapOptionalToOption.convert(f1).apply(expected)).contains(expected);
-    }
+        @Test
+        void convertOptionalAcceptsTfmThatReturnsNull() {
+            assertThat(Functional.ConvertFlatMapOptionalToOption.convert(o->null).apply(new Object())).isEmpty();
+        }
 
-    @Test
-    void convertFlatMapFnFromOption() {
-        final Function<Integer, io.vavr.control.Option<Integer>> f1 = io.vavr.control.Option::of;
-        final Function<Integer, Optional<Integer>> f2 = Optional::of;
+        @Test
+        void convertOptionAcceptsTfmThatReturnsNull() {
+            assertThat(Functional.ConvertFlatMapOptionToOptional.convert(o->null).apply(new Object())).isEmpty();
+        }
 
-        final int expected = 2;
-        final io.vavr.control.Option<Integer> i1 = io.vavr.control.Option.some(expected);
-        final Optional<Integer> i2 = Optional.of(expected);
-        assertThat(i1.flatMap(f1)).contains(expected);
-        assertThat(i2.flatMap(f2)).hasValue(expected);
-        assertThat(Functional.ConvertFlatMapOptionToOptional.convert(f1).apply(expected)).contains(expected);
+        @Test
+        void convertFlatMapFnFromOptional() {
+            final Function<Integer, Optional<Integer>> f1 = Optional::of;
+            final Function<Integer, io.vavr.control.Option<Integer>> f2 = io.vavr.control.Option::some;
+
+            final int expected = 2;
+            final Optional<Integer> i1 = Optional.of(expected);
+            final io.vavr.control.Option<Integer> i2 = io.vavr.control.Option.some(expected);
+            assertThat(i1.flatMap(f1)).hasValue(expected);
+            assertThat(i2.flatMap(f2)).contains(expected);
+            assertThat(Functional.ConvertFlatMapOptionalToOption.convert(f1).apply(expected)).contains(expected);
+        }
+
+        @Test
+        void convertFlatMapFnFromOption() {
+            final Function<Integer, io.vavr.control.Option<Integer>> f1 = io.vavr.control.Option::of;
+            final Function<Integer, Optional<Integer>> f2 = Optional::of;
+
+            final int expected = 2;
+            final io.vavr.control.Option<Integer> i1 = io.vavr.control.Option.some(expected);
+            final Optional<Integer> i2 = Optional.of(expected);
+            assertThat(i1.flatMap(f1)).contains(expected);
+            assertThat(i2.flatMap(f2)).hasValue(expected);
+            assertThat(Functional.ConvertFlatMapOptionToOptional.convert(f1).apply(expected)).contains(expected);
+        }
     }
 
     static boolean bothAreEven(final int a, final int b) {
@@ -568,7 +595,7 @@ class FunctionalTest {
     @Test
     void iterableToMutableSetTest() {
         final List<String> expected = Arrays.asList("0", "3", "6", "9", "11");
-        final Iterable<String> input = Functional.seq.map(Functional.identity(), expected);
+        final Iterable<String> input = Functional.seq.map(Function.identity(), expected);
         final Set<String> output = Functional.toMutableSet(input);
         assertThat(expected.containsAll(output)).isTrue();
         assertThat(output.containsAll(expected)).isTrue();

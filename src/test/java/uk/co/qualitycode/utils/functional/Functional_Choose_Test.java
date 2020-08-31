@@ -38,11 +38,11 @@ class Functional_Choose_Test {
         Map<Integer, String> o = null;
         try {
             final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-            o = Functional.toDictionary(Functional.identity(), Functional.dStringify(),
+            o = Functional.toDictionary(Function.identity(), Functional.dStringify(),
                     Functional.choose(i -> i % 2 == 0 ? Option.of(i) : Option.none(), li));
         } catch (final Exception e) {
         }
-        final Map<Integer, String> expected = new HashMap<Integer, String>();
+        final Map<Integer, String> expected = new HashMap<>();
         expected.put(6, "6");
         expected.put(12, "12");
         assertThat(expected.size() == o.size()).isTrue();

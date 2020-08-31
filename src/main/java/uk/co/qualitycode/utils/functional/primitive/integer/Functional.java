@@ -725,7 +725,7 @@ public final class Functional {
     public static <T> Object[] toArray(final Iterable<T> input)
     //public static <T>T[] toArray(final Iterable<T> input)
     {
-        if (input == null) throw new IllegalArgumentException("Functional.toArray(Iterable<T>): input is null");
+        if (input == null) throw new IllegalArgumentException("Functional.toArray(Iterable<T>): input must not be null");
 
         if (input instanceof Collection<?>)
             return ((Collection<T>) input).toArray();
@@ -737,7 +737,7 @@ public final class Functional {
     }
 
     public static <T> List<T> toMutableList(final Iterable<T> input) {
-        if (input == null) throw new IllegalArgumentException("Functional.toMutableList(Iterable<T>): input is null");
+        if (input == null) throw new IllegalArgumentException("Functional.toMutableList(Iterable<T>): input must not be null");
 
         if (input instanceof Collection<?>) {
             final Collection<T> input_ = (Collection<T>) input;
@@ -754,7 +754,7 @@ public final class Functional {
 
     public static <K, V> Map<K, V> toMutableDictionary(final Map<K, V> input) {
         if (input == null)
-            throw new IllegalArgumentException("Functional.toMutableDictionary(Map<K,V>): input is null");
+            throw new IllegalArgumentException("Functional.toMutableDictionary(Map<K,V>): input must not be null");
 
         final Map<K, V> output = new HashMap<>(input.size());
         output.putAll(input);
@@ -762,7 +762,7 @@ public final class Functional {
     }
 
     public static <T> Set<T> toMutableSet(final Iterable<T> input) {
-        if (input == null) throw new IllegalArgumentException("Functional.toMutableSet(Iterable<T>): input is null");
+        if (input == null) throw new IllegalArgumentException("Functional.toMutableSet(Iterable<T>): input must not be null");
 
         if (input instanceof Collection<?>) {
             final Collection<T> input_ = (Collection<T>) input;
@@ -785,7 +785,7 @@ public final class Functional {
      * @return a list containing the elements of the input sequence
      */
     public static <T> List<T> toList(final Iterable<T> input) {
-        if (input == null) throw new IllegalArgumentException("Functional.toList(Iterable<T>): input is null");
+        if (input == null) throw new IllegalArgumentException("Functional.toList(Iterable<T>): input must not be null");
         return Collections.unmodifiableList(toMutableList(input));
     }
 
@@ -798,7 +798,7 @@ public final class Functional {
      */
     public static <T> Set<T> toSet(final Iterable<T> input) {
         //Sets.newSetFromMap();
-        if (input == null) throw new IllegalArgumentException("Functional.toSet(Iterable<T>): input is null");
+        if (input == null) throw new IllegalArgumentException("Functional.toSet(Iterable<T>): input must not be null");
         return Collections.unmodifiableSet(toMutableSet(input));
     }
 
@@ -810,7 +810,7 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if the input sequence is null or empty
      */
     public static int last(final IntIterable input) {
-        if (input == null) throw new IllegalArgumentException("Functional.last(Iterable<T>): input is null");
+        if (input == null) throw new IllegalArgumentException("Functional.last(Iterable<T>): input must not be null");
 
         boolean isSet = false;
         int state = 0;
@@ -834,7 +834,7 @@ public final class Functional {
      */
     public static <T> T last(final T[] input) {
         if (input == null || input.length == 0)
-            throw new IllegalArgumentException("Functional.last(T[]): input is null or empty");
+            throw new IllegalArgumentException("Functional.last(T[]): input must not be null or empty");
 
         return input[input.length - 1];
     }
@@ -847,8 +847,8 @@ public final class Functional {
      * @return a list containing the elements of the first sequence followed by the elements of the second sequence
      */
     public static IntList concat(final IntList list1, final IntList list2) {
-        if (list1 == null) throw new IllegalArgumentException("Functional.concat(List<T>,List<T>): list1 is null");
-        if (list2 == null) throw new IllegalArgumentException("Functional.concat(List<T>,List<T>): list2 is null");
+        if (list1 == null) throw new IllegalArgumentException("Functional.concat(List<T>,List<T>): list1 must not be null");
+        if (list2 == null) throw new IllegalArgumentException("Functional.concat(List<T>,List<T>): list2 must not be null");
 
         final int[] first = list1.extractBackingStoreWithoutCopy();
         final int[] second = list2.extractBackingStoreWithoutCopy();
@@ -866,7 +866,7 @@ public final class Functional {
      */
     public static <T> List<T> take(final int howMany, final Iterable<? extends T> list) {
         if (howMany < 0) throw new IllegalArgumentException("Functional.take(int,Iterable<T>): howMany is negative");
-        if (list == null) throw new IllegalArgumentException("Functional.take(int,Iterable<T>): list is null");
+        if (list == null) throw new IllegalArgumentException("Functional.take(int,Iterable<T>): list must not be null");
 
         if (howMany == 0) return new ArrayList<>(0);
 
@@ -906,8 +906,8 @@ public final class Functional {
      */
     public static <T> List<T> takeWhile(final Function<? super T, Boolean> predicate, final List<T> list) {
         if (predicate == null)
-            throw new IllegalArgumentException("Functional.take(Func,Iterable<T>): predicate is null");
-        if (list == null) throw new IllegalArgumentException("Functional.take(Func,Iterable<T>): list is null");
+            throw new IllegalArgumentException("Functional.take(Func,Iterable<T>): predicate must not be null");
+        if (list == null) throw new IllegalArgumentException("Functional.take(Func,Iterable<T>): list must not be null");
 
         if (list.size() == 0) return new ArrayList<>();
 
@@ -947,7 +947,7 @@ public final class Functional {
      */
     public static <T> List<T> skip(final int howMany, final List<? extends T> list) {
         if (howMany < 0) throw new IllegalArgumentException("Functional.skip(int,List<T>): howMany is negative");
-        if (list == null) throw new IllegalArgumentException("Functional.skip(int,List<T>): list is null");
+        if (list == null) throw new IllegalArgumentException("Functional.skip(int,List<T>): list must not be null");
 
         if (howMany == 0) return Collections.unmodifiableList(list);
         final int outputListSize = list.size() - howMany;
@@ -982,8 +982,8 @@ public final class Functional {
      */
     public static <T> List<T> skipWhile(final Function<? super T, Boolean> predicate, final List<T> list) {
         if (predicate == null)
-            throw new IllegalArgumentException("Functional.skipWhile(Func,List<T>): predicate is null");
-        if (list == null) throw new IllegalArgumentException("Functional.skipWhile(Func,List<T>): list is null");
+            throw new IllegalArgumentException("Functional.skipWhile(Func,List<T>): predicate must not be null");
+        if (list == null) throw new IllegalArgumentException("Functional.skipWhile(Func,List<T>): list must not be null");
 
         for (int counter = 0; counter < list.size(); ++counter)
             if (!predicate.apply(list.get(counter)))
@@ -1047,8 +1047,8 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if either input sequence is null or if the sequences have differing lengths.
      */
     public static <A, B> List<Tuple2<A, B>> zip(final Iterable<? extends A> l1, final Iterable<? extends B> l2) {
-        if (l1 == null) throw new IllegalArgumentException("Functional.zip(Iterable<A>,Iterable<B>): l1 is null");
-        if (l2 == null) throw new IllegalArgumentException("Functional.zip(Iterable<A>,Iterable<B>): l2 is null");
+        if (l1 == null) throw new IllegalArgumentException("Functional.zip(Iterable<A>,Iterable<B>): l1 must not be null");
+        if (l2 == null) throw new IllegalArgumentException("Functional.zip(Iterable<A>,Iterable<B>): l2 must not be null");
 
         final List<Tuple2<A, B>> output;
         if (l1 instanceof Collection<?> && l2 instanceof Collection<?>) {
@@ -1083,11 +1083,11 @@ public final class Functional {
      */
     public static <A, B, C> List<Tuple3<A, B, C>> zip3(final Iterable<? extends A> l1, final Iterable<? extends B> l2, final Iterable<? extends C> l3) {
         if (l1 == null)
-            throw new IllegalArgumentException("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): l1 is null");
+            throw new IllegalArgumentException("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): l1 must not be null");
         if (l2 == null)
-            throw new IllegalArgumentException("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): l2 is null");
+            throw new IllegalArgumentException("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): l2 must not be null");
         if (l3 == null)
-            throw new IllegalArgumentException("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): l3 is null");
+            throw new IllegalArgumentException("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): l3 must not be null");
 
         final List<Tuple3<A, B, C>> output;
         if (l1 instanceof Collection<?> && l2 instanceof Collection<?> && l3 instanceof Collection<?>) {
@@ -1120,7 +1120,7 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if the input sequence is null
      */
     public static <A, B> Tuple2<List<A>, List<B>> unzip(final Iterable<Tuple2<A, B>> input) {
-        if (input == null) throw new IllegalArgumentException("Functional.unzip(Iterable<Tuple2<A,B>>): input is null");
+        if (input == null) throw new IllegalArgumentException("Functional.unzip(Iterable<Tuple2<A,B>>): input must not be null");
 
         final List<A> l1;
         final List<B> l2;
@@ -1153,7 +1153,7 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if the input sequence is null
      */
     public static <A, B, C> Tuple3<List<A>, List<B>, List<C>> unzip3(final Iterable<Tuple3<A, B, C>> input) {
-        if (input == null) throw new IllegalArgumentException("Functional.unzip(Iterable<Tuple2<A,B>>): input is null");
+        if (input == null) throw new IllegalArgumentException("Functional.unzip(Iterable<Tuple2<A,B>>): input must not be null");
 
         final List<A> l1;
         final List<B> l2;
@@ -1229,7 +1229,7 @@ public final class Functional {
      * @return a pair: (list, seq) - the list contains 'howMany' elements of 'input' and the sequence contains the remainder
      */
     public static <A> Tuple2<List<A>, Iterable<A>> takeNAndYield(final Iterable<A> input, final int howMany) {
-        if (input == null) throw new IllegalArgumentException("Functional.takeNAndYield: input is null");
+        if (input == null) throw new IllegalArgumentException("Functional.takeNAndYield: input must not be null");
 
         int counter = 0;
         final List<A> output = new ArrayList<>(howMany);
@@ -1289,8 +1289,8 @@ public final class Functional {
      * @return a java.util.Map containing a list of elements for each key
      */
     public static <T, U> Map<U, List<T>> groupBy(final Function<? super T, ? extends U> keyFn, final Iterable<T> input) {
-        if (keyFn == null) throw new IllegalArgumentException("Functional.groupBy(Func,Iterable): keyFn is null");
-        if (input == null) throw new IllegalArgumentException("Functional.groupBy(Func,Iterable): input is null");
+        if (keyFn == null) throw new IllegalArgumentException("Functional.groupBy(Func,Iterable): keyFn must not be null");
+        if (input == null) throw new IllegalArgumentException("Functional.groupBy(Func,Iterable): input must not be null");
 
         final Map<U, List<T>> intermediateResults = new HashMap<>();
         for (final T element : input) {

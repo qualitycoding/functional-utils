@@ -12,7 +12,7 @@ class Functional_If_Test {
     void ifTest1() {
         final int input = 1;
         final Iterable2<Integer> i = Iterable2.asList(0, 1, 2);
-        final Iterable2<Integer> result = i.map(ii -> Functional.If(input, Functional.greaterThan(ii), FunctionalTest.doublingGenerator, FunctionalTest.triplingGenerator));
+        final Iterable2<Integer> result = i.map(ii -> Functional.if_fn(input, Functional.greaterThan(ii), FunctionalTest.doublingGenerator, FunctionalTest.triplingGenerator));
         final List<Integer> expected = Arrays.asList(2, 3, 3);
         assertThat(result).containsExactlyElementsOf(expected);
     }

@@ -44,7 +44,7 @@ class Functional_SkipWhile_Test {
             assertThat(output).containsExactlyElementsOf(expected);
         }
         {
-            final List<Integer> expected = new ArrayList<Integer>();
+            final List<Integer> expected = new ArrayList<>();
             final List<Integer> output = Functional.skipWhile(i -> i <= 6, l);
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -58,7 +58,7 @@ class Functional_SkipWhile_Test {
 
     @Test
     void skipWhileTest3() {
-        final List<Number> input = new ArrayList<Number>();
+        final List<Number> input = new ArrayList<>();
         for (int i = 1; i < 10; ++i)
             input.add(Integer.valueOf(i));
 
@@ -88,7 +88,7 @@ class Functional_SkipWhile_Test {
             assertThat(output).containsExactlyElementsOf(expected);
         }
         {
-            final List<Integer> expected = new ArrayList<Integer>();
+            final List<Integer> expected = new ArrayList<>();
             final List<Integer> output = Functional.toList(Functional.seq.skipWhile(i -> i <= 6, l));
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -149,7 +149,7 @@ class Functional_SkipWhile_Test {
 
     @Test
     void seqSkipWhileTest3() {
-        final List<Number> input = new ArrayList<Number>();
+        final List<Number> input = new ArrayList<>();
         for (int i = 1; i < 10; ++i)
             input.add(i);
 
