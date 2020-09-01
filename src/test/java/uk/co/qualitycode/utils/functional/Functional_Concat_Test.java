@@ -28,8 +28,8 @@ class Functional_Concat_Test {
         final Function<Integer, Integer> doubler = i -> i * 2;
         final List<String> expected = Arrays.asList("1", "2", "3", "4", "5", "2", "4", "6", "8", "10");
 
-        final Iterable<String> strs = Functional.seq.map(Functional.dStringify(), input);
-        final Iterable<String> output = Functional.seq.concat(strs, Functional.seq.map(Functional.dStringify(), Functional.seq.map(doubler, input)));
+        final Iterable<String> strs = Functional.seq.map(Functional.stringify(), input);
+        final Iterable<String> output = Functional.seq.concat(strs, Functional.seq.map(Functional.stringify(), Functional.seq.map(doubler, input)));
 
         assertThat(output).containsExactlyElementsOf(expected);
     }
@@ -40,8 +40,8 @@ class Functional_Concat_Test {
         final Function<Integer, Integer> doubler = i -> i * 2;
         final List<String> expected = Arrays.asList("1", "2", "3", "4", "5", "2", "4", "6", "8", "10");
 
-        final Iterable<String> strs = Functional.seq.map(Functional.dStringify(), input);
-        final Iterable<String> output = Functional.seq.concat(strs, Functional.seq.map(Functional.dStringify(), Functional.seq.map(doubler, input)));
+        final Iterable<String> strs = Functional.seq.map(Functional.stringify(), input);
+        final Iterable<String> output = Functional.seq.concat(strs, Functional.seq.map(Functional.stringify(), Functional.seq.map(doubler, input)));
 
         assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
     }
@@ -52,8 +52,8 @@ class Functional_Concat_Test {
         final Function<Integer, Integer> doubler = i -> i * 2;
         final List<String> expected = Arrays.asList("1", "2", "3", "4", "5", "2", "4", "6", "8", "10");
 
-        final Iterable<String> strs = Functional.seq.map(Functional.dStringify(), input);
-        final Iterable<String> output = Functional.seq.concat(strs, Functional.seq.map(Functional.dStringify(), Functional.seq.map(doubler, input)));
+        final Iterable<String> strs = Functional.seq.map(Functional.stringify(), input);
+        final Iterable<String> output = Functional.seq.concat(strs, Functional.seq.map(Functional.stringify(), Functional.seq.map(doubler, input)));
         try {
             output.iterator();
         } catch (final UnsupportedOperationException e) {
@@ -68,8 +68,8 @@ class Functional_Concat_Test {
         final Function<Integer, Integer> doubler = i -> i * 2;
         final List<String> expected = Arrays.asList("1", "2", "3", "4", "5", "2", "4", "6", "8", "10");
 
-        final Iterable<String> strs = Functional.seq.map(Functional.dStringify(), input);
-        final Iterable<String> output = Functional.seq.concat(strs, Functional.seq.map(Functional.dStringify(), Functional.seq.map(doubler, input)));
+        final Iterable<String> strs = Functional.seq.map(Functional.stringify(), input);
+        final Iterable<String> output = Functional.seq.concat(strs, Functional.seq.map(Functional.stringify(), Functional.seq.map(doubler, input)));
         final Iterator<String> iterator = output.iterator();
 
         for (int i = 0; i < 20; ++i)
@@ -111,8 +111,8 @@ class Functional_Concat_Test {
         final Function<Integer, Integer> doubler = i -> i * 2;
         final Set<String> expected = new HashSet<>(Arrays.asList("1", "2", "3", "4", "5", "6", "8", "10"));
 
-        final Set<String> strs = Functional.set.map(Functional.dStringify(), input);
-        final Set<String> output = Functional.set.concat(strs, Functional.set.map(Functional.dStringify(), Functional.set.map(doubler, input)));
+        final Set<String> strs = Functional.set.map(Functional.stringify(), input);
+        final Set<String> output = Functional.set.concat(strs, Functional.set.map(Functional.stringify(), Functional.set.map(doubler, input)));
 
         assertThat(expected.containsAll(output)).isTrue();
         assertThat(output.containsAll(expected)).isTrue();

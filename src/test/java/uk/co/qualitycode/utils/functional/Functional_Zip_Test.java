@@ -46,9 +46,11 @@ class Functional_Zip_Test {
         expected.add(new Tuple2<>(5, "4"));
         expected.add(new Tuple2<>(6, "5"));
 
-        final List<Tuple2<Integer, String>> output = Functional.zip(i -> i + 1, Functional.dStringify(), ints);
+        final List<Tuple2<Integer, String>> output = Functional.zip(i -> i + 1, Functional.stringify(), ints);
 
         assertThat(output).containsExactlyElementsOf(expected);
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(()->output.add(new Tuple2<>(1,"hjh")));
     }
 
     @Test
@@ -62,7 +64,7 @@ class Functional_Zip_Test {
         expected.add(new Tuple2<>(4, "4"));
         expected.add(new Tuple2<>(5, "5"));
 
-        final List<Tuple2<Integer, String>> output = Functional.zip(Function.<Integer>identity(), Functional.dStringify()).apply(ints);
+        final List<Tuple2<Integer, String>> output = Functional.zip(Function.<Integer>identity(), Functional.stringify()).apply(ints);
 
         assertThat(output).containsExactlyElementsOf(expected);
     }
@@ -82,6 +84,8 @@ class Functional_Zip_Test {
         final List<Tuple2<Integer, Character>> output = Functional.zip(input1, input2);
 
         assertThat(output).containsExactlyElementsOf(expected);
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(()->output.add(new Tuple2<>(1,'d')));
     }
 
     @Test
@@ -109,6 +113,8 @@ class Functional_Zip_Test {
         final List<Tuple2<Integer, Character>> output = Functional.zip(input1, input2);
 
         assertThat(output).containsExactlyElementsOf(expected);
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(()->output.add(new Tuple2<>(1,'d')));
     }
 
     @Test
@@ -226,7 +232,7 @@ class Functional_Zip_Test {
             expected.add(new Tuple2<>(4, "4"));
             expected.add(new Tuple2<>(5, "5"));
 
-            final List<Tuple2<Integer, String>> output = Functional.toList(Functional.seq.zip(Function.identity(), Functional.dStringify(), input));
+            final List<Tuple2<Integer, String>> output = Functional.toList(Functional.seq.zip(Function.identity(), Functional.stringify(), input));
 
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -235,7 +241,7 @@ class Functional_Zip_Test {
         void cantRemoveFromSeqZipFnTest1() {
             final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
 
-            final Iterable<Tuple2<Integer, String>> output = Functional.seq.zip(Function.identity(), Functional.dStringify(), input);
+            final Iterable<Tuple2<Integer, String>> output = Functional.seq.zip(Function.identity(), Functional.stringify(), input);
             assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
         }
 
@@ -243,7 +249,7 @@ class Functional_Zip_Test {
         void cantRestartIteratorFromSeqZipFnTest1() {
             final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
 
-            final Iterable<Tuple2<Integer, String>> output = Functional.seq.zip(Function.identity(), Functional.dStringify(), input);
+            final Iterable<Tuple2<Integer, String>> output = Functional.seq.zip(Function.identity(), Functional.stringify(), input);
             try {
                 output.iterator();
             } catch (final UnsupportedOperationException e) {

@@ -20,7 +20,7 @@ class Functional_Rec_Test {
     @Test
     void recMap() {
         final Collection<Integer> li = Functional.init(doublingGenerator, 5);
-        final Iterable<String> actual = Functional.rec.map(Functional.dStringify(), li);
+        final Iterable<String> actual = Functional.rec.map(Functional.stringify(), li);
         assertThat(actual).containsExactly("2", "4", "6", "8", "10");
     }
 }

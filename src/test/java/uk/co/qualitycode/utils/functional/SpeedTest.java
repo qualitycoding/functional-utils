@@ -40,7 +40,7 @@ class SpeedTest {
         {
             final long start = System.currentTimeMillis();
             for (int i = 0; i < howMany; ++i) {
-                mapWithIterable(Functional.dStringify(), input);
+                mapWithIterable(Functional.stringify(), input);
             }
             final long howLong = System.currentTimeMillis() - start;
             System.out.println(howLong + "ms to map using Iterable and whatever array resizing the JVM implements");
@@ -48,7 +48,7 @@ class SpeedTest {
         {
             final long start = System.currentTimeMillis();
             for (int i = 0; i < howMany; ++i) {
-                mapWithCollection(Functional.dStringify(), input);
+                mapWithCollection(Functional.stringify(), input);
             }
             final long howLong = System.currentTimeMillis() - start;
             System.out.println(howLong + "ms to map using Collection");
@@ -56,7 +56,7 @@ class SpeedTest {
         {
             final long start = System.currentTimeMillis();
             for (int i = 0; i < howMany; ++i) {
-                mapWithInstanceOf(Functional.dStringify(), input);
+                mapWithInstanceOf(Functional.stringify(), input);
             }
             final long howLong = System.currentTimeMillis() - start;
             System.out.println(howLong + "ms to map using a Collection and instanceof to determine the initial array size");

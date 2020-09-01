@@ -25,7 +25,7 @@ class Functional_Last_Test {
     @Test
     void lastTest2() {
         final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-        final Iterable<String> strs = Functional.seq.map(Functional.dStringify(), input);
+        final Iterable<String> strs = Functional.seq.map(Functional.stringify(), input);
         assertThat(Functional.last(strs)).isEqualTo("5");
     }
 

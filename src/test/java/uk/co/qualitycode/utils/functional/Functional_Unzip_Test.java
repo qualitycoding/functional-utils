@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class Functional_Unzip_Test {
@@ -39,6 +40,10 @@ class Functional_Unzip_Test {
         assertThat(output).satisfies(__ -> {
             assertThat(output._1()).containsExactlyElementsOf(expected._1());
             assertThat(output._2()).containsExactlyElementsOf(expected._2());
+            assertThatExceptionOfType(UnsupportedOperationException.class)
+                    .isThrownBy(() -> output._1().add("string"));
+            assertThatExceptionOfType(UnsupportedOperationException.class)
+                    .isThrownBy(() -> output._2().add(0));
         });
     }
 
@@ -62,6 +67,12 @@ class Functional_Unzip_Test {
             assertThat(output._1()).containsExactlyElementsOf(expected._1());
             assertThat(output._2()).containsExactlyElementsOf(expected._2());
             assertThat(output._2()).containsExactlyElementsOf(expected._2());
+            assertThatExceptionOfType(UnsupportedOperationException.class)
+                    .isThrownBy(() -> output._1().add("string"));
+            assertThatExceptionOfType(UnsupportedOperationException.class)
+                    .isThrownBy(() -> output._2().add(0));
+            assertThatExceptionOfType(UnsupportedOperationException.class)
+                    .isThrownBy(() -> output._3().add("0"));
         });
     }
 }

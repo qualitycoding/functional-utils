@@ -41,7 +41,7 @@ class Iterable2Test {
     @Test
     void mapTest1() {
         final Iterable2<Integer> input = Iterable2.asList(1, 2, 3, 4, 5);
-        final Iterable2<String> output = input.map(Functional.dStringify());
+        final Iterable2<String> output = input.map(Functional.stringify());
         assertThat(output).containsExactly("1", "2", "3", "4", "5");
     }
 
@@ -186,7 +186,7 @@ class Iterable2Test {
     @Test
     void toStringTest1() {
         final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
-        final Iterable2<String> ls = li.map(Functional.dStringify());
+        final Iterable2<String> ls = li.map(Functional.stringify());
         //String s = String.Join(",", ls);
         assertThat(ls).containsExactly("2", "4", "6", "8", "10");
     }
@@ -206,7 +206,7 @@ class Iterable2Test {
         Map<Integer, String> o = null;
         try {
             final Iterable2<Integer> li = Iterable2.init(TriplingGenerator, 5);
-            o = Functional.toDictionary(Function.identity(), Functional.dStringify(),
+            o = Functional.toDictionary(Function.identity(), Functional.stringify(),
                     li.choose(
                             i -> i % 2 == 0 ? Option.of(i) : Option.none()));
         } catch (final Exception e) {
@@ -254,7 +254,7 @@ class Iterable2Test {
     @Test
     void foldvsMapTest1() {
         final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
-        final String s1 = Functional.join(",", li.map(Functional.dStringify()));
+        final String s1 = Functional.join(",", li.map(Functional.stringify()));
         assertThat(s1).isEqualTo("2,4,6,8,10");
         final String s2 = Iterable2.init(DoublingGenerator, 5).fold(
                 Iterable2Test::csv, "");
@@ -465,7 +465,7 @@ class Iterable2Test {
         final String expected = "3,6,9,12,15";
         {
             final Iterable2<Integer> ids = Iterable2.init(TriplingGenerator, 5);
-            assertThat(Functional.join(",", ids.map(Functional.dStringify()))).isEqualTo(expected);
+            assertThat(Functional.join(",", ids.map(Functional.stringify()))).isEqualTo(expected);
         }
         final Iterable2<Integer> ids = Iterable2.init(TriplingGenerator, 5);
         assertThat(")).isEqualTo(expected, ids.join(");
@@ -537,7 +537,7 @@ class Iterable2Test {
     @Test
     void toArrayTest1() {
         final Iterable2<Integer> input = Iterable2.asList(1, 2, 3, 4, 5);
-        final Iterable2<String> strs = input.map(Functional.dStringify());
+        final Iterable2<String> strs = input.map(Functional.stringify());
         final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
 
         final Object[] output = strs.toArray();
@@ -565,7 +565,7 @@ class Iterable2Test {
     @Test
     void toDictionaryTest() {
         final Iterable2<Integer> input = Iterable2.asList(1, 2, 3, 4, 5);
-        final Map<Integer, String> output = input.toDictionary(Function.identity(), Functional.dStringify());
+        final Map<Integer, String> output = input.toDictionary(Function.identity(), Functional.stringify());
 
         final Map<Integer, String> expected = new HashMap<>();
         expected.put(1, "1");
@@ -597,7 +597,7 @@ class Iterable2Test {
     @Test
     void lastTest2() {
         final Iterable2<Integer> input = Iterable2.asList(1, 2, 3, 4, 5);
-        final Iterable<String> strs = input.map(Functional.dStringify());
+        final Iterable<String> strs = input.map(Functional.stringify());
         assertThat(Functional.last(strs)).isEqualTo("5");
     }
 
@@ -614,8 +614,8 @@ class Iterable2Test {
         final Function<Integer, Integer> doubler = i -> i * 2;
         final Iterable2<String> expected = Iterable2.asList("1", "2", "3", "4", "5", "2", "4", "6", "8", "10");
 
-        final Iterable2<String> strs = input.map(Functional.dStringify());
-        final Iterable2<String> output = strs.concat(input.map(doubler).map(Functional.dStringify()));
+        final Iterable2<String> strs = input.map(Functional.stringify());
+        final Iterable2<String> output = strs.concat(input.map(doubler).map(Functional.stringify()));
 
         assertThat(output).containsExactlyElementsOf(expected);
     }
@@ -646,7 +646,7 @@ class Iterable2Test {
     void fwdPipelineTest3() {
         final Iterable2<Integer> input = Iterable2.init(DoublingGenerator, 5);
         final Iterable2<String> output = input.in(
-                integers -> integers.map(Functional.dStringify()));
+                integers -> integers.map(Functional.stringify()));
 
         final Collection<String> expected = Arrays.asList("2", "4", "6", "8", "10");
         assertThat(output).containsExactlyElementsOf(expected);
@@ -658,7 +658,7 @@ class Iterable2Test {
         final Iterable2<String> output = input.in(
                 integers -> {
                     try {
-                        return integers.map(Functional.dStringify());
+                        return integers.map(Functional.stringify());
                     } catch (final Exception e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                         return null; // Argh!!!
@@ -932,7 +932,7 @@ class Iterable2Test {
     void findTest1() {
         final String trueMatch = "6";
         final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
-        final Iterable2<String> ls = li.map(Functional.dStringify());
+        final Iterable2<String> ls = li.map(Functional.stringify());
         OptionAssert.assertThat(ls.find(s -> s.equals(trueMatch))).hasValue(trueMatch);
     }
 
@@ -940,7 +940,7 @@ class Iterable2Test {
     void findTest2() {
         final String falseMatch = "7";
         final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
-        final Iterable2<String> ls = li.map(Functional.dStringify());
+        final Iterable2<String> ls = li.map(Functional.stringify());
         OptionAssert.assertThat(ls.find(s -> s.equals(falseMatch))).isEmpty();
     }
 
@@ -948,7 +948,7 @@ class Iterable2Test {
     void findIndexTest1() {
         final String trueMatch = "6";
         final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
-        final Iterable2<String> ls = li.map(Functional.dStringify());
+        final Iterable2<String> ls = li.map(Functional.stringify());
         assertThat(ls.findIndex(s -> s.equals(trueMatch))).isEqualTo(2);
     }
 
@@ -956,7 +956,7 @@ class Iterable2Test {
     void findIndexTest2() {
         final String falseMatch = "7";
         final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
-        final Iterable2<String> ls = li.map(Functional.dStringify());
+        final Iterable2<String> ls = li.map(Functional.stringify());
         assertThatIllegalArgumentException().isThrownBy(() -> ls.findIndex(s -> s.equals(falseMatch)));
     }
 
@@ -998,11 +998,11 @@ class Iterable2Test {
                     }
 
                     public String getValue() {
-                        return Functional.<Integer>dStringify().apply(i);
+                        return Functional.<Integer>stringify().apply(i);
                     }
 
                     public String getKey() {
-                        return Functional.<Integer>dStringify().apply(i);
+                        return Functional.<Integer>stringify().apply(i);
                     }
                 }, input);
 
@@ -1069,7 +1069,7 @@ class Iterable2Test {
     @Test
     void recMapTest1() {
         final Iterable2<Integer> input = Iterable2.asList(1, 2, 3, 4, 5);
-        final Iterable<String> output = input.map(Functional.dStringify());
+        final Iterable<String> output = input.map(Functional.stringify());
         assertThat(output).containsExactly("1", "2", "3", "4", "5");
     }
 
@@ -1079,7 +1079,7 @@ class Iterable2Test {
         final String s2;
         {
             final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
-            s1 = Functional.join(",", li.map(Functional.dStringify()));
+            s1 = Functional.join(",", li.map(Functional.stringify()));
             assertThat(s1).isEqualTo("2,4,6,8,10");
         }
         {
@@ -1120,7 +1120,7 @@ class Iterable2Test {
     @Test
     void emptySeqTestMap() {
         final Iterable2<Integer> l = Iterable2.empty(); // for some reason the generic type inference failed and so
-        final Iterable2<String> l1 = l.map(Functional.dStringify()); // this filter needed to be fed from a statically-typed variable
+        final Iterable2<String> l1 = l.map(Functional.stringify()); // this filter needed to be fed from a statically-typed variable
         final Iterable2<String> other = Iterable2.empty();
 
         assertThat(l1).containsExactlyElementsOf(other);

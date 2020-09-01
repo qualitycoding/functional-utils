@@ -47,6 +47,8 @@ class Functional_Zip3_Test {
         final List<Tuple3<Integer, Character, Double>> output = Functional.zip3(input1, input2, input3);
 
         assertThat(output).containsExactlyElementsOf(expected);
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(()->output.add(new Tuple3<>(1,'l',2.0)));
     }
 
     @Test

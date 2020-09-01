@@ -498,11 +498,11 @@ class FunctionalTest {
             }
 
             public String getValue() {
-                return Functional.<Integer>dStringify().apply(i);
+                return Functional.<Integer>stringify().apply(i);
             }
 
             public String getKey() {
-                return Functional.<Integer>dStringify().apply(i);
+                return Functional.<Integer>stringify().apply(i);
             }
         }, input);
 
@@ -525,7 +525,7 @@ class FunctionalTest {
     @Test
     void mapInTermsOfFoldTest1() {
         final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-        final Collection<String> output = Functional.inTermsOfFold.map(Functional.dStringify(), input);
+        final Collection<String> output = Functional.inTermsOfFold.map(Functional.stringify(), input);
         assertThat(output).containsExactly("1", "2", "3", "4", "5");
     }
 

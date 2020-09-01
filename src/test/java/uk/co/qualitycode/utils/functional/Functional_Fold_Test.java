@@ -54,7 +54,7 @@ class Functional_Fold_Test {
     @Test
     void foldvsMapTest1() {
         final Collection<Integer> li = Functional.init(doublingGenerator, 5);
-        final String s1 = join(",", Functional.map(Functional.dStringify(), li));
+        final String s1 = join(",", Functional.map(Functional.stringify(), li));
         assertThat(s1).isEqualTo("2,4,6,8,10");
         final String s2 = Functional.fold(FunctionalTest::csv, "", li);
         assertThat(s2).isEqualTo(s1);
@@ -106,5 +106,7 @@ class Functional_Fold_Test {
         final List<Integer> keys = new ArrayList<>(missingPricesPerDate.keySet());
         Collections.sort(keys);
         assertThat(Functional.map(FunctionalTest.myInt::i, output._2())).containsExactlyElementsOf(keys);
+//        assertThatExceptionOfType(UnsupportedOperationException.class)
+//                .isThrownBy(()->output._2().add(new FunctionalTest.myInt(0)));
     }
 }

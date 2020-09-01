@@ -38,7 +38,7 @@ class Functional_Choose_Test {
         Map<Integer, String> o = null;
         try {
             final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-            o = Functional.toDictionary(Function.identity(), Functional.dStringify(),
+            o = Functional.toDictionary(Function.identity(), Functional.stringify(),
                     Functional.choose(i -> i % 2 == 0 ? Option.of(i) : Option.none(), li));
         } catch (final Exception e) {
         }

@@ -11,7 +11,7 @@ class Functional_ToArray_Test {
     @Test
     void toArrayTest1() {
         final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-        final Iterable<String> strs = Functional.seq.map(Functional.dStringify(), input);
+        final Iterable<String> strs = Functional.seq.map(Functional.stringify(), input);
         final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
 
         final Object[] output = Functional.toArray(strs);
@@ -24,7 +24,7 @@ class Functional_ToArray_Test {
     @Test
     void collectionToArrayTest1() {
         final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-        final List<String> strs = Functional.map(Functional.dStringify(), input);
+        final List<String> strs = Functional.map(Functional.stringify(), input);
         final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
 
         final Object[] output = Functional.toArray(strs);

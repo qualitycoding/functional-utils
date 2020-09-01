@@ -41,7 +41,7 @@ class LispListTest {
     @Test
     void mapTest1() {
         final List<Integer> input = list(1, list(2, list(3, list(4, list(5, LispList.nil())))));
-        final List<String> output = map(Functional.dStringify(), input);
+        final List<String> output = map(Functional.stringify(), input);
         assertThat(output.head()).isEqualTo("1");
         assertThat(output.tail().head()).isEqualTo("2");
         assertThat(output.tail().tail().head()).isEqualTo("3");
@@ -52,7 +52,7 @@ class LispListTest {
     @Test
     void equalsTest2() {
         final List<Integer> input = list(1, list(2, list(3, list(4, list(5, LispList.nil())))));
-        final List<String> output = map(Functional.dStringify(), input);
+        final List<String> output = map(Functional.stringify(), input);
         assertThat(output).isEqualTo(list("1", list("2", list("3", list("4", list("5", LispList.nil()))))));
     }
 
