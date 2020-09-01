@@ -35,22 +35,36 @@ class Functional_Map_Test {
                 .isThrownBy(() -> map(null, mock(Iterable.class)))
                 .withMessage("map(Function<A,B>,Iterable<A>): f must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> map(i -> i, (Iterable)null))
+                .isThrownBy(() -> map(i -> i, (Iterable) null))
                 .withMessage("map(Function<A,B>,Iterable<A>): input must not be null");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> map(null))
+                .withMessage("map(Function<A,B>): f must not be null");
+
     }
 
     @Test
     void mapIterableOfIntsToStrings() {
         final List<String> output = map(stringify(), Functional.seq.init(doublingGenerator, 5));
         assertThat(output).containsExactly("2", "4", "6", "8", "10");
-        assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(() -> output.add("ighijh"));
     }
 
     @Test
     void mapIntsToStrings() {
         final List<String> output = map(stringify(), Arrays.asList(1, 2, 3, 4, 5));
         assertThat(output).containsExactly("1", "2", "3", "4", "5");
+    }
+
+    @Test
+    void mapIterableReturnsImmutableList() {
+        final List<String> output = map(stringify(), Functional.seq.init(doublingGenerator, 5));
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(() -> output.add("ighijh"));
+    }
+
+    @Test
+    void mapIntsToStringsReturnsImmutableList() {
+        final List<String> output = map(stringify(), Arrays.asList(1, 2, 3, 4, 5));
         assertThatExceptionOfType(UnsupportedOperationException.class)
                 .isThrownBy(() -> output.add("ighijh"));
     }

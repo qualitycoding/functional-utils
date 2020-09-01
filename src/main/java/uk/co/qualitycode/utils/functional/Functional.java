@@ -66,7 +66,8 @@ public final class Functional {
          * @return
          */
         public static <T> Function<T, io.vavr.control.Option<T>> convert(final Function<T, Optional<T>> tfm) {
-            if (tfm == null) throw new IllegalArgumentException("convert(Function<T,Optional<T>>): tfm must not be null");
+            if (tfm == null)
+                throw new IllegalArgumentException("convert(Function<T,Optional<T>>): tfm must not be null");
             return t -> Option.of(tfm.apply(t)).toVavrOption();
         }
     }
@@ -108,7 +109,8 @@ public final class Functional {
      */
     public static <T> String join(final String separator, final Iterable<T> l, final Function<? super T, String> tfm) {
         if (l == null) return "";
-        if (tfm == null) throw new IllegalArgumentException("join(String,Iterable<T>,Function<T,String>): tfm must not be null");
+        if (tfm == null)
+            throw new IllegalArgumentException("join(String,Iterable<T>,Function<T,String>): tfm must not be null");
 
         return join(separator, map(tfm, l));
     }
@@ -122,9 +124,12 @@ public final class Functional {
      * @return a string indenting the input string by the indicated number of units
      */
     public static String indentBy(final int howMany, final String unitOfIndentation, final String indentThis) {
-        if (howMany < 0) throw new IllegalArgumentException("indentBy(int,String,String): Negative numbers must not be supplied as 'howMany'");
-        if (unitOfIndentation == null) throw new IllegalArgumentException("indentBy(int,String,String): unitOfIndentation must not be null");
-        if (indentThis == null) throw new IllegalArgumentException("indentBy(int,String,String): indentThis must not be null");
+        if (howMany < 0)
+            throw new IllegalArgumentException("indentBy(int,String,String): Negative numbers must not be supplied as 'howMany'");
+        if (unitOfIndentation == null)
+            throw new IllegalArgumentException("indentBy(int,String,String): unitOfIndentation must not be null");
+        if (indentThis == null)
+            throw new IllegalArgumentException("indentBy(int,String,String): indentThis must not be null");
 
         return fold((state, str) -> str + state, indentThis, init(integer -> unitOfIndentation, howMany));
     }
@@ -144,8 +149,10 @@ public final class Functional {
             final BiFunction<A, B, Tuple2<A, Option<B>>> f,
             final A initialValue,
             final Iterable<B> input) {
-        if (f == null) throw new IllegalArgumentException("foldAndChoose(BiFunction<A,B,Tuple2<A,Option<B>>,A,Iterable<B>): fn must not be null");
-        if (input == null) throw new IllegalArgumentException("foldAndChoose(BiFunction<A,B,Tuple2<A,Option<B>>,A,Iterable<B>): input must not be null");
+        if (f == null)
+            throw new IllegalArgumentException("foldAndChoose(BiFunction<A,B,Tuple2<A,Option<B>>,A,Iterable<B>): fn must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("foldAndChoose(BiFunction<A,B,Tuple2<A,Option<B>>,A,Iterable<B>): input must not be null");
 
         final Tuple2<A, List<B>> initial = new Tuple2<>(initialValue, new ArrayList<>());
         return fold((state, b) -> {
@@ -232,7 +239,8 @@ public final class Functional {
      */
     public static <A> Option<A> find(final Function<? super A, Boolean> f, final Iterable<A> input) {
         if (f == null) throw new IllegalArgumentException("find(Function<A,Boolean>,Iterable<A>): f must not be null");
-        if (input == null) throw new IllegalArgumentException("find(Function<A,Boolean>,Iterable<A>): input must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("find(Function<A,Boolean>,Iterable<A>): input must not be null");
 
         return find((Predicate<? super A>) (x -> f.apply(x)), input);
     }
@@ -283,7 +291,8 @@ public final class Functional {
      */
     public static <A> int findIndex(final Predicate<A> f, final Iterable<? extends A> input) {
         if (f == null) throw new IllegalArgumentException("findIndex(Predicate<A>,Iterable<A>): f must not be null");
-        if (input == null) throw new IllegalArgumentException("findIndex(Predicate<A>,Iterable<A>): input must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("findIndex(Predicate<A>,Iterable<A>): input must not be null");
 
         int pos = 0;
         for (final A a : input)
@@ -306,8 +315,10 @@ public final class Functional {
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
     public static <A> int findIndex(final Function<A, Boolean> f, final Iterable<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("findIndex(Function<A,Boolean>,Iterable<A>): f must not be null");
-        if (input == null) throw new IllegalArgumentException("findIndex(Function<A,Boolean>,Iterable<A>): input must not be null");
+        if (f == null)
+            throw new IllegalArgumentException("findIndex(Function<A,Boolean>,Iterable<A>): f must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("findIndex(Function<A,Boolean>,Iterable<A>): input must not be null");
         return findIndex((Predicate<A>) x -> f.apply(x), input);
     }
 
@@ -323,8 +334,10 @@ public final class Functional {
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
     public static <A> Option<A> findLast(final Function<A, Boolean> f, final Iterable<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("findLast(Function<A,Boolean>,Iterable<A>): f must not be null");
-        if (input == null) throw new IllegalArgumentException("findLast(Function<A,Boolean>,Iterable<A>): input must not be null");
+        if (f == null)
+            throw new IllegalArgumentException("findLast(Function<A,Boolean>,Iterable<A>): f must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("findLast(Function<A,Boolean>,Iterable<A>): input must not be null");
         return findLast((Predicate<A>) x -> f.apply(x), input);
     }
 
@@ -341,7 +354,8 @@ public final class Functional {
      */
     public static <A> Option<A> findLast(final Predicate<A> f, final Iterable<? extends A> input) {
         if (f == null) throw new IllegalArgumentException("findLast(Predicate<A>,Iterable<A>): f must not be null");
-        if (input == null) throw new IllegalArgumentException("findLast(Predicate<A>,Iterable<A>): input must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("findLast(Predicate<A>,Iterable<A>): input must not be null");
 
         final Tuple2<? extends List<? extends A>, ? extends Iterable<? extends A>> p = takeNAndYield(input, 1);
         final Tuple2<A, Boolean> seed = new Tuple2<>(p._1().get(0), f.test(p._1().get(0)));
@@ -363,7 +377,8 @@ public final class Functional {
      */
     public static <A> Option<A> findLast(final Function<A, Boolean> f, final List<? extends A> input) {
         if (f == null) throw new IllegalArgumentException("findLast(Function<A,Boolean>,List<A>): f must not be null");
-        if (input == null) throw new IllegalArgumentException("findLast(Function<A,Boolean>,List<A>): input must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("findLast(Function<A,Boolean>,List<A>): input must not be null");
         return findLast((Predicate<A>) x -> f.apply(x), input);
     }
 
@@ -402,7 +417,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A> Function<Iterable<A>, Option<A>> findLast(final Function<A, Boolean> f) {
-        if(f==null) throw new IllegalArgumentException("findLast(Function<A,Boolean>): f must not be null");
+        if (f == null) throw new IllegalArgumentException("findLast(Function<A,Boolean>): f must not be null");
         return input -> input instanceof List ? Functional.findLast(f, (List<A>) input) : Functional.findLast(f, input);
     }
 
@@ -419,7 +434,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A> Function<Iterable<A>, Option<A>> findLast(final Predicate<A> f) {
-        if(f==null) throw new IllegalArgumentException("findLast(Predicate<A>): f must not be null");
+        if (f == null) throw new IllegalArgumentException("findLast(Predicate<A>): f must not be null");
         return input -> input instanceof List ? Functional.findLast(f, (List<A>) input) : Functional.findLast(f, input);
     }
 
@@ -436,8 +451,10 @@ public final class Functional {
      * @return the first non-None transformed element of the input sequence
      */
     public static <A, B> Option<B> pick(final Function<? super A, Option<B>> f, final Iterable<A> input) {
-        if (f == null) throw new IllegalArgumentException("pick(Function<A,Option<B>>, Iterable<A>): f must not be null");
-        if (input == null) throw new IllegalArgumentException("pick(Function<A,Option<B>>, Iterable<A>): input must not be null");
+        if (f == null)
+            throw new IllegalArgumentException("pick(Function<A,Option<B>>, Iterable<A>): f must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("pick(Function<A,Option<B>>, Iterable<A>): input must not be null");
 
         for (final A a : input) {
             final Option<B> intermediate = f.apply(a); // which is, effectively, if(f(a)) return f(a), but without evaluating f twice
@@ -748,7 +765,8 @@ public final class Functional {
      */
     public static <T> List<T> init(final Function<Integer, T> f, final int howMany) {
         if (f == null) throw new IllegalArgumentException("init(Function<Integer,T>,int): f must not be null");
-        if (howMany < 0) throw new IllegalArgumentException("init(Function<Integer,T>,int): howMany must be non-negative");
+        if (howMany < 0)
+            throw new IllegalArgumentException("init(Function<Integer,T>,int): howMany must be non-negative");
 
         final List<T> output = new ArrayList<>(howMany);
         for (int i = 1; i <= howMany; ++i)
@@ -768,9 +786,9 @@ public final class Functional {
      * @return a list of type B containing the transformed values.
      */
     public static <A, B> List<B> map(final Function<A, ? extends B> f, final Iterable<? extends A> input) {
-        if(f==null) throw new IllegalArgumentException("map(Function<A,B>,Iterable<A>): f must not be null");
-        if(input==null) throw new IllegalArgumentException("map(Function<A,B>,Iterable<A>): input must not be null");
-        return Collections.unmodifiableList(StreamSupport.stream(input.spliterator(),false).map(f).collect(Collectors.toList()));
+        if (f == null) throw new IllegalArgumentException("map(Function<A,B>,Iterable<A>): f must not be null");
+        if (input == null) throw new IllegalArgumentException("map(Function<A,B>,Iterable<A>): input must not be null");
+        return Collections.unmodifiableList(StreamSupport.stream(input.spliterator(), false).map(f).collect(Collectors.toList()));
     }
 
     /**
@@ -785,8 +803,9 @@ public final class Functional {
      * @return a list of type B containing the transformed values.
      */
     public static <A, B> List<B> map(final Function<A, ? extends B> f, final Collection<? extends A> input) {
-        if(f==null) throw new IllegalArgumentException("map(Function<A,B>,Collection<A>): f must not be null");
-        if(input==null) throw new IllegalArgumentException("map(Function<A,B>,Collection<A>): input must not be null");
+        if (f == null) throw new IllegalArgumentException("map(Function<A,B>,Collection<A>): f must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("map(Function<A,B>,Collection<A>): input must not be null");
         return Collections.unmodifiableList(input.stream().map(f).collect(Collectors.toList()));
     }
 
@@ -803,6 +822,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A, B> Function<Iterable<A>, Iterable<B>> map(final Function<? super A, ? extends B> f) {
+        if (f == null) throw new IllegalArgumentException("map(Function<A,B>): f must not be null");
         return input -> Functional.map(f, input);
     }
 
@@ -819,7 +839,35 @@ public final class Functional {
      * @return a list of type B containing the transformed values.
      */
     public static <A, B> List<B> mapi(final BiFunction<Integer, A, ? extends B> f, final Iterable<? extends A> input) {
-        final List<B> output = input instanceof Collection<?> ? new ArrayList<>(((Collection) input).size()) : new ArrayList<>();
+        if (f == null)
+            throw new IllegalArgumentException("mapi(BiFunction<Integer,A,B>,Iterable<A>): f must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("mapi(BiFunction<Integer,A,B>,Iterable<A>): input must not be null");
+        final List<B> output = new ArrayList<>();
+        int pos = 0;
+        for (final A a : input)
+            output.add(f.apply(pos++, a));
+        return Collections.unmodifiableList(output);
+    }
+
+    /**
+     * See <a href="http://en.wikipedia.org/wiki/Map_(higher-order_function)">Map</a>
+     * This is a 1-to-1 transformation. Every element in the input sequence will be transformed into an element in the output sequence.
+     * mapi: (int -> A -> B) -> A list -> B list
+     *
+     * @param f     a transformation function which is passed each input object of type A along with its position in the input sequence
+     *              (starting from zero) and returns an object, presumably related, of type B
+     * @param input a sequence to be fed into f
+     * @param <A>   the type of the element in the input sequence
+     * @param <B>   the type of the element in the output sequence
+     * @return a list of type B containing the transformed values.
+     */
+    public static <A, B> List<B> mapi(final BiFunction<Integer, A, ? extends B> f, final Collection<? extends A> input) {
+        if (f == null)
+            throw new IllegalArgumentException("mapi(BiFunction<Integer,A,B>,Collection<A>): f must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("mapi(BiFunction<Integer,A,B>,Collection<A>): input must not be null");
+        final List<B> output = new ArrayList<>(input.size());
         int pos = 0;
         for (final A a : input)
             output.add(f.apply(pos++, a));
@@ -840,6 +888,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A, B> Function<Iterable<A>, List<B>> mapi(final BiFunction<Integer, ? super A, ? extends B> f) {
+        if (f == null) throw new IllegalArgumentException("mapi(BiFunction<Integer,A,B>): f must not be null");
         return input -> Functional.mapi(f, input);
     }
 
@@ -855,6 +904,10 @@ public final class Functional {
      * @return a sorted list containing all the elements of 'input' sorted using <tt>Collections.sort</tt> and 'f'
      */
     public static <A, AA extends A> List<AA> sortWith(final Comparator<A> f, final Collection<AA> input) {
+        if (f == null)
+            throw new IllegalArgumentException("sortWith(Comparator<A>,Collection<B>): comparator must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("sortWith(Comparator<A>,Collection<B>): input must not be null");
         final List<AA> output = new ArrayList<>(input);
         Collections.sort(output, f);
         return Collections.unmodifiableList(output);
