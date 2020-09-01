@@ -16,35 +16,35 @@ class Functional_Between_Test {
         void lowerBound() {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Functional.between(null, 4, 3))
-                    .withMessage("lower bound must not be null");
+                    .withMessage("between(T,T,T): lower bound must not be null");
         }
 
         @Test
         void upperBound() {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Functional.between(1, null, 3))
-                    .withMessage("upper bound must not be null");
+                    .withMessage("between(T,T,T): upper bound must not be null");
         }
 
         @Test
         void bounds() {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Functional.between(null, 3))
-                    .withMessage("bounds must not be null");
+                    .withMessage("between(Tuple2<T,T>,T): bounds must not be null");
         }
 
         @Test
         void value() {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Functional.between(new Tuple2<>(1, 2), null))
-                    .withMessage("value must not be null");
+                    .withMessage("between(Tuple2<T,T>,T): value must not be null");
         }
 
         @Test
         void lowerBoundShouldBeLessThanUpperBound() {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Functional.between(2, 1, 3))
-                    .withMessage("lower bound must be less than upper bound");
+                    .withMessage("between(T,T,T): lower bound must be less than upper bound");
         }
     }
 

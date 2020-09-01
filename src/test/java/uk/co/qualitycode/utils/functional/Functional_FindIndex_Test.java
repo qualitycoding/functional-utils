@@ -18,16 +18,16 @@ class Functional_FindIndex_Test {
         assertAll(
                 () -> assertThatIllegalArgumentException()
                         .isThrownBy(() -> findIndex((Function) null, mock(Iterable.class)))
-                        .withMessage("f must not be null"),
+                        .withMessage("findIndex(Function<A,Boolean>,Iterable<A>): f must not be null"),
                 () -> assertThatIllegalArgumentException()
                         .isThrownBy(() -> findIndex((Predicate) null, mock(Iterable.class)))
-                        .withMessage("f must not be null"),
+                        .withMessage("findIndex(Predicate<A>,Iterable<A>): f must not be null"),
                 () -> assertThatIllegalArgumentException()
                         .isThrownBy(() -> findIndex((Function) x -> true, null))
-                        .withMessage("input must not be null"),
+                        .withMessage("findIndex(Function<A,Boolean>,Iterable<A>): input must not be null"),
                 () -> assertThatIllegalArgumentException()
                         .isThrownBy(() -> findIndex((Predicate) x -> true, null))
-                        .withMessage("input must not be null")
+                        .withMessage("findIndex(Predicate<A>,Iterable<A>): input must not be null")
         );
     }
 

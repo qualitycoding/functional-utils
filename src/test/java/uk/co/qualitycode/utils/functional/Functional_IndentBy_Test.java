@@ -19,21 +19,21 @@ class Functional_IndentBy_Test {
     void defaultParamsBehaviour_throwsWhenHowManyIsNegative() {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> indentBy(-1, "d", "hhljj"))
-                .withMessage("Negative numbers must not be supplied as 'howMany'");
+                .withMessage("indentBy(int,String,String): Negative numbers must not be supplied as 'howMany'");
     }
 
     @Test
     void defaultParamsBehaviour_throwsWhenUnitOfIndentationIsNull() {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> indentBy(0, null, "hhljj"))
-                .withMessage("unitOfIndentation must not be null");
+                .withMessage("indentBy(int,String,String): unitOfIndentation must not be null");
     }
 
     @Test
     void defaultParamsBehaviour_throwsWhenUnitOfIndentThisIsNull() {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> indentBy(0, "d", null))
-                .withMessage("indentThis must not be null");
+                .withMessage("indentBy(int,String,String): indentThis must not be null");
     }
 
     @Test

@@ -317,12 +317,16 @@ class StringTest {
 
         @Test
         void throwsWithFunction() {
-            assertThatNullPointerException().isThrownBy(() -> assertThat(NonBlankString.of("jkh").filter((Function) null))).withMessage("predicate must not be null");
+            assertThatNullPointerException()
+.isThrownBy(() -> assertThat(NonBlankString.of("jkh").filter((Function) null)))
+.withMessage("predicate must not be null");
         }
 
         @Test
         void throwsWithPredicate() {
-            assertThatNullPointerException().isThrownBy(() -> assertThat(NonBlankString.of("jkh").filter((Function) null))).withMessage("predicate must not be null");
+            assertThatNullPointerException()
+.isThrownBy(() -> assertThat(NonBlankString.of("jkh").filter((Function) null)))
+.withMessage("predicate must not be null");
         }
     }
 
@@ -339,7 +343,9 @@ class StringTest {
 
         @Test
         void mapThrows() {
-            assertThatNullPointerException().isThrownBy(() -> NonBlankString.of("jhglgl").map(null)).withMessage("tfm must not be null");
+            assertThatNullPointerException()
+.isThrownBy(() -> NonBlankString.of("jhglgl").map(null))
+.withMessage("tfm must not be null");
         }
     }
 
@@ -356,7 +362,9 @@ class StringTest {
 
         @Test
         void flatMapThrows() {
-            assertThatNullPointerException().isThrownBy(() -> NonBlankString.of("jhglgl").flatMap(null)).withMessage("tfm must not be null");
+            assertThatNullPointerException()
+.isThrownBy(() -> NonBlankString.of("jhglgl").flatMap(null))
+.withMessage("tfm must not be null");
         }
     }
 

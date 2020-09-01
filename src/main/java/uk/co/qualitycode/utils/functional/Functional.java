@@ -122,9 +122,9 @@ public final class Functional {
      * @return a string indenting the input string by the indicated number of units
      */
     public static String indentBy(final int howMany, final String unitOfIndentation, final String indentThis) {
-        if (howMany < 0) throw new IllegalArgumentException("Negative numbers must not be supplied as 'howMany'");
-        if (unitOfIndentation == null) throw new IllegalArgumentException("unitOfIndentation must not be null");
-        if (indentThis == null) throw new IllegalArgumentException("indentThis must not be null");
+        if (howMany < 0) throw new IllegalArgumentException("indentBy(int,String,String): Negative numbers must not be supplied as 'howMany'");
+        if (unitOfIndentation == null) throw new IllegalArgumentException("indentBy(int,String,String): unitOfIndentation must not be null");
+        if (indentThis == null) throw new IllegalArgumentException("indentBy(int,String,String): indentThis must not be null");
 
         return fold((state, str) -> str + state, indentThis, init(integer -> unitOfIndentation, howMany));
     }
@@ -144,8 +144,8 @@ public final class Functional {
             final BiFunction<A, B, Tuple2<A, Option<B>>> f,
             final A initialValue,
             final Iterable<B> input) {
-        if (f == null) throw new IllegalArgumentException("f");
-        if (input == null) throw new IllegalArgumentException("input");
+        if (f == null) throw new IllegalArgumentException("foldAndChoose(BiFunction<A,B,Tuple2<A,Option<B>>,A,Iterable<B>): fn must not be null");
+        if (input == null) throw new IllegalArgumentException("foldAndChoose(BiFunction<A,B,Tuple2<A,Option<B>>,A,Iterable<B>): input must not be null");
 
         final Tuple2<A, List<B>> initial = new Tuple2<>(initialValue, new ArrayList<>());
         return fold((state, b) -> {
@@ -167,11 +167,11 @@ public final class Functional {
      * @return lowerBound < val < upperBound
      */
     public static <T extends Comparable<T>> boolean between(final T lowerBound, final T upperBound, final T val) {
-        if (lowerBound == null) throw new IllegalArgumentException("lower bound must not be null");
-        if (upperBound == null) throw new IllegalArgumentException("upper bound must not be null");
+        if (lowerBound == null) throw new IllegalArgumentException("between(T,T,T): lower bound must not be null");
+        if (upperBound == null) throw new IllegalArgumentException("between(T,T,T): upper bound must not be null");
         if (lowerBound.compareTo(upperBound) > -1)
-            throw new IllegalArgumentException("lower bound must be less than upper bound");
-        if (val == null) throw new IllegalArgumentException("value must not be null");
+            throw new IllegalArgumentException("between(T,T,T): lower bound must be less than upper bound");
+        if (val == null) throw new IllegalArgumentException("between(T,T,T): value must not be null");
 
         return val.compareTo(lowerBound) > 0 && val.compareTo(upperBound) < 0;
     }
@@ -183,7 +183,8 @@ public final class Functional {
      * @return lowerBound < val < upperBound
      */
     public static <T extends Comparable<T>> boolean between(final Tuple2<T, T> bounds, final T val) {
-        if (bounds == null) throw new IllegalArgumentException("bounds must not be null");
+        if (bounds == null) throw new IllegalArgumentException("between(Tuple2<T,T>,T): bounds must not be null");
+        if (val == null) throw new IllegalArgumentException("between(Tuple2<T,T>,T): value must not be null");
         return between(bounds._1, bounds._2, val);
     }
 
@@ -208,8 +209,8 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if f or input are null
      */
     public static <A> Option<A> find(final Predicate<? super A> f, final Iterable<A> input) {
-        if (f == null) throw new IllegalArgumentException("f must not be null");
-        if (input == null) throw new IllegalArgumentException("input must not be null");
+        if (f == null) throw new IllegalArgumentException("find(Predicate<A>,Iterable<A>): f must not be null");
+        if (input == null) throw new IllegalArgumentException("find(Predicate<A>,Iterable<A>): input must not be null");
 
         for (final A a : input) {
             if (f.test((a)))
@@ -230,7 +231,8 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if f or input are null
      */
     public static <A> Option<A> find(final Function<? super A, Boolean> f, final Iterable<A> input) {
-        if (f == null) throw new IllegalArgumentException("f must not be null");
+        if (f == null) throw new IllegalArgumentException("find(Function<A,Boolean>,Iterable<A>): f must not be null");
+        if (input == null) throw new IllegalArgumentException("find(Function<A,Boolean>,Iterable<A>): input must not be null");
 
         return find((Predicate<? super A>) (x -> f.apply(x)), input);
     }
@@ -280,8 +282,8 @@ public final class Functional {
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
     public static <A> int findIndex(final Predicate<A> f, final Iterable<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("f must not be null");
-        if (input == null) throw new IllegalArgumentException("input must not be null");
+        if (f == null) throw new IllegalArgumentException("findIndex(Predicate<A>,Iterable<A>): f must not be null");
+        if (input == null) throw new IllegalArgumentException("findIndex(Predicate<A>,Iterable<A>): input must not be null");
 
         int pos = 0;
         for (final A a : input)
@@ -304,7 +306,8 @@ public final class Functional {
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
     public static <A> int findIndex(final Function<A, Boolean> f, final Iterable<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("f must not be null");
+        if (f == null) throw new IllegalArgumentException("findIndex(Function<A,Boolean>,Iterable<A>): f must not be null");
+        if (input == null) throw new IllegalArgumentException("findIndex(Function<A,Boolean>,Iterable<A>): input must not be null");
         return findIndex((Predicate<A>) x -> f.apply(x), input);
     }
 
@@ -320,7 +323,8 @@ public final class Functional {
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
     public static <A> Option<A> findLast(final Function<A, Boolean> f, final Iterable<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("f must not be null");
+        if (f == null) throw new IllegalArgumentException("findLast(Function<A,Boolean>,Iterable<A>): f must not be null");
+        if (input == null) throw new IllegalArgumentException("findLast(Function<A,Boolean>,Iterable<A>): input must not be null");
         return findLast((Predicate<A>) x -> f.apply(x), input);
     }
 
@@ -336,8 +340,8 @@ public final class Functional {
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
     public static <A> Option<A> findLast(final Predicate<A> f, final Iterable<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("f must not be null");
-        if (input == null) throw new IllegalArgumentException("input must not be null");
+        if (f == null) throw new IllegalArgumentException("findLast(Predicate<A>,Iterable<A>): f must not be null");
+        if (input == null) throw new IllegalArgumentException("findLast(Predicate<A>,Iterable<A>): input must not be null");
 
         final Tuple2<? extends List<? extends A>, ? extends Iterable<? extends A>> p = takeNAndYield(input, 1);
         final Tuple2<A, Boolean> seed = new Tuple2<>(p._1().get(0), f.test(p._1().get(0)));
@@ -358,7 +362,8 @@ public final class Functional {
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
     public static <A> Option<A> findLast(final Function<A, Boolean> f, final List<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("f must not be null");
+        if (f == null) throw new IllegalArgumentException("findLast(Function<A,Boolean>,List<A>): f must not be null");
+        if (input == null) throw new IllegalArgumentException("findLast(Function<A,Boolean>,List<A>): input must not be null");
         return findLast((Predicate<A>) x -> f.apply(x), input);
     }
 
@@ -374,8 +379,8 @@ public final class Functional {
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
     public static <A> Option<A> findLast(final Predicate<A> f, final List<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("f must not be null");
-        if (input == null) throw new IllegalArgumentException("input must not be null");
+        if (f == null) throw new IllegalArgumentException("findLast(Predicate<A>,List<A>): f must not be null");
+        if (input == null) throw new IllegalArgumentException("findLast(Predicate<A>,List<A>): input must not be null");
 
         for (final A a : Iterators.reverse(input)) {
             if (f.test(a))
@@ -397,6 +402,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A> Function<Iterable<A>, Option<A>> findLast(final Function<A, Boolean> f) {
+        if(f==null) throw new IllegalArgumentException("findLast(Function<A,Boolean>): f must not be null");
         return input -> input instanceof List ? Functional.findLast(f, (List<A>) input) : Functional.findLast(f, input);
     }
 
@@ -413,6 +419,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A> Function<Iterable<A>, Option<A>> findLast(final Predicate<A> f) {
+        if(f==null) throw new IllegalArgumentException("findLast(Predicate<A>): f must not be null");
         return input -> input instanceof List ? Functional.findLast(f, (List<A>) input) : Functional.findLast(f, input);
     }
 
@@ -429,8 +436,8 @@ public final class Functional {
      * @return the first non-None transformed element of the input sequence
      */
     public static <A, B> Option<B> pick(final Function<? super A, Option<B>> f, final Iterable<A> input) {
-        if (f == null) throw new IllegalArgumentException("f must not be null");
-        if (input == null) throw new IllegalArgumentException("input must not be null");
+        if (f == null) throw new IllegalArgumentException("pick(Function<A,Option<B>>, Iterable<A>): f must not be null");
+        if (input == null) throw new IllegalArgumentException("pick(Function<A,Option<B>>, Iterable<A>): input must not be null");
 
         for (final A a : input) {
             final Option<B> intermediate = f.apply(a); // which is, effectively, if(f(a)) return f(a), but without evaluating f twice
@@ -618,7 +625,7 @@ public final class Functional {
         final List<A> l1;
         final List<B> l2;
         if (input instanceof Collection<?>) {
-            final int size = ((Collection) input).size();
+            final int size = ((Collection<?>) input).size();
             l1 = new ArrayList<>(size);
             l2 = new ArrayList<>(size);
         } else {
@@ -653,7 +660,7 @@ public final class Functional {
         final List<B> l2;
         final List<C> l3;
         if (input instanceof Collection<?>) {
-            final int size = ((Collection) input).size();
+            final int size = ((Collection<?>) input).size();
             l1 = new ArrayList<>(size);
             l2 = new ArrayList<>(size);
             l3 = new ArrayList<>(size);

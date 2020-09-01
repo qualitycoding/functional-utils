@@ -1,5 +1,6 @@
 package uk.co.qualitycode.utils.functional;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+@Disabled("These don't currently *test* anything")
 class SpeedTest {
     public static <A, B> List<B> mapWithIterable(final Function<A, ? extends B> f, final Iterable<? extends A> input) {
         final List<B> output = new ArrayList<>();

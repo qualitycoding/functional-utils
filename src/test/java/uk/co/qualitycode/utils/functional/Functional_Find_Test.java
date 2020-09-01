@@ -18,10 +18,18 @@ class Functional_Find_Test {
     @Test
     void preconditions() {
         assertAll(
-                () -> assertThatIllegalArgumentException().isThrownBy(() -> find((Predicate) null, Collections.emptySet())).withMessage("f must not be null"),
-                () -> assertThatIllegalArgumentException().isThrownBy(() -> find((Function) null, Collections.emptySet())).withMessage("f must not be null"),
-                () -> assertThatIllegalArgumentException().isThrownBy(() -> find((Predicate) x -> x.equals(new Object()), null)).withMessage("input must not be null"),
-                () -> assertThatIllegalArgumentException().isThrownBy(() -> find((Function) x -> x.equals(new Object()), null)).withMessage("input must not be null"));
+                () -> assertThatIllegalArgumentException()
+                        .isThrownBy(() -> find((Predicate) null, Collections.emptySet()))
+                        .withMessage("find(Predicate<A>,Iterable<A>): f must not be null"),
+                () -> assertThatIllegalArgumentException()
+                        .isThrownBy(() -> find((Function) null, Collections.emptySet()))
+                        .withMessage("find(Function<A,Boolean>,Iterable<A>): f must not be null"),
+                () -> assertThatIllegalArgumentException()
+                        .isThrownBy(() -> find((Predicate) x -> x.equals(new Object()), null))
+                        .withMessage("find(Predicate<A>,Iterable<A>): input must not be null"),
+                () -> assertThatIllegalArgumentException()
+                        .isThrownBy(() -> find((Function) x -> x.equals(new Object()), null))
+                        .withMessage("find(Function<A,Boolean>,Iterable<A>): input must not be null"));
     }
 
     @Test

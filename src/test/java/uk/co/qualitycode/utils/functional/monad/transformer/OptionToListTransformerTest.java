@@ -15,7 +15,9 @@ class OptionToListTransformerTest {
     class OfOption {
         @Test
         void precondition() {
-            assertThatNullPointerException().isThrownBy(() -> OptionToListTransformer.of((Option) null)).withMessage("value must not be null");
+            assertThatNullPointerException()
+.isThrownBy(() -> OptionToListTransformer.of((Option) null))
+.withMessage("value must not be null");
         }
 
         @Test
@@ -36,7 +38,9 @@ class OptionToListTransformerTest {
     class OfOptional {
         @Test
         void precondition() {
-            assertThatNullPointerException().isThrownBy(() -> OptionToListTransformer.of((Optional) null)).withMessage("value must not be null");
+            assertThatNullPointerException()
+.isThrownBy(() -> OptionToListTransformer.of((Optional) null))
+.withMessage("value must not be null");
         }
 
         @Test

@@ -48,7 +48,9 @@ class IOrTest {
     class LeftThrows {
         @Test
         void whenArgsAreNull() {
-            assertThatNullPointerException().isThrownBy(() -> IOr.left(null)).withMessage("left must not be null");
+            assertThatNullPointerException()
+.isThrownBy(() -> IOr.left(null))
+.withMessage("left must not be null");
         }
     }
 
@@ -56,7 +58,9 @@ class IOrTest {
     class RightThrows {
         @Test
         void whenArgsAreNull() {
-            assertThatNullPointerException().isThrownBy(() -> IOr.right(null)).withMessage("right must not be null");
+            assertThatNullPointerException()
+.isThrownBy(() -> IOr.right(null))
+.withMessage("right must not be null");
         }
     }
 
@@ -66,17 +70,23 @@ class IOrTest {
         class Null {
             @Test
             void leftArgIsNull() {
-                assertThatNullPointerException().isThrownBy(() -> IOr.both(null, new Object())).withMessage("left must not be null");
+                assertThatNullPointerException()
+.isThrownBy(() -> IOr.both(null, new Object()))
+.withMessage("left must not be null");
             }
 
             @Test
             void rightArgIsNull() {
-                assertThatNullPointerException().isThrownBy(() -> IOr.both(new Object(), null)).withMessage("right must not be null");
+                assertThatNullPointerException()
+.isThrownBy(() -> IOr.both(new Object(), null))
+.withMessage("right must not be null");
             }
 
             @Test
             void bothArgsAreNull() {
-                assertThatNullPointerException().isThrownBy(() -> IOr.both(null, null)).withMessage("left and right must not both be null");
+                assertThatNullPointerException()
+.isThrownBy(() -> IOr.both(null, null))
+.withMessage("left and right must not both be null");
             }
         }
     }
@@ -206,12 +216,16 @@ class IOrTest {
 
         @Test
         void mapThrowsWhenSuppliedNullFunction() {
-            assertThatNullPointerException().isThrownBy(() -> IOr.both(new Object(), new Object()).map((Function) null)).withMessage("tfm must not be null");
+            assertThatNullPointerException()
+.isThrownBy(() -> IOr.both(new Object(), new Object()).map((Function) null))
+.withMessage("tfm must not be null");
         }
 
         @Test
         void tfmShouldNotReturnNull() {
-            assertThatNullPointerException().isThrownBy(() -> IOr.right(new Object()).map(x -> null)).withMessage("right must not be null");
+            assertThatNullPointerException()
+.isThrownBy(() -> IOr.right(new Object()).map(x -> null))
+.withMessage("right must not be null");
         }
     }
 
@@ -256,12 +270,16 @@ class IOrTest {
 
         @Test
         void throwsWhenSuppliedNullFunction() {
-            assertThatNullPointerException().isThrownBy(() -> IOr.both(new Object(), new Object()).mapLeft((Function) null)).withMessage("tfm must not be null");
+            assertThatNullPointerException()
+.isThrownBy(() -> IOr.both(new Object(), new Object()).mapLeft((Function) null))
+.withMessage("tfm must not be null");
         }
 
         @Test
         void tfmShouldNotReturnNull() {
-            assertThatNullPointerException().isThrownBy(() -> IOr.left(new Object()).mapLeft(x -> null)).withMessage("left must not be null");
+            assertThatNullPointerException()
+.isThrownBy(() -> IOr.left(new Object()).mapLeft(x -> null))
+.withMessage("left must not be null");
         }
     }
 
@@ -322,22 +340,30 @@ class IOrTest {
 
             @Test
             void mapBothThrowsWhenSuppliedNullAsLeft() {
-                assertThatNullPointerException().isThrownBy(() -> IOr.both(new Object(), new Object()).mapBoth(null, Function.identity())).withMessage("leftTfm must not be null");
+                assertThatNullPointerException()
+.isThrownBy(() -> IOr.both(new Object(), new Object()).mapBoth(null, Function.identity()))
+.withMessage("leftTfm must not be null");
             }
 
             @Test
             void mapBothThrowsWhenSuppliedNullAsRight() {
-                assertThatNullPointerException().isThrownBy(() -> IOr.both(new Object(), new Object()).mapBoth(Function.identity(), null)).withMessage("rightTfm must not be null");
+                assertThatNullPointerException()
+.isThrownBy(() -> IOr.both(new Object(), new Object()).mapBoth(Function.identity(), null))
+.withMessage("rightTfm must not be null");
             }
 
             @Test
             void leftTfmShouldNotReturnNull() {
-                assertThatNullPointerException().isThrownBy(() -> IOr.both(new Object(), new Object()).mapBoth(x -> null, Function.identity())).withMessage("left must not be null");
+                assertThatNullPointerException()
+.isThrownBy(() -> IOr.both(new Object(), new Object()).mapBoth(x -> null, Function.identity()))
+.withMessage("left must not be null");
             }
 
             @Test
             void rightTfmShouldNotReturnNull() {
-                assertThatNullPointerException().isThrownBy(() -> IOr.both(new Object(), new Object()).mapBoth(Function.identity(), x -> null)).withMessage("right must not be null");
+                assertThatNullPointerException()
+.isThrownBy(() -> IOr.both(new Object(), new Object()).mapBoth(Function.identity(), x -> null))
+.withMessage("right must not be null");
             }
         }
     }

@@ -16,8 +16,12 @@ class Functional_Pick_Test {
     @Test
     void preconditions() {
         assertAll(
-                () -> assertThatIllegalArgumentException().isThrownBy(() -> pick(null, mock(Iterable.class))).withMessage("f must not be null"),
-                () -> assertThatIllegalArgumentException().isThrownBy(() -> pick(Function.identity(), null)).withMessage("input must not be null"));
+                () -> assertThatIllegalArgumentException()
+                        .isThrownBy(() -> pick(null, mock(Iterable.class)))
+                        .withMessage("pick(Function<A,Option<B>>, Iterable<A>): f must not be null"),
+                () -> assertThatIllegalArgumentException()
+                        .isThrownBy(() -> pick(Function.identity(), null))
+                        .withMessage("pick(Function<A,Option<B>>, Iterable<A>): input must not be null"));
     }
 
     @Test
