@@ -16,7 +16,7 @@ class FunctionTest {
         final UnaryFunction<Integer, String> stringify = new UnaryFunction<Integer, String>() {
 
             public String apply(final Integer integer) {
-                return Functional.Stringify(integer);
+                return Functional.stringify(integer);
             }
         };
 
@@ -45,7 +45,7 @@ class FunctionTest {
                 new BinaryFunction<Double, Integer, String>() {
 
                     public String apply(final Double d, final Integer i) {
-                        return Functional.Stringify((int) (i * d));
+                        return Functional.stringify((int) (i * d));
                     }
                 };
 
@@ -63,7 +63,7 @@ class FunctionTest {
                 new BinaryFunction<Double, Integer, String>() {
 
                     public String apply(final Double d, final Integer i) {
-                        return Functional.Stringify((int) (i * d));
+                        return Functional.stringify((int) (i * d));
                     }
                 };
 

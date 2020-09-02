@@ -11,36 +11,38 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
+import static uk.co.qualitycode.utils.functional.Functional.sortWith;
+import static uk.co.qualitycode.utils.functional.Functional.sorter;
 
 class Functional_Sort_Test {
     @Test
     void preconditions() {
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.sortWith(null, mock(Collection.class)))
+                .isThrownBy(() -> sortWith(null, mock(Collection.class)))
                 .withMessage("sortWith(Comparator<A>,Collection<B>): comparator must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.sortWith(mock(Comparator.class), (Collection)null))
+                .isThrownBy(() -> sortWith(mock(Comparator.class), (Collection)null))
                 .withMessage("sortWith(Comparator<A>,Collection<B>): input must not be null");
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.sortWith(null, mock(Iterable.class)))
+                .isThrownBy(() -> sortWith(null, mock(Iterable.class)))
                 .withMessage("sortWith(Comparator<A>,Iterable<B>): comparator must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.sortWith(mock(Comparator.class), (Iterable)null))
+                .isThrownBy(() -> sortWith(mock(Comparator.class), (Iterable)null))
                 .withMessage("sortWith(Comparator<A>,Iterable<B>): input must not be null");
     }
 
     @Test
     void sortWithTest() {
         final List<Integer> i = Arrays.asList(1, 6, 23, 7, 4);
-        final List<Integer> output = Functional.sortWith(Integer::compare, i);
+        final List<Integer> output = sortWith(Integer::compare, i);
         assertThat(output).containsExactly(1, 4, 6, 7, 23);
     }
 
     @Test
     void sortWithReturnsImmutableList() {
         final List<Integer> i = Arrays.asList(1, 6, 23, 7, 4);
-        final List<Integer> output = Functional.sortWith(Integer::compare, i);
+        final List<Integer> output = sortWith(Integer::compare, i);
         assertThatExceptionOfType(UnsupportedOperationException.class)
                 .isThrownBy(() -> output.add(1));
     }
@@ -48,15 +50,29 @@ class Functional_Sort_Test {
     @Test
     void sortWithIterableTest() {
         final Iterable<Integer> i = Arrays.asList(1, 6, 23, 7, 4);
-        final List<Integer> output = Functional.sortWith(Integer::compare, i);
+        final List<Integer> output = sortWith(Integer::compare, i);
         assertThat(output).containsExactly(1, 4, 6, 7, 23);
     }
 
     @Test
     void sortWithIterableReturnsImmutableList() {
         final Iterable<Integer> i = Arrays.asList(1, 6, 23, 7, 4);
-        final List<Integer> output = Functional.sortWith(Integer::compare, i);
+        final List<Integer> output = sortWith(Integer::compare, i);
         assertThatExceptionOfType(UnsupportedOperationException.class)
                 .isThrownBy(() -> output.add(1));
+    }
+
+    @Test
+    void sorterOrdersThing() {
+        assertThat(sorter(Integer.valueOf(2), Integer.valueOf(10))).isEqualTo(-1);
+        assertThat(sorter(Integer.valueOf(2), Integer.valueOf(2))).isEqualTo(0);
+        assertThat(sorter(Integer.valueOf(10), Integer.valueOf(2))).isEqualTo(1);
+    }
+
+    @Test
+    void sorterWithSortWith() {
+        assertThat(sortWith(sorter, Arrays.asList(2,10))).isEqualTo(-1);
+        assertThat(sortWith(sorter, Arrays.asList(2,2))).isEqualTo(0);
+        assertThat(sortWith(sorter, Arrays.asList(10,2))).isEqualTo(1);
     }
 }

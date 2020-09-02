@@ -62,7 +62,7 @@ class Iterable2Test {
     @Test
     void sortWithTest3() {
         final Iterable2<Integer> i = Iterable2.asList(1, 6, 23, 7, 4);
-        final Iterable2<Integer> j = i.sortWith(Functional.dSorter);
+        final Iterable2<Integer> j = i.sortWith(Functional.sorter);
         assertThat(j).containsExactly(1, 4, 6, 7, 23);
     }
 

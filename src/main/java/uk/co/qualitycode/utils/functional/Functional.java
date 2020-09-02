@@ -936,14 +936,14 @@ public final class Functional {
      * @param <A>   the type of the elements to be compared
      * @return left.compareTo(right)
      */
-    public static <A extends Comparable<A>> int Sorter(final A left, final A right) {
+    public static <A extends Comparable<A>> int sorter(final A left, final A right) {
         return left.compareTo(right);
     }
 
     /**
      * A Comparator that encapsulates <tt>Sorter</tt> above
      */
-    public static Comparator<Integer> dSorter = Functional::Sorter;
+    public static Comparator<Integer> sorter = Functional::sorter;
 
     /**
      * A wrapper around <tt>toString()</tt>
@@ -952,7 +952,7 @@ public final class Functional {
      * @param <T> the type of element 'a'
      * @return a.toString()
      */
-    public static <T> String Stringify(final T a) {
+    public static <T> String stringify(final T a) {
         return a.toString();
     }
 
@@ -963,7 +963,7 @@ public final class Functional {
      * @return a function that calls <tt>Stringify</tt>
      */
     public static <T> Function<T, String> stringify() {
-        return Functional::Stringify;
+        return Functional::stringify;
     }
 
     /**
