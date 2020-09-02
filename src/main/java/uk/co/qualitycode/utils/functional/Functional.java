@@ -908,9 +908,24 @@ public final class Functional {
             throw new IllegalArgumentException("sortWith(Comparator<A>,Collection<B>): comparator must not be null");
         if (input == null)
             throw new IllegalArgumentException("sortWith(Comparator<A>,Collection<B>): input must not be null");
-        final List<AA> output = new ArrayList<>(input);
-        Collections.sort(output, f);
-        return Collections.unmodifiableList(output);
+        return Collections.unmodifiableList(input.stream().sorted(f).collect(Collectors.toList()));
+    }
+
+    /**
+     * sortWith: a wrapper for <tt>Collections.sort</tt> which preserves the input sequence.
+     *
+     * @param f     the <tt>Comparator</tt> to use for the sort
+     * @param input the input
+     * @param <A>   the type of the <tt>Comparator</tt>
+     * @param <AA>  the type of the element in the input sequence
+     * @return a sorted list containing all the elements of 'input' sorted using <tt>Collections.sort</tt> and 'f'
+     */
+    public static <A, AA extends A> List<AA> sortWith(final Comparator<A> f, final Iterable<AA> input) {
+        if (f == null)
+            throw new IllegalArgumentException("sortWith(Comparator<A>,Iterable<B>): comparator must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("sortWith(Comparator<A>,Iterable<B>): input must not be null");
+        return Collections.unmodifiableList(StreamSupport.stream(input.spliterator(), false).sorted(f).collect(Collectors.toList()));
     }
 
     /**
