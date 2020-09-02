@@ -91,7 +91,7 @@ class FunctionalTest {
         return a < 10 && b < 10;
     }
 
-    static BiFunction<Integer, Integer, Boolean> dBothAreLessThan10 = FunctionalTest::bothAreLessThan10;
+    static BiFunction<Integer, Integer, Boolean> bothAreLessThan10 = FunctionalTest::bothAreLessThan10;
 
     @Test
     void compositionTest1A() {
@@ -119,7 +119,7 @@ class FunctionalTest {
     void compositionTest2() {
         final Collection<Integer> l = Functional.init(doublingGenerator, 5);
         final Collection<Integer> m = Functional.init(triplingGenerator, 5);
-        assertThat(Functional.forAll2(Functional.not2(dBothAreLessThan10), l, m)).isFalse();
+        assertThat(Functional.forAll2(Functional.not2(bothAreLessThan10), l, m)).isFalse();
         // equivalent to bothAreGreaterThanOrEqualTo10
 
         final int lowerLimit = 1;
@@ -128,11 +128,11 @@ class FunctionalTest {
         assertThat(Functional.forAll2(Functional.not2((a, b) -> a > upperLimit && b > upperLimit), l, m)).isTrue();
     }
 
-    static final <B, C> boolean fn(final B b, final C c) {
+    private static final <B, C> boolean fn(final B b, final C c) {
         return b.equals(c);
     }
 
-    static final <B, C> Function<C, Boolean> curried_fn(final B b) {
+    private static final <B, C> Function<C, Boolean> curried_fn(final B b) {
         return c -> fn(b, c);
     }
 

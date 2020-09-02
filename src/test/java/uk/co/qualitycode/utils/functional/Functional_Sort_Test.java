@@ -71,8 +71,8 @@ class Functional_Sort_Test {
 
     @Test
     void sorterWithSortWith() {
-        assertThat(sortWith(sorter, Arrays.asList(2,10))).isEqualTo(-1);
-        assertThat(sortWith(sorter, Arrays.asList(2,2))).isEqualTo(0);
-        assertThat(sortWith(sorter, Arrays.asList(10,2))).isEqualTo(1);
+        assertThat(sortWith(sorter, Arrays.asList(2,10))).containsExactly(2,10);
+        assertThat(sortWith(sorter, Arrays.asList(2,2))).containsExactly(2,2);
+        assertThat(sortWith(sorter, Arrays.asList(10,2))).containsExactly(2,10);
     }
 }

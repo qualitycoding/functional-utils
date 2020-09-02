@@ -27,7 +27,7 @@ class Functional_ForAll_Test {
         final Collection<Integer> l = Functional.init(FunctionalTest.doublingGenerator, 5);
         final Collection<Integer> m = Functional.init(FunctionalTest.triplingGenerator, 5);
 
-        assertThat(Functional.forAll2(FunctionalTest.dBothAreLessThan10, l, m)).isFalse();
+        assertThat(Functional.forAll2(FunctionalTest.bothAreLessThan10, l, m)).isFalse();
     }
 
     @Test
@@ -43,7 +43,7 @@ class Functional_ForAll_Test {
         final Collection<Integer> l = Functional.init(FunctionalTest.doublingGenerator, 5);
         final Collection<Integer> m = Functional.init(FunctionalTest.triplingGenerator, 5);
 
-        assertThat(Functional.noException.forAll2(FunctionalTest.dBothAreLessThan10, l, m).get()).isFalse();
+        assertThat(Functional.noException.forAll2(FunctionalTest.bothAreLessThan10, l, m).get()).isFalse();
     }
 
     @Test
