@@ -21,14 +21,14 @@ class Functional_Sort_Test {
                 .isThrownBy(() -> sortWith(null, mock(Collection.class)))
                 .withMessage("sortWith(Comparator<A>,Collection<B>): comparator must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> sortWith(mock(Comparator.class), (Collection)null))
+                .isThrownBy(() -> sortWith(mock(Comparator.class), (Collection) null))
                 .withMessage("sortWith(Comparator<A>,Collection<B>): input must not be null");
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> sortWith(null, mock(Iterable.class)))
                 .withMessage("sortWith(Comparator<A>,Iterable<B>): comparator must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> sortWith(mock(Comparator.class), (Iterable)null))
+                .isThrownBy(() -> sortWith(mock(Comparator.class), (Iterable) null))
                 .withMessage("sortWith(Comparator<A>,Iterable<B>): input must not be null");
     }
 
@@ -71,8 +71,8 @@ class Functional_Sort_Test {
 
     @Test
     void sorterWithSortWith() {
-        assertThat(sortWith(sorter, Arrays.asList(2,10))).containsExactly(2,10);
-        assertThat(sortWith(sorter, Arrays.asList(2,2))).containsExactly(2,2);
-        assertThat(sortWith(sorter, Arrays.asList(10,2))).containsExactly(2,10);
+        assertThat(sortWith(sorter, Arrays.asList(2, 10))).containsExactly(2, 10);
+        assertThat(sortWith(sorter, Arrays.asList(2, 2))).containsExactly(2, 2);
+        assertThat(sortWith(sorter, Arrays.asList(10, 2))).containsExactly(2, 10);
     }
 }
