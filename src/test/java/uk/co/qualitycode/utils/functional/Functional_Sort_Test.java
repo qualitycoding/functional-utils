@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static uk.co.qualitycode.utils.functional.Functional.sortWith;
 import static uk.co.qualitycode.utils.functional.Functional.sorter;
 
@@ -74,5 +75,14 @@ class Functional_Sort_Test {
         assertThat(sortWith(sorter, Arrays.asList(2, 10))).containsExactly(2, 10);
         assertThat(sortWith(sorter, Arrays.asList(2, 2))).containsExactly(2, 2);
         assertThat(sortWith(sorter, Arrays.asList(10, 2))).containsExactly(2, 10);
+    }
+
+    @Test
+    void sorterCallsCompareTo() {
+        final Comparable a = mock(Comparable.class);
+        final Comparable b = mock(Comparable.class);
+        sorter(a, b);
+
+        verify(a).compareTo(b);
     }
 }
