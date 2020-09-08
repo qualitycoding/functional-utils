@@ -59,14 +59,14 @@ class LispListTest {
     @Test
     void filterTest1() {
         final List<Integer> input = list(2, list(4, list(6, list(8, list(10, LispList.nil())))));
-        final List<Integer> oddElems = filter(Functional.isOdd, input);
+        final List<Integer> oddElems = filter(Functional::isOdd, input);
         assertThat(oddElems).isEqualTo(LispList.<Integer>nil());
     }
 
     @Test
     void filterTest2() {
         final List<Integer> input = list(2, list(5, list(7, list(8, list(10, LispList.nil())))));
-        final List<Integer> evenElems = filter(Functional.isEven, input);
+        final List<Integer> evenElems = filter(Functional::isEven, input);
 
         assertThat(evenElems.head()).isEqualTo(Integer.valueOf(2));
         assertThat(evenElems.tail().head()).isEqualTo(Integer.valueOf(8));
@@ -76,7 +76,7 @@ class LispListTest {
     @Test
     void equalsTest3() {
         final List<Integer> input = list(2, list(5, list(7, list(8, list(10, LispList.nil())))));
-        final List<Integer> evenElems = filter(Functional.isEven, input);
+        final List<Integer> evenElems = filter(Functional::isEven, input);
 
         final List<Integer> expected = list(2, list(8, list(10, LispList.nil())));
         assertThat(evenElems).isEqualTo(expected);

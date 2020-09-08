@@ -92,11 +92,6 @@ public class String {
         return value.getOrElseThrow(supplier);
     }
 
-    public String filter(final Function<java.lang.String, Boolean> predicate) {
-        requireNonNull(predicate, "predicate must not be null");
-        return new String(value.filter(predicate::apply));
-    }
-
     public String filter(final Predicate<java.lang.String> predicate) {
         requireNonNull(predicate, "predicate must not be null");
         return new String(value.filter(predicate::test));
@@ -167,18 +162,18 @@ public class String {
     }
 
     public static class ConformingString extends String {
-        private final Function<java.lang.String, Boolean> rule;
+        private final Predicate<java.lang.String> rule;
 
-        private ConformingString(final Function<java.lang.String, Boolean> rule, final io.vavr.control.Option<java.lang.String> s) {
+        private ConformingString(final Predicate<java.lang.String> rule, final io.vavr.control.Option<java.lang.String> s) {
             super(s);
             this.rule = rule;
         }
 
-        public static ConformingString of(final Function<java.lang.String, Boolean> rule, final java.lang.String s) {
+        public static ConformingString of(final Predicate<java.lang.String> rule, final java.lang.String s) {
             return new ConformingStringBuilder().withRule(rule).withValue(s).build();
         }
 
-        public Function<java.lang.String, Boolean> getRule() {
+        public Predicate<java.lang.String> getRule() {
             return rule;
         }
 
@@ -190,8 +185,8 @@ public class String {
                         .getOrElseThrow(() -> new MissingValueException("Cannot build a ConformingString with no value"));
             }
 
-            private io.vavr.control.Option<java.lang.String> applyRule(final Function<java.lang.String, Boolean> rule, final java.lang.String value) {
-                return BooleanToOptionTransformer.of(rule.apply(value)).map(x -> value);
+            private io.vavr.control.Option<java.lang.String> applyRule(final Predicate<java.lang.String> rule, final java.lang.String value) {
+                return BooleanToOptionTransformer.of(rule.test(value)).map(x -> value);
             }
         }
 

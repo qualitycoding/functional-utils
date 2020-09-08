@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Disabled("These don't currently *test* anything")
 class SpeedTest {
@@ -65,37 +66,37 @@ class SpeedTest {
 
     private static Function<Integer, Integer> DoublingGenerator = a -> 2 * a;
 
-    public static <A> List<A> filterWithIterable(final Function<? super A, Boolean> pred, final Iterable<A> input) {
+    public static <A> List<A> filterWithIterable(final Predicate<? super A> pred, final Iterable<A> input) {
         final List<A> output = new ArrayList<>();
         for (final A element : input)
-            if (pred.apply(element))
+            if (pred.test(element))
                 output.add(element);
 
         return Collections.unmodifiableList(output);
     }
 
-    public static <A> List<A> filterWithCollection(final Function<? super A, Boolean> pred, final Collection<A> input) {
+    public static <A> List<A> filterWithCollection(final Predicate<? super A> pred, final Collection<A> input) {
         final List<A> output = new ArrayList<>(input.size());
         for (final A element : input)
-            if (pred.apply(element))
+            if (pred.test(element))
                 output.add(element);
 
         return Collections.unmodifiableList(output);
     }
 
-    public static <A> List<A> filterWithHalfCollection(final Function<? super A, Boolean> pred, final Collection<A> input) {
+    public static <A> List<A> filterWithHalfCollection(final Predicate<? super A> pred, final Collection<A> input) {
         final List<A> output = new ArrayList<>((input.size() / 2) + 1);
         for (final A element : input)
-            if (pred.apply(element))
+            if (pred.test(element))
                 output.add(element);
 
         return Collections.unmodifiableList(output);
     }
 
-    public static <A> List<A> filterWithInstanceOf(final Function<? super A, Boolean> pred, final Iterable<A> input) {
+    public static <A> List<A> filterWithInstanceOf(final Predicate<? super A> pred, final Iterable<A> input) {
         final List<A> output = input instanceof Collection<?> ? new ArrayList<>(((Collection<A>) input).size()) : new ArrayList<>();
         for (final A element : input)
-            if (pred.apply(element))
+            if (pred.test(element))
                 output.add(element);
 
         return Collections.unmodifiableList(output);
@@ -109,13 +110,13 @@ class SpeedTest {
         {
             final long start = System.currentTimeMillis();
             for (int i = 0; i < howMany; ++i) {
-                filterWithIterable(Functional.isOdd, input);
+                filterWithIterable(Functional::isOdd, input);
             }
             final long howLong = System.currentTimeMillis() - start;
             System.out.println(howLong + "ms to filter using Iterable and whatever array resizing the JVM implements");
         }
 
-        final Collection<Integer> output1 = filterWithIterable(Functional.isOdd, input);
+        final Collection<Integer> output1 = filterWithIterable(Functional::isOdd, input);
 
         System.out.println("Size of output1 (Iterable) is " + output1.size());
     }
@@ -128,13 +129,13 @@ class SpeedTest {
         {
             final long start = System.currentTimeMillis();
             for (int i = 0; i < howMany; ++i) {
-                filterWithCollection(Functional.isOdd, input);
+                filterWithCollection(Functional::isOdd, input);
             }
             final long howLong = System.currentTimeMillis() - start;
             System.out.println(howLong + "ms to filter using Collection");
         }
 
-        final Collection<Integer> output2 = filterWithCollection(Functional.isOdd, input);
+        final Collection<Integer> output2 = filterWithCollection(Functional::isOdd, input);
 
         System.out.println("Size of output2 (Collection) is " + output2.size());
     }
@@ -147,13 +148,13 @@ class SpeedTest {
         {
             final long start = System.currentTimeMillis();
             for (int i = 0; i < howMany; ++i) {
-                filterWithInstanceOf(Functional.isOdd, input);
+                filterWithInstanceOf(Functional::isOdd, input);
             }
             final long howLong = System.currentTimeMillis() - start;
             System.out.println(howLong + "ms to filter using a Collection and instanceof to determine the initial array size");
         }
 
-        final Collection<Integer> output3 = filterWithInstanceOf(Functional.isOdd, input);
+        final Collection<Integer> output3 = filterWithInstanceOf(Functional::isOdd, input);
 
         System.out.println("Size of output3 (instanceof) is " + output3.size());
     }
@@ -166,13 +167,13 @@ class SpeedTest {
         {
             final long start = System.currentTimeMillis();
             for (int i = 0; i < howMany; ++i) {
-                filterWithHalfCollection(Functional.isOdd, input);
+                filterWithHalfCollection(Functional::isOdd, input);
             }
             final long howLong = System.currentTimeMillis() - start;
             System.out.println(howLong + "ms to filter using a Collection initialised to half-size to determine the initial array size");
         }
 
-        final Collection<Integer> output4 = filterWithHalfCollection(Functional.isOdd, input);
+        final Collection<Integer> output4 = filterWithHalfCollection(Functional::isOdd, input);
 
         System.out.println("Size of output4 (Collection half-size) is " + output4.size());
     }
@@ -185,13 +186,13 @@ class SpeedTest {
         {
             final long start = System.currentTimeMillis();
             for (int i = 0; i < howMany; ++i) {
-                filterWithIterable(Functional.isOdd, input);
+                filterWithIterable(Functional::isOdd, input);
             }
             final long howLong = System.currentTimeMillis() - start;
             System.out.println(howLong + "ms to filter using Iterable and whatever array resizing the JVM implements");
         }
 
-        final Collection<Integer> output1 = filterWithIterable(Functional.isOdd, input);
+        final Collection<Integer> output1 = filterWithIterable(Functional::isOdd, input);
 
         System.out.println("Size of output1 (Iterable) is " + output1.size());
     }
@@ -204,13 +205,13 @@ class SpeedTest {
         {
             final long start = System.currentTimeMillis();
             for (int i = 0; i < howMany; ++i) {
-                filterWithCollection(Functional.isOdd, input);
+                filterWithCollection(Functional::isOdd, input);
             }
             final long howLong = System.currentTimeMillis() - start;
             System.out.println(howLong + "ms to filter using Collection");
         }
 
-        final Collection<Integer> output2 = filterWithCollection(Functional.isOdd, input);
+        final Collection<Integer> output2 = filterWithCollection(Functional::isOdd, input);
 
         System.out.println("Size of output2 (Collection) is " + output2.size());
     }
@@ -223,13 +224,13 @@ class SpeedTest {
         {
             final long start = System.currentTimeMillis();
             for (int i = 0; i < howMany; ++i) {
-                filterWithInstanceOf(Functional.isOdd, input);
+                filterWithInstanceOf(Functional::isOdd, input);
             }
             final long howLong = System.currentTimeMillis() - start;
             System.out.println(howLong + "ms to filter using a Collection and instanceof to determine the initial array size");
         }
 
-        final Collection<Integer> output3 = filterWithInstanceOf(Functional.isOdd, input);
+        final Collection<Integer> output3 = filterWithInstanceOf(Functional::isOdd, input);
 
         System.out.println("Size of output3 (instanceof) is " + output3.size());
     }
@@ -242,13 +243,13 @@ class SpeedTest {
         {
             final long start = System.currentTimeMillis();
             for (int i = 0; i < howMany; ++i) {
-                filterWithHalfCollection(Functional.isOdd, input);
+                filterWithHalfCollection(Functional::isOdd, input);
             }
             final long howLong = System.currentTimeMillis() - start;
             System.out.println(howLong + "ms to filter using a Collection initialised to half-size to determine the initial array size");
         }
 
-        final Collection<Integer> output4 = filterWithHalfCollection(Functional.isOdd, input);
+        final Collection<Integer> output4 = filterWithHalfCollection(Functional::isOdd, input);
 
         System.out.println("Size of output4 (Collection half-size) is " + output4.size());
     }

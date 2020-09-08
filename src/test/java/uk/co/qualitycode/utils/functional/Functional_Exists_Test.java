@@ -12,8 +12,8 @@ class Functional_Exists_Test {
     void existsTest() {
         final Collection<Integer> i = Arrays.asList(2, 4, 6);
 
-        final boolean anEven = Functional.exists(Functional.isEven, i);
-        final boolean allOdd = Functional.exists(Functional.isOdd, i);
+        final boolean anEven = Functional.exists(Functional::isEven, i);
+        final boolean allOdd = Functional.exists(Functional::isOdd, i);
 
         assertThat(allOdd).isFalse();
         assertThat(anEven).isTrue();
@@ -23,8 +23,8 @@ class Functional_Exists_Test {
     void curriedExistsTest() {
         final Collection<Integer> i = Arrays.asList(2, 4, 6);
 
-        final boolean anEven = Functional.exists(Functional.isEven).apply(i);
-        final boolean allOdd = Functional.exists(Functional.isOdd).apply(i);
+        final boolean anEven = Functional.exists(Functional::isEven).test(i);
+        final boolean allOdd = Functional.exists(Functional::isOdd).test(i);
 
         assertThat(allOdd).isFalse();
         assertThat(anEven).isTrue();

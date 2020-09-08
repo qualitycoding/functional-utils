@@ -63,14 +63,14 @@ class Functional_Fold_Test {
     @Test
     void countTest() {
         final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-        final int howMany = Functional.fold(Functional.count, 0, input);
+        final int howMany = Functional.fold(Functional::count, 0, input);
         assertThat(howMany).isEqualTo(input.size());
     }
 
     @Test
     void sumTest() {
         final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-        final int sum = Functional.fold(Functional.sum, 0, input);
+        final int sum = Functional.fold(Integer::sum, 0, input);
         assertThat(sum).isEqualTo(15);
     }
 

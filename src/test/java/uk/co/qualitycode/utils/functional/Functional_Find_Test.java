@@ -19,17 +19,11 @@ class Functional_Find_Test {
     void preconditions() {
         assertAll(
                 () -> assertThatIllegalArgumentException()
-                        .isThrownBy(() -> find((Predicate) null, Collections.emptySet()))
+                        .isThrownBy(() -> find(null, Collections.emptySet()))
                         .withMessage("find(Predicate<A>,Iterable<A>): f must not be null"),
                 () -> assertThatIllegalArgumentException()
-                        .isThrownBy(() -> find((Function) null, Collections.emptySet()))
-                        .withMessage("find(Function<A,Boolean>,Iterable<A>): f must not be null"),
-                () -> assertThatIllegalArgumentException()
-                        .isThrownBy(() -> find((Predicate) x -> x.equals(new Object()), null))
-                        .withMessage("find(Predicate<A>,Iterable<A>): input must not be null"),
-                () -> assertThatIllegalArgumentException()
-                        .isThrownBy(() -> find((Function) x -> x.equals(new Object()), null))
-                        .withMessage("find(Function<A,Boolean>,Iterable<A>): input must not be null"));
+                        .isThrownBy(() -> find(x -> x.equals(new Object()), null))
+                        .withMessage("find(Predicate<A>,Iterable<A>): input must not be null"));
     }
 
     @Test
@@ -37,7 +31,7 @@ class Functional_Find_Test {
         final Integer trueMatch = 6;
         final Collection<Integer> li = init(FunctionalTest.doublingGenerator, 5);
 
-        final Function<Integer, Boolean> equals = trueMatch::equals;
+        final Predicate<Integer> equals = trueMatch::equals;
 
         assertThat(find(equals, li)).hasValue(trueMatch);
     }
@@ -56,7 +50,7 @@ class Functional_Find_Test {
     void curriedFindTestUsingFunction() {
         final Integer trueMatch = 6;
         final Collection<Integer> li = init(FunctionalTest.doublingGenerator, 5);
-        final Function<Integer, Boolean> equals = trueMatch::equals;
+        final Predicate<Integer> equals = trueMatch::equals;
 
         final Function<Iterable<Integer>, Option<Integer>> result = find(equals);
 

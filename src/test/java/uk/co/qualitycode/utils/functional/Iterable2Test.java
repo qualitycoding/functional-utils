@@ -24,17 +24,18 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class Iterable2Test {
-    private static final Function<Integer, Integer> DoublingGenerator = a -> 2 * a;
+    private static final Function<Integer, Integer> doublingGenerator = a -> 2 * a;
 
     @Test
     void initTest1() {
-        final Iterable2<Integer> output = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> output = Iterable2.init(doublingGenerator, 5);
         assertThat(output).containsExactly(2, 4, 6, 8, 10);
     }
 
@@ -66,18 +67,18 @@ class Iterable2Test {
         assertThat(j).containsExactly(1, 4, 6, 7, 23);
     }
 
-    private static final Function<Integer, Integer> TriplingGenerator = a -> 3 * a;
+    private static final Function<Integer, Integer> triplingGenerator = a -> 3 * a;
 
-    private static final Function<Integer, Integer> QuadruplingGenerator = a -> 4 * a;
+    private static final Function<Integer, Integer> quadruplingGenerator = a -> 4 * a;
 
     private static boolean BothAreEven(final int a, final int b) {
-        return Functional.isEven.apply(a) && Functional.isEven.apply(b);
+        return Functional.isEven(a) && Functional.isEven(b);
     }
 
     @Test
     void forAll2Test1() {
-        final Iterable2<Integer> l = Iterable2.init(DoublingGenerator, 5);
-        final Iterable2<Integer> m = Iterable2.init(QuadruplingGenerator, 5);
+        final Iterable2<Integer> l = Iterable2.init(doublingGenerator, 5);
+        final Iterable2<Integer> m = Iterable2.init(quadruplingGenerator, 5);
         assertThat(l.forAll2(Iterable2Test::BothAreEven, m)).isTrue();
     }
 
@@ -89,16 +90,16 @@ class Iterable2Test {
 
     @Test
     void forAll2Test2() {
-        final Iterable2<Integer> l = Iterable2.init(DoublingGenerator, 5);
-        final Iterable2<Integer> m = Iterable2.init(TriplingGenerator, 5);
+        final Iterable2<Integer> l = Iterable2.init(doublingGenerator, 5);
+        final Iterable2<Integer> m = Iterable2.init(triplingGenerator, 5);
 
         assertThat(Functional.forAll2(dBothAreLessThan10, l, m)).isFalse();
     }
 
     @Test
     void forAll2Test3() {
-        final Iterable2<Integer> l = Iterable2.init(DoublingGenerator, 5);
-        final Iterable2<Integer> m = Iterable2.init(QuadruplingGenerator, 7);
+        final Iterable2<Integer> l = Iterable2.init(doublingGenerator, 5);
+        final Iterable2<Integer> m = Iterable2.init(quadruplingGenerator, 7);
 
         assertThatExceptionOfType(Exception.class).isThrownBy(() -> Functional.forAll2(Iterable2Test::BothAreEven, l, m));
     }
@@ -107,8 +108,8 @@ class Iterable2Test {
     void compositionTest1A() {
         final Iterable2<Integer> i = Iterable2.asList(1, 2, 3, 45, 56, 6);
 
-        final boolean allOdd = i.forAll(Functional.isOdd);
-        final boolean notAllOdd = i.exists(Functional.not(Functional.isOdd));
+        final boolean allOdd = i.forAll(Functional::isOdd);
+        final boolean notAllOdd = i.exists(Functional.not(Functional::isOdd));
 
         assertThat(allOdd).isFalse();
         assertThat(notAllOdd).isTrue();
@@ -116,16 +117,16 @@ class Iterable2Test {
 
     @Test
     void compositionTest2() {
-        final Iterable2<Integer> l = Iterable2.init(DoublingGenerator, 5);
-        final Iterable2<Integer> m = Iterable2.init(TriplingGenerator, 5);
+        final Iterable2<Integer> l = Iterable2.init(doublingGenerator, 5);
+        final Iterable2<Integer> m = Iterable2.init(triplingGenerator, 5);
         assertThat(Functional.forAll2(Functional.not2(dBothAreLessThan10), l, m)).isFalse();
         // equivalent to BothAreGreaterThanOrEqualTo10
     }
 
     @Test
     void compositionTest2a() {
-        final Iterable2<Integer> l = Iterable2.init(DoublingGenerator, 5);
-        final Iterable2<Integer> m = Iterable2.init(TriplingGenerator, 5);
+        final Iterable2<Integer> l = Iterable2.init(doublingGenerator, 5);
+        final Iterable2<Integer> m = Iterable2.init(triplingGenerator, 5);
         final int lowerLimit = 1;
         final int upperLimit = 16;
         assertThat(Functional.forAll2(Functional.not2((a, b) -> a > lowerLimit && b > lowerLimit), l, m)).isFalse();
@@ -133,8 +134,8 @@ class Iterable2Test {
 
     @Test
     void compositionTest2b() {
-        final Iterable2<Integer> l = Iterable2.init(DoublingGenerator, 5);
-        final Iterable2<Integer> m = Iterable2.init(TriplingGenerator, 5);
+        final Iterable2<Integer> l = Iterable2.init(doublingGenerator, 5);
+        final Iterable2<Integer> m = Iterable2.init(triplingGenerator, 5);
         final int lowerLimit = 1;
         final int upperLimit = 16;
         assertThat(Functional.forAll2(Functional.not2((a, b) -> a > upperLimit && b > upperLimit), l, m)).isTrue();
@@ -144,14 +145,14 @@ class Iterable2Test {
         return b.equals(c);
     }
 
-    private static <B, C> Function<C, Boolean> curried_fn(final B b) {
+    private static <B, C> Predicate<C> curried_fn(final B b) {
         return c -> fn(b, c);
     }
 
     @Test
     void partitionTest1() {
-        final Iterable2<Integer> m = Iterable2.init(TriplingGenerator, 5);
-        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional.isOdd, m);
+        final Iterable2<Integer> m = Iterable2.init(triplingGenerator, 5);
+        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional::isOdd, m);
 
         assertThat(r._1()).containsExactly(3, 9, 15);
         assertThat(r._2()).containsExactly(6, 12);
@@ -159,16 +160,16 @@ class Iterable2Test {
 
     @Test
     void partitionTest3() {
-        final Iterable2<Integer> l = Iterable2.init(DoublingGenerator, 5);
-        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional.isEven, l);
-        final Iterable2<Integer> expected = Iterable2.init(DoublingGenerator, 5).filter(Functional.isEven);
+        final Iterable2<Integer> l = Iterable2.init(doublingGenerator, 5);
+        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional::isEven, l);
+        final Iterable2<Integer> expected = Iterable2.init(doublingGenerator, 5).filter(Functional::isEven);
         assertThat(r._1()).containsExactlyElementsOf(expected);
     }
 
     @Test
     void partitionTest1a() {
-        final Iterable2<Integer> m = Iterable2.init(TriplingGenerator, 5);
-        final Tuple2<List<Integer>, List<Integer>> r = m.partition(Functional.isOdd);
+        final Iterable2<Integer> m = Iterable2.init(triplingGenerator, 5);
+        final Tuple2<List<Integer>, List<Integer>> r = m.partition(Functional::isOdd);
 
         assertThat(r._1()).containsExactly(3, 9, 15);
         assertThat(r._2()).containsExactly(6, 12);
@@ -176,16 +177,16 @@ class Iterable2Test {
 
     @Test
     void partitionTest2() {
-        final Iterable2<Integer> l = Iterable2.init(DoublingGenerator, 5);
-        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional.isEven, l);
-        final Iterable2<Integer> expected = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> l = Iterable2.init(doublingGenerator, 5);
+        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional::isEven, l);
+        final Iterable2<Integer> expected = Iterable2.init(doublingGenerator, 5);
         assertThat(r._1()).containsExactlyElementsOf(expected);
         assertThat(r._2()).isEmpty();
     }
 
     @Test
     void toStringTest1() {
-        final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(doublingGenerator, 5);
         final Iterable2<String> ls = li.map(Functional.stringify());
         //String s = String.Join(",", ls);
         assertThat(ls).containsExactly("2", "4", "6", "8", "10");
@@ -193,7 +194,7 @@ class Iterable2Test {
 
     @Test
     void chooseTest1B() throws OptionNoValueAccessException {
-        final Iterable2<Integer> li = Iterable2.init(TriplingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(triplingGenerator, 5);
         final Iterable2<String> o = li.choose(
                 i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none());
         final Iterable2<String> expected = Iterable2.asList("6", "12");
@@ -205,7 +206,7 @@ class Iterable2Test {
     {
         Map<Integer, String> o = null;
         try {
-            final Iterable2<Integer> li = Iterable2.init(TriplingGenerator, 5);
+            final Iterable2<Integer> li = Iterable2.init(triplingGenerator, 5);
             o = Functional.toDictionary(Function.identity(), Functional.stringify(),
                     li.choose(
                             i -> i % 2 == 0 ? Option.of(i) : Option.none()));
@@ -226,7 +227,7 @@ class Iterable2Test {
     @Test
     void curriedFnTest1() {
         final boolean test1a = fn(1, 2);
-        final boolean test1b = curried_fn(1).apply(2);
+        final boolean test1b = curried_fn(1).test(2);
         assertThat(test1b).isEqualTo(test1a);
     }
 
@@ -253,20 +254,19 @@ class Iterable2Test {
 
     @Test
     void foldvsMapTest1() {
-        final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(doublingGenerator, 5);
         final String s1 = Functional.join(",", li.map(Functional.stringify()));
         assertThat(s1).isEqualTo("2,4,6,8,10");
-        final String s2 = Iterable2.init(DoublingGenerator, 5).fold(
+        final String s2 = Iterable2.init(doublingGenerator, 5).fold(
                 Iterable2Test::csv, "");
         assertThat(s2).isEqualTo(s1);
     }
 
-    private final Function<Iterable2<Integer>, String> concatenate =
-            l -> l.fold(Iterable2Test::csv, "");
+    private final Function<Iterable2<Integer>, String> concatenate = l -> l.fold(Iterable2Test::csv, "");
 
     @Test
     void fwdPipelineTest1() {
-        final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(doublingGenerator, 5);
         final String s1 = li.in(concatenate);
         assertThat(s1).isEqualTo("2,4,6,8,10");
     }
@@ -275,7 +275,7 @@ class Iterable2Test {
             new UnaryFunction<Iterable2<Integer>, Iterable2<Integer>>() {
 
                 public Iterable2<Integer> apply(final Iterable2<Integer> l) {
-                    return l.filter(Functional.isEven);
+                    return l.filter(Functional::isEven);
                 }
             };
 
@@ -283,11 +283,11 @@ class Iterable2Test {
     void fwdPipelineTest2() {
         final String s1;
         {
-            final Iterable2<Integer> li = Iterable2.init(TriplingGenerator, 5);
+            final Iterable2<Integer> li = Iterable2.init(triplingGenerator, 5);
             final Iterable2<Integer> evens = li.in(evens_f);
             s1 = evens.in(concatenate);
         }
-        final Iterable2<Integer> li = Iterable2.init(TriplingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(triplingGenerator, 5);
         final String s2 = li.in(evens_f.then(concatenate));
         assertThat(s1).isEqualTo("6,12");
         assertThat(s2).isEqualTo(s1);
@@ -295,14 +295,14 @@ class Iterable2Test {
 
     @Test
     void compositionTest3() {
-        final Iterable2<Integer> li = Iterable2.init(TriplingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(triplingGenerator, 5);
         final String s = li.in(evens_f.then(concatenate));
         assertThat(s).isEqualTo("6,12");
     }
 
     @Test
     void compositionTest4() {
-        final Iterable2<Integer> li = Iterable2.init(TriplingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(triplingGenerator, 5);
         final String s = evens_f.then(concatenate).apply(li);
         assertThat(s).isEqualTo("6,12");
     }
@@ -351,7 +351,7 @@ class Iterable2Test {
 
     @Test
     void chooseTest3A() throws OptionNoValueAccessException {
-        final Iterable2<Integer> li = Iterable2.init(TriplingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(triplingGenerator, 5);
         final Iterable2<Integer> o =
                 li.choose(
                         i -> i % 2 == 0 ? Option.of(i) : Option.none());
@@ -434,7 +434,7 @@ class Iterable2Test {
     @Test
     void foldAndChooseTest1() {
         final Map<Integer, Double> missingPricesPerDate = new Hashtable<>();
-        final Iterable2<Integer> openedDays = Iterable2.init(TriplingGenerator, 5);
+        final Iterable2<Integer> openedDays = Iterable2.init(triplingGenerator, 5);
         Double last = 10.0;
         for (final int day : openedDays) {
             final Double value = day % 2 == 0 ? (Double) ((double) (day / 2)) : null;
@@ -464,10 +464,10 @@ class Iterable2Test {
     void joinTest1() {
         final String expected = "3,6,9,12,15";
         {
-            final Iterable2<Integer> ids = Iterable2.init(TriplingGenerator, 5);
+            final Iterable2<Integer> ids = Iterable2.init(triplingGenerator, 5);
             assertThat(Functional.join(",", ids.map(Functional.stringify()))).isEqualTo(expected);
         }
-        final Iterable2<Integer> ids = Iterable2.init(TriplingGenerator, 5);
+        final Iterable2<Integer> ids = Iterable2.init(triplingGenerator, 5);
         assertThat(")).isEqualTo(expected, ids.join(");
     }
 
@@ -477,10 +477,10 @@ class Iterable2Test {
         final Function<Integer, String> f =
                 id -> "'" + id + "'";
         {
-            final Iterable2<Integer> ids = Iterable2.init(TriplingGenerator, 5);
+            final Iterable2<Integer> ids = Iterable2.init(triplingGenerator, 5);
             assertThat(Functional.join(",", ids.map(f))).isEqualTo(expected);
         }
-        final Iterable2<Integer> ids = Iterable2.init(TriplingGenerator, 5);
+        final Iterable2<Integer> ids = Iterable2.init(triplingGenerator, 5);
         assertThat(Functional.join(",", ids, f)).isEqualTo(expected);
     }
 
@@ -504,7 +504,7 @@ class Iterable2Test {
 
     @Test
     void testIsEven_withEvenNum() {
-        assertThat(Functional.isEven.apply(2)).isTrue();
+        assertThat(Functional.isEven(2)).isTrue();
     }
 
 
@@ -524,14 +524,14 @@ class Iterable2Test {
 
     @Test
     void findLastTest1() {
-        final Iterable2<Integer> l = Iterable2.init(DoublingGenerator, 5);
-        OptionAssert.assertThat(Functional.findLast(Functional.isOdd, l)).isEmpty();
+        final Iterable2<Integer> l = Iterable2.init(doublingGenerator, 5);
+        OptionAssert.assertThat(Functional.findLast(Functional::isOdd, l)).isEmpty();
     }
 
     @Test
     void findLastTest2() {
-        final Iterable2<Integer> l = Iterable2.init(DoublingGenerator, 5);
-        OptionAssert.assertThat(l.findLast(Functional.isEven)).hasValue(10);
+        final Iterable2<Integer> l = Iterable2.init(doublingGenerator, 5);
+        OptionAssert.assertThat(l.findLast(Functional::isEven)).hasValue(10);
     }
 
     @Test
@@ -634,7 +634,7 @@ class Iterable2Test {
 
     @Test
     void seqChooseTest1() {
-        final Iterable2<Integer> li = Iterable2.init(TriplingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(triplingGenerator, 5);
         final Iterable2<String> output = li.choose(
                 i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none());
 
@@ -644,7 +644,7 @@ class Iterable2Test {
 
     @Test
     void fwdPipelineTest3() {
-        final Iterable2<Integer> input = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> input = Iterable2.init(doublingGenerator, 5);
         final Iterable2<String> output = input.in(
                 integers -> integers.map(Functional.stringify()));
 
@@ -654,7 +654,7 @@ class Iterable2Test {
 
     @Test
     void fwdPipelineTest4() {
-        final Iterable2<Integer> input = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> input = Iterable2.init(doublingGenerator, 5);
         final Iterable2<String> output = input.in(
                 integers -> {
                     try {
@@ -671,9 +671,9 @@ class Iterable2Test {
 
     @Test
     void fwdPipelineTest5() {
-        final Iterable2<Integer> l = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> l = Iterable2.init(doublingGenerator, 5);
         final Iterable2<Integer> oddElems = l.in(
-                ints -> ints.filter(Functional.isOdd));
+                ints -> ints.filter(Functional::isOdd));
 
         assertThat(oddElems.iterator().hasNext()).isFalse();
     }
@@ -716,7 +716,7 @@ class Iterable2Test {
 
     @Test
     void seqInitTest2() {
-        final Iterable2<Integer> output = Iterable2.init(DoublingGenerator);
+        final Iterable2<Integer> output = Iterable2.init(doublingGenerator);
         assertThat(output.take(11)).containsExactly(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22);
     }
 
@@ -931,7 +931,7 @@ class Iterable2Test {
     @Test
     void findTest1() {
         final String trueMatch = "6";
-        final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(doublingGenerator, 5);
         final Iterable2<String> ls = li.map(Functional.stringify());
         OptionAssert.assertThat(ls.find(s -> s.equals(trueMatch))).hasValue(trueMatch);
     }
@@ -939,7 +939,7 @@ class Iterable2Test {
     @Test
     void findTest2() {
         final String falseMatch = "7";
-        final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(doublingGenerator, 5);
         final Iterable2<String> ls = li.map(Functional.stringify());
         OptionAssert.assertThat(ls.find(s -> s.equals(falseMatch))).isEmpty();
     }
@@ -947,7 +947,7 @@ class Iterable2Test {
     @Test
     void findIndexTest1() {
         final String trueMatch = "6";
-        final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(doublingGenerator, 5);
         final Iterable2<String> ls = li.map(Functional.stringify());
         assertThat(ls.findIndex(s -> s.equals(trueMatch))).isEqualTo(2);
     }
@@ -955,7 +955,7 @@ class Iterable2Test {
     @Test
     void findIndexTest2() {
         final String falseMatch = "7";
-        final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(doublingGenerator, 5);
         final Iterable2<String> ls = li.map(Functional.stringify());
         assertThatIllegalArgumentException().isThrownBy(() -> ls.findIndex(s -> s.equals(falseMatch)));
     }
@@ -963,21 +963,21 @@ class Iterable2Test {
     @Test
     void pickTest1() {
         final int trueMatch = 6;
-        final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(doublingGenerator, 5);
         OptionAssert.assertThat(li.pick(a -> a.equals(trueMatch) ? Option.of(a.toString()) : Option.none())).hasValue(String.valueOf(trueMatch));
     }
 
     @Test
     void pickTest2() {
         final int falseMatch = 7;
-        final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> li = Iterable2.init(doublingGenerator, 5);
         OptionAssert.assertThat(li.pick(a -> a.equals(falseMatch) ? Option.of(a.toString()) : Option.none())).isEmpty();
     }
 
     @Test
     void curryFnTest1() {
         final int state = 0;
-        final Function<Integer, Boolean> testForPosInts = integer -> integer > state;
+        final Predicate<Integer> testForPosInts = integer -> integer > state;
 
         final Function<Iterable<Integer>, List<Integer>> curriedTestForPosInts = Functional.filter(testForPosInts);
 
@@ -1013,7 +1013,7 @@ class Iterable2Test {
 
     @Test
     void toListTest1() {
-        final Iterable2<Integer> output = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> output = Iterable2.init(doublingGenerator, 5);
         final List<Integer> output_ints = output.toList();
         assertThat(output_ints).containsExactly(2, 4, 6, 8, 10);
     }
@@ -1024,7 +1024,7 @@ class Iterable2Test {
 
     @Test
     void collectTest1() {
-        final Iterable2<Integer> input = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> input = Iterable2.init(doublingGenerator, 5);
         final Iterable2<Integer> output = input.collect(intToList(3));
         final List<Integer> expected = Arrays.asList(2, 2, 2, 4, 4, 4, 6, 6, 6, 8, 8, 8, 10, 10, 10);
         assertThat(output).containsExactlyElementsOf(expected);
@@ -1032,7 +1032,7 @@ class Iterable2Test {
 
     @Test
     void seqCollectTest1() {
-        final Iterable2<Integer> input = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> input = Iterable2.init(doublingGenerator, 5);
         final Iterable2<Integer> output = input.collect(intToList(3));
         final List<Integer> expected = Arrays.asList(2, 2, 2, 4, 4, 4, 6, 6, 6, 8, 8, 8, 10, 10, 10);
         assertThat(output).containsExactlyElementsOf(expected);
@@ -1040,7 +1040,7 @@ class Iterable2Test {
 
     @Test
     void takeNandYieldTest1() {
-        final Iterable2<Integer> input = Iterable2.init(DoublingGenerator, 5);
+        final Iterable2<Integer> input = Iterable2.init(doublingGenerator, 5);
         final Tuple2<List<Integer>, Iterable<Integer>> output = Functional.takeNAndYield(input, 2);
         final List<Integer> expectedList = Arrays.asList(2, 4);
         final List<Integer> expectedRemainder = Arrays.asList(6, 8, 10);
@@ -1050,7 +1050,7 @@ class Iterable2Test {
 
     @Test
     void takeNandYieldTest2() {
-        final Iterable<Integer> input = Iterable2.init(DoublingGenerator, 5);
+        final Iterable<Integer> input = Iterable2.init(doublingGenerator, 5);
         final Tuple2<List<Integer>, Iterable<Integer>> output = Functional.takeNAndYield(input, 0);
         final List<Integer> expectedList = Arrays.asList();
         final List<Integer> expectedRemainder = Arrays.asList(2, 4, 6, 8, 10);
@@ -1060,8 +1060,8 @@ class Iterable2Test {
 
     @Test
     void recFilterTest1() {
-        final Iterable2<Integer> l = Iterable2.init(DoublingGenerator, 5);
-        final Iterable<Integer> oddElems = l.filter(Functional.isOdd);
+        final Iterable2<Integer> l = Iterable2.init(doublingGenerator, 5);
+        final Iterable<Integer> oddElems = l.filter(Functional::isOdd);
 
         assertThat(oddElems).isEmpty();
     }
@@ -1078,12 +1078,12 @@ class Iterable2Test {
         final String s1;
         final String s2;
         {
-            final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
+            final Iterable2<Integer> li = Iterable2.init(doublingGenerator, 5);
             s1 = Functional.join(",", li.map(Functional.stringify()));
             assertThat(s1).isEqualTo("2,4,6,8,10");
         }
         {
-            final Iterable2<Integer> li = Iterable2.init(DoublingGenerator, 5);
+            final Iterable2<Integer> li = Iterable2.init(doublingGenerator, 5);
             s2 = li.fold(Iterable2Test::csv, "");
         }
         assertThat(s2).isEqualTo(s1);
@@ -1111,7 +1111,7 @@ class Iterable2Test {
     @Test
     void emptySeqTestFilter() {
         final Iterable2<Integer> l = Iterable2.empty(); // for some reason the generic type inference failed and so
-        final Iterable2<Integer> l1 = l.filter(Functional.isEven); // this filter needed to be fed from a statically-typed variable
+        final Iterable2<Integer> l1 = l.filter(Functional::isEven); // this filter needed to be fed from a statically-typed variable
         final Iterable2<Integer> other = Iterable2.empty();
 
         assertThat(l1).containsExactlyElementsOf(other);
@@ -1139,7 +1139,7 @@ class Iterable2Test {
     @Test
     void emptySeqTestExists1() {
         final Iterable2<Integer> l = Iterable2.empty(); // for some reason the generic type inference failed and so
-        final boolean b = l.exists(Functional.isEven); // this filter needed to be fed from a statically-typed variable
+        final boolean b = l.exists(Functional::isEven); // this filter needed to be fed from a statically-typed variable
 
         assertThat(b).isFalse();
     }
@@ -1147,7 +1147,7 @@ class Iterable2Test {
     @Test
     void emptySeqTestExists2() {
         final Iterable2<Integer> l = Iterable2.empty(); // for some reason the generic type inference failed and so
-        final boolean b = l.exists(Functional.isOdd); // this filter needed to be fed from a statically-typed variable
+        final boolean b = l.exists(Functional::isOdd); // this filter needed to be fed from a statically-typed variable
 
         assertThat(b).isFalse();
     }
@@ -1155,7 +1155,7 @@ class Iterable2Test {
     @Test
     void emptySeqTestForAll1() {
         final Iterable2<Integer> l = Iterable2.empty(); // for some reason the generic type inference failed and so
-        final boolean b = l.forAll(Functional.isEven); // this filter needed to be fed from a statically-typed variable
+        final boolean b = l.forAll(Functional::isEven); // this filter needed to be fed from a statically-typed variable
 
         assertThat(b).isFalse();
     }
@@ -1163,7 +1163,7 @@ class Iterable2Test {
     @Test
     void emptySeqTestForAll2() {
         final Iterable2<Integer> l = Iterable2.empty(); // for some reason the generic type inference failed and so
-        final boolean b = l.forAll(Functional.isOdd); // this filter needed to be fed from a statically-typed variable
+        final boolean b = l.forAll(Functional::isOdd); // this filter needed to be fed from a statically-typed variable
 
         assertThat(b).isFalse();
     }
@@ -1266,7 +1266,7 @@ class Iterable2Test {
     @Test
     void groupByOddVsEvenInt() {
         final Iterable2<Integer> input = Iterable2.of(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
-        final Map<Boolean, List<Integer>> output = input.groupBy(Functional.isEven);
+        final Map<Boolean, List<Integer>> output = input.groupBy(Functional::isEven);
         final Map<Boolean, List<Integer>> expected = new HashMap<>();
         expected.put(false, Arrays.asList(1, 3, 5, 7, 9));
         expected.put(true, Arrays.asList(2, 4, 6, 8, 10));
@@ -1297,7 +1297,7 @@ class Iterable2Test {
     void takeWhileTest1() {
         final Iterable2<Integer> l = Iterable2.of(Arrays.asList(1, 2, 3, 4, 5));
         final List<Integer> expected = new ArrayList<>();
-        final Iterable<Integer> output = l.takeWhile(Functional.isEven);
+        final Iterable<Integer> output = l.takeWhile(Functional::isEven);
         assertThat(output).containsExactlyElementsOf(expected);
     }
 
@@ -1314,7 +1314,7 @@ class Iterable2Test {
     void skipWhileTest1() {
         final Iterable2<Integer> l = Iterable2.of(Arrays.asList(1, 2, 3, 4, 5));
         final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-        final Iterable<Integer> output = l.skipWhile(Functional.isEven);
+        final Iterable<Integer> output = l.skipWhile(Functional::isEven);
         assertThat(output).containsExactlyElementsOf(expected);
     }
 
@@ -1372,7 +1372,7 @@ class Iterable2Test {
 
     @Test
     void emptyListTakeWhileTest() {
-        assertThat(Iterable2.<Integer>empty().takeWhile(Functional.isOdd)).isEqualTo(Iterable2.empty());
+        assertThat(Iterable2.<Integer>empty().takeWhile(Functional::isOdd)).isEqualTo(Iterable2.empty());
     }
 
     @Test
@@ -1382,7 +1382,7 @@ class Iterable2Test {
 
     @Test
     void emptyListSkipWhileTest() {
-        assertThat(Iterable2.<Integer>empty().skipWhile(Functional.isOdd)).isEqualTo(Iterable2.empty());
+        assertThat(Iterable2.<Integer>empty().skipWhile(Functional::isOdd)).isEqualTo(Iterable2.empty());
     }
 
     @Test
@@ -1392,12 +1392,12 @@ class Iterable2Test {
 
     @Test
     void emptyListFindLastTest() {
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> Iterable2.<Integer>empty().findLast(Functional.isOdd));
+        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> Iterable2.<Integer>empty().findLast(Functional::isOdd));
     }
 
     @Test
     void emptyListPartitionTest() {
-        final Tuple2<List<Object>, List<Object>> pair = Iterable2.empty().partition(o -> null);
+        final Tuple2<List<Object>, List<Object>> pair = Iterable2.empty().partition(o -> false);
         assertThat(pair._1().isEmpty()).isTrue();
         assertThat(pair._2().isEmpty()).isTrue();
     }

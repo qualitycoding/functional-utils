@@ -127,7 +127,7 @@ class Functional_Collect_Test {
                 true, true, true, false,
                 true, true, true, true);
 
-        final List<Boolean> output = Functional.collect(ths -> Functional.map(that -> Functional.greaterThanOrEqual(that).apply(ths), list2), list1);
+        final List<Boolean> output = Functional.collect(ths -> Functional.map(that -> Functional.greaterThanOrEqual(that).test(ths), list2), list1);
 
         assertThat(output).isEqualTo(expected);
     }
@@ -144,7 +144,7 @@ class Functional_Collect_Test {
                 false, false, false, false, true
         );
 
-        final List<Boolean> output = Functional.collect(ths -> Functional.map(that -> Functional.lessThanOrEqual(that).apply(ths), list2), list1);
+        final List<Boolean> output = Functional.collect(ths -> Functional.map(that -> Functional.lessThanOrEqual(that).test(ths), list2), list1);
 
         assertThat(output).isEqualTo(expected);
     }

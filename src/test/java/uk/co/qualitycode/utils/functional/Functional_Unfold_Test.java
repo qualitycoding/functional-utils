@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -19,7 +20,7 @@ class Functional_Unfold_Test {
     void unfoldTest1() {
         final int seed = 0;
         final Function<Integer, Tuple2<Integer, Integer>> unspool = integer -> new Tuple2<>(integer + 1, integer + 1);
-        final Function<Integer, Boolean> finished = integer -> integer == 10;
+        final Predicate<Integer> finished = integer -> integer == 10;
 
         final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         final List<Integer> output = Functional.unfold(unspool, finished, seed);
@@ -30,7 +31,7 @@ class Functional_Unfold_Test {
     void unfoldAsDoublingGeneratorTest1() {
         final int seed = 1;
         final Function<Integer, Tuple2<Integer, Integer>> doubler = integer -> new Tuple2<>(integer * 2, integer + 1);
-        final Function<Integer, Boolean> finished = integer -> integer > 10;
+        final Predicate<Integer> finished = integer -> integer > 10;
 
         final List<Integer> expected = Arrays.asList(2, 4, 6, 8, 10, 12, 14, 16, 18, 20);
         final List<Integer> output = Functional.unfold(doubler, finished, seed);
@@ -51,7 +52,7 @@ class Functional_Unfold_Test {
     void seqUnfoldTest1() {
         final int seed = 0;
         final Function<Integer, Tuple2<Integer, Integer>> unspool = integer -> new Tuple2<>(integer + 1, integer + 1);
-        final Function<Integer, Boolean> finished = integer -> integer == 10;
+        final Predicate<Integer> finished = integer -> integer == 10;
 
         final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         final Iterable<Integer> output = Functional.seq.unfold(unspool, finished, seed);
@@ -62,7 +63,7 @@ class Functional_Unfold_Test {
     void cantRemoveFromSeqUnfoldTest1() {
         final int seed = 0;
         final Function<Integer, Tuple2<Integer, Integer>> unspool = integer -> new Tuple2<>(integer + 1, integer + 1);
-        final Function<Integer, Boolean> finished = integer -> integer == 10;
+        final Predicate<Integer> finished = integer -> integer == 10;
 
         final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         final Iterable<Integer> output = Functional.seq.unfold(unspool, finished, seed);
@@ -73,7 +74,7 @@ class Functional_Unfold_Test {
     void cantRestartIteratorFromSeqUnfoldTest1() {
         final int seed = 0;
         final Function<Integer, Tuple2<Integer, Integer>> unspool = integer -> new Tuple2<>(integer + 1, integer + 1);
-        final Function<Integer, Boolean> finished = integer -> integer == 10;
+        final Predicate<Integer> finished = integer -> integer == 10;
 
         final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         final Iterable<Integer> output = Functional.seq.unfold(unspool, finished, seed);
@@ -89,7 +90,7 @@ class Functional_Unfold_Test {
     void seqUnfoldTest2() {
         final int seed = 0;
         final Function<Integer, Tuple2<Integer, Integer>> unspool = integer -> new Tuple2<>(integer + 1, integer + 1);
-        final Function<Integer, Boolean> finished = integer -> integer == 10;
+        final Predicate<Integer> finished = integer -> integer == 10;
 
         final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         final Iterable<Integer> output = Functional.seq.unfold(unspool, finished, seed);
@@ -117,7 +118,7 @@ class Functional_Unfold_Test {
     void seqUnfoldAsDoublingGeneratorTest1() {
         final int seed = 1;
         final Function<Integer, Tuple2<Integer, Integer>> doubler = integer -> new Tuple2<>(integer * 2, integer + 1);
-        final Function<Integer, Boolean> finished = integer -> integer > 10;
+        final Predicate<Integer> finished = integer -> integer > 10;
 
         final List<Integer> expected = Arrays.asList(2, 4, 6, 8, 10, 12, 14, 16, 18, 20);
         final Iterable<Integer> output = Functional.seq.unfold(doubler, finished, seed);
@@ -190,7 +191,7 @@ class Functional_Unfold_Test {
     void recUnfoldAsDoublingGeneratorTest1() {
         final int seed = 1;
         final Function<Integer, Tuple2<Integer, Integer>> doubler = integer -> new Tuple2<>(integer * 2, integer + 1);
-        final Function<Integer, Boolean> finished = integer -> integer > 10;
+        final Predicate<Integer> finished = integer -> integer > 10;
 
         final List<Integer> expected = Arrays.asList(2, 4, 6, 8, 10, 12, 14, 16, 18, 20);
         final List<Integer> output = Functional.rec.unfold(doubler, finished, seed);

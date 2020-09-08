@@ -20,40 +20,22 @@ class Functional_FindLast_Test {
     void preconditions() {
         assertAll(
                 () -> assertThatIllegalArgumentException()
-                        .isThrownBy(() -> findLast((Function) null, mock(Iterable.class)))
-                        .withMessage("findLast(Function<A,Boolean>,Iterable<A>): f must not be null"),
-                () -> assertThatIllegalArgumentException()
-                        .isThrownBy(() -> findLast((Function) x -> true, (Iterable) null))
-                        .withMessage("findLast(Function<A,Boolean>,Iterable<A>): input must not be null"),
-
-                () -> assertThatIllegalArgumentException()
-                        .isThrownBy(() -> findLast((Function) null, mock(List.class)))
-                        .withMessage("findLast(Function<A,Boolean>,List<A>): f must not be null"),
-                () -> assertThatIllegalArgumentException()
-                        .isThrownBy(() -> findLast((Function) x -> true, (List) null))
-                        .withMessage("findLast(Function<A,Boolean>,List<A>): input must not be null"),
-
-                () -> assertThatIllegalArgumentException()
-                        .isThrownBy(() -> findLast((Predicate) null, mock(Iterable.class)))
+                        .isThrownBy(() -> findLast(null, mock(Iterable.class)))
                         .withMessage("findLast(Predicate<A>,Iterable<A>): f must not be null"),
                 () -> assertThatIllegalArgumentException()
-                        .isThrownBy(() -> findLast((Predicate) x -> true, (Iterable) null))
+                        .isThrownBy(() -> findLast(x -> true, (Iterable) null))
                         .withMessage("findLast(Predicate<A>,Iterable<A>): input must not be null"),
 
                 () -> assertThatIllegalArgumentException()
-                        .isThrownBy(() -> findLast((Predicate) null, mock(List.class)))
+                        .isThrownBy(() -> findLast(null, mock(List.class)))
                         .withMessage("findLast(Predicate<A>,List<A>): f must not be null"),
                 () -> assertThatIllegalArgumentException()
-                        .isThrownBy(() -> findLast((Predicate) x -> true, (List) null))
+                        .isThrownBy(() -> findLast(x -> true, (List) null))
                         .withMessage("findLast(Predicate<A>,List<A>): input must not be null"),
 
                 () -> assertThatIllegalArgumentException()
-                        .isThrownBy(() -> findLast((Predicate) null).apply(mock(Iterable.class)))
-                        .withMessage("findLast(Predicate<A>): f must not be null"),
-
-                () -> assertThatIllegalArgumentException()
-                        .isThrownBy(() -> findLast((Function) null).apply(mock(Iterable.class)))
-                        .withMessage("findLast(Function<A,Boolean>): f must not be null")
+                        .isThrownBy(() -> findLast(null).apply(mock(Iterable.class)))
+                        .withMessage("findLast(Predicate<A>): f must not be null")
         );
     }
 
@@ -62,19 +44,19 @@ class Functional_FindLast_Test {
         @Test
         void findLastWithFunctionReturnsEmpty() {
             final List<Integer> l = new ArrayList<>(Functional.init(FunctionalTest.doublingGenerator, 5));
-            assertThat(findLast(Functional.isOdd, l)).isEmpty();
+            assertThat(findLast(Functional::isOdd, l)).isEmpty();
         }
 
         @Test
         void findLastWithFunctionReturnsValue() {
             final List<Integer> l = new ArrayList<>(Functional.init(FunctionalTest.doublingGenerator, 5));
-            assertThat(findLast(Functional.isEven, l)).hasValue(10);
+            assertThat(findLast(Functional::isEven, l)).hasValue(10);
         }
 
         @Test
         void curriedFindLastWithFunctionReturnsValue() {
             final List<Integer> l = new ArrayList<>(Functional.init(FunctionalTest.doublingGenerator, 5));
-            final Function<Iterable<Integer>, Option<Integer>> lastFunc = findLast(Functional.isEven);
+            final Function<Iterable<Integer>, Option<Integer>> lastFunc = findLast(Functional::isEven);
             assertThat(lastFunc.apply(l)).hasValue(10);
         }
     }
@@ -84,19 +66,19 @@ class Functional_FindLast_Test {
         @Test
         void findLastIterableWithFunctionReturnsEmpty() {
             final Iterable<Integer> l = new ArrayList<>(Functional.init(FunctionalTest.doublingGenerator, 5));
-            assertThat(findLast(Functional.isOdd, l)).isEmpty();
+            assertThat(findLast(Functional::isOdd, l)).isEmpty();
         }
 
         @Test
         void findLastIterableWithFunctionReturnsValue() {
             final Iterable<Integer> l = new ArrayList<>(Functional.init(FunctionalTest.doublingGenerator, 5));
-            assertThat(findLast(Functional.isEven, l)).hasValue(10);
+            assertThat(findLast(Functional::isEven, l)).hasValue(10);
         }
 
         @Test
         void curriedFindLastIterableWithFunctionReturnsValue() {
             final Iterable<Integer> l = Functional.init(FunctionalTest.doublingGenerator, 5);
-            final Function<Iterable<Integer>, Option<Integer>> lastFunc = findLast(Functional.isEven);
+            final Function<Iterable<Integer>, Option<Integer>> lastFunc = findLast(Functional::isEven);
             assertThat(lastFunc.apply(l)).hasValue(10);
         }
     }
@@ -106,19 +88,19 @@ class Functional_FindLast_Test {
         @Test
         void findLastWithFunctionReturnsEmpty() {
             final List<Integer> l = new ArrayList<>(Functional.init(FunctionalTest.doublingGenerator, 5));
-            assertThat(findLast((Predicate<Integer>) x -> Functional.isOdd.apply(x), l)).isEmpty();
+            assertThat(findLast((Predicate<Integer>) Functional::isOdd, l)).isEmpty();
         }
 
         @Test
         void findLastWithFunctionReturnsValue() {
             final List<Integer> l = new ArrayList<>(Functional.init(FunctionalTest.doublingGenerator, 5));
-            assertThat(findLast((Predicate<Integer>) x -> Functional.isEven.apply(x), l)).hasValue(10);
+            assertThat(findLast((Predicate<Integer>) Functional::isEven, l)).hasValue(10);
         }
 
         @Test
         void curriedFindLastWithFunctionReturnsValue() {
             final List<Integer> l = new ArrayList<>(Functional.init(FunctionalTest.doublingGenerator, 5));
-            final Function<Iterable<Integer>, Option<Integer>> lastFunc = findLast((Predicate<Integer>) x -> Functional.isEven.apply(x));
+            final Function<Iterable<Integer>, Option<Integer>> lastFunc = findLast((Predicate<Integer>) Functional::isEven);
             assertThat(lastFunc.apply(l)).hasValue(10);
         }
     }
@@ -128,19 +110,19 @@ class Functional_FindLast_Test {
         @Test
         void findLastIterableWithFunctionReturnsEmpty() {
             final Iterable<Integer> l = new ArrayList<>(Functional.init(FunctionalTest.doublingGenerator, 5));
-            assertThat(findLast((Predicate<Integer>) x -> Functional.isOdd.apply(x), l)).isEmpty();
+            assertThat(findLast((Predicate<Integer>) Functional::isOdd, l)).isEmpty();
         }
 
         @Test
         void findLastIterableWithFunctionReturnsValue() {
             final Iterable<Integer> l = new ArrayList<>(Functional.init(FunctionalTest.doublingGenerator, 5));
-            assertThat(findLast((Predicate<Integer>) x -> Functional.isEven.apply(x), l)).hasValue(10);
+            assertThat(findLast((Predicate<Integer>) Functional::isEven, l)).hasValue(10);
         }
 
         @Test
         void curriedFindLastIterableWithFunctionReturnsValue() {
             final Iterable<Integer> l = Functional.init(FunctionalTest.doublingGenerator, 5);
-            final Function<Iterable<Integer>, Option<Integer>> lastFunc = findLast((Predicate<Integer>) x -> Functional.isEven.apply(x));
+            final Function<Iterable<Integer>, Option<Integer>> lastFunc = findLast((Predicate<Integer>) Functional::isEven);
             assertThat(lastFunc.apply(l)).hasValue(10);
         }
     }

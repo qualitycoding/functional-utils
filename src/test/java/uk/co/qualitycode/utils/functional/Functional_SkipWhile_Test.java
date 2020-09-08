@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -20,7 +19,7 @@ class Functional_SkipWhile_Test {
         final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
         {
             final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-            final List<Integer> output = Functional.skipWhile(Functional.isEven).apply(l);
+            final List<Integer> output = Functional.skipWhile(Functional::isEven).apply(l);
             assertThat(output).containsExactlyElementsOf(expected);
         }
     }
@@ -30,12 +29,12 @@ class Functional_SkipWhile_Test {
         final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
         {
             final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-            final List<Integer> output = Functional.skipWhile(Functional.isEven, l);
+            final List<Integer> output = Functional.skipWhile(Functional::isEven, l);
             assertThat(output).containsExactlyElementsOf(expected);
         }
         {
             final List<Integer> expected = Arrays.asList(2, 3, 4, 5);
-            final List<Integer> output = Functional.skipWhile(Functional.isOdd, l);
+            final List<Integer> output = Functional.skipWhile(Functional::isOdd, l);
             assertThat(output).containsExactlyElementsOf(expected);
         }
         {
@@ -62,7 +61,7 @@ class Functional_SkipWhile_Test {
         for (int i = 1; i < 10; ++i)
             input.add(Integer.valueOf(i));
 
-        final List<Number> output = Functional.skipWhile((Function<Object, Boolean>) number -> ((number instanceof Integer) && ((Integer) number % 2) == 1), input);
+        final List<Number> output = Functional.skipWhile(number -> ((number instanceof Integer) && ((Integer) number % 2) == 1), input);
 
         final List<Integer> expected = Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9);
 
@@ -74,12 +73,12 @@ class Functional_SkipWhile_Test {
         final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
         {
             final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-            final List<Integer> output = Functional.toList(Functional.seq.skipWhile(Functional.isEven, l));
+            final List<Integer> output = Functional.toList(Functional.seq.skipWhile(Functional::isEven, l));
             assertThat(output).containsExactlyElementsOf(expected);
         }
         {
             final List<Integer> expected = Arrays.asList(2, 3, 4, 5);
-            final List<Integer> output = Functional.toList(Functional.seq.skipWhile(Functional.isOdd, l));
+            final List<Integer> output = Functional.toList(Functional.seq.skipWhile(Functional::isOdd, l));
             assertThat(output).containsExactlyElementsOf(expected);
         }
         {
@@ -99,7 +98,7 @@ class Functional_SkipWhile_Test {
         final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
         {
             final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-            final Iterable<Integer> output = Functional.seq.skipWhile(Functional.isEven, l);
+            final Iterable<Integer> output = Functional.seq.skipWhile(Functional::isEven, l);
             final Iterator<Integer> iterator = output.iterator();
             for (final int expct : expected)
                 assertThat(iterator.next()).isEqualTo(expct);
@@ -111,7 +110,7 @@ class Functional_SkipWhile_Test {
         final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
         {
             final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-            final Iterable<Integer> output = Functional.seq.skipWhile(Functional.isEven, l);
+            final Iterable<Integer> output = Functional.seq.skipWhile(Functional::isEven, l);
             assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
         }
     }
@@ -121,7 +120,7 @@ class Functional_SkipWhile_Test {
         final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
         {
             final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-            final Iterable<Integer> output = Functional.seq.skipWhile(Functional.isEven, l);
+            final Iterable<Integer> output = Functional.seq.skipWhile(Functional::isEven, l);
             try {
                 output.iterator();
             } catch (final UnsupportedOperationException e) {
@@ -136,7 +135,7 @@ class Functional_SkipWhile_Test {
         final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
         {
             final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-            final List<Integer> output = Functional.toList(Functional.seq.skipWhile(Functional.isEven).apply(l));
+            final List<Integer> output = Functional.toList(Functional.seq.skipWhile(Functional::isEven).apply(l));
             assertThat(output).containsExactlyElementsOf(expected);
         }
     }
@@ -153,7 +152,7 @@ class Functional_SkipWhile_Test {
         for (int i = 1; i < 10; ++i)
             input.add(i);
 
-        final List<Number> output = Functional.toList(Functional.seq.skipWhile((Function<Object, Boolean>) number -> ((number instanceof Integer) && ((Integer) number % 2) == 1), input));
+        final List<Number> output = Functional.toList(Functional.seq.skipWhile(number -> ((number instanceof Integer) && ((Integer) number % 2) == 1), input));
 
         final List<Integer> expected = Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9);
 

@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static uk.co.qualitycode.utils.functional.primitive.integer.Iterators.reverse;
 
@@ -75,14 +75,14 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if f or input are null
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
-    public static int find(final Func_int_T<Boolean> f, final IntList input) {
+    public static int find(final Predicate_int f, final IntList input) {
         if (f == null) throw new IllegalArgumentException("f");
         if (input == null) throw new IllegalArgumentException("input");
 
         final IntIterator iterator = input.iterator();
         while (iterator.hasNext()) {
             final int a = iterator.next();
-            if (f.apply((a)))
+            if (f.test((a)))
                 return a;
         }
         throw new NoSuchElementException();
@@ -99,7 +99,7 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if f or input are null
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
-    public static int findIndex(final Func_int_T<Boolean> f, final IntList input) {
+    public static int findIndex(final Predicate_int f, final IntList input) {
         if (f == null) throw new IllegalArgumentException("f");
         if (input == null) throw new IllegalArgumentException("input");
 
@@ -107,7 +107,7 @@ public final class Functional {
         final IntIterator iterator = input.iterator();
         while (iterator.hasNext()) {
             final int a = iterator.next();
-            if (f.apply(a))
+            if (f.test(a))
                 return pos;
             else pos++;
         }
@@ -124,7 +124,7 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if f or input are null
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
-    public static int findLast(final Func_int_T<Boolean> f, final IntList input) {
+    public static int findLast(final Predicate_int f, final IntList input) {
         if (f == null) throw new IllegalArgumentException("f");
         if (input == null) throw new IllegalArgumentException("input");
 
@@ -132,7 +132,7 @@ public final class Functional {
         final IntIterator iterator = reversed.iterator();
         while (iterator.hasNext()) {
             final int a = iterator.next();
-            if (f.apply(a))
+            if (f.test(a))
                 return a;
         }
         throw new NoSuchElementException();
@@ -147,7 +147,7 @@ public final class Functional {
 //     * @throws java.util.NoSuchElementException if no element is found that satisfies the predicate
 //     * @return the last element in the input sequence for which the supplied predicate returns true
 //     */
-//    public static int findLast(final Func_int_T<Boolean> f, final IntIterable input)
+//    public static int findLast(final Predicate_int f, final IntIterable input)
 //    {
 //        if (f == null) throw new IllegalArgumentException("f");
 //        if (input == null) throw new IllegalArgumentException("input");
@@ -200,27 +200,31 @@ public final class Functional {
      * <tt>isEven</tt> a function that accepts an integer and returns a boolean that indicates whether the passed integer
      * is or is not an even integer
      */
-    public static Func_int_T<Boolean> isEven = i -> i % 2 == 0;
+    public static boolean isEven(final int i) {
+        return i % 2 == 0;
+    }
+
     /**
      * <tt>isOdd</tt> a function that accepts an integer and returns a boolean that indicates whether the passed integer
      * is or is not an odd integer
      */
-    public static Func_int_T<Boolean> isOdd = i -> i % 2 != 0;
+    public static boolean isOdd(final int i) {
+        return i % 2 != 0;
+    }
+
     /**
      * <tt>count</tt> a function that accepts a counter and another integer and returns 1 + counter
      */
-    public static BiFunction<Integer, Integer, Integer> count = (state, b) -> state + 1;
-    /**
-     * <tt>sum</tt> a function that accepts two integers and returns the sum of them
-     */
-    public static BiFunction<Integer, Integer, Integer> sum = Integer::sum;
+    public static int count(final int state, final int b) {
+        return state + 1;
+    }
 
     /**
      * @param <T> the type of <tt>that</tt>, the input argument
      * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' is greater than
      * 'that' or false otherwise
      */
-    public static <T extends Comparable<T>> Function<T, Boolean> greaterThan(final T that) {
+    public static <T extends Comparable<T>> Predicate<T> greaterThan(final T that) {
         return ths -> ths.compareTo(that) > 0;
     }
 
@@ -229,7 +233,7 @@ public final class Functional {
      * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' is greater than
      * or equal to 'that' or false otherwise
      */
-    public static <T extends Comparable<T>> Function<T, Boolean> greaterThanOrEqual(final T that) {
+    public static <T extends Comparable<T>> Predicate<T> greaterThanOrEqual(final T that) {
         return ths -> ths.compareTo(that) >= 0;
     }
 
@@ -238,7 +242,7 @@ public final class Functional {
      * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' is less than
      * 'that' or false otherwise
      */
-    public static <T extends Comparable<T>> Function<T, Boolean> lessThan(final T that) {
+    public static <T extends Comparable<T>> Predicate<T> lessThan(final T that) {
         return ths -> ths.compareTo(that) < 0;
     }
 
@@ -247,7 +251,7 @@ public final class Functional {
      * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' is less than
      * or equal to 'that' or false otherwise
      */
-    public static <T extends Comparable<T>> Function<T, Boolean> lessThanOrEqual(final T that) {
+    public static <T extends Comparable<T>> Predicate<T> lessThanOrEqual(final T that) {
         return ths -> ths.compareTo(that) <= 0;
     }
 
@@ -468,13 +472,13 @@ public final class Functional {
      * @return a list which contains zero or more of the elements of the input sequence. Each element is included only if the filter
      * function returns true for the element.
      */
-    public static IntList filter(final Func_int_T<Boolean> pred, final IntIterable input) {
+    public static IntList filter(final Predicate_int pred, final IntIterable input) {
         final int[] output = input instanceof IntList ? new int[((IntList) input).size()] : new int[]{};
         final IntIterator iterator = input.iterator();
         int pos = 0;
         while (iterator.hasNext()) {
             final int element = iterator.next();
-            if (pred.apply(element))
+            if (pred.test(element))
                 output[pos++] = element;
         }
         return new IntList(output, pos);
@@ -489,11 +493,11 @@ public final class Functional {
      * @param input input sequence
      * @return true if the predicate returns true for any element in the input sequence, false otherwise
      */
-    public static boolean exists(final Func_int_T<Boolean> f, final IntIterable input) {
+    public static boolean exists(final Predicate_int f, final IntIterable input) {
         final IntIterator iterator = input.iterator();
         while (iterator.hasNext()) {
             final int a = iterator.next();
-            if (f.apply(a))
+            if (f.test(a))
                 return true;
         }
         return false;
@@ -506,8 +510,8 @@ public final class Functional {
      * @param f the applied predicate
      * @return true if f returns false, false if f returns true
      */
-    public static Func_int_T<Boolean> not(final Func_int_T<Boolean> f) {
-        return a -> !f.apply(a);
+    public static Predicate_int not(final Predicate_int f) {
+        return a -> !f.test(a);
     }
 
     /**
@@ -520,7 +524,7 @@ public final class Functional {
      * @param <A>   the type of the element in the input sequence
      * @return true if the predicate returns true for all elements in the input sequence, false otherwise
      */
-    public static <A> boolean forAll(final Func_int_T<Boolean> f, final IntIterable input) {
+    public static <A> boolean forAll(final Predicate_int f, final IntIterable input) {
         return !exists(not(f), input);
     }
 
@@ -529,11 +533,9 @@ public final class Functional {
      * not2: (A -> B -> bool) -> (A -> B -> bool)
      *
      * @param f   the applied predicate
-     * @param <A> the type of the first input to the function <tt>f</tt>
-     * @param <B> the type of the second input to the function <tt>f</tt>
      * @return true if f returns false, false if f returns true
      */
-    public static <A, B> Func2_int_int_T<Boolean> not2(final Func2_int_int_T<Boolean> f) {
+    public static Func2_int_int_T<Boolean> not2(final Func2_int_int_T<Boolean> f) {
         return (a, b) -> !f.apply(a, b);
     }
 
@@ -550,7 +552,7 @@ public final class Functional {
      * @param input the input sequence
      * @return a pair of lists, the first being the 'true' and the second being the 'false'
      */
-    public static Tuple2<List<Integer>, List<Integer>> partition(final Func_int_T<Boolean> f, final IntIterable input) {
+    public static Tuple2<List<Integer>, List<Integer>> partition(final Predicate_int f, final IntIterable input) {
         final List<Integer> left;
         final List<Integer> right;
         if (input instanceof IntList) {
@@ -563,7 +565,7 @@ public final class Functional {
         final IntIterator iterator = input.iterator();
         while (iterator.hasNext()) {
             final int a = iterator.next();
-            if (f.apply(a))
+            if (f.test(a))
                 left.add(a);
             else
                 right.add(a);
@@ -644,13 +646,13 @@ public final class Functional {
      * This is the converse of <tt>fold</tt>
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
-    public static <A, B> List<A> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Function<? super B, Boolean> finished, final B seed) {
+    public static <A, B> List<A> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Predicate<? super B> finished, final B seed) {
         if (unspool == null) throw new IllegalArgumentException("unspool");
         if (finished == null) throw new IllegalArgumentException("finished");
 
         B next = seed;
         final List<A> results = new ArrayList<>();
-        while (!finished.apply(next)) {
+        while (!finished.test(next)) {
             final Tuple2<A, B> t = unspool.apply(next);
             results.add(t._1());
             next = t._2();
@@ -725,7 +727,8 @@ public final class Functional {
     public static <T> Object[] toArray(final Iterable<T> input)
     //public static <T>T[] toArray(final Iterable<T> input)
     {
-        if (input == null) throw new IllegalArgumentException("Functional.toArray(Iterable<T>): input must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("Functional.toArray(Iterable<T>): input must not be null");
 
         if (input instanceof Collection<?>)
             return ((Collection<T>) input).toArray();
@@ -737,7 +740,8 @@ public final class Functional {
     }
 
     public static <T> List<T> toMutableList(final Iterable<T> input) {
-        if (input == null) throw new IllegalArgumentException("Functional.toMutableList(Iterable<T>): input must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("Functional.toMutableList(Iterable<T>): input must not be null");
 
         if (input instanceof Collection<?>) {
             final Collection<T> input_ = (Collection<T>) input;
@@ -762,7 +766,8 @@ public final class Functional {
     }
 
     public static <T> Set<T> toMutableSet(final Iterable<T> input) {
-        if (input == null) throw new IllegalArgumentException("Functional.toMutableSet(Iterable<T>): input must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("Functional.toMutableSet(Iterable<T>): input must not be null");
 
         if (input instanceof Collection<?>) {
             final Collection<T> input_ = (Collection<T>) input;
@@ -847,8 +852,10 @@ public final class Functional {
      * @return a list containing the elements of the first sequence followed by the elements of the second sequence
      */
     public static IntList concat(final IntList list1, final IntList list2) {
-        if (list1 == null) throw new IllegalArgumentException("Functional.concat(List<T>,List<T>): list1 must not be null");
-        if (list2 == null) throw new IllegalArgumentException("Functional.concat(List<T>,List<T>): list2 must not be null");
+        if (list1 == null)
+            throw new IllegalArgumentException("Functional.concat(List<T>,List<T>): list1 must not be null");
+        if (list2 == null)
+            throw new IllegalArgumentException("Functional.concat(List<T>,List<T>): list2 must not be null");
 
         final int[] first = list1.extractBackingStoreWithoutCopy();
         final int[] second = list2.extractBackingStoreWithoutCopy();
@@ -904,16 +911,17 @@ public final class Functional {
      * @param <T>       the type of the element in the input sequence
      * @return a list
      */
-    public static <T> List<T> takeWhile(final Function<? super T, Boolean> predicate, final List<T> list) {
+    public static <T> List<T> takeWhile(final Predicate<? super T> predicate, final List<T> list) {
         if (predicate == null)
             throw new IllegalArgumentException("Functional.take(Func,Iterable<T>): predicate must not be null");
-        if (list == null) throw new IllegalArgumentException("Functional.take(Func,Iterable<T>): list must not be null");
+        if (list == null)
+            throw new IllegalArgumentException("Functional.take(Func,Iterable<T>): list must not be null");
 
         if (list.size() == 0) return new ArrayList<>();
 
         for (int i = 0; i < list.size(); ++i) {
             final T element = list.get(i);
-            if (!predicate.apply(element)) {
+            if (!predicate.test(element)) {
                 if (i == 0) return new ArrayList<>();
                 return Collections.unmodifiableList(list.subList(0, i));
             }
@@ -931,7 +939,7 @@ public final class Functional {
      * @return a list
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
-    public static <T> Function<List<T>, List<T>> takeWhile(final Function<? super T, Boolean> predicate) {
+    public static <T> Function<List<T>, List<T>> takeWhile(final Predicate<? super T> predicate) {
         return input -> Functional.takeWhile(predicate, input);
     }
 
@@ -980,13 +988,14 @@ public final class Functional {
      * @param <T>       the type of the element in the input sequence
      * @return a list containing the remaining elements after and including the first element for which the predicate returns false
      */
-    public static <T> List<T> skipWhile(final Function<? super T, Boolean> predicate, final List<T> list) {
+    public static <T> List<T> skipWhile(final Predicate<? super T> predicate, final List<T> list) {
         if (predicate == null)
             throw new IllegalArgumentException("Functional.skipWhile(Func,List<T>): predicate must not be null");
-        if (list == null) throw new IllegalArgumentException("Functional.skipWhile(Func,List<T>): list must not be null");
+        if (list == null)
+            throw new IllegalArgumentException("Functional.skipWhile(Func,List<T>): list must not be null");
 
         for (int counter = 0; counter < list.size(); ++counter)
-            if (!predicate.apply(list.get(counter)))
+            if (!predicate.test(list.get(counter)))
                 return Collections.unmodifiableList(list.subList(counter, list.size()));
 
         return Collections.unmodifiableList(new ArrayList<>(0));
@@ -1001,7 +1010,7 @@ public final class Functional {
      * @return a list containing the remaining elements after and including the first element for which the predicate returns false
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
-    public static <T> Function<List<T>, List<T>> skipWhile(final Function<? super T, Boolean> predicate) {
+    public static <T> Function<List<T>, List<T>> skipWhile(final Predicate<? super T> predicate) {
         return input -> Functional.skipWhile(predicate, input);
     }
 
@@ -1047,8 +1056,10 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if either input sequence is null or if the sequences have differing lengths.
      */
     public static <A, B> List<Tuple2<A, B>> zip(final Iterable<? extends A> l1, final Iterable<? extends B> l2) {
-        if (l1 == null) throw new IllegalArgumentException("Functional.zip(Iterable<A>,Iterable<B>): l1 must not be null");
-        if (l2 == null) throw new IllegalArgumentException("Functional.zip(Iterable<A>,Iterable<B>): l2 must not be null");
+        if (l1 == null)
+            throw new IllegalArgumentException("Functional.zip(Iterable<A>,Iterable<B>): l1 must not be null");
+        if (l2 == null)
+            throw new IllegalArgumentException("Functional.zip(Iterable<A>,Iterable<B>): l2 must not be null");
 
         final List<Tuple2<A, B>> output;
         if (l1 instanceof Collection<?> && l2 instanceof Collection<?>) {
@@ -1120,7 +1131,8 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if the input sequence is null
      */
     public static <A, B> Tuple2<List<A>, List<B>> unzip(final Iterable<Tuple2<A, B>> input) {
-        if (input == null) throw new IllegalArgumentException("Functional.unzip(Iterable<Tuple2<A,B>>): input must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("Functional.unzip(Iterable<Tuple2<A,B>>): input must not be null");
 
         final List<A> l1;
         final List<B> l2;
@@ -1153,7 +1165,8 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if the input sequence is null
      */
     public static <A, B, C> Tuple3<List<A>, List<B>, List<C>> unzip3(final Iterable<Tuple3<A, B, C>> input) {
-        if (input == null) throw new IllegalArgumentException("Functional.unzip(Iterable<Tuple2<A,B>>): input must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("Functional.unzip(Iterable<Tuple2<A,B>>): input must not be null");
 
         final List<A> l1;
         final List<B> l2;
@@ -1277,7 +1290,7 @@ public final class Functional {
     }
 
     /**
-     * groupBy: similar to {@link #partition(Func_int_T, IntIterable)} in that the input is grouped according to a function. This is more general than
+     * groupBy: similar to {@link #partition(Predicate_int, IntIterable)} in that the input is grouped according to a function. This is more general than
      * <tt>partition</tt> though as the output can be an arbitrary number of groups, up to and including one group per item in the
      * input data set. The 'keyFn' is the grouping operator and it is used to determine the key at which any given element from
      * the input data set should be added to the output dictionary / map.
@@ -1289,8 +1302,10 @@ public final class Functional {
      * @return a java.util.Map containing a list of elements for each key
      */
     public static <T, U> Map<U, List<T>> groupBy(final Function<? super T, ? extends U> keyFn, final Iterable<T> input) {
-        if (keyFn == null) throw new IllegalArgumentException("Functional.groupBy(Func,Iterable): keyFn must not be null");
-        if (input == null) throw new IllegalArgumentException("Functional.groupBy(Func,Iterable): input must not be null");
+        if (keyFn == null)
+            throw new IllegalArgumentException("Functional.groupBy(Func,Iterable): keyFn must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("Functional.groupBy(Func,Iterable): input must not be null");
 
         final Map<U, List<T>> intermediateResults = new HashMap<>();
         for (final T element : input) {

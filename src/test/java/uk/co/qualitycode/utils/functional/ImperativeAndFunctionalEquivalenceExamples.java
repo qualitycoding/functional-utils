@@ -11,13 +11,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.co.qualitycode.utils.functional.Functional.choose;
 import static uk.co.qualitycode.utils.functional.Functional.filter;
 import static uk.co.qualitycode.utils.functional.Functional.fold;
 import static uk.co.qualitycode.utils.functional.Functional.init;
-import static uk.co.qualitycode.utils.functional.Functional.sum;
 import static uk.co.qualitycode.utils.functional.Functional.toList;
 import static uk.co.qualitycode.utils.functional.function.UnaryFunction.delay;
 import static uk.co.qualitycode.utils.functional.monad.MException.toMException;
@@ -33,7 +33,7 @@ public final class ImperativeAndFunctionalEquivalenceExamples {
         }
 
         private static int functional(final int n) {
-            return fold(sum, 0, init(Function.identity(), n));
+            return fold(Integer::sum, 0, init(Function.identity(), n));
         }
 
         @Test
@@ -56,7 +56,7 @@ public final class ImperativeAndFunctionalEquivalenceExamples {
             final Function<Integer, Integer> oddGenerator = integer -> {
                 return 2 * (integer - 1) + 1;            // because init starts counting from 1
             };
-            return fold(sum, 0, init(oddGenerator, n));
+            return fold(Integer::sum, 0, init(oddGenerator, n));
         }
 
         @Test
@@ -75,7 +75,7 @@ public final class ImperativeAndFunctionalEquivalenceExamples {
             return result;
         }
 
-        public static Function<Integer, Boolean> isDivisibleBy(final int denominator) {
+        public static Predicate<Integer> isDivisibleBy(final int denominator) {
             return numerator -> numerator % denominator == 0;
         }
 

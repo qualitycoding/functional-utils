@@ -14,9 +14,10 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public interface Iterable2<T> extends java.lang.Iterable<T> {
-    Iterable2<T> filter(Function<? super T, Boolean> f);
+    Iterable2<T> filter(Predicate<? super T> f);
 
     <U> Iterable2<U> map(Function<? super T, ? extends U> f);
 
@@ -24,9 +25,9 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
 
     <U> Iterable2<U> choose(Function<? super T, Option<U>> f);
 
-    boolean exists(Function<? super T, Boolean> f);
+    boolean exists(Predicate<? super T> f);
 
-    boolean forAll(Function<? super T, Boolean> f);
+    boolean forAll(Predicate<? super T> f);
 
     <U> boolean forAll2(final BiFunction<? super U, ? super T, Boolean> f, final Iterable<U> input1);
 
@@ -46,9 +47,9 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
 
     Iterable2<T> concat(final Iterable2<T> list2);
 
-    Option<T> find(Function<? super T, Boolean> f);
+    Option<T> find(Predicate<? super T> f);
 
-    int findIndex(Function<? super T, Boolean> f);
+    int findIndex(Predicate<? super T> f);
 
     <U> Option<U> pick(final Function<? super T, Option<U>> f);
 
@@ -56,17 +57,17 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
 
     Iterable2<T> take(final int howMany);
 
-    Iterable2<T> takeWhile(final Function<? super T, Boolean> f);
+    Iterable2<T> takeWhile(final Predicate<? super T> f);
 
     Iterable2<T> skip(final int howMany);
 
-    Iterable2<T> skipWhile(final Function<? super T, Boolean> f);
+    Iterable2<T> skipWhile(final Predicate<? super T> f);
 
     String join(final String delimiter);
 
-    Option<T> findLast(final Function<T, Boolean> f);
+    Option<T> findLast(final Predicate<T> f);
 
-    Tuple2<List<T>, List<T>> partition(final Function<? super T, Boolean> f);
+    Tuple2<List<T>, List<T>> partition(final Predicate<? super T> f);
 
     <U> Iterable2<Tuple2<T, U>> zip(final Iterable2<? extends U> l2);
 
@@ -93,7 +94,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
                 return i.iterator();
             }
 
-            public Iterable2<T> filter(final Function<? super T, Boolean> f) {
+            public Iterable2<T> filter(final Predicate<? super T> f) {
                 return of(Functional.seq.filter(f, i));
             }
 
@@ -109,11 +110,11 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
                 return of(Functional.seq.choose(f, i));
             }
 
-            public boolean exists(final Function<? super T, Boolean> f) {
+            public boolean exists(final Predicate<? super T> f) {
                 return Functional.exists(f, i);
             }
 
-            public boolean forAll(final Function<? super T, Boolean> f) {
+            public boolean forAll(final Predicate<? super T> f) {
                 return Functional.forAll(f, i);
             }
 
@@ -153,11 +154,11 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
                 return of(Functional.seq.concat(i, list2));
             }
 
-            public Option<T> find(final Function<? super T, Boolean> f) {
+            public Option<T> find(final Predicate<? super T> f) {
                 return Functional.find(f, i);
             }
 
-            public int findIndex(final Function<? super T, Boolean> f) {
+            public int findIndex(final Predicate<? super T> f) {
                 return Functional.findIndex(f, i);
             }
 
@@ -170,7 +171,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             }
 
 
-            public Iterable2<T> takeWhile(final Function<? super T, Boolean> f) {
+            public Iterable2<T> takeWhile(final Predicate<? super T> f) {
                 return of(Functional.seq.takeWhile(f, i));
             }
 
@@ -179,7 +180,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             }
 
 
-            public Iterable2<T> skipWhile(final Function<? super T, Boolean> f) {
+            public Iterable2<T> skipWhile(final Predicate<? super T> f) {
                 return of(Functional.seq.skipWhile(f, i));
             }
 
@@ -187,11 +188,11 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
                 return Functional.join(delimiter, i);
             }
 
-            public Option<T> findLast(final Function<T, Boolean> f) {
+            public Option<T> findLast(final Predicate<T> f) {
                 return Functional.findLast(f, i);
             }
 
-            public Tuple2<List<T>, List<T>> partition(final Function<? super T, Boolean> f) {
+            public Tuple2<List<T>, List<T>> partition(final Predicate<? super T> f) {
                 return Functional.partition(f, i);
             }
 
@@ -242,7 +243,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             };
         }
 
-        public Iterable2<T> filter(final Function<? super T, Boolean> f) {
+        public Iterable2<T> filter(final Predicate<? super T> f) {
             return this;
         }
 
@@ -258,11 +259,11 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             return new uk.co.qualitycode.utils.functional.Iterable2.EmptyList<>();
         }
 
-        public boolean exists(final Function<? super T, Boolean> f) {
+        public boolean exists(final Predicate<? super T> f) {
             return false;
         }
 
-        public boolean forAll(final Function<? super T, Boolean> f) {
+        public boolean forAll(final Predicate<? super T> f) {
             return false;
         }
 
@@ -302,11 +303,11 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             return list2;
         }
 
-        public Option<T> find(final Function<? super T, Boolean> f) {
+        public Option<T> find(final Predicate<? super T> f) {
             throw new NoSuchElementException();
         }
 
-        public int findIndex(final Function<? super T, Boolean> f) {
+        public int findIndex(final Predicate<? super T> f) {
             throw new NoSuchElementException();
         }
 
@@ -318,7 +319,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             return this;
         }
 
-        public Iterable2<T> takeWhile(final Function<? super T, Boolean> f) {
+        public Iterable2<T> takeWhile(final Predicate<? super T> f) {
             return this;
         }
 
@@ -326,7 +327,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             return this;
         }
 
-        public Iterable2<T> skipWhile(final Function<? super T, Boolean> f) {
+        public Iterable2<T> skipWhile(final Predicate<? super T> f) {
             return this;
         }
 
@@ -334,11 +335,11 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             return Functional.join(delimiter, this);
         }
 
-        public Option<T> findLast(final Function<T, Boolean> f) {
+        public Option<T> findLast(final Predicate<T> f) {
             throw new NoSuchElementException();
         }
 
-        public Tuple2<List<T>, List<T>> partition(final Function<? super T, Boolean> f) {
+        public Tuple2<List<T>, List<T>> partition(final Predicate<? super T> f) {
             return Functional.partition(f, this);
         }
 
@@ -367,11 +368,9 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             return o instanceof uk.co.qualitycode.utils.functional.Iterable2.EmptyList<?>;
         }
 
-
         public int hashCode() {
             return 0;
         }
-
 
         public String toString() {
             return "()";

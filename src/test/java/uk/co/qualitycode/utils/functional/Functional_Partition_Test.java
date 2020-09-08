@@ -20,7 +20,7 @@ class Functional_Partition_Test {
     @Test
     void partitionTest1() {
         final Collection<Integer> m = Functional.init(FunctionalTest.triplingGenerator, 5);
-        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional.isOdd, m);
+        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional::isOdd, m);
 
         assertThat(r._1()).containsExactly(3, 9, 15);
         assertThat(r._2()).containsExactly(6, 12);
@@ -29,7 +29,7 @@ class Functional_Partition_Test {
     @Test
     void curriedPartitionTest1() {
         final Collection<Integer> m = Functional.init(FunctionalTest.triplingGenerator, 5);
-        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional.isOdd).apply(m);
+        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional::isOdd).apply(m);
 
         assertThat(r._1()).containsExactly(3, 9, 15);
         assertThat(r._2()).containsExactly(6, 12);
@@ -38,7 +38,7 @@ class Functional_Partition_Test {
     @Test
     void iterablePartitionTest1() {
         final Iterable<Integer> m = Functional.seq.init(FunctionalTest.triplingGenerator, 5);
-        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional.isOdd, m);
+        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional::isOdd, m);
 
         assertThat(r._1()).containsExactly(3, 9, 15);
         assertThat(r._2()).containsExactly(6, 12);
@@ -47,7 +47,7 @@ class Functional_Partition_Test {
     @Test
     void partitionTest2() {
         final Collection<Integer> l = Functional.init(FunctionalTest.doublingGenerator, 5);
-        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional.isEven, l);
+        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional::isEven, l);
         assertThat(r._1()).containsExactlyElementsOf(l);
         assertThat(r._2()).containsExactly();
     }
@@ -55,8 +55,8 @@ class Functional_Partition_Test {
     @Test
     void partitionTest3() {
         final Collection<Integer> l = Functional.init(FunctionalTest.doublingGenerator, 5);
-        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional.isEven, l);
-        assertThat(r._1()).isEqualTo(Functional.filter(Functional.isEven, l));
+        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional::isEven, l);
+        assertThat(r._1()).isEqualTo(Functional.filter(Functional::isEven, l));
     }
 
     @Test

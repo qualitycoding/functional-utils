@@ -20,13 +20,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static uk.co.qualitycode.utils.functional.Functional.isEven;
 import static uk.co.qualitycode.utils.functional.Functional.stringify;
 
@@ -89,13 +88,18 @@ class FunctionalTest {
     @Test
     void convertToString() {
         assertThat(stringify(1)).isEqualTo("1");
-        final Object obj = mock(Object.class);
-        stringify(obj);
-        verify(obj).toString();
+
+//        Mockito cannot verify toString()
+//        toString() is too often used behind of scenes  (i.e. during String concatenation, in IDE debugging views). Verifying it may give inconsistent or hard to understand results. Not to mention that verifying toString() most likely hints awkward design (hard to explain in a short exception message. Trust me...)
+//        However, it is possible to stub toString(). Stubbing toString() smells a bit funny but there are rare, legitimate use cases.
+
+//        final Object obj = mock(Object.class);
+//        stringify(obj);
+//        verify(obj).toString();
     }
 
     static boolean bothAreEven(final int a, final int b) {
-        return isEven.apply(a) && isEven.apply(b);
+        return isEven(a) && isEven(b);
     }
 
     static boolean bothAreLessThan10(final int a, final int b) {
@@ -108,8 +112,8 @@ class FunctionalTest {
     void compositionTest1A() {
         final Collection<Integer> i = Arrays.asList(1, 2, 3, 45, 56, 6);
 
-        final boolean allOdd = Functional.forAll(Functional.isOdd, i);
-        final boolean notAllOdd = Functional.exists(Functional.not(Functional.isOdd), i);
+        final boolean allOdd = Functional.forAll(Functional::isOdd, i);
+        final boolean notAllOdd = Functional.exists(Functional.not(Functional::isOdd), i);
 
         assertThat(allOdd).isFalse();
         assertThat(notAllOdd).isTrue();
@@ -119,8 +123,8 @@ class FunctionalTest {
     void curriedCompositionTest1A() {
         final Collection<Integer> i = Arrays.asList(1, 2, 3, 45, 56, 6);
 
-        final boolean allOdd = Functional.forAll(Functional.isOdd).apply(i);
-        final boolean notAllOdd = Functional.exists(Functional.not(Functional.isOdd)).apply(i);
+        final boolean allOdd = Functional.forAll(Functional::isOdd).test(i);
+        final boolean notAllOdd = Functional.exists(Functional.not(Functional::isOdd)).test(i);
 
         assertThat(allOdd).isFalse();
         assertThat(notAllOdd).isTrue();
@@ -143,14 +147,14 @@ class FunctionalTest {
         return b.equals(c);
     }
 
-    private static final <B, C> Function<C, Boolean> curried_fn(final B b) {
+    private static final <B, C> Predicate<C> curried_fn(final B b) {
         return c -> fn(b, c);
     }
 
     @Test
     void curriedFnTest1() {
         final boolean test1a = fn(1, 2);
-        final boolean test1b = curried_fn(1).apply(2);
+        final boolean test1b = curried_fn(1).test(2);
         assertThat(test1b).isEqualTo(test1a);
     }
 
@@ -176,7 +180,7 @@ class FunctionalTest {
 
     final Function<Collection<Integer>, String> concatenate = l -> Functional.fold(FunctionalTest::csv, "", l);
 
-    final Function<Collection<Integer>, Collection<Integer>> evens_f = l -> Functional.filter(isEven, l);
+    final Function<Collection<Integer>, Collection<Integer>> evens_f = l -> Functional.filter(Functional::isEven, l);
 
     @Test
     void chooseTest3A() throws OptionNoValueAccessException {
@@ -266,7 +270,7 @@ class FunctionalTest {
 
     @Test
     void testIsEven_withEvenNum() {
-        assertThat(isEven.apply(2)).isTrue();
+        assertThat(isEven(2)).isTrue();
     }
 
     /*@Test void testThen()
@@ -489,7 +493,7 @@ class FunctionalTest {
     @Test
     void curryFnTest1() {
         final int state = 0;
-        final Function<Integer, Boolean> testForPosInts = integer -> integer > state;
+        final Predicate<Integer> testForPosInts = integer -> integer > state;
 
         final Function<Iterable<Integer>, List<Integer>> curriedTestForPosInts = Functional.filter(testForPosInts);
 
@@ -543,7 +547,7 @@ class FunctionalTest {
     @Test
     void filterInTermsOfFoldTest1() {
         final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-        final Iterable<Integer> oddElems = Functional.inTermsOfFold.filter(Functional.isOdd, l);
+        final Iterable<Integer> oddElems = Functional.inTermsOfFold.filter(Functional::isOdd, l);
         assertThat(oddElems).containsExactlyElementsOf(new ArrayList<>());
     }
 

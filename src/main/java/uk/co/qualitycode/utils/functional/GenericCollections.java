@@ -3,7 +3,7 @@ package uk.co.qualitycode.utils.functional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 public final class GenericCollections {
     public interface Generator<A> {
@@ -44,10 +44,10 @@ public final class GenericCollections {
         }
     }
 
-    public static <A> Iterable<A> filter(final Function<A, Boolean> pred, final Generator<A> generator, final Iterable<A> input) {
+    public static <A> Iterable<A> filter(final Predicate<A> pred, final Generator<A> generator, final Iterable<A> input) {
         final Collection<A> output = generator.initialiseEmptyContainer();
         for (final A element : input)
-            if (pred.apply(element))
+            if (pred.test(element))
                 output.add(element);
 
         return generator.createUnmodifiableContainer(output);

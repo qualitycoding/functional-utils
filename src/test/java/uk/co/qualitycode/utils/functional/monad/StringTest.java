@@ -10,7 +10,7 @@ import uk.co.qualitycode.utils.functional.monad.String.NonEmptyString;
 import uk.co.qualitycode.utils.functional.monad.String.NonNullString;
 
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -312,21 +312,21 @@ class StringTest {
 
         @Test
         void withPredicate() {
-            assertThat(NonBlankString.of("jhj").filter((java.util.function.Predicate) Objects::nonNull)).isEqualTo(NonBlankString.of("jhj"));
+            assertThat(NonBlankString.of("jhj").filter(Objects::nonNull)).isEqualTo(NonBlankString.of("jhj"));
         }
 
         @Test
         void throwsWithFunction() {
             assertThatNullPointerException()
-.isThrownBy(() -> assertThat(NonBlankString.of("jkh").filter((Function) null)))
-.withMessage("predicate must not be null");
+                    .isThrownBy(() -> assertThat(NonBlankString.of("jkh").filter(null)))
+                    .withMessage("predicate must not be null");
         }
 
         @Test
         void throwsWithPredicate() {
             assertThatNullPointerException()
-.isThrownBy(() -> assertThat(NonBlankString.of("jkh").filter((Function) null)))
-.withMessage("predicate must not be null");
+                    .isThrownBy(() -> assertThat(NonBlankString.of("jkh").filter(null)))
+                    .withMessage("predicate must not be null");
         }
     }
 
@@ -344,8 +344,8 @@ class StringTest {
         @Test
         void mapThrows() {
             assertThatNullPointerException()
-.isThrownBy(() -> NonBlankString.of("jhglgl").map(null))
-.withMessage("tfm must not be null");
+                    .isThrownBy(() -> NonBlankString.of("jhglgl").map(null))
+                    .withMessage("tfm must not be null");
         }
     }
 
@@ -363,8 +363,8 @@ class StringTest {
         @Test
         void flatMapThrows() {
             assertThatNullPointerException()
-.isThrownBy(() -> NonBlankString.of("jhglgl").flatMap(null))
-.withMessage("tfm must not be null");
+                    .isThrownBy(() -> NonBlankString.of("jhglgl").flatMap(null))
+                    .withMessage("tfm must not be null");
         }
     }
 
@@ -396,7 +396,7 @@ class StringTest {
 
         @Test
         void of() {
-            final Function<java.lang.String, Boolean> rule = s -> true;
+            final Predicate<java.lang.String> rule = s -> true;
             final java.lang.String value = "a";
             final ConformingString string = ConformingString.of(rule, value);
             assertAll(
@@ -407,14 +407,14 @@ class StringTest {
 
         @Test
         void getRule() {
-            final Function<java.lang.String, Boolean> rule = s -> true;
+            final Predicate<java.lang.String> rule = s -> true;
             final ConformingString string = new ConformingStringBuilder().withRule(rule).withValue("value").build();
             assertThat(string.getRule()).isEqualTo(rule);
         }
 
         @Test
         void getRuleWhenValueDoesNotConform() {
-            final Function<java.lang.String, Boolean> rule = s -> false;
+            final Predicate<java.lang.String> rule = s -> false;
             final ConformingString string = new ConformingStringBuilder().withRule(rule).withValue("value").build();
             assertThat(string.getRule()).isEqualTo(rule);
         }

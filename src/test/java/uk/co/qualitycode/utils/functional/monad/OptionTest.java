@@ -92,7 +92,7 @@ class OptionTest {
 
             final Iterable2<Option<Integer>> output = input.map(
                     integer -> Option.of(integer).bind(
-                            i -> Functional.isEven.apply(i) ? Option.of(i) : Option.none()));
+                            i -> Functional.isEven(i) ? Option.of(i) : Option.none()));
 
 
             final Iterable2<Integer> choose = output.choose(Function.identity());

@@ -84,8 +84,7 @@ class MExceptionTest {
             }
         }
 
-        final java.util.List<MException<Integer>> l1 = Functional.filter(
-                m -> !m.hasException(), l);
+        final java.util.List<MException<Integer>> l1 = Functional.filter(m -> !m.hasException(), l);
 
         assertThat(Functional.forAll(MException::hasException, l1)).isFalse();
 

@@ -2,6 +2,7 @@ package uk.co.qualitycode.utils.functional;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public final class LispList {
     public interface List<T> {
@@ -20,13 +21,13 @@ public final class LispList {
         return reverse(input, nil());
     }
 
-    private static <T> List<T> filter(final Function<T, Boolean> f, final List<T> input, final List<T> accumulator) {
+    private static <T> List<T> filter(final Predicate<T> f, final List<T> input, final List<T> accumulator) {
         return input.isEmpty()
                 ? accumulator
-                : filter(f, input.tail(), f.apply(input.head()) ? list(input.head(), accumulator) : accumulator);
+                : filter(f, input.tail(), f.test(input.head()) ? list(input.head(), accumulator) : accumulator);
     }
 
-    public static <T> List<T> filter(final Function<T, Boolean> f, final List<T> input) {
+    public static <T> List<T> filter(final Predicate<T> f, final List<T> input) {
         return reverse(filter(f, input, nil()));
     }
 

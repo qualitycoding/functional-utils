@@ -19,10 +19,8 @@ import java.util.function.Function;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class FunctionalTest {
-    private static final Func2_int_int_T<Boolean> dBothAreLessThan10 = FunctionalTest::bothAreLessThan10;
     public static Func_int_int doublingGenerator = a -> 2 * a;
 
     @Test
@@ -101,12 +99,12 @@ class FunctionalTest {
 //        Assert.fail("Should not reach this point");
 //    }
 
-    public static Func_int_int TriplingGenerator = a -> 3 * a;
+    public static Func_int_int triplingGenerator = a -> 3 * a;
 
-    public static Func_int_int QuadruplingGenerator = a -> 4 * a;
+    public static Func_int_int quadruplingGenerator = a -> 4 * a;
 
-    private static boolean BothAreEven(final int a, final int b) {
-        return Functional.isEven.apply(a) && Functional.isEven.apply(b);
+    private static boolean bothAreEven(final int a, final int b) {
+        return Functional.isEven(a) && Functional.isEven(b);
     }
 
     @Test
@@ -148,29 +146,26 @@ class FunctionalTest {
     @Test
     void forAll2Test1() {
         final IntList l = Functional.init(doublingGenerator, 5);
-        final IntList m = Functional.init(QuadruplingGenerator, 5);
-        try {
-            assertThat(Functional.forAll2(FunctionalTest::BothAreEven, l, m)).isTrue();
-        } catch (final Exception e) {
-            fail();
-        }
+        final IntList m = Functional.init(quadruplingGenerator, 5);
+
+        assertThat(Functional.forAll2(FunctionalTest::bothAreEven, l, m)).isTrue();
     }
 
     @Test
     void forAll2Test2() {
         final IntList l = Functional.init(doublingGenerator, 5);
-        final IntList m = Functional.init(TriplingGenerator, 5);
+        final IntList m = Functional.init(triplingGenerator, 5);
 
-        assertThat(Functional.forAll2(dBothAreLessThan10, l, m)).isFalse();
+        assertThat(Functional.forAll2(FunctionalTest::bothAreLessThan10, l, m)).isFalse();
     }
 
     @Test
     void forAll2Test3() {
         final IntList l = Functional.init(doublingGenerator, 5);
-        final IntList m = Functional.init(QuadruplingGenerator, 7);
+        final IntList m = Functional.init(quadruplingGenerator, 7);
 
-        assertThatExceptionOfType(Exception.class).isThrownBy(() ->
-                Functional.forAll2(FunctionalTest::BothAreEven, l, m));
+        assertThatExceptionOfType(Exception.class)
+                .isThrownBy(() -> Functional.forAll2(FunctionalTest::bothAreEven, l, m));
     }
 
 //    @Test
@@ -202,8 +197,8 @@ class FunctionalTest {
     void compositionTest1A() {
         final IntList i = new IntList(new int[]{1, 2, 3, 45, 56, 6});
 
-        final boolean allOdd = Functional.forAll(Functional.isOdd, i);
-        final boolean notAllOdd = Functional.exists(Functional.not(Functional.isOdd), i);
+        final boolean allOdd = Functional.forAll(Functional::isOdd, i);
+        final boolean notAllOdd = Functional.exists(Functional.not(Functional::isOdd), i);
 
         assertThat(allOdd).isFalse();
         assertThat(notAllOdd).isTrue();
@@ -212,8 +207,8 @@ class FunctionalTest {
     @Test
     void compositionTest2() {
         final IntList l = Functional.init(doublingGenerator, 5);
-        final IntList m = Functional.init(TriplingGenerator, 5);
-        assertThat(Functional.forAll2(Functional.not2(dBothAreLessThan10), l, m)).isFalse();
+        final IntList m = Functional.init(triplingGenerator, 5);
+        assertThat(Functional.forAll2(Functional.not2(FunctionalTest::bothAreLessThan10), l, m)).isFalse();
         // equivalent to BothAreGreaterThanOrEqualTo10
 
         final int lowerLimit = 1;
@@ -224,8 +219,8 @@ class FunctionalTest {
 
     @Test
     void partitionTest1() {
-        final IntList m = Functional.init(TriplingGenerator, 5);
-        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional.isOdd, m);
+        final IntList m = Functional.init(triplingGenerator, 5);
+        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional::isOdd, m);
 
         final Integer[] left = {3, 9, 15};
         final Integer[] right = {6, 12};
@@ -236,7 +231,7 @@ class FunctionalTest {
     @Test
     void partitionTest2() {
         final IntList l = Functional.init(doublingGenerator, 5);
-        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional.isEven, l);
+        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional::isEven, l);
         assertThat(r._1()).containsExactly(l.toArray(new Integer[0]));
         assertThat(r._2()).isEmpty();
     }
@@ -244,8 +239,8 @@ class FunctionalTest {
     @Test
     void partitionTest3() {
         final IntList l = Functional.init(doublingGenerator, 5);
-        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional.isEven, l);
-        assertThat(r._1()).containsExactly(Functional.filter(Functional.isEven, l).toArray(new Integer[0]));
+        final Tuple2<List<Integer>, List<Integer>> r = Functional.partition(Functional::isEven, l);
+        assertThat(r._1()).containsExactly(Functional.filter(Functional::isEven, l).toArray(new Integer[0]));
     }
 
     @Test
@@ -258,7 +253,7 @@ class FunctionalTest {
 
     @Test
     void chooseTest1B() throws OptionNoValueAccessException {
-        final IntList li = Functional.init(TriplingGenerator, 5);
+        final IntList li = Functional.init(triplingGenerator, 5);
         final Collection<String> o = Functional.choose((Func_int_T<Option<String>>) i -> i % 2 == 0 ? Option.of(Integer.toString(i)) : Option.none(), li);
         assertThat(o).containsExactly("6", "12");
     }
@@ -266,7 +261,7 @@ class FunctionalTest {
     @Test
     void chooseTest2A() //throws OptionNoValueAccessException
     {
-        final IntList li = Functional.init(TriplingGenerator, 5);
+        final IntList li = Functional.init(triplingGenerator, 5);
         final Map<Integer, String> o = Functional.toDictionary(i->i, Functional.dStringify(),
                 Functional.filter(i -> i % 2 == 0, li));
         final Map<Integer, String> expected = new HashMap<>();
@@ -286,9 +281,9 @@ class FunctionalTest {
 //        return b.equals(c);
 //    }
 //
-//    private final static <B, C>Function<C, Boolean> curried_fn(final B b)
+//    private final static <B, C>Predicate<C> curried_fn(final B b)
 //    {
-//        return new Function<C, Boolean>() {
+//        return new Predicate<C>() {
 //
 //            public Boolean apply(final C c) {
 //                return Fn(b,c);
@@ -348,7 +343,7 @@ class FunctionalTest {
             l -> Functional.fold(FunctionalTest::csv, "", l);
 
     private final Function<IntList, IntList> evens_f =
-            l -> Functional.filter(Functional.isEven, l);
+            l -> Functional.filter(Functional::isEven, l);
 
     @Test
     void indentTest1() {
@@ -368,7 +363,7 @@ class FunctionalTest {
 
     @Test
     void chooseTest3A() throws OptionNoValueAccessException {
-        final IntList li = Functional.init(TriplingGenerator, 5);
+        final IntList li = Functional.init(triplingGenerator, 5);
         final IntList o =
                 Functional.choose(
                         (Func_int_Option_int) i -> i % 2 == 0 ? Option_int.toOption(i) : Option_int.none(), li);
@@ -456,7 +451,7 @@ class FunctionalTest {
     @Test
     void foldAndChooseTest1() {
         final Map<Integer, Double> missingPricesPerDate = new Hashtable<>();
-        final IntList openedDays = Functional.init(TriplingGenerator, 5);
+        final IntList openedDays = Functional.init(triplingGenerator, 5);
         Double last = 10.0;
         final IntIterator iterator = openedDays.iterator();
         while (iterator.hasNext()) {
@@ -487,7 +482,7 @@ class FunctionalTest {
 
     @Test
     void joinTest1() {
-        final IntList ids = Functional.init(TriplingGenerator, 5);
+        final IntList ids = Functional.init(triplingGenerator, 5);
         final String expected = "3,6,9,12,15";
         assertThat(uk.co.qualitycode.utils.functional.Functional.join(",", Functional.map(Functional.dStringify(), ids))).isEqualTo(expected);
         assertThat(Functional.join(",", ids)).isEqualTo(expected);
@@ -495,7 +490,7 @@ class FunctionalTest {
 
     @Test
     void joinTest2() {
-        final IntList ids = Functional.init(TriplingGenerator, 5);
+        final IntList ids = Functional.init(triplingGenerator, 5);
         final String expected = "'3','6','9','12','15'";
         final Func_int_T<String> f =
                 id -> "'" + id + "'";
@@ -524,14 +519,14 @@ class FunctionalTest {
 
     @Test
     void testIsEven_withEvenNum() {
-        assertThat(Functional.isEven.apply(2)).isTrue();
+        assertThat(Functional.isEven(2)).isTrue();
     }
 
     //    @Test
 //    public void testIn()
 //    {
 //        final int a = 10;
-//        assertThat().isTrue()(Functionalin(a, Functional.isEven));
+//        assertThat().isTrue()(Functionalin(a, Functional::isEven));
 //    }
 //
 //
@@ -555,7 +550,7 @@ class FunctionalTest {
 //    public void seqFilterTest1()
 //    {
 //        final IntList l = Functional.init(DoublingGenerator,5);
-//        final Iterable<Integer> oddElems = Functional.seq.filter(Functional.isOdd, l);
+//        final Iterable<Integer> oddElems = Functional.seq.filter(Functional::isOdd, l);
 //
 //        AssertIterable.assertIterableEquals(new ArrayList<Integer>(), oddElems);
 //    }
@@ -564,7 +559,7 @@ class FunctionalTest {
 //    public void seqFilterTest2()
 //    {
 //        final IntList l = Functional.init(DoublingGenerator,5);
-//        final Iterable<Integer> evenElems = Functional.seq.filter(Functional.isEven, l);
+//        final Iterable<Integer> evenElems = Functional.seq.filter(Functional::isEven, l);
 //
 //        final IntList expected = new int[]{2,4,6,8,10});
 //        AssertIterable.assertIterableEquals(expected, evenElems);
@@ -576,7 +571,7 @@ class FunctionalTest {
 //        final IntList l = Functional.init(DoublingGenerator,5);
 //        final Integer limit = 5;
 //        final Iterable<Integer> highElems = Functional.seq.filter(
-//                new Function<Integer,Boolean>()
+//                new Predicate<Integer>()
 //                {
 //
 //                    public Boolean apply(final Integer a) { return a > limit;}
@@ -592,7 +587,7 @@ class FunctionalTest {
 //        final IntList li = Functional.init(DoublingGenerator, 5);
 //        final Integer limit = 10;
 //        final Iterable<Integer> output = Functional.seq.filter(
-//                new Function<Integer,Boolean>()
+//                new Predicate<Integer>()
 //                {
 //                     public Boolean apply(final Integer a) {return a > limit;}
 //                }, li);
@@ -606,7 +601,7 @@ class FunctionalTest {
 //        final IntList li = Functional.init(DoublingGenerator, 10);
 //        final IntList expected = new int[]{4,8,12,16,20});
 //        final Iterable<Integer> output = Functional.seq.filter(
-//                new Function<Integer,Boolean>()
+//                new Predicate<Integer>()
 //                {
 //                     public Boolean apply(final Integer a) {return a % 4 ==0;}
 //                }, li);
@@ -619,7 +614,7 @@ class FunctionalTest {
 //    {
 //        final IntList input = Functional.init(DoublingGenerator, 10);
 //        final Iterable<Integer> output = Functional.seq.filter(
-//                new Function<Integer,Boolean>()
+//                new Predicate<Integer>()
 //                {
 //                     public Boolean apply(final Integer a) {return a % 4 ==0;}
 //                }, input);
@@ -653,13 +648,13 @@ class FunctionalTest {
     void findLastTest1() {
         final IntList l = Functional.init(doublingGenerator, 5);
         assertThatExceptionOfType(NoSuchElementException.class)
-                .isThrownBy(() -> Functional.findLast(Functional.isOdd, l));
+                .isThrownBy(() -> Functional.findLast(Functional::isOdd, l));
     }
 
     @Test
     void findLastTest2() {
         final IntList l = Functional.init(doublingGenerator, 5);
-        assertThat(Functional.findLast(Functional.isEven, l)).isEqualTo(10);
+        assertThat(Functional.findLast(Functional::isEven, l)).isEqualTo(10);
     }
 //
 //    @Test
@@ -673,7 +668,7 @@ class FunctionalTest {
 //    public void findLastNoExceptionTest2()
 //    {
 //        final List<Integer> l = new ArrayList<Integer>(Functional.init(DoublingGenerator, 5));
-//        assertThat().isEqualTo((Integer)10, Functional.noException.findLast(Functional.isEven, l).Some());
+//        assertThat().isEqualTo((Integer)10, Functional.noException.findLast(Functional::isEven, l).Some());
 //    }
 //
 //    @Test(expected=NoSuchElementException.class)
@@ -687,7 +682,7 @@ class FunctionalTest {
 //    public void findLastIterableTest2()
 //    {
 //        final Iterable<Integer> l = new ArrayList<Integer>(Functional.init(DoublingGenerator, 5));
-//        assertThat().isEqualTo((Integer)10, Functional.findLast(Functional.isEven, l));
+//        assertThat().isEqualTo((Integer)10, Functional.findLast(Functional::isEven, l));
 //    }
 
     //    @Test
@@ -1104,7 +1099,7 @@ class FunctionalTest {
 //        final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
 //        {
 //            final List<Integer> expected = new ArrayList<Integer>();
-//            final List<Integer> output = Functional.takeWhile(Functional.isEven, l);
+//            final List<Integer> output = Functional.takeWhile(Functional::isEven, l);
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //        {
@@ -1114,7 +1109,7 @@ class FunctionalTest {
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(1,2,3,4);
-//            final List<Integer> output = Functional.takeWhile(new Function<Integer, Boolean>() {
+//            final List<Integer> output = Functional.takeWhile(new Predicate<Integer>() {
 //                public Boolean apply(final Integer i) {
 //                    return i <= 4;
 //                }
@@ -1123,7 +1118,7 @@ class FunctionalTest {
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-//            final List<Integer> output = Functional.takeWhile(new Function<Integer, Boolean>() {
+//            final List<Integer> output = Functional.takeWhile(new Predicate<Integer>() {
 //                public Boolean apply(final Integer i) {
 //                    return i <= 6;
 //                }
@@ -1145,7 +1140,7 @@ class FunctionalTest {
 //        final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
 //        {
 //            final List<Integer> expected = new ArrayList<Integer>();
-//            final List<Integer> output = Functional.toList(Functional.seq.takeWhile(Functional.isEven, l));
+//            final List<Integer> output = Functional.toList(Functional.seq.takeWhile(Functional::isEven, l));
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //        {
@@ -1155,7 +1150,7 @@ class FunctionalTest {
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(1,2,3,4);
-//            final List<Integer> output = Functional.toList(Functional.seq.takeWhile(new Function<Integer, Boolean>() {
+//            final List<Integer> output = Functional.toList(Functional.seq.takeWhile(new Predicate<Integer>() {
 //                public Boolean apply(final Integer i) {
 //                    return i <= 4;
 //                }
@@ -1164,7 +1159,7 @@ class FunctionalTest {
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-//            final List<Integer> output = Functional.toList(Functional.seq.takeWhile(new Function<Integer, Boolean>() {
+//            final List<Integer> output = Functional.toList(Functional.seq.takeWhile(new Predicate<Integer>() {
 //                public Boolean apply(final Integer i) {
 //                    return i <= 6;
 //                }
@@ -1701,7 +1696,7 @@ class FunctionalTest {
 //        final Collection<String> ls = Functional.map(Functional.<Integer>dStringify(), li);
 //        assertThat().isEqualTo(trueMatch,
 //                Functional.find(
-//                        new Function<String, Boolean>() {
+//                        new Predicate<String>() {
 //
 //                            public Boolean apply(final String s) {
 //                                return s.equals(trueMatch);
@@ -1716,7 +1711,7 @@ class FunctionalTest {
 //        final IntList li = Functional.init(DoublingGenerator, 5);
 //        final Collection<String> ls = Functional.map(Functional.<Integer>dStringify(), li);
 //        Functional.find(
-//                new Function<String, Boolean>() {
+//                new Predicate<String>() {
 //
 //                    public Boolean apply(final String s) {
 //                        return s.equals(falseMatch);
@@ -1732,7 +1727,7 @@ class FunctionalTest {
 //        final Collection<String> ls = Functional.map(Functional.<Integer>dStringify(), li);
 //        assertThat().isEqualTo(trueMatch,
 //                Functional.noException.find(
-//                        new Function<String, Boolean>() {
+//                        new Predicate<String>() {
 //
 //                            public Boolean apply(final String s) {
 //                                return s.equals(trueMatch);
@@ -1747,7 +1742,7 @@ class FunctionalTest {
 //        final IntList li = Functional.init(DoublingGenerator, 5);
 //        final Collection<String> ls = Functional.map(Functional.<Integer>dStringify(), li);
 //        assertThat().isTrue()(Functional.noException.find(
-//                new Function<String, Boolean>() {
+//                new Predicate<String>() {
 //
 //                    public Boolean apply(final String s) {
 //                        return s.equals(falseMatch);
@@ -1763,7 +1758,7 @@ class FunctionalTest {
 //        final Collection<String> ls = Functional.map(Functional.<Integer>dStringify(), li);
 //        assertThat().isEqualTo(2,
 //                Functional.findIndex(
-//                        new Function<String, Boolean>() {
+//                        new Predicate<String>() {
 //
 //                            public Boolean apply(final String s) {
 //                                return s.equals(trueMatch);
@@ -1778,7 +1773,7 @@ class FunctionalTest {
 //        final IntList li = Functional.init(DoublingGenerator, 5);
 //        final Collection<String> ls = Functional.map(Functional.<Integer>dStringify(), li);
 //        Functional.findIndex(
-//                new Function<String, Boolean>() {
+//                new Predicate<String>() {
 //
 //                    public Boolean apply(final String s) {
 //                        return s.equals(falseMatch);
@@ -1794,7 +1789,7 @@ class FunctionalTest {
 //        final Collection<String> ls = Functional.map(Functional.<Integer>dStringify(), li);
 //        assertThat().isEqualTo((Integer) 2,
 //                Functional.noException.findIndex(
-//                        new Function<String, Boolean>() {
+//                        new Predicate<String>() {
 //
 //                            public Boolean apply(final String s) {
 //                                return s.equals(trueMatch);
@@ -1809,7 +1804,7 @@ class FunctionalTest {
 //        final IntList li = Functional.init(DoublingGenerator, 5);
 //        final Collection<String> ls = Functional.map(Functional.<Integer>dStringify(), li);
 //        assertThat().isTrue()(Functional.noException.findIndex(
-//                new Function<String, Boolean>() {
+//                new Predicate<String>() {
 //
 //                    public Boolean apply(final String s) {
 //                        return s.equals(falseMatch);
@@ -2098,7 +2093,7 @@ class FunctionalTest {
 //    {
 //        final IntList l = Functional.init(DoublingGenerator,5);
 //        final Set<Integer> sl = new HashSet<Integer>(l);
-//        final Set<Integer> evenElems = Functional.set.filter(Functional.isEven, sl);
+//        final Set<Integer> evenElems = Functional.set.filter(Functional::isEven, sl);
 //
 //        final IntList expected = new int[]{2,4,6,8,10});
 //        assertThat().isTrue()(expected.containsAll(evenElems));
@@ -2112,7 +2107,7 @@ class FunctionalTest {
 //        final Integer limit = 5;
 //        final Set<Integer> sl = new HashSet<Integer>(l);
 //        final Set<Integer> highElems = Functional.set.filter(
-//                new Function<Integer,Boolean>()
+//                new Predicate<Integer>()
 //                {
 //
 //                    public Boolean apply(final Integer a) { return a > limit;}
@@ -2130,7 +2125,7 @@ class FunctionalTest {
 //        final Integer limit = 10;
 //        final Set<Integer> sl = new HashSet<Integer>(li);
 //        final Set<Integer> output = Functional.set.filter(
-//                new Function<Integer, Boolean>() {
+//                new Predicate<Integer>() {
 //
 //                    public Boolean apply(final Integer a) {
 //                        return a > limit;
@@ -2147,7 +2142,7 @@ class FunctionalTest {
 //        final IntList expected = new int[]{4, 8, 12, 16, 20});
 //        final Set<Integer> sl = new HashSet<Integer>(li);
 //        final Set<Integer> output = Functional.set.filter(
-//                new Function<Integer,Boolean>()
+//                new Predicate<Integer>()
 //                {
 //                     public Boolean apply(final Integer a) {return a % 4 ==0;}
 //                }, sl);
@@ -2670,7 +2665,7 @@ class FunctionalTest {
 //        final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
 //        {
 //            final List<Integer> expected = Arrays.asList(1,2,3,4,5);
-//            final List<? extends Integer> output = Functional.skipWhile(Functional.isEven, l);
+//            final List<? extends Integer> output = Functional.skipWhile(Functional::isEven, l);
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //        {
@@ -2680,7 +2675,7 @@ class FunctionalTest {
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(3,4,5);
-//            final List<? extends Integer> output = Functional.skipWhile(new Function<Integer, Boolean>() {
+//            final List<? extends Integer> output = Functional.skipWhile(new Predicate<Integer>() {
 //                public Boolean apply(final Integer i) {
 //                    return i <=2;
 //                }
@@ -2689,7 +2684,7 @@ class FunctionalTest {
 //        }
 //        {
 //            final List<Integer> expected = new ArrayList<Integer>();
-//            final List<? extends Integer> output = Functional.skipWhile(new Function<Integer,Boolean>() { public Boolean apply(final Integer i) { return i<=6;} },l);
+//            final List<? extends Integer> output = Functional.skipWhile(new Predicate<Integer>() { public Boolean apply(final Integer i) { return i<=6;} },l);
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //    }
@@ -2708,7 +2703,7 @@ class FunctionalTest {
 //        for(int i=1;i<10;++i)
 //            input.add(Integer.valueOf(i));
 //
-//        final List<? extends Number> output = Functional.skipWhile(new Function<Object, Boolean>() {
+//        final List<? extends Number> output = Functional.skipWhile(new Predicate<Object>() {
 //
 //            public Boolean apply(final Object number) {
 //                return ((number instanceof Integer) && ((Integer)number % 2) == 1);
@@ -2726,7 +2721,7 @@ class FunctionalTest {
 //        final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
 //        {
 //            final List<Integer> expected = Arrays.asList(1,2,3,4,5);
-//            final List<? extends Integer> output = Functional.toList(Functional.seq.skipWhile(Functional.isEven, l));
+//            final List<? extends Integer> output = Functional.toList(Functional.seq.skipWhile(Functional::isEven, l));
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //        {
@@ -2736,7 +2731,7 @@ class FunctionalTest {
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(3,4,5);
-//            final List<? extends Integer> output = Functional.toList(Functional.seq.skipWhile(new Function<Integer, Boolean>() {
+//            final List<? extends Integer> output = Functional.toList(Functional.seq.skipWhile(new Predicate<Integer>() {
 //                public Boolean apply(final Integer i) {
 //                    return i <= 2;
 //                }
@@ -2745,7 +2740,7 @@ class FunctionalTest {
 //        }
 //        {
 //            final List<Integer> expected = new ArrayList<Integer>();
-//            final List<? extends Integer> output = Functional.toList(Functional.seq.skipWhile(new Function<Integer, Boolean>() {
+//            final List<? extends Integer> output = Functional.toList(Functional.seq.skipWhile(new Predicate<Integer>() {
 //                public Boolean apply(final Integer i) {
 //                    return i <= 6;
 //                }
@@ -2768,7 +2763,7 @@ class FunctionalTest {
 //        for(int i=1;i<10;++i)
 //            input.add(Integer.valueOf(i));
 //
-//        final List<? extends Number> output = Functional.toList(Functional.seq.skipWhile(new Function<Object, Boolean>() {
+//        final List<? extends Number> output = Functional.toList(Functional.seq.skipWhile(new Predicate<Object>() {
 //
 //            public Boolean apply(final Object number) {
 //                return ((number instanceof Integer) && ((Integer) number % 2) == 1);
@@ -2785,7 +2780,7 @@ class FunctionalTest {
 //    {
 //        final List<Integer> l = Arrays.asList(1,2,3,4,5);
 //        final List<Integer> expected = Arrays.asList(3,4,5);
-//        final Iterable<Integer> output = Functional.seq.skipWhile(new Function<Integer, Boolean>() {
+//        final Iterable<Integer> output = Functional.seq.skipWhile(new Predicate<Integer>() {
 //            public Boolean apply(final Integer i) {
 //                return i <= 2;
 //            }
@@ -2835,7 +2830,7 @@ class FunctionalTest {
 //    public void groupByOddVsEvenInt()
 //    {
 //        final List<Integer> input = Arrays.asList(1,2,3,4,5,6,7,8,9,10);
-//        final Map<Boolean,List<Integer>> output = Functional.groupBy(Functional.isEven,input);
+//        final Map<Boolean,List<Integer>> output = Functional.groupBy(Functional::isEven,input);
 //        final Map<Boolean,List<Integer>> expected = new HashMap<Boolean, List<Integer>>();
 //        expected.put(false,Arrays.asList(1,3,5,7,9));
 //        expected.put(true, Arrays.asList(2, 4, 6, 8, 10));

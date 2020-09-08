@@ -1,20 +1,20 @@
 package uk.co.qualitycode.utils.functional.monad;
 
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static io.vavr.control.Option.none;
 import static io.vavr.control.Option.some;
 
 public abstract class ConformingObjectBuilder<T, MONAD> {
     private io.vavr.control.Option<T> value = none();
-    private Function<T, Boolean> rule = t -> true;
+    private Predicate<T> rule = t -> true;
 
     public ConformingObjectBuilder<T, MONAD> withValue(final T value) {
         this.value = some(value);
         return this;
     }
 
-    public ConformingObjectBuilder<T, MONAD> withRule(final Function<T, Boolean> rule) {
+    public ConformingObjectBuilder<T, MONAD> withRule(final Predicate<T> rule) {
         this.rule = rule;
         return this;
     }
@@ -25,7 +25,7 @@ public abstract class ConformingObjectBuilder<T, MONAD> {
         return value;
     }
 
-    public Function<T, Boolean> getRule() {
+    public Predicate<T> getRule() {
         return rule;
     }
 }
