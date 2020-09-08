@@ -941,7 +941,7 @@ public final class Functional {
     }
 
     /**
-     * A Comparator that encapsulates <tt>Sorter</tt> above
+     * A Comparator that encapsulates {link=sorter} above
      */
     public static Comparator<Integer> sorter = Functional::sorter;
 
@@ -986,7 +986,7 @@ public final class Functional {
     public static <A, B, AA extends A, BB extends B> boolean forAll2(final BiFunction<A, B, Boolean> f, final Iterable<AA> input1, final Iterable<BB> input2) {
         final Iterator<AA> enum1 = input1.iterator();
         final Iterator<BB> enum2 = input2.iterator();
-        boolean enum1Moved = false, enum2Moved = false;
+        boolean enum1Moved, enum2Moved;
         do {
             enum1Moved = enum1.hasNext();
             enum2Moved = enum2.hasNext();
@@ -994,7 +994,7 @@ public final class Functional {
                 return false;
         } while (enum1Moved && enum2Moved);
         if (enum1Moved != enum2Moved)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): Cannot compare two sequences with different numbers of elements");
         return true;
     }
 

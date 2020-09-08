@@ -25,7 +25,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static uk.co.qualitycode.utils.functional.Functional.isEven;
+import static uk.co.qualitycode.utils.functional.Functional.stringify;
 
 class FunctionalTest {
     public static Func_int_int doublingGenerator_f = a -> 2 * a;
@@ -81,6 +84,14 @@ class FunctionalTest {
             assertThat(i2.flatMap(f2)).hasValue(expected);
             assertThat(Functional.ConvertFlatMapOptionToOptional.convert(f1).apply(expected)).contains(expected);
         }
+    }
+
+    @Test
+    void convertToString() {
+        assertThat(stringify(1)).isEqualTo("1");
+        final Object obj = mock(Object.class);
+        stringify(obj);
+        verify(obj).toString();
     }
 
     static boolean bothAreEven(final int a, final int b) {
