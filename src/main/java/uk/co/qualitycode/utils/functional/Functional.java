@@ -992,6 +992,7 @@ public final class Functional {
      * @return true if f returns false, false if f returns true
      */
     public static <A> Predicate<A> not(final Predicate<A> f) {
+        if (f == null) throw new IllegalArgumentException("not(Predicate<A>): predicate must not be null");
         return a -> !f.test(a);
     }
 

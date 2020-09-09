@@ -1,5 +1,6 @@
 package uk.co.qualitycode.utils.functional;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -17,14 +18,14 @@ class Functional_Exists_Test {
                 .isThrownBy(() -> Functional.exists(null, mock(Iterable.class)))
                 .withMessage("exists(Predicate<T>,Iterable<T>): predicate must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.exists(mock(Predicate.class), (Iterable)null))
+                .isThrownBy(() -> Functional.exists(mock(Predicate.class), (Iterable) null))
                 .withMessage("exists(Predicate<T>,Iterable<T>): input must not be null");
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.exists(null, mock(Collection.class)))
                 .withMessage("exists(Predicate<T>,Collection<T>): predicate must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.exists(mock(Predicate.class), (Collection)null))
+                .isThrownBy(() -> Functional.exists(mock(Predicate.class), (Collection) null))
                 .withMessage("exists(Predicate<T>,Collection<T>): input must not be null");
 
         assertThatIllegalArgumentException()
@@ -63,5 +64,26 @@ class Functional_Exists_Test {
 
         assertThat(allOdd).isFalse();
         assertThat(anEven).isTrue();
+    }
+
+    @Nested
+    class Not {
+        @Test
+        void preconditions() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.not(null))
+                    .withMessage("not(Predicate<A>): predicate must not be null");
+        }
+
+        @Test
+        void notReturnsInversePredicate() {
+            final Collection<Integer> i = Arrays.asList(2, 4, 6);
+
+            final boolean anEven = Functional.exists(Functional::isEven, i);
+            final boolean notAnEven = Functional.exists(Functional.not(Functional::isEven), i);
+
+            assertThat(notAnEven).isFalse();
+            assertThat(anEven).isTrue();
+        }
     }
 }
