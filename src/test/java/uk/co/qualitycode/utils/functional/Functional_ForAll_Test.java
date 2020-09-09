@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,6 +32,16 @@ class Functional_ForAll_Test {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.forAll(null))
                 .withMessage("forAll(Predicate<A>): predicate must not be null");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.forAll2(null, mock(Iterable.class), mock(Iterable.class)))
+                .withMessage("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): predicate must not be null");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.forAll2(mock(BiFunction.class), (Iterable) null, mock(Iterable.class)))
+                .withMessage("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): input1 must not be null");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.forAll2(mock(BiFunction.class), mock(Iterable.class), (Iterable) null))
+                .withMessage("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): input2 must not be null");
     }
 
     @Nested
@@ -63,14 +74,14 @@ class Functional_ForAll_Test {
     @Nested
     class ForAll2 {
         @Test
-        void forAll2WithCollectionReturnsTrue() {
+        void forAll2ReturnsTrue() {
             final List<Integer> l = Functional.init(FunctionalTest.doublingGenerator, 5);
             final List<Integer> m = Functional.init(FunctionalTest.quadruplingGenerator, 5);
             assertThat(Functional.forAll2(FunctionalTest::bothAreEven, l, m)).isTrue();
         }
 
         @Test
-        void forAll2WithCollectionReturnsFalse() {
+        void forAll2ReturnsFalse() {
             final List<Integer> l = Functional.init(FunctionalTest.doublingGenerator, 5);
             final List<Integer> m = Functional.init(FunctionalTest.triplingGenerator, 5);
 
@@ -78,7 +89,7 @@ class Functional_ForAll_Test {
         }
 
         @Test
-        void forAll2WithCollectionThrowsWhenTheSequencesHaveDifferentLengths() {
+        void forAll2ThrowsWhenTheSequencesHaveDifferentLengths() {
             final List<Integer> l = Functional.init(FunctionalTest.doublingGenerator, 5);
             final List<Integer> m = Functional.init(FunctionalTest.quadruplingGenerator, 7);
 

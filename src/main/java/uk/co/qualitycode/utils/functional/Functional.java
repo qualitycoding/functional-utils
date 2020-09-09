@@ -1061,18 +1061,20 @@ public final class Functional {
      *                                            of elements
      */
     public static <A, B, AA extends A, BB extends B> boolean forAll2(final BiFunction<A, B, Boolean> f, final Iterable<AA> input1, final Iterable<BB> input2) {
-        final Iterator<AA> enum1 = input1.iterator();
-        final Iterator<BB> enum2 = input2.iterator();
-        boolean enum1Moved, enum2Moved;
-        do {
-            enum1Moved = enum1.hasNext();
-            enum2Moved = enum2.hasNext();
-            if (enum1Moved && enum2Moved && !f.apply(enum1.next(), enum2.next()))
-                return false;
-        } while (enum1Moved && enum2Moved);
-        if (enum1Moved != enum2Moved)
-            throw new IllegalArgumentException("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): Cannot compare two sequences with different numbers of elements");
-        return true;
+        if (f == null)
+            throw new IllegalArgumentException("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): predicate must not be null");
+        if (input1 == null)
+            throw new IllegalArgumentException("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): input1 must not be null");
+        if (input2 == null)
+            throw new IllegalArgumentException("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): input2 must not be null");
+
+        try {
+            return StreamSupport.stream(seq.zip(input1, input2).spliterator(), false).allMatch(t -> f.apply(t._1, t._2));
+        } catch (final IllegalArgumentException e) {
+            if (e.getMessage().contains("Functional.seq.zip(Iterable<A>,Iterable<B>): l1 and l2 have differing numbers of elements"))
+                throw new IllegalArgumentException("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): Cannot compare two sequences with different numbers of elements");
+            throw e;
+        }
     }
 
     /// <summary> </summary>
