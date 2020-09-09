@@ -122,7 +122,7 @@ class FunctionalTest {
 //        try
 //        {
 //            assertThat().isTrue()(Functional.noException.forAll2(
-//                    new BiFunction<Integer, Integer, Boolean>() {
+//                    new BiPredicate<Integer, Integer>() {
 //
 //                        public Boolean apply(final Integer a, final Integer b) {
 //                            return BothAreEven(a, b);
@@ -185,7 +185,7 @@ class FunctionalTest {
 //        final IntList m = Functional.init(QuadruplingGenerator, 7);
 //
 //        assertThat().isTrue()(Functional.noException.forAll2(
-//                new BiFunction<Integer, Integer, Boolean>() {
+//                new BiPredicate<Integer, Integer>() {
 //
 //                    public Boolean apply(final Integer a, final Integer b) {
 //                        return BothAreEven(a, b);

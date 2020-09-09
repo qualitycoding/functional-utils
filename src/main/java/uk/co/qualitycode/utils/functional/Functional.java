@@ -986,9 +986,9 @@ public final class Functional {
      * @param f   the applied predicate
      * @return true if f returns false, false if f returns true
      */
-    public static <A, B> BiFunction<A, B, Boolean> not2(final BiFunction<A, B, Boolean> f) {
-        if (f == null) throw new IllegalArgumentException("not(BiFunction<A,B,Boolean>): predicate must not be null");
-        return (a, b) -> !f.apply(a, b);
+    public static <A, B> BiPredicate<A,B> not2(final BiPredicate<A,B> f) {
+        if (f == null) throw new IllegalArgumentException("not(BiPredicate<A,B>): predicate must not be null");
+        return (a, b) -> !f.test(a, b);
     }
 
     /**
@@ -1060,19 +1060,19 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if the predicate returns true for all pairs and the sequences contain differing numbers
      *                                            of elements
      */
-    public static <A, B, AA extends A, BB extends B> boolean forAll2(final BiFunction<A, B, Boolean> f, final Iterable<AA> input1, final Iterable<BB> input2) {
+    public static <A, B, AA extends A, BB extends B> boolean forAll2(final BiPredicate<A,B> f, final Iterable<AA> input1, final Iterable<BB> input2) {
         if (f == null)
-            throw new IllegalArgumentException("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): predicate must not be null");
+            throw new IllegalArgumentException("forAll2(BiPredicate<A,B>,Iterable<A>,Iterable<B>): predicate must not be null");
         if (input1 == null)
-            throw new IllegalArgumentException("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): input1 must not be null");
+            throw new IllegalArgumentException("forAll2(BiPredicate<A,B>,Iterable<A>,Iterable<B>): input1 must not be null");
         if (input2 == null)
-            throw new IllegalArgumentException("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): input2 must not be null");
+            throw new IllegalArgumentException("forAll2(BiPredicate<A,B>,Iterable<A>,Iterable<B>): input2 must not be null");
 
         try {
-            return StreamSupport.stream(seq.zip(input1, input2).spliterator(), false).allMatch(t -> f.apply(t._1, t._2));
+            return StreamSupport.stream(seq.zip(input1, input2).spliterator(), false).allMatch(t -> f.test(t._1, t._2));
         } catch (final IllegalArgumentException e) {
             if (e.getMessage().contains("Functional.seq.zip(Iterable<A>,Iterable<B>): l1 and l2 have differing numbers of elements"))
-                throw new IllegalArgumentException("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): Cannot compare two sequences with different numbers of elements");
+                throw new IllegalArgumentException("forAll2(BiPredicate<A,B>,Iterable<A>,Iterable<B>): Cannot compare two sequences with different numbers of elements");
             throw e;
         }
     }
@@ -3308,14 +3308,14 @@ public final class Functional {
          * if the predicate returns true for all pairs and the sequences contain differing numbers
          * of elements
          */
-        public static <A, B, AA extends A, BB extends B> Option<Boolean> forAll2(final BiFunction<A, B, Boolean> f, final Iterable<AA> input1, final Iterable<BB> input2) {
+        public static <A, B, AA extends A, BB extends B> Option<Boolean> forAll2(final BiPredicate<A,B> f, final Iterable<AA> input1, final Iterable<BB> input2) {
             final Iterator<AA> enum1 = input1.iterator();
             final Iterator<BB> enum2 = input2.iterator();
             boolean enum1Moved = false, enum2Moved = false;
             do {
                 enum1Moved = enum1.hasNext();
                 enum2Moved = enum2.hasNext();
-                if (enum1Moved && enum2Moved && !f.apply(enum1.next(), enum2.next()))
+                if (enum1Moved && enum2Moved && !f.test(enum1.next(), enum2.next()))
                     return Option.of(false);
             } while (enum1Moved && enum2Moved);
             if (enum1Moved != enum2Moved)

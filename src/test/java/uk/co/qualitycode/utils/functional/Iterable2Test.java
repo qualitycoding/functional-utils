@@ -86,7 +86,7 @@ class Iterable2Test {
         return a < 10 && b < 10;
     }
 
-    private static final BiFunction<Integer, Integer, Boolean> dBothAreLessThan10 = Iterable2Test::BothAreLessThan10;
+    private static final BiPredicate<Integer, Integer> dBothAreLessThan10 = Iterable2Test::BothAreLessThan10;
 
     @Test
     void forAll2Test2() {
@@ -1347,7 +1347,7 @@ class Iterable2Test {
 
     @Test
     void forAll2EmptyListTest() {
-        assertThat(Iterable2.empty().forAll2((BiFunction<Object, Object, Boolean>) (o, o2) -> null, Arrays.asList(1))).isFalse();
+        assertThat(Iterable2.empty().forAll2((BiPredicate<Object, Object>) (o, o2) -> false, Arrays.asList(1))).isFalse();
     }
 
     @Test

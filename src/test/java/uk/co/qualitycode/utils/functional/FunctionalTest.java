@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -106,7 +105,7 @@ class FunctionalTest {
         return a < 10 && b < 10;
     }
 
-    static BiFunction<Integer, Integer, Boolean> bothAreLessThan10 = FunctionalTest::bothAreLessThan10;
+    static BiPredicate<Integer,Integer> bothAreLessThan10 = FunctionalTest::bothAreLessThan10;
 
     @Test
     void compositionTest1A() {

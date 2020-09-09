@@ -29,7 +29,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
 
     boolean forAll(Predicate<? super T> f);
 
-    <U> boolean forAll2(final BiFunction<? super U, ? super T, Boolean> f, final Iterable<U> input1);
+    <U> boolean forAll2(final BiPredicate<? super U, ? super T> f, final Iterable<U> input1);
 
     <U> U fold(BiFunction<? super U, ? super T, ? extends U> f, U seed);
 
@@ -118,7 +118,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
                 return Functional.forAll(f, i);
             }
 
-            public <U> boolean forAll2(final BiFunction<? super U, ? super T, Boolean> f, final Iterable<U> j) {
+            public <U> boolean forAll2(final BiPredicate<? super U, ? super T> f, final Iterable<U> j) {
                 return Functional.forAll2(f, j, i);
             }
 
@@ -267,7 +267,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             return false;
         }
 
-        public <U> boolean forAll2(final BiFunction<? super U, ? super T, Boolean> f, final Iterable<U> input1) {
+        public <U> boolean forAll2(final BiPredicate<? super U, ? super T> f, final Iterable<U> input1) {
             return false;
         }
 

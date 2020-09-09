@@ -3,7 +3,6 @@ package uk.co.qualitycode.utils.functional;
 import org.junit.jupiter.api.Test;
 import uk.co.qualitycode.utils.functional.primitive.integer.Func_int_int;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static java.lang.Integer.sum;
@@ -31,7 +30,7 @@ class Functional_Compare_Test {
         return a < 10 && b < 10;
     }
 
-    static BiFunction<Integer, Integer, Boolean> dBothAreLessThan10 = Functional_Compare_Test::bothAreLessThan10;
+    static BiPredicate<Integer, Integer> dBothAreLessThan10 = Functional_Compare_Test::bothAreLessThan10;
 
     @Test
     void isEvenReturnsTrueForEvenFalseForOdd() {

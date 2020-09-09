@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,13 +34,13 @@ class Functional_ForAll_Test {
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.forAll2(null, mock(Iterable.class), mock(Iterable.class)))
-                .withMessage("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): predicate must not be null");
+                .withMessage("forAll2(BiPredicate<A,B>,Iterable<A>,Iterable<B>): predicate must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.forAll2(mock(BiFunction.class), (Iterable) null, mock(Iterable.class)))
-                .withMessage("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): input1 must not be null");
+                .isThrownBy(() -> Functional.forAll2(mock(BiPredicate.class), (Iterable) null, mock(Iterable.class)))
+                .withMessage("forAll2(BiPredicate<A,B>,Iterable<A>,Iterable<B>): input1 must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.forAll2(mock(BiFunction.class), mock(Iterable.class), (Iterable) null))
-                .withMessage("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): input2 must not be null");
+                .isThrownBy(() -> Functional.forAll2(mock(BiPredicate.class), mock(Iterable.class), (Iterable) null))
+                .withMessage("forAll2(BiPredicate<A,B>,Iterable<A>,Iterable<B>): input2 must not be null");
     }
 
     @Nested
@@ -95,7 +94,7 @@ class Functional_ForAll_Test {
 
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Functional.forAll2(FunctionalTest::bothAreEven, l, m))
-                    .withMessage("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): Cannot compare two sequences with different numbers of elements");
+                    .withMessage("forAll2(BiPredicate<A,B>,Iterable<A>,Iterable<B>): Cannot compare two sequences with different numbers of elements");
         }
     }
 }
