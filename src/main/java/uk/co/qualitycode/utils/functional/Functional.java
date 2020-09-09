@@ -948,10 +948,7 @@ public final class Functional {
     public static <A> boolean exists(final Predicate<? super A> f, final Iterable<A> input) {
         if(f==null) throw new IllegalArgumentException("exists(Predicate<T>,Iterable<T>): predicate must not be null");
         if(input==null) throw new IllegalArgumentException("exists(Predicate<T>,Iterable<T>): input must not be null");
-        for (final A a : input)
-            if (f.test(a))
-                return true;
-        return false;
+        return StreamSupport.stream(input.spliterator(), false).anyMatch(f);
     }
 
     /**
@@ -967,10 +964,7 @@ public final class Functional {
     public static <A> boolean exists(final Predicate<? super A> f, final Collection<A> input) {
         if(f==null) throw new IllegalArgumentException("exists(Predicate<T>,Collection<T>): predicate must not be null");
         if(input==null) throw new IllegalArgumentException("exists(Predicate<T>,Collection<T>): input must not be null");
-        for (final A a : input)
-            if (f.test(a))
-                return true;
-        return false;
+        return input.stream().anyMatch(f);
     }
 
     /**
