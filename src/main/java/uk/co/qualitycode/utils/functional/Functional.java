@@ -946,6 +946,27 @@ public final class Functional {
      * @return true if the predicate returns true for any element in the input sequence, false otherwise
      */
     public static <A> boolean exists(final Predicate<? super A> f, final Iterable<A> input) {
+        if(f==null) throw new IllegalArgumentException("exists(Predicate<T>,Iterable<T>): predicate must not be null");
+        if(input==null) throw new IllegalArgumentException("exists(Predicate<T>,Iterable<T>): input must not be null");
+        for (final A a : input)
+            if (f.test(a))
+                return true;
+        return false;
+    }
+
+    /**
+     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traveral of the
+     * input sequence. Otherwise return false.
+     * exists: (A -> bool) -> A list -> bool
+     *
+     * @param <A>   the type of the element in the input sequence
+     * @param f     predicate
+     * @param input input sequence
+     * @return true if the predicate returns true for any element in the input sequence, false otherwise
+     */
+    public static <A> boolean exists(final Predicate<? super A> f, final Collection<A> input) {
+        if(f==null) throw new IllegalArgumentException("exists(Predicate<T>,Collection<T>): predicate must not be null");
+        if(input==null) throw new IllegalArgumentException("exists(Predicate<T>,Collection<T>): input must not be null");
         for (final A a : input)
             if (f.test(a))
                 return true;
@@ -964,6 +985,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A> Predicate<Iterable<A>> exists(final Predicate<? super A> f) {
+        if(f==null) throw new IllegalArgumentException("exists(Predicate<T>): predicate must not be null");
         return input -> Functional.exists(f, input);
     }
 

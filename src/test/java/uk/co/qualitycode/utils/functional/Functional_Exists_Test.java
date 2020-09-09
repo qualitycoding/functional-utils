@@ -4,12 +4,47 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.Mockito.mock;
 
 class Functional_Exists_Test {
     @Test
-    void existsTest() {
+    void preconditions() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.exists(null, mock(Iterable.class)))
+                .withMessage("exists(Predicate<T>,Iterable<T>): predicate must not be null");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.exists(mock(Predicate.class), (Iterable)null))
+                .withMessage("exists(Predicate<T>,Iterable<T>): input must not be null");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.exists(null, mock(Collection.class)))
+                .withMessage("exists(Predicate<T>,Collection<T>): predicate must not be null");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.exists(mock(Predicate.class), (Collection)null))
+                .withMessage("exists(Predicate<T>,Collection<T>): input must not be null");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.exists(null))
+                .withMessage("exists(Predicate<T>): predicate must not be null");
+    }
+
+    @Test
+    void existsInIterable() {
+        final Iterable<Integer> i = Arrays.asList(2, 4, 6);
+
+        final boolean anEven = Functional.exists(Functional::isEven, i);
+        final boolean allOdd = Functional.exists(Functional::isOdd, i);
+
+        assertThat(allOdd).isFalse();
+        assertThat(anEven).isTrue();
+    }
+
+    @Test
+    void existsInCollection() {
         final Collection<Integer> i = Arrays.asList(2, 4, 6);
 
         final boolean anEven = Functional.exists(Functional::isEven, i);
