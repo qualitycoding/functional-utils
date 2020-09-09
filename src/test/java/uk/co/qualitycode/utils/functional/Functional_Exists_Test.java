@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -73,14 +74,28 @@ class Functional_Exists_Test {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Functional.not(null))
                     .withMessage("not(Predicate<A>): predicate must not be null");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.not2(null))
+                    .withMessage("not(BiFunction<A,B,Boolean>): predicate must not be null");
         }
 
         @Test
         void notReturnsInversePredicate() {
-            final Collection<Integer> i = Arrays.asList(2, 4, 6);
+            final List<Integer> i = Arrays.asList(2, 4, 6);
 
             final boolean anEven = Functional.exists(Functional::isEven, i);
             final boolean notAnEven = Functional.exists(Functional.not(Functional::isEven), i);
+
+            assertThat(notAnEven).isFalse();
+            assertThat(anEven).isTrue();
+        }
+
+        @Test
+        void not2ReturnsInversePredicate() {
+            final List<Integer> i = Arrays.asList(2, 4, 6);
+
+            final boolean anEven = Functional.exists(Functional::isEven, i);
+            final boolean notAnEven = Functional.forAll2(Functional.not2(FunctionalTest::bothAreEven), i, i);
 
             assertThat(notAnEven).isFalse();
             assertThat(anEven).isTrue();

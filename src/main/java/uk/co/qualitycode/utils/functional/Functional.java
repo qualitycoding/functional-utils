@@ -591,18 +591,24 @@ public final class Functional {
      * <tt>isEven</tt> a function that accepts an integer and returns a boolean that indicates whether the passed integer
      * is or is not an even integer
      */
-    public static boolean isEven(final int i) { return i % 2 == 0; }
+    public static boolean isEven(final int i) {
+        return i % 2 == 0;
+    }
 
     /**
      * <tt>isOdd</tt> a function that accepts an integer and returns a boolean that indicates whether the passed integer
      * is or is not an odd integer
      */
-    public static boolean isOdd(final int i) { return i % 2 != 0; }
+    public static boolean isOdd(final int i) {
+        return i % 2 != 0;
+    }
 
     /**
      * <tt>count</tt> a function that accepts a counter and another integer and returns 1 + counter
      */
-    public static int count(final int state, final int b) { return state + 1; }
+    public static int count(final int state, final int b) {
+        return state + 1;
+    }
 
     /**
      * @param <T> the type of <tt>that</tt>, the input argument
@@ -856,6 +862,188 @@ public final class Functional {
     }
 
     /**
+     * See <a href="http://en.wikipedia.org/wiki/Filter_(higher-order_function)">Filter</a>
+     *
+     * @param <A>   the type of the element in the input sequence
+     * @param pred  a filter function. This is passed each input element in turn and returns either true or false. If true then
+     *              the input element is passed through to the output otherwise it is ignored.
+     * @param input a sequence of objects
+     * @return a list which contains zero or more of the elements of the input sequence. Each element is included only if the filter
+     * function returns true for the element.
+     */
+    public static <A> List<A> filter(final Predicate<? super A> pred, final Iterable<A> input) {
+        if (pred == null) throw new IllegalArgumentException("filter(Predicate<A>,Iterable<A>): pred must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("filter(Predicate<A>,Iterable<A>): input must not be null");
+        return Collections.unmodifiableList(StreamSupport.stream(input.spliterator(), false).filter(pred).collect(Collectors.toList()));
+    }
+
+    /**
+     * See <a href="http://en.wikipedia.org/wiki/Filter_(higher-order_function)">Filter</a>
+     *
+     * @param <A>   the type of the element in the input sequence
+     * @param pred  a filter function. This is passed each input element in turn and returns either true or false. If true then
+     *              the input element is passed through to the output otherwise it is ignored.
+     * @param input a sequence of objects
+     * @return a list which contains zero or more of the elements of the input sequence. Each element is included only if the filter
+     * function returns true for the element.
+     */
+    public static <A> List<A> filter(final Predicate<? super A> pred, final Collection<A> input) {
+        if (pred == null)
+            throw new IllegalArgumentException("filter(Predicate<A>,Collection<A>): pred must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("filter(Predicate<A>,Collection<A>): input must not be null");
+        return Collections.unmodifiableList(input.stream().filter(pred).collect(Collectors.toList()));
+    }
+
+    /**
+     * See <a href="http://en.wikipedia.org/wiki/Filter_(higher-order_function)">Filter</a>
+     *
+     * @param <T> the type of the element in the input sequence
+     * @param f   a filter function. This is passed each input element in turn and returns either true or false. If true then
+     *            the input element is passed through to the output otherwise it is ignored.
+     * @return a curried function that expects an input sequence which it feeds to the filter predicate which then returns
+     * a list which contains zero or more of the elements of the input sequence. Each element is included only if the filter
+     * function returns true for the element.
+     * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
+     */
+    public static <T> Function<Iterable<T>, List<T>> filter(final Predicate<? super T> f) {
+        if (f == null) throw new IllegalArgumentException("filter(Predicate<A>): pred must not be null");
+        return input -> input instanceof Collection<?> ? Functional.filter(f, (Collection<T>) input) : Functional.filter(f, input);
+    }
+
+    /**
+     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traveral of the
+     * input sequence. Otherwise return false.
+     * exists: (A -> bool) -> A list -> bool
+     *
+     * @param <A>   the type of the element in the input sequence
+     * @param f     predicate
+     * @param input input sequence
+     * @return true if the predicate returns true for any element in the input sequence, false otherwise
+     */
+    public static <A> boolean exists(final Predicate<? super A> f, final Iterable<A> input) {
+        if (f == null)
+            throw new IllegalArgumentException("exists(Predicate<T>,Iterable<T>): predicate must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("exists(Predicate<T>,Iterable<T>): input must not be null");
+        return StreamSupport.stream(input.spliterator(), false).anyMatch(f);
+    }
+
+    /**
+     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traveral of the
+     * input sequence. Otherwise return false.
+     * exists: (A -> bool) -> A list -> bool
+     *
+     * @param <A>   the type of the element in the input sequence
+     * @param f     predicate
+     * @param input input sequence
+     * @return true if the predicate returns true for any element in the input sequence, false otherwise
+     */
+    public static <A> boolean exists(final Predicate<? super A> f, final Collection<A> input) {
+        if (f == null)
+            throw new IllegalArgumentException("exists(Predicate<T>,Collection<T>): predicate must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("exists(Predicate<T>,Collection<T>): input must not be null");
+        return input.stream().anyMatch(f);
+    }
+
+    /**
+     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traveral of the
+     * input sequence. Otherwise return false.
+     * exists: (A -> bool) -> A list -> bool
+     * This is the curried implementation.
+     *
+     * @param <A> the type of the element in the input sequence
+     * @param f   predicate
+     * @return true if the predicate returns true for any element in the input sequence, false otherwise
+     * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
+     */
+    public static <A> Predicate<Iterable<A>> exists(final Predicate<? super A> f) {
+        if (f == null) throw new IllegalArgumentException("exists(Predicate<T>): predicate must not be null");
+        return input -> Functional.exists(f, input);
+    }
+
+    /**
+     * not reverses the result of the applied predicate
+     * not: (A -> bool) -> (A -> bool)
+     *
+     * @param <A> the type of the input to the function <tt>f</tt>
+     * @param f   the applied predicate
+     * @return true if f returns false, false if f returns true
+     */
+    public static <A> Predicate<A> not(final Predicate<A> f) {
+        if (f == null) throw new IllegalArgumentException("not(Predicate<A>): predicate must not be null");
+        return a -> !f.test(a);
+    }
+
+    /**
+     * not2 reverses the result of the applied predicate
+     * not2: (A -> B -> bool) -> (A -> B -> bool)
+     *
+     * @param <A> the type of the first input to the function <tt>f</tt>
+     * @param <B> the type of the second input to the function <tt>f</tt>
+     * @param f   the applied predicate
+     * @return true if f returns false, false if f returns true
+     */
+    public static <A, B> BiFunction<A, B, Boolean> not2(final BiFunction<A, B, Boolean> f) {
+        if (f == null) throw new IllegalArgumentException("not(BiFunction<A,B,Boolean>): predicate must not be null");
+        return (a, b) -> !f.apply(a, b);
+    }
+
+    /**
+     * The converse operation to <tt>exists</tt>. If the predicate returns true for all elements in the input sequence then 'forAll'
+     * returns true otherwise return false.
+     * forAll: (A -> bool) -> A list -> bool
+     *
+     * @param <A>   the type of the element in the input sequence
+     * @param f     predicate
+     * @param input input sequence
+     * @return true if the predicate returns true for all elements in the input sequence, false otherwise
+     */
+    public static <A> boolean forAll(final Predicate<A> f, final Iterable<? extends A> input) {
+        if (f == null)
+            throw new IllegalArgumentException("forAll(Predicate<A>,Iterable<A>): predicate must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("forAll(Predicate<A>,Iterable<A>): input must not be null");
+        return !exists(not(f), input);
+    }
+
+    /**
+     * The converse operation to <tt>exists</tt>. If the predicate returns true for all elements in the input sequence then 'forAll'
+     * returns true otherwise return false.
+     * forAll: (A -> bool) -> A list -> bool
+     *
+     * @param <A>   the type of the element in the input sequence
+     * @param f     predicate
+     * @param input input sequence
+     * @return true if the predicate returns true for all elements in the input sequence, false otherwise
+     */
+    public static <A> boolean forAll(final Predicate<A> f, final Collection<? extends A> input) {
+        if (f == null)
+            throw new IllegalArgumentException("forAll(Predicate<A>,Collection<A>): predicate must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("forAll(Predicate<A>,Collection<A>): input must not be null");
+        return !exists(not(f), input);
+    }
+
+    /**
+     * The converse operation to <tt>exists</tt>. If the predicate returns true for all elements in the input sequence then 'forAll'
+     * returns true otherwise return false.
+     * forAll: (A -> bool) -> A list -> bool
+     * This is a curried implementation of 'forAll
+     *
+     * @param <A> the type of the element in the input sequence
+     * @param f   predicate
+     * @return true if the predicate returns true for all elements in the input sequence, false otherwise
+     * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
+     */
+    public static <A> Predicate<Iterable<A>> forAll(final Predicate<? super A> f) {
+        if (f == null) throw new IllegalArgumentException("forAll(Predicate<A>): predicate must not be null");
+        return input -> Functional.forAll(f, input);
+    }
+
+    /**
      * forAll2: the predicate 'f' is applied to all elements in the input sequences input1 and input2 as pairs. If the predicate returns
      * true for all pairs and there is the same number of elements in both input sequences then forAll2 returns true. If the predicate
      * returns false at any point then the traversal of the input sequences halts and forAll2 returns false.
@@ -885,157 +1073,6 @@ public final class Functional {
         if (enum1Moved != enum2Moved)
             throw new IllegalArgumentException("forAll2(BiFunction<A,B,Boolean>,Iterable<A>,Iterable<B>): Cannot compare two sequences with different numbers of elements");
         return true;
-    }
-
-    /**
-     * See <a href="http://en.wikipedia.org/wiki/Filter_(higher-order_function)">Filter</a>
-     *
-     * @param <A>   the type of the element in the input sequence
-     * @param pred  a filter function. This is passed each input element in turn and returns either true or false. If true then
-     *              the input element is passed through to the output otherwise it is ignored.
-     * @param input a sequence of objects
-     * @return a list which contains zero or more of the elements of the input sequence. Each element is included only if the filter
-     * function returns true for the element.
-     */
-    public static <A> List<A> filter(final Predicate<? super A> pred, final Iterable<A> input) {
-        if(pred==null) throw new IllegalArgumentException("filter(Predicate<A>,Iterable<A>): pred must not be null");
-        if(input==null) throw new IllegalArgumentException("filter(Predicate<A>,Iterable<A>): input must not be null");
-        return Collections.unmodifiableList(StreamSupport.stream(input.spliterator(), false).filter(pred).collect(Collectors.toList()));
-    }
-
-    /**
-     * See <a href="http://en.wikipedia.org/wiki/Filter_(higher-order_function)">Filter</a>
-     *
-     * @param <A>   the type of the element in the input sequence
-     * @param pred  a filter function. This is passed each input element in turn and returns either true or false. If true then
-     *              the input element is passed through to the output otherwise it is ignored.
-     * @param input a sequence of objects
-     * @return a list which contains zero or more of the elements of the input sequence. Each element is included only if the filter
-     * function returns true for the element.
-     */
-    public static <A> List<A> filter(final Predicate<? super A> pred, final Collection<A> input) {
-        if(pred==null) throw new IllegalArgumentException("filter(Predicate<A>,Collection<A>): pred must not be null");
-        if(input==null) throw new IllegalArgumentException("filter(Predicate<A>,Collection<A>): input must not be null");
-        return Collections.unmodifiableList(input.stream().filter(pred).collect(Collectors.toList()));
-    }
-
-    /**
-     * See <a href="http://en.wikipedia.org/wiki/Filter_(higher-order_function)">Filter</a>
-     *
-     * @param <T> the type of the element in the input sequence
-     * @param f   a filter function. This is passed each input element in turn and returns either true or false. If true then
-     *            the input element is passed through to the output otherwise it is ignored.
-     * @return a curried function that expects an input sequence which it feeds to the filter predicate which then returns
-     * a list which contains zero or more of the elements of the input sequence. Each element is included only if the filter
-     * function returns true for the element.
-     * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
-     */
-    public static <T> Function<Iterable<T>, List<T>> filter(final Predicate<? super T> f) {
-        if(f==null) throw new IllegalArgumentException("filter(Predicate<A>): pred must not be null");
-        return input -> input instanceof Collection<?> ? Functional.filter(f, (Collection<T>)input) : Functional.filter(f, input);
-    }
-
-    /**
-     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traveral of the
-     * input sequence. Otherwise return false.
-     * exists: (A -> bool) -> A list -> bool
-     *
-     * @param <A>   the type of the element in the input sequence
-     * @param f     predicate
-     * @param input input sequence
-     * @return true if the predicate returns true for any element in the input sequence, false otherwise
-     */
-    public static <A> boolean exists(final Predicate<? super A> f, final Iterable<A> input) {
-        if(f==null) throw new IllegalArgumentException("exists(Predicate<T>,Iterable<T>): predicate must not be null");
-        if(input==null) throw new IllegalArgumentException("exists(Predicate<T>,Iterable<T>): input must not be null");
-        return StreamSupport.stream(input.spliterator(), false).anyMatch(f);
-    }
-
-    /**
-     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traveral of the
-     * input sequence. Otherwise return false.
-     * exists: (A -> bool) -> A list -> bool
-     *
-     * @param <A>   the type of the element in the input sequence
-     * @param f     predicate
-     * @param input input sequence
-     * @return true if the predicate returns true for any element in the input sequence, false otherwise
-     */
-    public static <A> boolean exists(final Predicate<? super A> f, final Collection<A> input) {
-        if(f==null) throw new IllegalArgumentException("exists(Predicate<T>,Collection<T>): predicate must not be null");
-        if(input==null) throw new IllegalArgumentException("exists(Predicate<T>,Collection<T>): input must not be null");
-        return input.stream().anyMatch(f);
-    }
-
-    /**
-     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traveral of the
-     * input sequence. Otherwise return false.
-     * exists: (A -> bool) -> A list -> bool
-     * This is the curried implementation.
-     *
-     * @param <A> the type of the element in the input sequence
-     * @param f   predicate
-     * @return true if the predicate returns true for any element in the input sequence, false otherwise
-     * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
-     */
-    public static <A> Predicate<Iterable<A>> exists(final Predicate<? super A> f) {
-        if(f==null) throw new IllegalArgumentException("exists(Predicate<T>): predicate must not be null");
-        return input -> Functional.exists(f, input);
-    }
-
-    /**
-     * not reverses the result of the applied predicate
-     * not: (A -> bool) -> (A -> bool)
-     *
-     * @param <A> the type of the input to the function <tt>f</tt>
-     * @param f   the applied predicate
-     * @return true if f returns false, false if f returns true
-     */
-    public static <A> Predicate<A> not(final Predicate<A> f) {
-        if (f == null) throw new IllegalArgumentException("not(Predicate<A>): predicate must not be null");
-        return a -> !f.test(a);
-    }
-
-    /**
-     * The converse operation to <tt>exists</tt>. If the predicate returns true for all elements in the input sequence then 'forAll'
-     * returns true otherwise return false.
-     * forAll: (A -> bool) -> A list -> bool
-     *
-     * @param <A>   the type of the element in the input sequence
-     * @param f     predicate
-     * @param input input sequence
-     * @return true if the predicate returns true for all elements in the input sequence, false otherwise
-     */
-    public static <A> boolean forAll(final Predicate<A> f, final Iterable<? extends A> input) {
-        return !exists(not(f), input);
-    }
-
-    /**
-     * The converse operation to <tt>exists</tt>. If the predicate returns true for all elements in the input sequence then 'forAll'
-     * returns true otherwise return false.
-     * forAll: (A -> bool) -> A list -> bool
-     * This is a curried implementation of 'forAll
-     *
-     * @param <A> the type of the element in the input sequence
-     * @param f   predicate
-     * @return true if the predicate returns true for all elements in the input sequence, false otherwise
-     * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
-     */
-    public static <A> Predicate<Iterable<A>> forAll(final Predicate<? super A> f) {
-        return input -> Functional.forAll(f, input);
-    }
-
-    /**
-     * not2 reverses the result of the applied predicate
-     * not2: (A -> B -> bool) -> (A -> B -> bool)
-     *
-     * @param <A> the type of the first input to the function <tt>f</tt>
-     * @param <B> the type of the second input to the function <tt>f</tt>
-     * @param f   the applied predicate
-     * @return true if f returns false, false if f returns true
-     */
-    public static <A, B> BiFunction<A, B, Boolean> not2(final BiFunction<A, B, Boolean> f) {
-        return (a, b) -> !f.apply(a, b);
     }
 
     /// <summary> </summary>
