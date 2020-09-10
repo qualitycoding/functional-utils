@@ -1092,6 +1092,8 @@ public final class Functional {
      * @return a pair of lists, the first being the 'true' and the second being the 'false'
      */
     public static <A> Tuple2<List<A>, List<A>> partition(final Predicate<? super A> f, final Iterable<A> input) {
+        if(f==null) throw new IllegalArgumentException("partition(Predicate<A>,Iterable<A>): predicate must not be null");
+        if(input==null) throw new IllegalArgumentException("partition(Predicate<A>,Iterable<A>): input must not be null");
         final List<A> left;
         final List<A> right;
         if (input instanceof Collection<?>) {
@@ -1122,23 +1124,150 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A> Function<Iterable<A>, Tuple2<List<A>, List<A>>> partition(final Predicate<? super A> f) {
+        if(f==null) throw new IllegalArgumentException("partition(Predicate<A>): predicate must not be null");
         return input -> Functional.partition(f, input);
     }
 
     /**
-     * choose: this is a map transformation with the difference being that the number of elements in the output sequence may
-     * be between zero and the number of elements in the input sequence.
-     * See <a href="http://en.wikipedia.org/wiki/Map_(higher-order_function)">Map</a>
-     * choose: (A -> B option) -> A list -> B list
+     * This list generator returns a list of Range objects which split the interval [1-'howManyElements') into 'howManyPartitions' Range objects.
+     * If the interval cannot be divided exactly then the remainder is allocated evenly across the first
+     * 'howManyElements' % 'howManyPartitions' Range objects.
      *
-     * @param <A>   the type of the element in the input sequence
-     * @param <B>   the type of the element in the output sequence
-     * @param f     map function. This transforms the input element into an Option
-     * @param input input sequence
-     * @return a list of transformed elements, numbering less than or equal to the number of input elements
+     * @param howManyElements   defines the exclusive upper bound of the interval to be split
+     * @param howManyPartitions defines the number of Range objects to generate to cover the interval
+     * @return a list of Range objects
      */
+    public static List<Range<Integer>> partition(final int howManyElements, final int howManyPartitions) {
+        if(howManyElements<=0) throw new IllegalArgumentException("partition(int,int): howManyElements must be positive");
+        if(howManyPartitions<=0) throw new IllegalArgumentException("partition(int,int): howManyPartitions must be positive");
+        return partition(Functional.range(1), howManyElements, howManyPartitions);
+    }
+
+    /**
+     * This sequence generator returns a sequence of Range objects which split the interval [1-'howManyElements') into 'howManyPartitions'
+     * Range objects. If the interval cannot be divided exactly then the remainder is allocated evenly across the first
+     * 'howManyElements' % 'howManyPartitions' Range objects.
+     *
+     * @param generator         a function which generates members of the input sequence
+     * @param howManyElements   defines the exclusive upper bound of the interval to be split
+     * @param howManyPartitions defines the number of Range objects to generate to cover the interval
+     * @return a list of Range objects
+     */
+    public static <T> List<Range<T>> partition(final Function<Integer, T> generator, final int howManyElements, final int howManyPartitions) {
+        if(generator == null)
+            throw new IllegalArgumentException("partition(Function<Integer,A>,int,int): generator must not be null");
+        if (howManyElements <= 0)
+            throw new IllegalArgumentException("partition(Function<Integer,A>,int,int): howManyElements must be positive");
+        if (howManyPartitions <= 0)
+            throw new IllegalArgumentException("partition(Function<Integer,A>,int,int): howManyPartitions must be positive");
+
+        final int size = howManyElements / howManyPartitions;
+        final int remainder = howManyElements % howManyPartitions;
+
+        assert size * howManyPartitions + remainder == howManyElements;
+
+        final Integer seed = 0;
+        final Function<Integer, Tuple2<T, Integer>> boundsCalculator = integer -> new Tuple2<>(
+                generator.apply(1 + (integer * size + (integer <= remainder ? integer : remainder))),
+                integer + 1);
+        final Predicate<Integer> finished = integer -> integer > howManyPartitions;
+
+        final Iterable<T> output = Functional.seq.unfold(boundsCalculator, finished, seed);
+
+        final Iterator<T> iterator = output.iterator();
+        if (!iterator.hasNext())
+            throw new IllegalStateException("Somehow we have no entries in our sequence of bounds");
+        T last = iterator.next();
+        final List<Range<T>> retval = new ArrayList<>(howManyPartitions);
+        for (int i = 0; i < howManyPartitions; ++i) {
+            if (!iterator.hasNext())
+                throw new IllegalStateException(String.format("Somehow we have fewer entries (%d) in our sequence of bounds than expected (%d)", i, howManyPartitions));
+            final T next = iterator.next();
+            retval.add(new Range(last, next));
+            last = next;
+        }
+        return retval;
+
+//        return Functional.seq.init(new Function<Integer, Range<T>>() {
+//
+//            public Range<T> apply(final Integer integer) {
+//// inefficient - the upper bound is computed twice (once at the end of an iteration and once at the beginning of the next iteration)
+//                return new Range<T>( // 1 + the value because the init function expects the control range to start from one.
+//                        generator.apply(1 + ((integer - 1) * size + (integer <= remainder + 1 ? integer - 1 : remainder))),
+//                        generator.apply(1 + (integer * size + (integer <= remainder ? integer : remainder))));
+//            }
+//        }, howManyPartitions);
+    }
+
+    /**
+     * The Range class holds an inclusive lower bound and an exclusive upper bound. That is lower <= pos < upper
+     */
+    public static class Range<T> {
+        private final T lowerBound;
+        private final T upperExBound;
+
+        /**
+         * Create a new Range object
+         *
+         * @param lower   the inclusive lower bound of the Range
+         * @param upperEx the exclusive upper bound of the Range
+         */
+        public Range(final T lower, final T upperEx) {
+            this.lowerBound = lower;
+            this.upperExBound = upperEx;
+        }
+
+        /**
+         * Return the inclusive lower bound
+         *
+         * @return the inclusive lower bound
+         */
+        public T from() {
+            return lowerBound;
+        }
+
+        /**
+         * return the exclusive upper bound
+         *
+         * @return the exclusive upper bound
+         */
+        public T to() {
+            return upperExBound;
+        }
+
+        public boolean equals(final Object other) {
+            if (!(other instanceof Range<?>)) return false;
+            final Range<?> otherRange = (Range<?>) other;
+            return from().equals(otherRange.from()) && to().equals(otherRange.to());
+        }
+
+        public int hashCode() {
+            return 13 * from().hashCode() + 7 * to().hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return "Range{" +
+                    "lowerBound=" + lowerBound +
+                    ", upperExBound=" + upperExBound +
+                    '}';
+        }
+    }
+
+    /**
+         * choose: this is a map transformation with the difference being that the number of elements in the output sequence may
+         * be between zero and the number of elements in the input sequence.
+         * See <a href="http://en.wikipedia.org/wiki/Map_(higher-order_function)">Map</a>
+         * choose: (A -> B option) -> A list -> B list
+         *
+         * @param <A>   the type of the element in the input sequence
+         * @param <B>   the type of the element in the output sequence
+         * @param f     map function. This transforms the input element into an Option
+         * @param input input sequence
+         * @return a list of transformed elements, numbering less than or equal to the number of input elements
+         */
     public static <A, B> List<B> choose(final Function<? super A, Option<B>> f, final Iterable<A> input) {
-        final List<B> results = input instanceof Collection<?> ? new ArrayList<>(((Collection) input).size()) : new ArrayList<>();
+        final List<B> results = input instanceof Collection<?> ? new ArrayList<>(((Collection<?>) input).size()) : new ArrayList<>();
         for (final A a : input) {
             final Option<B> intermediate = f.apply(a);
             if (intermediate.isSome())
@@ -1749,121 +1878,7 @@ public final class Functional {
         return Collections.unmodifiableMap(output);
     }
 
-    /**
-     * The Range class holds an inclusive lower bound and an exclusive upper bound. That is lower <= pos < upper
-     */
-    public static class Range<T> {
-        private final T lowerBound;
-        private final T upperExBound;
-
-        /**
-         * Create a new Range object
-         *
-         * @param lower   the inclusive lower bound of the Range
-         * @param upperEx the exclusive upper bound of the Range
-         */
-        public Range(final T lower, final T upperEx) {
-            this.lowerBound = lower;
-            this.upperExBound = upperEx;
-        }
-
-        /**
-         * Return the inclusive lower bound
-         *
-         * @return the inclusive lower bound
-         */
-        public T from() {
-            return lowerBound;
-        }
-
-        /**
-         * return the exclusive upper bound
-         *
-         * @return the exclusive upper bound
-         */
-        public T to() {
-            return upperExBound;
-        }
-
-        public boolean equals(final Object other) {
-            if (!(other instanceof Range<?>)) return false;
-            final Range<?> otherRange = (Range<?>) other;
-            return from().equals(otherRange.from()) && to().equals(otherRange.to());
-        }
-
-        public int hashCode() {
-            return 13 * from().hashCode() + 7 * to().hashCode();
-        }
-    }
-
-    /**
-     * This list generator returns a list of Range objects which split the interval [1-'howManyElements') into 'howManyPartitions' Range objects.
-     * If the interval cannot be divided exactly then the remainder is allocated evenly across the first
-     * 'howManyElements' % 'howManyPartitions' Range objects.
-     *
-     * @param howManyElements   defines the exclusive upper bound of the interval to be split
-     * @param howManyPartitions defines the number of Range objects to generate to cover the interval
-     * @return a list of Range objects
-     */
-    public static List<Range<Integer>> partition(final int howManyElements, final int howManyPartitions) {
-        return partition(Functional.range(0), howManyElements, howManyPartitions);
-    }
-
-    /**
-     * This sequence generator returns a sequence of Range objects which split the interval [1-'howManyElements') into 'howManyPartitions'
-     * Range objects. If the interval cannot be divided exactly then the remainder is allocated evenly across the first
-     * 'howManyElements' % 'howManyPartitions' Range objects.
-     *
-     * @param generator         a function which generates members of the input sequence
-     * @param howManyElements   defines the exclusive upper bound of the interval to be split
-     * @param howManyPartitions defines the number of Range objects to generate to cover the interval
-     * @return a list of Range objects
-     */
-    public static <T> List<Range<T>> partition(final Function<Integer, T> generator, final int howManyElements, final int howManyPartitions) {
-        if (howManyElements <= 0)
-            throw new IllegalArgumentException("Functional.partition() howManyElements cannot be non-positive");
-        if (howManyPartitions <= 0)
-            throw new IllegalArgumentException("Functional.partition() howManyPartitions cannot be non-positive");
-
-        final int size = howManyElements / howManyPartitions;
-        final int remainder = howManyElements % howManyPartitions;
-
-        assert size * howManyPartitions + remainder == howManyElements;
-
-        final Integer seed = 0;
-        final Function<Integer, Tuple2<T, Integer>> boundsCalculator = integer -> new Tuple2<>(
-                generator.apply(1 + (integer * size + (integer <= remainder ? integer : remainder))),
-                integer + 1);
-        final Predicate<Integer> finished = integer -> integer > howManyPartitions;
-
-        final Iterable<T> output = Functional.seq.unfold(boundsCalculator, finished, seed);
-
-        final Iterator<T> iterator = output.iterator();
-        if (iterator == null || !iterator.hasNext())
-            throw new IllegalStateException("Somehow we have no entries in our sequence of bounds");
-        T last = iterator.next();
-        final List<Range<T>> retval = new ArrayList<>(howManyPartitions);
-        for (int i = 0; i < howManyPartitions; ++i) {
-            if (!iterator.hasNext())
-                throw new IllegalStateException(String.format("Somehow we have fewer entries (%d) in our sequence of bounds than expected (%d)", i, howManyPartitions));
-            final T next = iterator.next();
-            retval.add(new Range(last, next));
-            last = next;
-        }
-        return retval;
-
-//        return Functional.seq.init(new Function<Integer, Range<T>>() {
-//
-//            public Range<T> apply(final Integer integer) {
-//// inefficient - the upper bound is computed twice (once at the end of an iteration and once at the beginning of the next iteration)
-//                return new Range<T>( // 1 + the value because the init function expects the control range to start from one.
-//                        generator.apply(1 + ((integer - 1) * size + (integer <= remainder + 1 ? integer - 1 : remainder))),
-//                        generator.apply(1 + (integer * size + (integer <= remainder ? integer : remainder))));
-//            }
-//        }, howManyPartitions);
-    }
-
-    /**
+     /**
      * Lazily-evaluated implementations of various of the algorithms
      *
      * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
