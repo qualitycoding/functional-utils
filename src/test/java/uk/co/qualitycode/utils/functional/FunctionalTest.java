@@ -40,21 +40,37 @@ class FunctionalTest {
         void preconditions() {
             assertAll(
                     () -> assertThatIllegalArgumentException()
-                            .isThrownBy(() -> Functional.ConvertFlatMapOptionalToOption.convert(null))
+                            .isThrownBy(() -> Functional.ConvertFlatMapOptionalToFlatMapVavrOption.convert(null))
                             .withMessage("convert(Function<T,Optional<T>>): tfm must not be null"),
                     () -> assertThatIllegalArgumentException()
-                            .isThrownBy(() -> Functional.ConvertFlatMapOptionToOptional.convert(null))
-                            .withMessage("convert(Function<T,Option<T>>): tfm must not be null"));
+                            .isThrownBy(() -> Functional.ConvertFlatMapVavrOptionToFlatMapOptional.convert(null))
+                            .withMessage("convert(Function<T,Option<T>>): tfm must not be null"),
+                    () -> assertThatIllegalArgumentException()
+                            .isThrownBy(() -> Functional.ConvertFlatMapVavrOptionToFlatMapOption.convert(null))
+                            .withMessage("convert(Function<T,Option<T>>): tfm must not be null"),
+                    () -> assertThatIllegalArgumentException()
+                            .isThrownBy(() -> Functional.ConvertFlatMapOptionalToFlatMapOption.convert(null))
+                            .withMessage("convert(Function<T,Optional<T>>): tfm must not be null"));
         }
 
         @Test
         void convertOptionalAcceptsTfmThatReturnsNull() {
-            assertThat(Functional.ConvertFlatMapOptionalToOption.convert(o->null).apply(new Object())).isEmpty();
+            assertThat(Functional.ConvertFlatMapOptionalToFlatMapVavrOption.convert(o->null).apply(new Object())).isEmpty();
         }
 
         @Test
         void convertOptionAcceptsTfmThatReturnsNull() {
-            assertThat(Functional.ConvertFlatMapOptionToOptional.convert(o->null).apply(new Object())).isEmpty();
+            assertThat(Functional.ConvertFlatMapVavrOptionToFlatMapOptional.convert(o->null).apply(new Object())).isEmpty();
+        }
+
+        @Test
+        void convertOptionalToOptionAcceptsTfmThatReturnsNull() {
+            OptionAssert.assertThat(Functional.ConvertFlatMapOptionalToFlatMapOption.convert(o->null).apply(new Object())).isEmpty();
+        }
+
+        @Test
+        void convertOptionToOptionAcceptsTfmThatReturnsNull() {
+            OptionAssert.assertThat(Functional.ConvertFlatMapVavrOptionToFlatMapOption.convert(o->null).apply(new Object())).isEmpty();
         }
 
         @Test
@@ -67,7 +83,7 @@ class FunctionalTest {
             final io.vavr.control.Option<Integer> i2 = io.vavr.control.Option.some(expected);
             assertThat(i1.flatMap(f1)).hasValue(expected);
             assertThat(i2.flatMap(f2)).contains(expected);
-            assertThat(Functional.ConvertFlatMapOptionalToOption.convert(f1).apply(expected)).contains(expected);
+            assertThat(Functional.ConvertFlatMapOptionalToFlatMapVavrOption.convert(f1).apply(expected)).contains(expected);
         }
 
         @Test
@@ -80,7 +96,33 @@ class FunctionalTest {
             final Optional<Integer> i2 = Optional.of(expected);
             assertThat(i1.flatMap(f1)).contains(expected);
             assertThat(i2.flatMap(f2)).hasValue(expected);
-            assertThat(Functional.ConvertFlatMapOptionToOptional.convert(f1).apply(expected)).contains(expected);
+            assertThat(Functional.ConvertFlatMapVavrOptionToFlatMapOptional.convert(f1).apply(expected)).contains(expected);
+        }
+
+        @Test
+        void convertFlatMapFnFromOptionalToOption() {
+            final Function<Integer, Optional<Integer>> f1 = Optional::of;
+            final Function<Integer, Optional<Integer>> f2 = Optional::of;
+
+            final int expected = 2;
+            final Optional<Integer> i1 = Optional.of(expected);
+            final Option<Integer> i2 = Option.of(expected);
+            assertThat(i1.flatMap(f1)).hasValue(expected);
+            assertThat(i2.toJavaOptional().flatMap(f2)).contains(expected);
+            OptionAssert.assertThat(Functional.ConvertFlatMapOptionalToFlatMapOption.convert(f1).apply(expected)).hasValue(expected);
+        }
+
+        @Test
+        void convertFlatMapFnFromOptionToOption() {
+            final Function<Integer, io.vavr.control.Option<Integer>> f1 = io.vavr.control.Option::of;
+            final Function<Integer, Optional<Integer>> f2 = Optional::of;
+
+            final int expected = 2;
+            final io.vavr.control.Option<Integer> i1 = io.vavr.control.Option.some(expected);
+            final Optional<Integer> i2 = Optional.of(expected);
+            assertThat(i1.flatMap(f1)).contains(expected);
+            assertThat(i2.flatMap(f2)).hasValue(expected);
+            OptionAssert.assertThat(Functional.ConvertFlatMapVavrOptionToFlatMapOption.convert(f1).apply(expected)).hasValue(expected);
         }
     }
 

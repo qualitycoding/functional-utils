@@ -2,7 +2,6 @@ package uk.co.qualitycode.utils.functional;
 
 import org.junit.jupiter.api.Test;
 import uk.co.qualitycode.utils.functional.monad.Option;
-import uk.co.qualitycode.utils.functional.monad.OptionNoValueAccessException;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,31 +9,54 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.FunctionalTest.triplingGenerator;
 
 class Functional_Choose_Test {
     @Test
-    void chooseTest1B() throws OptionNoValueAccessException {
+    void preconditions() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(()->Functional.choose(null, mock(Iterable.class)))
+                .withMessage("choose(Function<A,Option<B>>,Iterable<A>): chooser must not be null");
+        assertThatIllegalArgumentException()
+                .isThrownBy(()->Functional.choose(mock(Function.class), (Iterable)null))
+                .withMessage("choose(Function<A,Option<B>>,Iterable<A>): input must not be null");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(()->Functional.choose(null, mock(Collection.class)))
+                .withMessage("choose(Function<A,Option<B>>,Collection<A>): chooser must not be null");
+        assertThatIllegalArgumentException()
+                .isThrownBy(()->Functional.choose(mock(Function.class), (Collection)null))
+                .withMessage("choose(Function<A,Option<B>>,Collection<A>): input must not be null");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(()->Functional.choose(null))
+                .withMessage("choose(Function<A,Option<B>>): chooser must not be null");
+    }
+
+    @Test
+    void chooseTest1BUsingOption() {
         final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-        final Collection<String> o = Functional.choose(i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none(), li);
+        final Collection<String> o = Functional.choose(i -> Option.of(Optional.of(i).filter(Functional::isEven).map(Object::toString)), li);
         assertThat(o).containsExactly("6", "12");
     }
 
     @Test
-    void curriedChooseTest1B() throws OptionNoValueAccessException {
+    void curriedChooseTest1B() {
         final Collection<Integer> li = Functional.init(triplingGenerator, 5);
         final Collection<String> o = Functional.choose((Function<Integer, Option<String>>) i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none()).apply(li);
         assertThat(o).containsExactly("6", "12");
     }
 
     @Test
-    void chooseTest2A() //throws OptionNoValueAccessException
-    {
+    void chooseTest2A() {
         Map<Integer, String> o = null;
         try {
             final Collection<Integer> li = Functional.init(triplingGenerator, 5);
@@ -115,31 +137,26 @@ class Functional_Choose_Test {
     }
 
     @Test
-    void chooseTest1() throws OptionNoValueAccessException {
+    void chooseTest1() {
         final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
         final Collection<Integer> expected = Arrays.asList(1, 3, 5);
-        final Collection<Integer> output =
-                Functional.choose(i -> i % 2 != 0 ? Option.of(i) : Option.none(), input);
+        final Collection<Integer> output = Functional.choose(i -> i % 2 != 0 ? Option.of(i) : Option.none(), input);
         assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
-    void chooseTest2() throws OptionNoValueAccessException {
+    void chooseTest2() {
         final Collection<String> input = Arrays.asList("abc", "def");
         final Collection<Character> expected = Arrays.asList('a');
-        final Collection<Character> output =
-                Functional.choose(str -> str.startsWith("a") ? Option.of('a') : Option.none()
-                        , input
-                );
+        final Collection<Character> output = Functional.choose(str -> str.startsWith("a") ? Option.of('a') : Option.none(), input);
         assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
-    void chooseTest3() throws OptionNoValueAccessException {
+    void chooseTest3() {
         final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
         final Collection<Integer> expected = Arrays.asList(1, 3, 5);
-        final Collection<Integer> output = Functional.choose(
-                i -> i % 2 != 0 ? Option.of(i) : Option.none(), input);
+        final Collection<Integer> output = Functional.choose(i -> i % 2 != 0 ? Option.of(i) : Option.none(), input);
 
         assertThat(output).containsExactlyElementsOf(expected);
     }
