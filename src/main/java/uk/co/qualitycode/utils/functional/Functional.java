@@ -48,10 +48,11 @@ public final class Functional {
          *
          * @param tfm
          * @param <T>
+         * @param <R>
          * @return
          */
-        public static <T> Function<T, Optional<T>> convert(final Function<T, io.vavr.control.Option<T>> tfm) {
-            if (tfm == null) throw new IllegalArgumentException("convert(Function<T,Option<T>>): tfm must not be null");
+        public static <T,R> Function<T, Optional<R>> convert(final Function<T, io.vavr.control.Option<R>> tfm) {
+            if (tfm == null) throw new IllegalArgumentException("convert(Function<T,Option<R>>): tfm must not be null");
             return t -> Option.of(tfm.apply(t)).toJavaOptional();
         }
     }
@@ -63,43 +64,46 @@ public final class Functional {
          *
          * @param tfm
          * @param <T>
+         * @param <R>
          * @return
          */
-        public static <T> Function<T, io.vavr.control.Option<T>> convert(final Function<T, Optional<T>> tfm) {
+        public static <T,R> Function<T, io.vavr.control.Option<R>> convert(final Function<T, Optional<R>> tfm) {
             if (tfm == null)
-                throw new IllegalArgumentException("convert(Function<T,Optional<T>>): tfm must not be null");
+                throw new IllegalArgumentException("convert(Function<T,Optional<R>>): tfm must not be null");
             return t -> Option.of(tfm.apply(t)).toVavrOption();
         }
     }
 
     public static class ConvertFlatMapOptionalToFlatMapOption {
         /**
-         * So you have a flatmap function that returns an Optional but you want to stream through vavr? Never fear,
+         * So you have a flatmap function that returns an Optional but you want to stream through the functions here? Never fear,
          * functional-utils are here.
          *
          * @param tfm
          * @param <T>
+         * @param <R>
          * @return
          */
-        public static <T> Function<T, Option<T>> convert(final Function<T, Optional<T>> tfm) {
+        public static <T,R> Function<T, Option<R>> convert(final Function<T, Optional<R>> tfm) {
             if (tfm == null)
-                throw new IllegalArgumentException("convert(Function<T,Optional<T>>): tfm must not be null");
+                throw new IllegalArgumentException("convert(Function<T,Optional<R>>): tfm must not be null");
             return t -> Option.of(tfm.apply(t));
         }
     }
 
     public static class ConvertFlatMapVavrOptionToFlatMapOption {
         /**
-         * So you have a flatmap function that returns an Optional but you want to stream through vavr? Never fear,
+         * So you have a flatmap function that returns a Vavr Option but you want to stream through the functions here? Never fear,
          * functional-utils are here.
          *
          * @param tfm
          * @param <T>
+         * @param <R>
          * @return
          */
-        public static <T> Function<T, Option<T>> convert(final Function<T, io.vavr.control.Option<T>> tfm) {
+        public static <T,R> Function<T, Option<R>> convert(final Function<T, io.vavr.control.Option<R>> tfm) {
             if (tfm == null)
-                throw new IllegalArgumentException("convert(Function<T,Option<T>>): tfm must not be null");
+                throw new IllegalArgumentException("convert(Function<T,Option<R>>): tfm must not be null");
             return t -> Option.of(tfm.apply(t));
         }
     }
@@ -1018,7 +1022,7 @@ public final class Functional {
      * @param f   the applied predicate
      * @return true if f returns false, false if f returns true
      */
-    public static <A, B> BiPredicate<A,B> not2(final BiPredicate<A,B> f) {
+    public static <A, B> BiPredicate<A, B> not2(final BiPredicate<A, B> f) {
         if (f == null) throw new IllegalArgumentException("not(BiPredicate<A,B>): predicate must not be null");
         return (a, b) -> !f.test(a, b);
     }
@@ -1092,7 +1096,7 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if the predicate returns true for all pairs and the sequences contain differing numbers
      *                                            of elements
      */
-    public static <A, B, AA extends A, BB extends B> boolean forAll2(final BiPredicate<A,B> f, final Iterable<AA> input1, final Iterable<BB> input2) {
+    public static <A, B, AA extends A, BB extends B> boolean forAll2(final BiPredicate<A, B> f, final Iterable<AA> input1, final Iterable<BB> input2) {
         if (f == null)
             throw new IllegalArgumentException("forAll2(BiPredicate<A,B>,Iterable<A>,Iterable<B>): predicate must not be null");
         if (input1 == null)
@@ -1124,8 +1128,10 @@ public final class Functional {
      * @return a pair of lists, the first being the 'true' and the second being the 'false'
      */
     public static <A> Tuple2<List<A>, List<A>> partition(final Predicate<? super A> f, final Iterable<A> input) {
-        if(f==null) throw new IllegalArgumentException("partition(Predicate<A>,Iterable<A>): predicate must not be null");
-        if(input==null) throw new IllegalArgumentException("partition(Predicate<A>,Iterable<A>): input must not be null");
+        if (f == null)
+            throw new IllegalArgumentException("partition(Predicate<A>,Iterable<A>): predicate must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("partition(Predicate<A>,Iterable<A>): input must not be null");
         final List<A> left;
         final List<A> right;
         if (input instanceof Collection<?>) {
@@ -1156,7 +1162,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A> Function<Iterable<A>, Tuple2<List<A>, List<A>>> partition(final Predicate<? super A> f) {
-        if(f==null) throw new IllegalArgumentException("partition(Predicate<A>): predicate must not be null");
+        if (f == null) throw new IllegalArgumentException("partition(Predicate<A>): predicate must not be null");
         return input -> Functional.partition(f, input);
     }
 
@@ -1170,8 +1176,10 @@ public final class Functional {
      * @return a list of Range objects
      */
     public static List<Range<Integer>> partition(final int howManyElements, final int howManyPartitions) {
-        if(howManyElements<=0) throw new IllegalArgumentException("partition(int,int): howManyElements must be positive");
-        if(howManyPartitions<=0) throw new IllegalArgumentException("partition(int,int): howManyPartitions must be positive");
+        if (howManyElements <= 0)
+            throw new IllegalArgumentException("partition(int,int): howManyElements must be positive");
+        if (howManyPartitions <= 0)
+            throw new IllegalArgumentException("partition(int,int): howManyPartitions must be positive");
         return partition(Functional.range(1), howManyElements, howManyPartitions);
     }
 
@@ -1186,7 +1194,7 @@ public final class Functional {
      * @return a list of Range objects
      */
     public static <T> List<Range<T>> partition(final Function<Integer, T> generator, final int howManyElements, final int howManyPartitions) {
-        if(generator == null)
+        if (generator == null)
             throw new IllegalArgumentException("partition(Function<Integer,A>,int,int): generator must not be null");
         if (howManyElements <= 0)
             throw new IllegalArgumentException("partition(Function<Integer,A>,int,int): howManyElements must be positive");
@@ -1286,55 +1294,57 @@ public final class Functional {
         }
     }
 
-    /**
-         * choose: this is a map transformation with the difference being that the number of elements in the output sequence may
-         * be between zero and the number of elements in the input sequence.
-         * See <a href="http://en.wikipedia.org/wiki/Map_(higher-order_function)">Map</a>
-         * choose: (A -> B option) -> A list -> B list
-         *
-         * @param <A>   the type of the element in the input sequence
-         * @param <B>   the type of the element in the output sequence
-         * @param f     map function. This transforms the input element into an Option
-         * @param input input sequence
-         * @return a list of transformed elements, numbering less than or equal to the number of input elements
-         */
-    public static <A, B> List<B> choose(final Function<? super A, Option<B>> f, final Iterable<A> input) {
-        if(f==null) throw new IllegalArgumentException("choose(Function<A,Option<B>>,Iterable<A>): chooser must not be null");
-        if(input==null) throw new IllegalArgumentException("choose(Function<A,Option<B>>,Iterable<A>): input must not be null");
-//        final Stream<A> stream = StreamSupport.stream(input.spliterator(), false);
-//        final List<Option<B>> collect = stream.map(f).filter(Option::isSome).collect(Collectors.toList());
-//        stream.reduce()
-        final List<B> results = new ArrayList<>();
-        for (final A a : input) {
+    private static <A,B>List<B> chooseReducer(final Function<? super A, Option<B>> f, final Stream<A> input) {
+        return input.reduce(new ArrayList<>(), (state, a) -> {
             final Option<B> intermediate = f.apply(a);
             if (intermediate.isSome())
-                results.add(intermediate.get());
-        }
-        return Collections.unmodifiableList(results);
+                state.add(intermediate.get());
+            return state;
+        }, (t1, t2) -> {
+            t1.addAll(t2);
+            return t1;
+        });
     }
 
     /**
-         * choose: this is a map transformation with the difference being that the number of elements in the output sequence may
-         * be between zero and the number of elements in the input sequence.
-         * See <a href="http://en.wikipedia.org/wiki/Map_(higher-order_function)">Map</a>
-         * choose: (A -> B option) -> A list -> B list
-         *
-         * @param <A>   the type of the element in the input sequence
-         * @param <B>   the type of the element in the output sequence
-         * @param f     map function. This transforms the input element into an Option
-         * @param input input sequence
-         * @return a list of transformed elements, numbering less than or equal to the number of input elements
-         */
+     * choose: this is a map transformation with the difference being that the number of elements in the output sequence may
+     * be between zero and the number of elements in the input sequence.
+     * See <a href="http://en.wikipedia.org/wiki/Map_(higher-order_function)">Map</a>
+     * choose: (A -> B option) -> A list -> B list
+     *
+     * @param <A>   the type of the element in the input sequence
+     * @param <B>   the type of the element in the output sequence
+     * @param f     map function. This transforms the input element into an Option
+     * @param input input sequence
+     * @return a list of transformed elements, numbering less than or equal to the number of input elements
+     */
+    public static <A, B> List<B> choose(final Function<? super A, Option<B>> f, final Iterable<A> input) {
+        if (f == null)
+            throw new IllegalArgumentException("choose(Function<A,Option<B>>,Iterable<A>): chooser must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("choose(Function<A,Option<B>>,Iterable<A>): input must not be null");
+        return Collections.unmodifiableList(chooseReducer(f, StreamSupport.stream(input.spliterator(), false)));
+    }
+
+    /**
+     * choose: this is a map transformation with the difference being that the number of elements in the output sequence may
+     * be between zero and the number of elements in the input sequence.
+     * See <a href="http://en.wikipedia.org/wiki/Map_(higher-order_function)">Map</a>
+     * choose: (A -> B option) -> A list -> B list
+     *
+     * @param <A>   the type of the element in the input sequence
+     * @param <B>   the type of the element in the output sequence
+     * @param f     map function. This transforms the input element into an Option
+     * @param input input sequence
+     * @return a list of transformed elements, numbering less than or equal to the number of input elements
+     */
     public static <A, B> List<B> choose(final Function<? super A, Option<B>> f, final Collection<A> input) {
-        if(f==null) throw new IllegalArgumentException("choose(Function<A,Option<B>>,Collection<A>): chooser must not be null");
-        if(input==null) throw new IllegalArgumentException("choose(Function<A,Option<B>>,Collection<A>): input must not be null");
-        final List<B> results = new ArrayList<>(input.size());
-        for (final A a : input) {
-            final Option<B> intermediate = f.apply(a);
-            if (intermediate.isSome())
-                results.add(intermediate.get());
-        }
-        return Collections.unmodifiableList(results);
+        if (f == null)
+            throw new IllegalArgumentException("choose(Function<A,Option<B>>,Collection<A>): chooser must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("choose(Function<A,Option<B>>,Collection<A>): input must not be null");
+
+        return Collections.unmodifiableList(chooseReducer(f, input.stream()));
     }
 
     /**
@@ -1351,7 +1361,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A, B> Function<Iterable<A>, List<B>> choose(final Function<? super A, Option<B>> f) {
-        if(f==null) throw new IllegalArgumentException("choose(Function<A,Option<B>>): chooser must not be null");
+        if (f == null) throw new IllegalArgumentException("choose(Function<A,Option<B>>): chooser must not be null");
         return input -> Functional.choose(f, input);
     }
 
@@ -1940,7 +1950,7 @@ public final class Functional {
         return Collections.unmodifiableMap(output);
     }
 
-     /**
+    /**
      * Lazily-evaluated implementations of various of the algorithms
      *
      * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
@@ -3385,7 +3395,7 @@ public final class Functional {
          * if the predicate returns true for all pairs and the sequences contain differing numbers
          * of elements
          */
-        public static <A, B, AA extends A, BB extends B> Option<Boolean> forAll2(final BiPredicate<A,B> f, final Iterable<AA> input1, final Iterable<BB> input2) {
+        public static <A, B, AA extends A, BB extends B> Option<Boolean> forAll2(final BiPredicate<A, B> f, final Iterable<AA> input1, final Iterable<BB> input2) {
             final Iterator<AA> enum1 = input1.iterator();
             final Iterator<BB> enum2 = input2.iterator();
             boolean enum1Moved = false, enum2Moved = false;

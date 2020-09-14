@@ -41,16 +41,16 @@ class FunctionalTest {
             assertAll(
                     () -> assertThatIllegalArgumentException()
                             .isThrownBy(() -> Functional.ConvertFlatMapOptionalToFlatMapVavrOption.convert(null))
-                            .withMessage("convert(Function<T,Optional<T>>): tfm must not be null"),
+                            .withMessage("convert(Function<T,Optional<R>>): tfm must not be null"),
                     () -> assertThatIllegalArgumentException()
                             .isThrownBy(() -> Functional.ConvertFlatMapVavrOptionToFlatMapOptional.convert(null))
-                            .withMessage("convert(Function<T,Option<T>>): tfm must not be null"),
+                            .withMessage("convert(Function<T,Option<R>>): tfm must not be null"),
                     () -> assertThatIllegalArgumentException()
                             .isThrownBy(() -> Functional.ConvertFlatMapVavrOptionToFlatMapOption.convert(null))
-                            .withMessage("convert(Function<T,Option<T>>): tfm must not be null"),
+                            .withMessage("convert(Function<T,Option<R>>): tfm must not be null"),
                     () -> assertThatIllegalArgumentException()
                             .isThrownBy(() -> Functional.ConvertFlatMapOptionalToFlatMapOption.convert(null))
-                            .withMessage("convert(Function<T,Optional<T>>): tfm must not be null"));
+                            .withMessage("convert(Function<T,Optional<R>>): tfm must not be null"));
         }
 
         @Test
