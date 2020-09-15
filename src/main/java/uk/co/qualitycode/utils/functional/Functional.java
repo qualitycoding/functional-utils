@@ -1615,28 +1615,6 @@ public final class Functional {
         Map<K, V> withValueFn(Function<? super T, ? extends V> valueFn);
     }
 
-    /**
-     * toArray: create an array containing all the objects in the input sequence
-     *
-     * @param input input sequence
-     * @param <T>   the type of the element in the input sequence
-     * @return an array containing all the elements of the input sequence
-     */
-    public static <T> Object[] toArray(final Iterable<T> input)
-    //public static <T>T[] toArray(final Iterable<T> input)
-    {
-        if (input == null)
-            throw new IllegalArgumentException("Functional.toArray(Iterable<T>): input must not be null");
-
-        if (input instanceof Collection<?>)
-            return ((Collection<T>) input).toArray();
-
-        final List<T> output = new ArrayList<>();
-        for (final T element : input) output.add(element);
-
-        return output.toArray(); // this needs to be output.toArray(new T[0]) but that doesn't appear to be allowable Java :-(
-    }
-
     public static <T> List<T> toMutableList(final Iterable<T> input) {
         if (input == null)
             throw new IllegalArgumentException("Functional.toMutableList(Iterable<T>): input must not be null");

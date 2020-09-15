@@ -35,8 +35,6 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
 
     List<T> toList();
 
-    Object[] toArray();
-
     Set<T> toSet();
 
     <K, V> Map<K, V> toDictionary(final Function<? super T, ? extends K> keyFn, final Function<? super T, ? extends V> valueFn);
@@ -128,10 +126,6 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
 
             public List<T> toList() {
                 return Functional.toList(i);
-            }
-
-            public Object[] toArray() {
-                return Functional.toArray(i);
             }
 
             public Set<T> toSet() {
@@ -277,10 +271,6 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
 
         public List<T> toList() {
             return Functional.toList(this);
-        }
-
-        public Object[] toArray() {
-            return Functional.toArray(this);
         }
 
         public Set<T> toSet() {

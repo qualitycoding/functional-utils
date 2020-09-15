@@ -535,19 +535,6 @@ class Iterable2Test {
     }
 
     @Test
-    void toArrayTest1() {
-        final Iterable2<Integer> input = Iterable2.asList(1, 2, 3, 4, 5);
-        final Iterable2<String> strs = input.map(Functional.stringify());
-        final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
-
-        final Object[] output = strs.toArray();
-
-        assertThat(output.length).isEqualTo(expected.size());
-        for (int i = 0; i < expected.size(); ++i)
-            assertThat(output[i]).isEqualTo(expected.get(i));
-    }
-
-    @Test
     void toSetTest1() {
         final Iterable2<Integer> input = Iterable2.asList(1, 2, 3, 4, 5);
         final Set<Integer> integerSet = input.toSet();
