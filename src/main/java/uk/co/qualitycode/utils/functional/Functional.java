@@ -1378,11 +1378,18 @@ public final class Functional {
      * @return aggregated value
      */
     public static <A, B> A fold(final BiFunction<? super A, ? super B, ? extends A> f, final A initialValue, final Iterable<B> input) {
+        if(f==null) throw new IllegalArgumentException("fold(BiFunction<A,B,A>,A,Iterable<B>): folder must not be null");
+        if(input==null) throw new IllegalArgumentException("fold(BiFunction<A,B,A>,A,Iterable<B>): input must not be null");
         A state = initialValue;
         for (final B b : input)
             state = f.apply(state, b);
         return state;
     }
+
+    // The JDK reduce() doesn't seem to be quite as broadly applicable because it accepts "A" and not "? super A"
+//    public static <A, B> A fold(final BiFunction<A, ? super B, A> f, final A initialValue, final Collection<B> input) {
+//        return input.stream().reduce(initialValue, f, (a,b)->a);
+//    }
 
     /**
      * See <a href="http://en.wikipedia.org/wiki/Fold_(higher-order_function)">Fold</a>

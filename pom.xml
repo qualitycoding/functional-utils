@@ -18,11 +18,11 @@
         <maven.version>3.3.9</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <assertj-core.version>3.16.2-SNAPSHOT</assertj-core.version>
+        <assertj-core.version>3.17.2</assertj-core.version>
         <assertj-vavr.version>0.2.0</assertj-vavr.version>
         <commons-lang3.version>3.10</commons-lang3.version>
         <junit-jupiter.version>5.7.0-M1</junit-jupiter.version>
-        <mockito-core.version>3.3.3</mockito-core.version>
+        <mockito-core.version>3.4.0</mockito-core.version>
         <vavr.version>1.0.0-alpha-3</vavr.version>
         <vavr-test.version>0.10.3</vavr-test.version>
 
@@ -123,22 +123,22 @@
                         </plugin>
                     </plugins>
                 </pluginManagement>
-
             </build>
         </profile>
     </profiles>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>io.vavr</groupId>
             <artifactId>vavr</artifactId>
             <version>${vavr.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -166,6 +166,7 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-vavr</artifactId>
             <version>${assertj-vavr.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -182,5 +183,4 @@
             <url>http://maven.atlassian.com/content/repositories/atlassian-public/</url>
         </repository>
     </repositories>
-
 </project>

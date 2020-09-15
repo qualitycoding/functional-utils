@@ -1,11 +1,12 @@
 package uk.co.qualitycode.utils.functional;
 
 import io.vavr.Tuple2;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import uk.co.qualitycode.utils.functional.monad.Option;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.Functional.join;
 import static uk.co.qualitycode.utils.functional.FunctionalTest.doublingGenerator;
 import static uk.co.qualitycode.utils.functional.FunctionalTest.triplingGenerator;
@@ -20,6 +23,34 @@ import static uk.co.qualitycode.utils.functional.FunctionalTest.triplingGenerato
 class Functional_Fold_Test {
 
     public static final BiFunction<String, Integer, String> csv = (state, a) -> state + "," + a;
+
+    @Test
+    void preconditions() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.fold(null, new Object(), mock(Iterable.class)))
+                .withMessage("fold(BiFunction<A,B,A>,A,Iterable<B>): folder must not be null");
+        // null is an allowable initialValue
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.fold(mock(BiFunction.class), new Object(), (Iterable) null))
+                .withMessage("fold(BiFunction<A,B,A>,A,Iterable<B>): input must not be null");
+
+//        assertThatIllegalArgumentException()
+//                .isThrownBy(() -> Functional.fold(null, new Object(), mock(Collection.class)))
+//                .withMessage("fold(BiFunction<A,B,A>,A,Collection<B>): folder must not be null");
+//        assertThatIllegalArgumentException()
+//                .isThrownBy(() -> Functional.fold(mock(BiFunction.class), new Object(), (Collection) null))
+//                .withMessage("fold(BiFunction<A,B,A>,A,Collection<B>): input must not be null");
+    }
+
+    @Test
+    void foldIntegersStartingWithNull() {
+        final Collection<Integer> li = Functional.init(doublingGenerator, 5);
+        final String s1 = ",2,4,6,8,10";
+
+        final String s2 = Functional.fold((state, val) -> StringUtils.join(state, ",", val), null, li);
+
+        assertThat(s2).isEqualTo(s1);
+    }
 
     @Test
     void foldIntegers() {
@@ -42,7 +73,7 @@ class Functional_Fold_Test {
     }
 
     @Test
-    void curriedFoldIntegers2() {
+    void curriedFoldIntegersSupplyingInitialValueSeparately() {
         final Collection<Integer> li = Functional.init(doublingGenerator, 5);
         final String s1 = "0,2,4,6,8,10";
 
@@ -51,27 +82,16 @@ class Functional_Fold_Test {
         assertThat(s2).isEqualTo(s1);
     }
 
-    @Test
-    void foldvsMapTest1() {
-        final Collection<Integer> li = Functional.init(doublingGenerator, 5);
-        final String s1 = join(",", Functional.map(Functional.stringify(), li));
-        assertThat(s1).isEqualTo("2,4,6,8,10");
-        final String s2 = Functional.fold(FunctionalTest::csv, "", li);
-        assertThat(s2).isEqualTo(s1);
-    }
-
-    @Test
-    void countTest() {
-        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-        final int howMany = Functional.fold(Functional::count, 0, input);
-        assertThat(howMany).isEqualTo(input.size());
-    }
-
-    @Test
-    void sumTest() {
-        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-        final int sum = Functional.fold(Integer::sum, 0, input);
-        assertThat(sum).isEqualTo(15);
+    @Nested
+    class FoldAndMapAreEquivalent {
+        @Test
+        void foldVsMap() {
+            final Collection<Integer> li = Functional.init(doublingGenerator, 5);
+            final String s1 = "0," + join(",", Functional.map(Functional.stringify(), li));
+            assertThat(s1).isEqualTo("0,2,4,6,8,10");
+            final String s2 = Functional.fold(csv, "0", li);
+            assertThat(s2).isEqualTo(s1);
+        }
     }
 
     static boolean isEven(final int i) {
@@ -82,8 +102,8 @@ class Functional_Fold_Test {
     void foldAndChoose() {
         final Collection<Integer> openedDays = Functional.init(triplingGenerator, 5);
 
-        final Hashtable<Integer, Double> missingPricesPerDate= new Hashtable<>();
-        Double previous=10.0;
+        final Hashtable<Integer, Double> missingPricesPerDate = new Hashtable<>();
+        Double previous = 10.0;
         for (final int day : openedDays) {
             final Option<Double> value = isEven(day) ? Option.of((double) (day / 2)) : Option.none();
             if (value.isSome())
