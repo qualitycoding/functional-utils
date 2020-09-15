@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.FunctionalTest.triplingGenerator;
 
-class Function_ToDictionary_Test {
+class Functional_ToDictionary_Test {
     @Test
     void preconditions() {
         assertThatIllegalArgumentException()

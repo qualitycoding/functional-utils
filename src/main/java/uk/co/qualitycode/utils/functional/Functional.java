@@ -1529,9 +1529,7 @@ public final class Functional {
         if (valueFn == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Iterable<T>): valueFn must not be null");
         if (input == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Iterable<T>): input must not be null");
 
-        final Map<K, V> output = new HashMap<>();
-        for (final T element : input) output.put(keyFn.apply(element), valueFn.apply(element));
-        return Collections.unmodifiableMap(output);
+        return Collections.unmodifiableMap(StreamSupport.stream(input.spliterator(), false).collect(Collectors.toMap(keyFn,valueFn)));
     }
 
     /**
@@ -1553,9 +1551,7 @@ public final class Functional {
         if (valueFn == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Collection<T>): valueFn must not be null");
         if (input == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Collection<T>): input must not be null");
 
-        final Map<K, V> output = new HashMap<>();
-        for (final T element : input) output.put(keyFn.apply(element), valueFn.apply(element));
-        return Collections.unmodifiableMap(output);
+        return Collections.unmodifiableMap(input.stream().collect(Collectors.toMap(keyFn,valueFn)));
     }
 
     /**
