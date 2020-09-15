@@ -1437,8 +1437,8 @@ public final class Functional {
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
     public static <A, B> List<A> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Predicate<? super B> finished, final B seed) {
-        if (unspool == null) throw new IllegalArgumentException("unspool");
-        if (finished == null) throw new IllegalArgumentException("finished");
+        if (unspool == null) throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): unspooler must not be null");
+        if (finished == null) throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): finished must not be null");
 
         B next = seed;
         final List<A> results = new ArrayList<>();
@@ -1451,13 +1451,45 @@ public final class Functional {
     }
 
     /**
+     * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a> and
+     * <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
+     * This is the converse of <tt>fold</tt>
+     * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
+     */
+    public static <A, B> WithSeed<A,B> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Predicate<? super B> finished) {
+        if (unspool == null) throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>): unspooler must not be null");
+        if (finished == null) throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>): finished must not be null");
+
+        return seed->Functional.unfold(unspool,finished,seed);
+    }
+
+    /**
+     * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a> and
+     * <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
+     * This is the converse of <tt>fold</tt>
+     * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
+     */
+    public static <A, B> WithFinished<A,B> unfold(final Function<? super B, Tuple2<A, B>> unspool) {
+        if (unspool == null) throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>): unspooler must not be null");
+        return finished -> seed -> Functional.unfold(unspool, finished, seed);
+    }
+
+    public interface WithSeed<A,B> {
+        List<A> withSeed(B seed);
+    }
+
+    public interface WithFinished<A,B> {
+        WithSeed<A,B> withFinished(Predicate<? super B> finished);
+    }
+
+    /**
      * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a>
      * and <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
      * This is the converse of <tt>fold</tt>
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
     public static <A, B> List<A> unfold(final Function<? super B, Option<Tuple2<A, B>>> unspool, final B seed) {
-        if (unspool == null) throw new IllegalArgumentException("unspool");
+        if (unspool == null) throw new IllegalArgumentException("unfold(Function<B,Option<Tuple2<A,B>>>,B): unspooler must not be null");
 
         B next = seed;
         final List<A> results = new ArrayList<>();
