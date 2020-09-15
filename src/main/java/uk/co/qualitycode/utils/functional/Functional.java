@@ -1615,6 +1615,13 @@ public final class Functional {
         Map<K, V> withValueFn(Function<? super T, ? extends V> valueFn);
     }
 
+    public static <K, V> Map<K, V> toMutableDictionary(final Map<K, V> input) {
+        if (input == null)
+            throw new IllegalArgumentException("toMutableDictionary(Map<K,V>): input must not be null");
+
+        return io.vavr.collection.HashMap.ofAll(input).toJavaMap();
+    }
+
     public static <T> List<T> toMutableList(final Iterable<T> input) {
         if (input == null)
             throw new IllegalArgumentException("Functional.toMutableList(Iterable<T>): input must not be null");
@@ -1629,15 +1636,6 @@ public final class Functional {
         final List<T> output = new ArrayList<>();
         for (final T element : input) output.add(element);
 
-        return output;
-    }
-
-    public static <K, V> Map<K, V> toMutableDictionary(final Map<K, V> input) {
-        if (input == null)
-            throw new IllegalArgumentException("Functional.toMutableDictionary(Map<K,V>): input must not be null");
-
-        final Map<K, V> output = new HashMap<>(input.size());
-        output.putAll(input);
         return output;
     }
 

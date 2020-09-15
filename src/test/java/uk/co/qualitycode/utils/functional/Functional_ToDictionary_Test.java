@@ -50,6 +50,10 @@ class Functional_ToDictionary_Test {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.toDictionary((Collection)null))
                 .withMessage("toDictionary(Collection<T>): input must not be null");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.toMutableDictionary(null))
+                .withMessage("toMutableDictionary(Map<K,V>): input must not be null");
     }
 
     @Test
@@ -60,7 +64,7 @@ class Functional_ToDictionary_Test {
                 Functional.stringify(),
                 Functional.seq.filter(Functional::isEven, li));
         final Map<Integer, String> expected = of(6, "6", 12, "12").toJavaMap();
-        assertThat(output).containsExactlyEntriesOf(expected);
+        assertThat(output).containsExactlyInAnyOrderEntriesOf(expected);
     }
 
     @Test
@@ -70,7 +74,7 @@ class Functional_ToDictionary_Test {
                 .withKeyFn(Function.identity())
                 .withValueFn(Functional.stringify());
         final Map<Integer, String> expected = of(6, "6", 12, "12").toJavaMap();
-        assertThat(output).containsExactlyEntriesOf(expected);
+        assertThat(output).containsExactlyInAnyOrderEntriesOf(expected);
     }
 
     @Test
@@ -81,7 +85,7 @@ class Functional_ToDictionary_Test {
                 Functional.stringify(),
                 Functional.filter(Functional::isEven, li));
         final Map<Integer, String> expected = of(6, "6", 12, "12").toJavaMap();
-        assertThat(output).containsExactlyEntriesOf(expected);
+        assertThat(output).containsExactlyInAnyOrderEntriesOf(expected);
     }
 
     @Test
@@ -91,6 +95,13 @@ class Functional_ToDictionary_Test {
                 .withKeyFn(Function.identity())
                 .withValueFn(Functional.stringify());
         final Map<Integer, String> expected = of(6, "6", 12, "12").toJavaMap();
-        assertThat(output).containsExactlyEntriesOf(expected);
+        assertThat(output).containsExactlyInAnyOrderEntriesOf(expected);
+    }
+
+    @Test
+    void toMutableDictionary() {
+        final Map<Integer, String> expected = of(6, "6", 12, "12").toJavaMap();
+        final Map<Integer, String> output = Functional.toMutableDictionary(expected);
+        assertThat(output).containsExactlyInAnyOrderEntriesOf(expected);
     }
 }
