@@ -2,3 +2,4 @@ ToDo:
  - Add tests that require Collections.unmodifiableList()
  - Consider FunctionalInterface return types from partial functions, eg as in fold
  - Tests for all the ? super and ? extends
+ - Space out the preconditions from the body

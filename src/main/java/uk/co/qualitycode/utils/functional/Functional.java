@@ -51,7 +51,7 @@ public final class Functional {
          * @param <R>
          * @return
          */
-        public static <T,R> Function<T, Optional<R>> convert(final Function<T, io.vavr.control.Option<R>> tfm) {
+        public static <T, R> Function<T, Optional<R>> convert(final Function<T, io.vavr.control.Option<R>> tfm) {
             if (tfm == null) throw new IllegalArgumentException("convert(Function<T,Option<R>>): tfm must not be null");
             return t -> Option.of(tfm.apply(t)).toJavaOptional();
         }
@@ -67,7 +67,7 @@ public final class Functional {
          * @param <R>
          * @return
          */
-        public static <T,R> Function<T, io.vavr.control.Option<R>> convert(final Function<T, Optional<R>> tfm) {
+        public static <T, R> Function<T, io.vavr.control.Option<R>> convert(final Function<T, Optional<R>> tfm) {
             if (tfm == null)
                 throw new IllegalArgumentException("convert(Function<T,Optional<R>>): tfm must not be null");
             return t -> Option.of(tfm.apply(t)).toVavrOption();
@@ -84,7 +84,7 @@ public final class Functional {
          * @param <R>
          * @return
          */
-        public static <T,R> Function<T, Option<R>> convert(final Function<T, Optional<R>> tfm) {
+        public static <T, R> Function<T, Option<R>> convert(final Function<T, Optional<R>> tfm) {
             if (tfm == null)
                 throw new IllegalArgumentException("convert(Function<T,Optional<R>>): tfm must not be null");
             return t -> Option.of(tfm.apply(t));
@@ -101,7 +101,7 @@ public final class Functional {
          * @param <R>
          * @return
          */
-        public static <T,R> Function<T, Option<R>> convert(final Function<T, io.vavr.control.Option<R>> tfm) {
+        public static <T, R> Function<T, Option<R>> convert(final Function<T, io.vavr.control.Option<R>> tfm) {
             if (tfm == null)
                 throw new IllegalArgumentException("convert(Function<T,Option<R>>): tfm must not be null");
             return t -> Option.of(tfm.apply(t));
@@ -1294,7 +1294,7 @@ public final class Functional {
         }
     }
 
-    private static <A,B>List<B> chooseReducer(final Function<? super A, Option<B>> f, final Stream<A> input) {
+    private static <A, B> List<B> chooseReducer(final Function<? super A, Option<B>> f, final Stream<A> input) {
         return input.reduce(new ArrayList<>(), (state, a) -> {
             final Option<B> intermediate = f.apply(a);
             if (intermediate.isSome())
@@ -1378,8 +1378,10 @@ public final class Functional {
      * @return aggregated value
      */
     public static <A, B> A fold(final BiFunction<? super A, ? super B, ? extends A> f, final A initialValue, final Iterable<B> input) {
-        if(f==null) throw new IllegalArgumentException("fold(BiFunction<A,B,A>,A,Iterable<B>): folder must not be null");
-        if(input==null) throw new IllegalArgumentException("fold(BiFunction<A,B,A>,A,Iterable<B>): input must not be null");
+        if (f == null)
+            throw new IllegalArgumentException("fold(BiFunction<A,B,A>,A,Iterable<B>): folder must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("fold(BiFunction<A,B,A>,A,Iterable<B>): input must not be null");
         A state = initialValue;
         for (final B b : input)
             state = f.apply(state, b);
@@ -1405,7 +1407,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A, B> Function<Iterable<B>, A> fold(final BiFunction<? super A, ? super B, ? extends A> f, final A initialValue) {
-        if(f==null) throw new IllegalArgumentException("fold(BiFunction<A,B,A>,A): folder must not be null");
+        if (f == null) throw new IllegalArgumentException("fold(BiFunction<A,B,A>,A): folder must not be null");
         return input -> Functional.fold(f, initialValue, input);
     }
 
@@ -1422,7 +1424,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A, B> WithInitialValue<A, Function<Iterable<B>, A>> fold(final BiFunction<? super A, ? super B, ? extends A> f) {
-        if(f==null) throw new IllegalArgumentException("fold(BiFunction<A,B,A>): folder must not be null");
+        if (f == null) throw new IllegalArgumentException("fold(BiFunction<A,B,A>): folder must not be null");
         return initialValue -> input -> Functional.fold(f, initialValue, input);
     }
 
@@ -1437,8 +1439,10 @@ public final class Functional {
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
     public static <A, B> List<A> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Predicate<? super B> finished, final B seed) {
-        if (unspool == null) throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): unspooler must not be null");
-        if (finished == null) throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): finished must not be null");
+        if (unspool == null)
+            throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): unspooler must not be null");
+        if (finished == null)
+            throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): finished must not be null");
 
         B next = seed;
         final List<A> results = new ArrayList<>();
@@ -1456,11 +1460,13 @@ public final class Functional {
      * This is the converse of <tt>fold</tt>
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
-    public static <A, B> WithSeed<A,B> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Predicate<? super B> finished) {
-        if (unspool == null) throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>): unspooler must not be null");
-        if (finished == null) throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>): finished must not be null");
+    public static <A, B> WithSeed<A, B> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Predicate<? super B> finished) {
+        if (unspool == null)
+            throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>): unspooler must not be null");
+        if (finished == null)
+            throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>): finished must not be null");
 
-        return seed->Functional.unfold(unspool,finished,seed);
+        return seed -> Functional.unfold(unspool, finished, seed);
     }
 
     /**
@@ -1469,17 +1475,18 @@ public final class Functional {
      * This is the converse of <tt>fold</tt>
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
-    public static <A, B> WithFinished<A,B> unfold(final Function<? super B, Tuple2<A, B>> unspool) {
-        if (unspool == null) throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>): unspooler must not be null");
+    public static <A, B> WithFinished<A, B> unfold(final Function<? super B, Tuple2<A, B>> unspool) {
+        if (unspool == null)
+            throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>): unspooler must not be null");
         return finished -> seed -> Functional.unfold(unspool, finished, seed);
     }
 
-    public interface WithSeed<A,B> {
+    public interface WithSeed<A, B> {
         List<A> withSeed(B seed);
     }
 
-    public interface WithFinished<A,B> {
-        WithSeed<A,B> withFinished(Predicate<? super B> finished);
+    public interface WithFinished<A, B> {
+        WithSeed<A, B> withFinished(Predicate<? super B> finished);
     }
 
     /**
@@ -1489,7 +1496,8 @@ public final class Functional {
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
     public static <A, B> List<A> unfold(final Function<? super B, Option<Tuple2<A, B>>> unspool, final B seed) {
-        if (unspool == null) throw new IllegalArgumentException("unfold(Function<B,Option<Tuple2<A,B>>>,B): unspooler must not be null");
+        if (unspool == null)
+            throw new IllegalArgumentException("unfold(Function<B,Option<Tuple2<A,B>>>,B): unspooler must not be null");
 
         B next = seed;
         final List<A> results = new ArrayList<>();
@@ -1517,12 +1525,98 @@ public final class Functional {
      *                                  or value prevents it from being stored in this map
      */
     public static <T, K, V> Map<K, V> toDictionary(final Function<? super T, ? extends K> keyFn, final Function<? super T, ? extends V> valueFn, final Iterable<T> input) {
-        if (keyFn == null) throw new IllegalArgumentException("keyFn");
-        if (valueFn == null) throw new IllegalArgumentException("valueFn");
+        if (keyFn == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Iterable<T>): keyFn must not be null");
+        if (valueFn == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Iterable<T>): valueFn must not be null");
+        if (input == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Iterable<T>): input must not be null");
 
         final Map<K, V> output = new HashMap<>();
         for (final T element : input) output.put(keyFn.apply(element), valueFn.apply(element));
         return Collections.unmodifiableMap(output);
+    }
+
+    /**
+     * toDictionary: given each element from the input sequence apply the keyFn and valueFn to generate a (key,value) pair.
+     * The resulting dictionary (java.util.Map) contains all these pairs.
+     *
+     * @param <T>     the type of the element in the input sequence
+     * @param <K>     the type of the key elements
+     * @param <V>     the type of the value elements
+     * @param keyFn   function used to generate the key
+     * @param valueFn function used to generate the value
+     * @param input   input sequence
+     * @return a java.util.Map containing the transformed input sequence
+     * @throws IllegalArgumentException if some property of the specified key
+     *                                  or value prevents it from being stored in this map
+     */
+    public static <T, K, V> Map<K, V> toDictionary(final Function<? super T, ? extends K> keyFn, final Function<? super T, ? extends V> valueFn, final Collection<T> input) {
+        if (keyFn == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Collection<T>): keyFn must not be null");
+        if (valueFn == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Collection<T>): valueFn must not be null");
+        if (input == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Collection<T>): input must not be null");
+
+        final Map<K, V> output = new HashMap<>();
+        for (final T element : input) output.put(keyFn.apply(element), valueFn.apply(element));
+        return Collections.unmodifiableMap(output);
+    }
+
+    /**
+     * toDictionary: given each element from the input sequence apply the keyFn and valueFn to generate a (key,value) pair.
+     * The resulting dictionary (java.util.Map) contains all these pairs.
+     *
+     * @param <T>     the type of the element in the input sequence
+     * @param <K>     the type of the key elements
+     * @param <V>     the type of the value elements
+     * @param keyFn   function used to generate the key
+     * @param valueFn function used to generate the value
+     * @return a java.util.Map containing the transformed input sequence
+     * @throws IllegalArgumentException if some property of the specified key
+     *                                  or value prevents it from being stored in this map
+     */
+    public static <T, K, V> Function<Iterable<T>, Map<K, V>> toDictionary(final Function<? super T, ? extends K> keyFn, final Function<? super T, ? extends V> valueFn) {
+        if (keyFn == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>): keyFn must not be null");
+        if (valueFn == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>): valueFn must not be null");
+
+        return input -> toDictionary(keyFn, valueFn, input);
+    }
+
+    /**
+     * toDictionary: given each element from the input sequence apply the keyFn and valueFn to generate a (key,value) pair.
+     * The resulting dictionary (java.util.Map) contains all these pairs.
+     *
+     * @param <T> the type of the element in the input sequence
+     * @param <K> the type of the key elements
+     * @param <V> the type of the value elements
+     * @return a java.util.Map containing the transformed input sequence
+     * @throws IllegalArgumentException if some property of the specified key
+     *                                  or value prevents it from being stored in this map
+     */
+    public static <T, K, V> WithKeyFn<T, K, V> toDictionary(final Iterable<T> input) {
+        if (input == null) throw new IllegalArgumentException("toDictionary(Iterable<T>): input must not be null");
+        return keyFn -> valueFn -> toDictionary(keyFn, valueFn, input);
+    }
+
+
+    /**
+     * toDictionary: given each element from the input sequence apply the keyFn and valueFn to generate a (key,value) pair.
+     * The resulting dictionary (java.util.Map) contains all these pairs.
+     *
+     * @param <T> the type of the element in the input sequence
+     * @param <K> the type of the key elements
+     * @param <V> the type of the value elements
+     * @return a java.util.Map containing the transformed input sequence
+     * @throws IllegalArgumentException if some property of the specified key
+     *                                  or value prevents it from being stored in this map
+     */
+    public static <T, K, V> WithKeyFn<T, K, V> toDictionary(final Collection<T> input) {
+        if (input == null) throw new IllegalArgumentException("toDictionary(Collection<T>): input must not be null");
+        return keyFn -> valueFn -> toDictionary(keyFn, valueFn, input);
+    }
+
+    public interface WithKeyFn<T, K, V> {
+        WithValueFn<T, K, V> withKeyFn(Function<? super T, ? extends K> keyFn);
+    }
+
+    public interface WithValueFn<T, K, V> {
+        Map<K, V> withValueFn(Function<? super T, ? extends V> valueFn);
     }
 
     /**

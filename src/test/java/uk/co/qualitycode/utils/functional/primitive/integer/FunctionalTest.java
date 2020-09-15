@@ -9,7 +9,6 @@ import uk.co.qualitycode.utils.functional.monad.OptionNoValueAccessException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -256,24 +255,6 @@ class FunctionalTest {
         final IntList li = Functional.init(triplingGenerator, 5);
         final Collection<String> o = Functional.choose((Func_int_T<Option<String>>) i -> i % 2 == 0 ? Option.of(Integer.toString(i)) : Option.none(), li);
         assertThat(o).containsExactly("6", "12");
-    }
-
-    @Test
-    void chooseTest2A() //throws OptionNoValueAccessException
-    {
-        final IntList li = Functional.init(triplingGenerator, 5);
-        final Map<Integer, String> o = Functional.toDictionary(i->i, Functional.dStringify(),
-                Functional.filter(i -> i % 2 == 0, li));
-        final Map<Integer, String> expected = new HashMap<>();
-        expected.put(6, "6");
-        expected.put(12, "12");
-        assertThat(o).hasSize(expected.size());
-        for (final int expectedKey : expected.keySet()) {
-            assertThat(o).containsKey(expectedKey);
-            final String expectedValue = expected.get(expectedKey);
-            //assertThat().isEqualTo(expectedValue,o.get(expectedKey),"Expected '"+expectedValue+"' but got '"+o.get(expectedKey)+"'");
-            assertThat(o.get(expectedKey)).isEqualTo(expectedValue);
-        }
     }
 
 //    private final static <B, C>boolean Fn(final B b, final C c)
