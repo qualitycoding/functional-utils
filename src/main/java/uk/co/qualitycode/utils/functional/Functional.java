@@ -1405,6 +1405,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A, B> Function<Iterable<B>, A> fold(final BiFunction<? super A, ? super B, ? extends A> f, final A initialValue) {
+        if(f==null) throw new IllegalArgumentException("fold(BiFunction<A,B,A>,A): folder must not be null");
         return input -> Functional.fold(f, initialValue, input);
     }
 
@@ -1421,6 +1422,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A, B> WithInitialValue<A, Function<Iterable<B>, A>> fold(final BiFunction<? super A, ? super B, ? extends A> f) {
+        if(f==null) throw new IllegalArgumentException("fold(BiFunction<A,B,A>): folder must not be null");
         return initialValue -> input -> Functional.fold(f, initialValue, input);
     }
 

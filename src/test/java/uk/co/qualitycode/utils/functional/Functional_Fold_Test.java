@@ -40,6 +40,14 @@ class Functional_Fold_Test {
 //        assertThatIllegalArgumentException()
 //                .isThrownBy(() -> Functional.fold(mock(BiFunction.class), new Object(), (Collection) null))
 //                .withMessage("fold(BiFunction<A,B,A>,A,Collection<B>): input must not be null");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.fold(null, new Object()))
+                .withMessage("fold(BiFunction<A,B,A>,A): folder must not be null");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.fold(null))
+                .withMessage("fold(BiFunction<A,B,A>): folder must not be null");
     }
 
     @Test
