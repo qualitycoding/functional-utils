@@ -73,22 +73,22 @@ class Functional_SkipWhile_Test {
         final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
         {
             final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-            final List<Integer> output = Functional.toList(Functional.seq.skipWhile(Functional::isEven, l));
+            final Iterable<Integer> output = Functional.seq.skipWhile(Functional::isEven, l);
             assertThat(output).containsExactlyElementsOf(expected);
         }
         {
             final List<Integer> expected = Arrays.asList(2, 3, 4, 5);
-            final List<Integer> output = Functional.toList(Functional.seq.skipWhile(Functional::isOdd, l));
+            final Iterable<Integer> output = Functional.seq.skipWhile(Functional::isOdd, l);
             assertThat(output).containsExactlyElementsOf(expected);
         }
         {
             final List<Integer> expected = Arrays.asList(3, 4, 5);
-            final List<Integer> output = Functional.toList(Functional.seq.skipWhile(i -> i <= 2, l));
+            final Iterable<Integer> output = Functional.seq.skipWhile(i -> i <= 2, l);
             assertThat(output).containsExactlyElementsOf(expected);
         }
         {
             final List<Integer> expected = new ArrayList<>();
-            final List<Integer> output = Functional.toList(Functional.seq.skipWhile(i -> i <= 6, l));
+            final Iterable<Integer> output = Functional.seq.skipWhile(i -> i <= 6, l);
             assertThat(output).containsExactlyElementsOf(expected);
         }
     }
@@ -135,7 +135,7 @@ class Functional_SkipWhile_Test {
         final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
         {
             final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-            final List<Integer> output = Functional.toList(Functional.seq.skipWhile(Functional::isEven).apply(l));
+            final Iterable<Integer> output = Functional.seq.skipWhile(Functional::isEven).apply(l);
             assertThat(output).containsExactlyElementsOf(expected);
         }
     }
@@ -152,7 +152,7 @@ class Functional_SkipWhile_Test {
         for (int i = 1; i < 10; ++i)
             input.add(i);
 
-        final List<Number> output = Functional.toList(Functional.seq.skipWhile(number -> ((number instanceof Integer) && ((Integer) number % 2) == 1), input));
+        final Iterable<Number> output = Functional.seq.skipWhile(number -> number instanceof Integer && (Integer) number % 2 == 1, input);
 
         final List<Integer> expected = Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9);
 

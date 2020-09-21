@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static uk.co.qualitycode.utils.functional.Functional.find;
 import static uk.co.qualitycode.utils.functional.Functional.init;
-import static uk.co.qualitycode.utils.functional.OptionAssert.assertThat;
+import static uk.co.qualitycode.utils.functional.assertions.OptionAssert.assertThat;
 
 class Functional_Find_Test {
     @Test

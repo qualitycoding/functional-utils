@@ -7,31 +7,35 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class Functional_Last_Test {
     @Test
-    void lastTest1() {
-        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-        assertThat((long) Functional.last(input)).isEqualTo(5);
+    void preconditions() {
+        assertThatIllegalArgumentException()
+            .isThrownBy(()->Functional.last((Iterable)null))
+            .withMessage("last(Iterable<T>): input must not be null");
+        assertThatIllegalArgumentException()
+            .isThrownBy(()->Functional.last(new ArrayList<>()))
+            .withMessage("last(Iterable<T>): input must not be empty");
+
+        assertThatIllegalArgumentException()
+            .isThrownBy(()->Functional.last((Object[])null))
+            .withMessage("last(T[]): input must not be null");
+        assertThatIllegalArgumentException()
+            .isThrownBy(()->Functional.last(new Object[]{}))
+            .withMessage("last(T[]): input must not be empty");
     }
 
     @Test
-    void lastofArrayTest1() {
+    void lastFromCollection() {
+        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
+        assertThat(Functional.last(input)).isEqualTo(5);
+    }
+
+    @Test
+    void lastFromArray() {
         final Integer[] input = new Integer[]{1, 2, 3, 4, 5};
-        assertThat((long) Functional.last(input)).isEqualTo(5);
-    }
-
-    @Test
-    void lastTest2() {
-        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-        final Iterable<String> strs = Functional.seq.map(Functional.stringify(), input);
-        assertThat(Functional.last(strs)).isEqualTo("5");
-    }
-
-    @Test
-    void lastTest3() {
-        final List<Integer> input = new ArrayList<>();
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> Functional.last(input));
+        assertThat(Functional.last(input)).isEqualTo(5);
     }
 }

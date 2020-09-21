@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.Functional.findLast;
-import static uk.co.qualitycode.utils.functional.OptionAssert.assertThat;
+import static uk.co.qualitycode.utils.functional.assertions.OptionAssert.assertThat;
 
 class Functional_FindLast_Test {
     @Test

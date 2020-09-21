@@ -4,20 +4,18 @@ import io.vavr.Tuple2;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import uk.co.qualitycode.utils.functional.assertions.OptionAssert;
 import uk.co.qualitycode.utils.functional.monad.Option;
-import uk.co.qualitycode.utils.functional.monad.OptionNoValueAccessException;
 import uk.co.qualitycode.utils.functional.primitive.integer.Func_int_int;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -143,60 +141,12 @@ class FunctionalTest {
         return isEven(a) && isEven(b);
     }
 
-    static boolean bothAreLessThan10(final int a, final int b) {
-        return a < 10 && b < 10;
-    }
-
-    static BiPredicate<Integer,Integer> bothAreLessThan10 = FunctionalTest::bothAreLessThan10;
-
-    @Test
-    void compositionTest1A() {
-        final Collection<Integer> i = Arrays.asList(1, 2, 3, 45, 56, 6);
-
-        final boolean allOdd = Functional.forAll(Functional::isOdd, i);
-        final boolean notAllOdd = Functional.exists(Functional.not(Functional::isOdd), i);
-
-        assertThat(allOdd).isFalse();
-        assertThat(notAllOdd).isTrue();
-    }
-
-    @Test
-    void curriedCompositionTest1A() {
-        final Collection<Integer> i = Arrays.asList(1, 2, 3, 45, 56, 6);
-
-        final boolean allOdd = Functional.forAll(Functional::isOdd).test(i);
-        final boolean notAllOdd = Functional.exists(Functional.not(Functional::isOdd)).test(i);
-
-        assertThat(allOdd).isFalse();
-        assertThat(notAllOdd).isTrue();
-    }
-
-    @Test
-    void compositionTest2() {
-        final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-        final Collection<Integer> m = Functional.init(triplingGenerator, 5);
-        assertThat(Functional.forAll2(Functional.not2(bothAreLessThan10), l, m)).isFalse();
-        // equivalent to bothAreGreaterThanOrEqualTo10
-
-        final int lowerLimit = 1;
-        final int upperLimit = 16;
-        assertThat(Functional.forAll2(Functional.not2((a, b) -> a > lowerLimit && b > lowerLimit), l, m)).isFalse();
-        assertThat(Functional.forAll2(Functional.not2((a, b) -> a > upperLimit && b > upperLimit), l, m)).isTrue();
-    }
-
     private static final <B, C> boolean fn(final B b, final C c) {
         return b.equals(c);
     }
 
     private static final <B, C> Predicate<C> curried_fn(final B b) {
         return c -> fn(b, c);
-    }
-
-    @Test
-    void curriedFnTest1() {
-        final boolean test1a = fn(1, 2);
-        final boolean test1b = curried_fn(1).test(2);
-        assertThat(test1b).isEqualTo(test1a);
     }
 
     private static int adder_int(final int left, final int right) {
@@ -207,14 +157,6 @@ class FunctionalTest {
         return p -> adder_int(c, p);
     }
 
-    @Test
-    void curriedFnTest2() {
-        final List<Integer> a = Arrays.asList(1, 2, 3, 4, 5);
-        final Collection<Integer> b = Functional.map(a1 -> adder_int(2, a1), a);
-        final Collection<Integer> c = Functional.map(curried_adder_int(2), a);
-        assertThat(c).containsExactlyElementsOf(b);
-    }
-
     static String csv(final String state, final Integer a) {
         return StringUtils.isEmpty(state) ? a.toString() : state + "," + a;
     }
@@ -222,16 +164,6 @@ class FunctionalTest {
     final Function<Collection<Integer>, String> concatenate = l -> Functional.fold(FunctionalTest::csv, "", l);
 
     final Function<Collection<Integer>, Collection<Integer>> evens_f = l -> Functional.filter(Functional::isEven, l);
-
-    @Test
-    void chooseTest3A() throws OptionNoValueAccessException {
-        final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-        final Collection<Integer> o =
-                Functional.choose(i -> i % 2 == 0 ? Option.of(i) : Option.none(), li);
-
-        final Integer[] expected = new Integer[]{6, 12};
-        assertThat(o).containsExactly(expected);
-    }
 
 /*
         [Test]
@@ -567,13 +499,6 @@ class FunctionalTest {
         assertThat(keys).containsExactly("1", "2", "3", "4", "5");
     }
 
-    @Test
-    void toListTest1() {
-        final Iterable<Integer> output = Functional.init(doublingGenerator, 5);
-        final List<Integer> output_ints = Functional.toList(output);
-        assertThat(output_ints).isEqualTo(Arrays.asList(2, 4, 6, 8, 10));
-    }
-
     public static Function<Integer, List<Integer>> repeat(final int howMany) {
         return integer -> Functional.init((Function<Integer, Integer>) counter -> integer, howMany);
     }
@@ -614,49 +539,6 @@ class FunctionalTest {
         final List<String> output = Functional.map(Functional.second(), input);
         final List<String> expected = Arrays.asList("0", "1", "2", "3", "4");
         assertThat(output).containsExactlyElementsOf(expected);
-    }
-
-    @Test
-    void toMutableDictionaryTest() {
-        final Map<Integer, String> expected = new HashMap<>();
-        expected.put(6, "6");
-        expected.put(12, "12");
-        final Map<Integer, String> output = Functional.toMutableDictionary(expected);
-        assertThat(expected.entrySet().containsAll(output.entrySet())).isTrue();
-        assertThat(output.entrySet().containsAll(expected.entrySet())).isTrue();
-        output.put(24, "24");
-        assertThat(output.containsKey(24)).isTrue();
-        assertThat(output.containsValue("24")).isTrue();
-    }
-
-    @Test
-    void toMutableListTest() {
-        final List<String> expected = Arrays.asList("0", "3", "6", "9", "11");
-        final List<String> output = Functional.toMutableList(expected);
-        assertThat(output).containsExactlyElementsOf(expected);
-        output.add("24");
-        assertThat(output.contains("24")).isTrue();
-    }
-
-    @Test
-    void toMutableSetTest() {
-        final List<String> expected = Arrays.asList("0", "3", "6", "9", "11");
-        final Set<String> output = Functional.toMutableSet(expected);
-        assertThat(expected.containsAll(output)).isTrue();
-        assertThat(output.containsAll(expected)).isTrue();
-        output.add("24");
-        assertThat(output.contains("24")).isTrue();
-    }
-
-    @Test
-    void iterableToMutableSetTest() {
-        final List<String> expected = Arrays.asList("0", "3", "6", "9", "11");
-        final Iterable<String> input = Functional.seq.map(Function.identity(), expected);
-        final Set<String> output = Functional.toMutableSet(input);
-        assertThat(expected.containsAll(output)).isTrue();
-        assertThat(output.containsAll(expected)).isTrue();
-        output.add("24");
-        assertThat(output.contains("24")).isTrue();
     }
 
     @Test

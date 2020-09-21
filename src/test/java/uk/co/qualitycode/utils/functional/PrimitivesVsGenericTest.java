@@ -1,6 +1,7 @@
 package uk.co.qualitycode.utils.functional;
 
 import org.junit.jupiter.api.Test;
+import uk.co.qualitycode.utils.functional.assertions.OptionAssert;
 import uk.co.qualitycode.utils.functional.monad.Option;
 import uk.co.qualitycode.utils.functional.primitive.integer.IntList;
 

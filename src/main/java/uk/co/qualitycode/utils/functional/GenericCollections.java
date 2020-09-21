@@ -22,9 +22,8 @@ public final class GenericCollections {
             return new ArrayList<>();
         }
 
-
         public Collection<A> createUnmodifiableContainer(final Collection<A> c) {
-            return java.util.Collections.unmodifiableList(Functional.toList(c));
+            return java.util.Collections.unmodifiableList(new ArrayList<>(c));
         }
     }
 
@@ -40,7 +39,7 @@ public final class GenericCollections {
 
 
         public Collection<A> createUnmodifiableContainer(final Collection<A> c) {
-            return java.util.Collections.unmodifiableSet(Functional.toSet(c));
+            return java.util.Collections.unmodifiableSet(io.vavr.collection.HashSet.ofAll(c).toJavaSet());
         }
     }
 

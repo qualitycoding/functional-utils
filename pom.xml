@@ -22,7 +22,7 @@
         <assertj-vavr.version>0.2.0</assertj-vavr.version>
         <commons-lang3.version>3.10</commons-lang3.version>
         <junit-jupiter.version>5.7.0-M1</junit-jupiter.version>
-        <mockito-core.version>3.4.0</mockito-core.version>
+        <mockito-core.version>3.5.10</mockito-core.version>
         <vavr.version>1.0.0-alpha-3</vavr.version>
         <vavr-test.version>0.10.3</vavr-test.version>
 
@@ -129,16 +129,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.vavr</groupId>
-            <artifactId>vavr</artifactId>
-            <version>${vavr.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
-            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
+            <version>${vavr.version}</version>
         </dependency>
 
         <dependency>

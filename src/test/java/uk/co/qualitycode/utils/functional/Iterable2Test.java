@@ -4,6 +4,7 @@ import io.vavr.Tuple2;
 import io.vavr.Tuple3;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import uk.co.qualitycode.utils.functional.assertions.OptionAssert;
 import uk.co.qualitycode.utils.functional.function.UnaryFunction;
 import uk.co.qualitycode.utils.functional.monad.Option;
 import uk.co.qualitycode.utils.functional.monad.OptionNoValueAccessException;
@@ -56,15 +57,15 @@ class Iterable2Test {
     @Test
     void sortWithTest2() {
         final Iterable2<Integer> i = Iterable2.asList(1, 6, 23, 7, 4);
-        final Iterable2<Integer> j = i.sortWith(Comparator.comparingInt(a -> a));
-        assertThat(j).containsExactly(1, 4, 6, 7, 23);
+        final Iterable2<Integer> output = i.sortWith(Comparator.comparingInt(a -> a));
+        assertThat(output).containsExactly(1, 4, 6, 7, 23);
     }
 
     @Test
     void sortWithTest3() {
         final Iterable2<Integer> i = Iterable2.asList(1, 6, 23, 7, 4);
-        final Iterable2<Integer> j = i.sortWith(Functional.sorter);
-        assertThat(j).containsExactly(1, 4, 6, 7, 23);
+        final Iterable2<Integer> output = i.sortWith(Functional.sorter);
+        assertThat(output).containsExactly(1, 4, 6, 7, 23);
     }
 
     private static final Function<Integer, Integer> triplingGenerator = a -> 3 * a;

@@ -1,4 +1,4 @@
-package uk.co.qualitycode.utils.functional;
+package uk.co.qualitycode.utils.functional.assertions;
 
 import uk.co.qualitycode.utils.functional.monad.Option;
 

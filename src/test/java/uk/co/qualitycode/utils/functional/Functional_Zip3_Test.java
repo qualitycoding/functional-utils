@@ -95,7 +95,7 @@ class Functional_Zip3_Test {
             expected.add(new Tuple3<>(4, 'd', 3.0));
             expected.add(new Tuple3<>(5, 'e', 3.5));
 
-            final Collection<Tuple3<Integer, Character, Double>> output = Functional.toList(Functional.seq.zip3(input1, input2, input3));
+            final Iterable<Tuple3<Integer, Character, Double>> output = Functional.seq.zip3(input1, input2, input3);
 
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -113,7 +113,7 @@ class Functional_Zip3_Test {
             expected.add(new Tuple3<>(4, 'd', 3.0));
             expected.add(new Tuple3<>(5, 'e', 3.5));
 
-            final Collection<Tuple3<Integer, Character, Double>> output = Functional.toList(Functional.seq.<Integer, Character, Double>zip3(input1, input2).apply(input3));
+            final Iterable<Tuple3<Integer, Character, Double>> output = Functional.seq.<Integer, Character, Double>zip3(input1, input2).apply(input3);
 
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -157,7 +157,7 @@ class Functional_Zip3_Test {
             expected.add(new Tuple3<>(4, 'd', 3.0));
             expected.add(new Tuple3<>(5, 'e', 3.5));
 
-            final Collection<Tuple3<Integer, Character, Double>> output = Functional.toList(Functional.seq.zip3(input1, input2, input3));
+            final Iterable<Tuple3<Integer, Character, Double>> output = Functional.seq.zip3(input1, input2, input3);
             final Iterator<Tuple3<Integer, Character, Double>> iterator = output.iterator();
 
             for (int i = 0; i < 20; ++i)

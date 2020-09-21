@@ -1622,65 +1622,6 @@ public final class Functional {
         return io.vavr.collection.HashMap.ofAll(input).toJavaMap();
     }
 
-    public static <T> List<T> toMutableList(final Iterable<T> input) {
-        if (input == null)
-            throw new IllegalArgumentException("Functional.toMutableList(Iterable<T>): input must not be null");
-
-        if (input instanceof Collection<?>) {
-            final Collection<T> input_ = (Collection<T>) input;
-            final List<T> output = new ArrayList<>(input_.size());
-            output.addAll(input_);
-            return output;
-        }
-
-        final List<T> output = new ArrayList<>();
-        for (final T element : input) output.add(element);
-
-        return output;
-    }
-
-    public static <T> Set<T> toMutableSet(final Iterable<T> input) {
-        if (input == null)
-            throw new IllegalArgumentException("Functional.toMutableSet(Iterable<T>): input must not be null");
-
-        if (input instanceof Collection<?>) {
-            final Collection<T> input_ = (Collection<T>) input;
-            final Set<T> output = new HashSet<>(input_.size());
-            output.addAll(input_);
-            return output;
-        }
-
-        final Set<T> output = new HashSet<>();
-        for (final T element : input) output.add(element);
-
-        return output;
-    }
-
-    /**
-     * Create a java.util.List which contains all of the elements in the input sequence
-     *
-     * @param input input sequence
-     * @param <T>   the type of the element in the input sequence
-     * @return a list containing the elements of the input sequence
-     */
-    public static <T> List<T> toList(final Iterable<T> input) {
-        if (input == null) throw new IllegalArgumentException("Functional.toList(Iterable<T>): input must not be null");
-        return Collections.unmodifiableList(toMutableList(input));
-    }
-
-    /**
-     * Create a java.util.Set which contains all of the elements in the input sequence
-     *
-     * @param input input sequence
-     * @param <T>   the type of the element in the input sequence
-     * @return a set containing the elements of the input sequence
-     */
-    public static <T> Set<T> toSet(final Iterable<T> input) {
-        //Sets.newSetFromMap();
-        if (input == null) throw new IllegalArgumentException("Functional.toSet(Iterable<T>): input must not be null");
-        return Collections.unmodifiableSet(toMutableSet(input));
-    }
-
     /**
      * Return the final element from the input sequence
      *
@@ -1690,12 +1631,12 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if the input sequence is null or empty
      */
     public static <T> T last(final Iterable<T> input) {
-        if (input == null) throw new IllegalArgumentException("Functional.last(Iterable<T>): input must not be null");
+        if (input == null) throw new IllegalArgumentException("last(Iterable<T>): input must not be null");
 
         T state = null;
         for (final T element : input) state = element;
 
-        if (state == null) throw new IllegalArgumentException("Functional.last(Iterable): input is empty");
+        if (state == null) throw new IllegalArgumentException("last(Iterable<T>): input must not be empty");
         return state;
     }
 
@@ -1707,8 +1648,10 @@ public final class Functional {
      * @return the last element from the input array
      */
     public static <T> T last(final T[] input) {
-        if (input == null || input.length == 0)
-            throw new IllegalArgumentException("Functional.last(T[]): input must not be null or empty");
+        if (input == null)
+            throw new IllegalArgumentException("last(T[]): input must not be null");
+        if(input.length == 0)
+            throw new IllegalArgumentException("last(T[]): input must not be empty");
 
         return input[input.length - 1];
     }
@@ -1721,15 +1664,13 @@ public final class Functional {
      * @param <T>   the type of the element in the input sequences
      * @return a list containing the elements of the first sequence followed by the elements of the second sequence
      */
-    public static <T> List<T> concat(final Iterable<? extends T> list1, final Iterable<? extends T> list2) {
+    public static <T> List<T> concat(final Iterable<T> list1, final Iterable<T> list2) {
         if (list1 == null)
             throw new IllegalArgumentException("Functional.concat(List<T>,List<T>): list1 must not be null");
         if (list2 == null)
             throw new IllegalArgumentException("Functional.concat(List<T>,List<T>): list2 must not be null");
 
-        final List<T> newList = new ArrayList<>(toList(list1));
-        final boolean didItChange = newList.addAll(toList(list2));
-        return Collections.unmodifiableList(newList);
+        return io.vavr.collection.List.ofAll(list1).appendAll(list2).toJavaList();
     }
 
     /**
@@ -1925,10 +1866,10 @@ public final class Functional {
      * @param input a sequence to be fed into f
      * @return a list of type U containing the concatenated sequences of transformed values.
      */
-    public static <T, U> List<U> collect(final Function<? super T, ? extends Iterable<U>> f, final Iterable<T> input) {
-        List<U> output = input instanceof Collection<?> ? new ArrayList<>(((Collection) input).size()) : new ArrayList<>();
+    public static <T, U> List<U> flatMap(final Function<? super T, ? extends Iterable<U>> f, final Iterable<T> input) {
+        List<U> output = input instanceof Collection<?> ? new ArrayList<>(((Collection<?>) input).size()) : new ArrayList<>();
         for (final T element : input)
-            output = Functional.concat(output, Functional.toList(f.apply(element)));
+            output = Functional.concat(output, f.apply(element));
         return Collections.unmodifiableList(output);
     }
 
@@ -1945,8 +1886,8 @@ public final class Functional {
      * @return a list of type U containing the concatenated sequences of transformed values.
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
-    public static <T, U> Function<Iterable<T>, List<U>> collect(final Function<? super T, ? extends Iterable<U>> f) {
-        return input -> Functional.collect(f, input);
+    public static <T, U> Function<Iterable<T>, List<U>> flatMap(final Function<? super T, ? extends Iterable<U>> f) {
+        return input -> Functional.flatMap(f, input);
     }
 
     /**
@@ -2508,7 +2449,7 @@ public final class Functional {
 
                             public U next() {
                                 if (cacheIterator.hasNext()) return cacheIterator.next();
-                                cache = toList(f.apply(it.next()));
+                                cache = StreamSupport.stream(f.apply(it.next()).spliterator(), false).collect(Collectors.toList());
                                 cacheIterator = cache.iterator();
                                 return cacheIterator.next();
                             }
@@ -3321,10 +3262,10 @@ public final class Functional {
          * @param input a sequence to be fed into f
          * @return a set of type U containing the concatenated sequences of transformed values.
          */
-        public static <T, U> Set<U> collect(final Function<? super T, ? extends Iterable<U>> f, final Iterable<T> input) {
+        public static <T, U> Set<U> flatMap(final Function<? super T, ? extends Iterable<U>> f, final Iterable<T> input) {
             final Set<U> output = input instanceof Collection<?> ? new HashSet<>(((Collection<?>) input).size()) : new HashSet<>();
             for (final T element : input)
-                output.addAll(Functional.toSet(f.apply(element)));
+                output.addAll(io.vavr.collection.HashSet.ofAll(f.apply(element)).toJavaSet());
             return Collections.unmodifiableSet(output);
         }
 

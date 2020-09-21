@@ -15,6 +15,9 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public interface Iterable2<T> extends java.lang.Iterable<T> {
     Iterable2<T> filter(Predicate<? super T> f);
@@ -32,10 +35,6 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
     <U> boolean forAll2(final BiPredicate<? super U, ? super T> f, final Iterable<U> input1);
 
     <U> U fold(BiFunction<? super U, ? super T, ? extends U> f, U seed);
-
-    List<T> toList();
-
-    Set<T> toSet();
 
     <K, V> Map<K, V> toDictionary(final Function<? super T, ? extends K> keyFn, final Function<? super T, ? extends V> valueFn);
 
@@ -124,14 +123,6 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
                 return Functional.fold(f, seed, i);
             }
 
-            public List<T> toList() {
-                return Functional.toList(i);
-            }
-
-            public Set<T> toSet() {
-                return Functional.toSet(i);
-            }
-
             public <K, V> Map<K, V> toDictionary(final Function<? super T, ? extends K> keyFn, final Function<? super T, ? extends V> valueFn) {
                 return Functional.toDictionary(keyFn, valueFn, i);
             }
@@ -141,7 +132,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             }
 
             public Iterable2<T> sortWith(final Comparator<T> f) {
-                return of(Functional.sortWith(f, toList()));
+                return of(Functional.sortWith(f, i));
             }
 
             public Iterable2<T> concat(final Iterable2<T> list2) {
@@ -210,12 +201,30 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             public <U> Map<U, List<T>> groupBy(final Function<? super T, ? extends U> keyFn) {
                 return Functional.groupBy(keyFn, i);
             }
+
+            @Override
+            public List<T> toList() {
+                return Collections.unmodifiableList(asStream().collect(Collectors.toList()));
+            }
+
+            @Override
+            public Set<T> toSet() {
+                return Collections.unmodifiableSet(asStream().collect(Collectors.toSet()));
+            }
+
+            private Stream<T> asStream() {
+                return StreamSupport.stream(i.spliterator(), false);
+            }
         };
     }
 
     static <T> Iterable2<T> empty() {
         return new uk.co.qualitycode.utils.functional.Iterable2.EmptyList<>();
     }
+
+    List<T> toList();
+
+    Set<T> toSet();
 
     class EmptyList<T> implements Iterable2<T> {
         private EmptyList() {
@@ -267,14 +276,6 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
 
         public <U> U fold(final BiFunction<? super U, ? super T, ? extends U> f, final U seed) {
             return seed;
-        }
-
-        public List<T> toList() {
-            return Functional.toList(this);
-        }
-
-        public Set<T> toSet() {
-            return Functional.toSet(this);
         }
 
         public <K, V> Map<K, V> toDictionary(final Function<? super T, ? extends K> keyFn, final Function<? super T, ? extends V> valueFn) {
@@ -352,6 +353,16 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
 
         public <U> Map<U, List<T>> groupBy(final Function<? super T, ? extends U> keyFn) {
             return Collections.emptyMap();
+        }
+
+        @Override
+        public List<T> toList() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public Set<T> toSet() {
+            return Collections.emptySet();
         }
 
         public boolean equals(final Object o) {

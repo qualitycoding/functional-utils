@@ -141,7 +141,7 @@ class Functional_Zip_Test {
             expected.add(new Tuple2<>(4, 'd'));
             expected.add(new Tuple2<>(5, 'e'));
 
-            final Collection<Tuple2<Integer, Character>> output = Functional.toList(Functional.seq.zip(input1, input2));
+            final Iterable<Tuple2<Integer, Character>> output = Functional.seq.zip(input1, input2);
 
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -158,7 +158,7 @@ class Functional_Zip_Test {
             expected.add(new Tuple2<>(4, 'd'));
             expected.add(new Tuple2<>(5, 'e'));
 
-            final Collection<Tuple2<Integer, Character>> output = Functional.toList(Functional.seq.<Integer, Character>zip(input1).apply(input2));
+            final Iterable<Tuple2<Integer, Character>> output = Functional.seq.<Integer, Character>zip(input1).apply(input2);
 
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -200,7 +200,7 @@ class Functional_Zip_Test {
             expected.add(new Tuple2<>(4, 'd'));
             expected.add(new Tuple2<>(5, 'e'));
 
-            final Collection<Tuple2<Integer, Character>> output = Functional.toList(Functional.seq.zip(input1, input2));
+            final Iterable<Tuple2<Integer, Character>> output = Functional.seq.zip(input1, input2);
             final Iterator<Tuple2<Integer, Character>> iterator = output.iterator();
 
             for (int i = 0; i < 20; ++i)
@@ -232,7 +232,7 @@ class Functional_Zip_Test {
             expected.add(new Tuple2<>(4, "4"));
             expected.add(new Tuple2<>(5, "5"));
 
-            final List<Tuple2<Integer, String>> output = Functional.toList(Functional.seq.zip(Function.identity(), Functional.stringify(), input));
+            final Iterable<Tuple2<Integer, String>> output = Functional.seq.zip(Function.identity(), Functional.stringify(), input);
 
             assertThat(output).containsExactlyElementsOf(expected);
         }

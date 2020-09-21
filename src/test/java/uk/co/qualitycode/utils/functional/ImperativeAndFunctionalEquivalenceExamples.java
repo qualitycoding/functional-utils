@@ -18,7 +18,6 @@ import static uk.co.qualitycode.utils.functional.Functional.choose;
 import static uk.co.qualitycode.utils.functional.Functional.filter;
 import static uk.co.qualitycode.utils.functional.Functional.fold;
 import static uk.co.qualitycode.utils.functional.Functional.init;
-import static uk.co.qualitycode.utils.functional.Functional.toList;
 import static uk.co.qualitycode.utils.functional.function.UnaryFunction.delay;
 import static uk.co.qualitycode.utils.functional.monad.MException.toMException;
 import static uk.co.qualitycode.utils.functional.monad.Option.of;
@@ -178,7 +177,7 @@ public final class ImperativeAndFunctionalEquivalenceExamples {
                     Iterable2.of(Functional.skip(1, l)).map(integer -> firstElement.bind(underlyingInteger -> toMException(delay(o -> underlyingInteger / o, integer))));
             final Iterable<MException<Integer>> squares = Functional.map(o -> o.bind(i -> toMException(() -> i * i)), results);
 
-            return toList(choose(i -> i.hasException() ? Option.none() : of(i.read()), squares));
+            return choose(i -> i.hasException() ? Option.none() : of(i.read()), squares);
         }
 
         @Test

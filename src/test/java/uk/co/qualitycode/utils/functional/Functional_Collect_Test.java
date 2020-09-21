@@ -19,7 +19,7 @@ class Functional_Collect_Test {
     @Test
     void curriedCollectTest1() {
         final List<Integer> input = Functional.init(doublingGenerator, 5);
-        final List<Integer> output = Functional.collect(repeat(3)).apply(input);
+        final List<Integer> output = Functional.flatMap(repeat(3)).apply(input);
         final List<Integer> expected = Arrays.asList(2, 2, 2, 4, 4, 4, 6, 6, 6, 8, 8, 8, 10, 10, 10);
         assertThat(output).containsExactlyElementsOf(expected);
     }
@@ -27,7 +27,7 @@ class Functional_Collect_Test {
     @Test
     void collectTest1() {
         final List<Integer> input = Functional.init(doublingGenerator, 5);
-        final List<Integer> output = Functional.collect(repeat(3), input);
+        final List<Integer> output = Functional.flatMap(repeat(3), input);
         final List<Integer> expected = Arrays.asList(2, 2, 2, 4, 4, 4, 6, 6, 6, 8, 8, 8, 10, 10, 10);
         assertThat(output).containsExactlyElementsOf(expected);
     }
@@ -95,7 +95,7 @@ class Functional_Collect_Test {
     @Test
     void setCollectTest1() {
         final Iterable<Integer> input = Functional.init(doublingGenerator, 5);
-        final Set<Integer> output = Functional.set.collect(repeat(3), input);
+        final Set<Integer> output = Functional.set.flatMap(repeat(3), input);
         final Set<Integer> expected = new HashSet<>(Arrays.asList(2, 4, 6, 8, 10));
 
         assertThat(expected.containsAll(output)).isTrue();
@@ -105,7 +105,7 @@ class Functional_Collect_Test {
     @Test
     void setCollectTest2() {
         final Iterable<Integer> input = Functional.init(doublingGenerator, 5);
-        final Set<Integer> output1 = Functional.set.collect(repeat(3), input);
+        final Set<Integer> output1 = Functional.set.flatMap(repeat(3), input);
         final Set<Integer> output2 = output1;
         final Set<Integer> expected = new HashSet<>(Arrays.asList(2, 4, 6, 8, 10));
 
@@ -127,7 +127,7 @@ class Functional_Collect_Test {
                 true, true, true, false,
                 true, true, true, true);
 
-        final List<Boolean> output = Functional.collect(ths -> Functional.map(that -> Functional.greaterThanOrEqual(that).test(ths), list2), list1);
+        final List<Boolean> output = Functional.flatMap(ths -> Functional.map(that -> Functional.greaterThanOrEqual(that).test(ths), list2), list1);
 
         assertThat(output).isEqualTo(expected);
     }
@@ -144,7 +144,7 @@ class Functional_Collect_Test {
                 false, false, false, false, true
         );
 
-        final List<Boolean> output = Functional.collect(ths -> Functional.map(that -> Functional.lessThanOrEqual(that).test(ths), list2), list1);
+        final List<Boolean> output = Functional.flatMap(ths -> Functional.map(that -> Functional.lessThanOrEqual(that).test(ths), list2), list1);
 
         assertThat(output).isEqualTo(expected);
     }
