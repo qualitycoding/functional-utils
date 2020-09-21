@@ -1667,37 +1667,37 @@ public final class Functional {
     /**
      * Concatenate two sequences and return a new list containing the concatenation.
      *
-     * @param list1 first input sequence
-     * @param list2 second input sequence
+     * @param input1 first input sequence
+     * @param input2 second input sequence
      * @param <T>   the type of the element in the input sequences
      * @return a list containing the elements of the first sequence followed by the elements of the second sequence
      */
-    public static <T> List<T> concat(final Iterable<T> list1, final Iterable<T> list2) {
-        if (list1 == null)
+    public static <T> List<T> concat(final Iterable<T> input1, final Iterable<T> input2) {
+        if (input1 == null)
             throw new IllegalArgumentException("concat(Iterable<T>,Iterable<T>): input1 must not be null");
-        if (list2 == null)
+        if (input2 == null)
             throw new IllegalArgumentException("concat(Iterable<T>,Iterable<T>): input2 must not be null");
 
-        return io.vavr.collection.List.ofAll(list1).appendAll(list2).toJavaList();
+        return io.vavr.collection.List.ofAll(input1).appendAll(input2).toJavaList();
     }
 
     /**
      * take: given a list return another list containing the first 'howMany' elements
      *
      * @param howMany a positive number of elements to be returned from the input sequence
-     * @param list    the input sequence
+     * @param input    the input sequence
      * @param <T>     the type of the element in the input sequence
-     * @return a list containing the first 'howMany' elements of 'list'
+     * @return a list containing the first 'howMany' elements of 'input'
      * @throws java.util.NoSuchElementException if more elements are requested than are present in the input sequence
      */
-    public static <T> List<T> take(final int howMany, final Iterable<? extends T> list) {
+    public static <T> List<T> take(final int howMany, final Iterable<? extends T> input) {
         if (howMany < 0) throw new IllegalArgumentException("take(int,Iterable<T>): howMany must not be negative");
-        if (list == null) throw new IllegalArgumentException("take(int,Iterable<T>): input must not be null");
+        if (input == null) throw new IllegalArgumentException("take(int,Iterable<T>): input must not be null");
 
         if (howMany == 0) return new ArrayList<>(0);
 
         final List<T> output = new ArrayList<>(howMany);
-        final Iterator<? extends T> iterator = list.iterator();
+        final Iterator<? extends T> iterator = input.iterator();
         for (int i = 0; i < howMany; ++i) {
             if (iterator.hasNext())
                 output.add(iterator.next());
@@ -1728,25 +1728,25 @@ public final class Functional {
      *
      * @param <T>       the type of the element in the input sequence
      * @param predicate the predicate to use
-     * @param list      the input sequence
+     * @param input      the input sequence
      * @return a list
      */
-    public static <T> List<T> takeWhile(final Predicate<? super T> predicate, final List<T> list) {
+    public static <T> List<T> takeWhile(final Predicate<? super T> predicate, final List<T> input) {
         if (predicate == null)
             throw new IllegalArgumentException("takeWhile(Predicate<T>,List<T>): predicate must not be null");
-        if (list == null)
+        if (input == null)
             throw new IllegalArgumentException("takeWhile(Predicate<T>,List<T>): input must not be null");
 
-        if (list.size() == 0) return new ArrayList<>();
+        if (input.size() == 0) return new ArrayList<>();
 
-        for (int i = 0; i < list.size(); ++i) {
-            final T element = list.get(i);
+        for (int i = 0; i < input.size(); ++i) {
+            final T element = input.get(i);
             if (!predicate.test(element)) {
                 if (i == 0) return new ArrayList<>();
-                return Collections.unmodifiableList(list.subList(0, i));
+                return Collections.unmodifiableList(input.subList(0, i));
             }
         }
-        return Collections.unmodifiableList(list);
+        return Collections.unmodifiableList(input);
     }
 
     /**
@@ -1769,20 +1769,20 @@ public final class Functional {
      * first 'howMany' elements. That is, if we skip(1,[1,2,3]) then we have [2,3]
      *
      * @param howMany a non-negative number of elements to be discarded from the input sequence
-     * @param list    the input sequence
+     * @param input    the input sequence
      * @param <T>     the type of the element in the input sequence
      * @return a list containing the remaining elements after the first 'howMany' elements of 'list' or an empty list if more elements
-     * are skipped than are present in the 'list'
+     * are skipped than are present in the 'input'
      */
-    public static <T> List<T> skip(final int howMany, final List<? extends T> list) {
-        if (howMany < 0) throw new IllegalArgumentException("Functional.skip(int,List<T>): howMany is negative");
-        if (list == null) throw new IllegalArgumentException("Functional.skip(int,List<T>): list must not be null");
+    public static <T> List<T> skip(final int howMany, final List<? extends T> input) {
+        if (howMany < 0) throw new IllegalArgumentException("skip(int,List<T>): howMany must not be negative");
+        if (input == null) throw new IllegalArgumentException("skip(int,List<T>): input must not be negative");
 
-        if (howMany == 0) return Collections.unmodifiableList(list);
-        final int outputListSize = list.size() - howMany;
+        if (howMany == 0) return Collections.unmodifiableList(input);
+        final int outputListSize = input.size() - howMany;
         if (outputListSize <= 0) return new ArrayList<>();
 
-        return Collections.unmodifiableList(list.subList(howMany, list.size()));
+        return Collections.unmodifiableList(input.subList(howMany, input.size()));
     }
 
     /**
@@ -1797,6 +1797,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <T> Function<List<? extends T>, List<T>> skip(final int howMany) {
+        if(howMany<0) throw new IllegalArgumentException("skip(int): howMany must not be negative");
         return input -> Functional.skip(howMany, input);
     }
 
