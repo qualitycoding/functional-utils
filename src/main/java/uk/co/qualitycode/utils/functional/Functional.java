@@ -1812,9 +1812,9 @@ public final class Functional {
      */
     public static <T> List<T> skipWhile(final Predicate<? super T> predicate, final List<T> list) {
         if (predicate == null)
-            throw new IllegalArgumentException("Functional.skipWhile(Func,List<T>): predicate must not be null");
+            throw new IllegalArgumentException("skipWhile(Predicate<T>,List<T>): predicate must not be null");
         if (list == null)
-            throw new IllegalArgumentException("Functional.skipWhile(Func,List<T>): list must not be null");
+            throw new IllegalArgumentException("skipWhile(Predicate<T>,List<T>): input must not be null");
 
         for (int counter = 0; counter < list.size(); ++counter)
             if (!predicate.test(list.get(counter)))
@@ -1833,6 +1833,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <T> Function<List<T>, List<T>> skipWhile(final Predicate<? super T> predicate) {
+        if(predicate==null) throw new IllegalArgumentException("skipWhile(Predicate<T>): predicate must not be null");
         return input -> Functional.skipWhile(predicate, input);
     }
 
