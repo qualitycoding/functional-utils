@@ -1733,9 +1733,9 @@ public final class Functional {
      */
     public static <T> List<T> takeWhile(final Predicate<? super T> predicate, final List<T> list) {
         if (predicate == null)
-            throw new IllegalArgumentException("Functional.take(Func,Iterable<T>): predicate must not be null");
+            throw new IllegalArgumentException("takeWhile(Predicate<T>,List<T>): predicate must not be null");
         if (list == null)
-            throw new IllegalArgumentException("Functional.take(Func,Iterable<T>): list must not be null");
+            throw new IllegalArgumentException("takeWhile(Predicate<T>,List<T>): input must not be null");
 
         if (list.size() == 0) return new ArrayList<>();
 
@@ -1760,6 +1760,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <T> Function<List<T>, List<T>> takeWhile(final Predicate<? super T> predicate) {
+        if(predicate==null) throw new IllegalArgumentException("takeWhile(Predicate<T>): predicate must not be null");
         return input -> Functional.takeWhile(predicate, input);
     }
 
