@@ -1525,11 +1525,14 @@ public final class Functional {
      *                                  or value prevents it from being stored in this map
      */
     public static <T, K, V> Map<K, V> toDictionary(final Function<? super T, ? extends K> keyFn, final Function<? super T, ? extends V> valueFn, final Iterable<T> input) {
-        if (keyFn == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Iterable<T>): keyFn must not be null");
-        if (valueFn == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Iterable<T>): valueFn must not be null");
-        if (input == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Iterable<T>): input must not be null");
+        if (keyFn == null)
+            throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Iterable<T>): keyFn must not be null");
+        if (valueFn == null)
+            throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Iterable<T>): valueFn must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Iterable<T>): input must not be null");
 
-        return Collections.unmodifiableMap(StreamSupport.stream(input.spliterator(), false).collect(Collectors.toMap(keyFn,valueFn)));
+        return Collections.unmodifiableMap(StreamSupport.stream(input.spliterator(), false).collect(Collectors.toMap(keyFn, valueFn)));
     }
 
     /**
@@ -1547,11 +1550,14 @@ public final class Functional {
      *                                  or value prevents it from being stored in this map
      */
     public static <T, K, V> Map<K, V> toDictionary(final Function<? super T, ? extends K> keyFn, final Function<? super T, ? extends V> valueFn, final Collection<T> input) {
-        if (keyFn == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Collection<T>): keyFn must not be null");
-        if (valueFn == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Collection<T>): valueFn must not be null");
-        if (input == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Collection<T>): input must not be null");
+        if (keyFn == null)
+            throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Collection<T>): keyFn must not be null");
+        if (valueFn == null)
+            throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Collection<T>): valueFn must not be null");
+        if (input == null)
+            throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Collection<T>): input must not be null");
 
-        return Collections.unmodifiableMap(input.stream().collect(Collectors.toMap(keyFn,valueFn)));
+        return Collections.unmodifiableMap(input.stream().collect(Collectors.toMap(keyFn, valueFn)));
     }
 
     /**
@@ -1568,8 +1574,10 @@ public final class Functional {
      *                                  or value prevents it from being stored in this map
      */
     public static <T, K, V> Function<Iterable<T>, Map<K, V>> toDictionary(final Function<? super T, ? extends K> keyFn, final Function<? super T, ? extends V> valueFn) {
-        if (keyFn == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>): keyFn must not be null");
-        if (valueFn == null) throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>): valueFn must not be null");
+        if (keyFn == null)
+            throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>): keyFn must not be null");
+        if (valueFn == null)
+            throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>): valueFn must not be null");
 
         return input -> toDictionary(keyFn, valueFn, input);
     }
@@ -1650,7 +1658,7 @@ public final class Functional {
     public static <T> T last(final T[] input) {
         if (input == null)
             throw new IllegalArgumentException("last(T[]): input must not be null");
-        if(input.length == 0)
+        if (input.length == 0)
             throw new IllegalArgumentException("last(T[]): input must not be empty");
 
         return input[input.length - 1];
@@ -1683,8 +1691,8 @@ public final class Functional {
      * @throws java.util.NoSuchElementException if more elements are requested than are present in the input sequence
      */
     public static <T> List<T> take(final int howMany, final Iterable<? extends T> list) {
-        if (howMany < 0) throw new IllegalArgumentException("Functional.take(int,Iterable<T>): howMany is negative");
-        if (list == null) throw new IllegalArgumentException("Functional.take(int,Iterable<T>): list must not be null");
+        if (howMany < 0) throw new IllegalArgumentException("take(int,Iterable<T>): howMany must not be negative");
+        if (list == null) throw new IllegalArgumentException("take(int,Iterable<T>): input must not be null");
 
         if (howMany == 0) return new ArrayList<>(0);
 
@@ -1710,6 +1718,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <T> Function<Iterable<? extends T>, List<T>> take(final int howMany) {
+        if (howMany < 0) throw new IllegalArgumentException("take(int): howMany must not be negative");
         return input -> Functional.take(howMany, input);
     }
 

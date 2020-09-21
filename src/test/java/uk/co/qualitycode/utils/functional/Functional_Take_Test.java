@@ -1,109 +1,110 @@
 package uk.co.qualitycode.utils.functional;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
 
 class Functional_Take_Test {
     @Test
+    void preconditions() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.take(-1, mock(Iterable.class)))
+                .withMessage("take(int,Iterable<T>): howMany must not be negative");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.take(1, null))
+                .withMessage("take(int,Iterable<T>): input must not be null");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.take(-1))
+                .withMessage("take(int): howMany must not be negative");
+    }
+
+    @Test
     void takeTooManyItemsTest() {
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> Functional.take(100, Functional.init(FunctionalTest.doublingGenerator, 10)));
+        assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(() -> Functional.take(100, Functional.init(FunctionalTest.doublingGenerator, 10)))
+                .withMessage("Cannot take 100 elements from input list with fewer elements");
     }
 
     @Test
-    void takeTest1() {
+    void takeThreeElements() {
         final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-        final List<Integer> output = Functional.flatMap((Function<Integer, List<Integer>>) o -> Functional.take(o, input), input);
-        final List<Integer> expected = Arrays.asList(1, 1, 2, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-
-        assertThat(output).containsExactlyElementsOf(expected);
-    }
-
-    @Test
-    void curriedTakeTest1() {
-        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-        final List<Integer> output = Functional.flatMap((Function<Integer, List<Integer>>) o -> Functional.<Integer>take(o).apply(input), input);
-        final List<Integer> expected = Arrays.asList(1, 1, 2, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-
-        assertThat(output).containsExactlyElementsOf(expected);
-    }
-
-    @Test
-    void takeNoExceptionTest1() {
-        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-        final List<Integer> output = Functional.flatMap((Function<Integer, List<Integer>>) o -> Functional.noException.take(o, input), input);
-        final List<Integer> expected = Arrays.asList(1, 1, 2, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-
-        assertThat(output).containsExactlyElementsOf(expected);
-    }
-
-    @Test
-    void takeNoExceptionTest2() {
-        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-        final List<Integer> output = Functional.flatMap((Function<Integer, List<Integer>>) o -> Functional.noException.take(o + 5, input), input);
-        final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-
-        assertThat(output).containsExactlyElementsOf(expected);
-    }
-
-    @Test
-    void seqTakeTest1() {
-        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-        final Iterable<Integer> output = Functional.seq.take(3, input);
+        final List<Integer> output = Functional.take(3, input);
         final List<Integer> expected = Arrays.asList(1, 2, 3);
-
         assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
-    void curriedSeqTakeTest1() {
+    void curriedTakeThreeElements() {
         final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-        final Iterable<Integer> output = Functional.seq.<Integer>take(3).apply(input);
+        final List<Integer> output = Functional.<Integer>take(3).apply(input);
         final List<Integer> expected = Arrays.asList(1, 2, 3);
-
         assertThat(output).containsExactlyElementsOf(expected);
     }
 
-    @Test
-    void cantRemoveFromSeqTakeTest1() {
-        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-        final Iterable<Integer> output = Functional.seq.take(1, input);
-        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
-    }
+    @Nested
+    class Seq {
+        @Test
+        void seqTakeTest1() {
+            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+            final Iterable<Integer> output = Functional.seq.take(3, input);
+            final List<Integer> expected = Arrays.asList(1, 2, 3);
 
-    @Test
-    void cantRestartIteratorFromSeqTakeTest1() {
-        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-        final Iterable<Integer> output = Functional.seq.take(1, input);
-        try {
-            output.iterator();
-        } catch (final UnsupportedOperationException e) {
-            fail("Shouldn't reach this point");
+            assertThat(output).containsExactlyElementsOf(expected);
         }
-        assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(output::iterator);
-    }
 
-    @Test
-    void takeTooManyFromSeqTakeTest1() {
-        final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-        final Iterable<Integer> output = Functional.seq.take(1, input);
-        final Iterator<Integer> iterator = output.iterator();
-        Integer next;
-        try {
-            next = iterator.next();
-        } catch (final NoSuchElementException e) {
-            fail("Should not reach this point");
-            next = null;
+        @Test
+        void curriedSeqTakeTest1() {
+            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+            final Iterable<Integer> output = Functional.seq.<Integer>take(3).apply(input);
+            final List<Integer> expected = Arrays.asList(1, 2, 3);
+
+            assertThat(output).containsExactlyElementsOf(expected);
         }
-        assertThat(next).isEqualTo(input.get(0));
-        assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(iterator::next);
+
+        @Test
+        void cantRemoveFromSeqTakeTest1() {
+            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+            final Iterable<Integer> output = Functional.seq.take(1, input);
+            assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
+        }
+
+        @Test
+        void cantRestartIteratorFromSeqTakeTest1() {
+            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+            final Iterable<Integer> output = Functional.seq.take(1, input);
+            try {
+                output.iterator();
+            } catch (final UnsupportedOperationException e) {
+                fail("Shouldn't reach this point");
+            }
+            assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(output::iterator);
+        }
+
+        @Test
+        void takeTooManyFromSeqTakeTest1() {
+            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+            final Iterable<Integer> output = Functional.seq.take(1, input);
+            final Iterator<Integer> iterator = output.iterator();
+            Integer next;
+            try {
+                next = iterator.next();
+            } catch (final NoSuchElementException e) {
+                fail("Should not reach this point");
+                next = null;
+            }
+            assertThat(next).isEqualTo(input.get(0));
+            assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(iterator::next);
+        }
     }
 }
