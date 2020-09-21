@@ -1666,9 +1666,9 @@ public final class Functional {
      */
     public static <T> List<T> concat(final Iterable<T> list1, final Iterable<T> list2) {
         if (list1 == null)
-            throw new IllegalArgumentException("Functional.concat(List<T>,List<T>): list1 must not be null");
+            throw new IllegalArgumentException("concat(Iterable<T>,Iterable<T>): input1 must not be null");
         if (list2 == null)
-            throw new IllegalArgumentException("Functional.concat(List<T>,List<T>): list2 must not be null");
+            throw new IllegalArgumentException("concat(Iterable<T>,Iterable<T>): input2 must not be null");
 
         return io.vavr.collection.List.ofAll(list1).appendAll(list2).toJavaList();
     }
