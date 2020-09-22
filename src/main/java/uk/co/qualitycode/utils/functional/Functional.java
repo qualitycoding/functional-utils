@@ -2049,9 +2049,9 @@ public final class Functional {
      */
     public static <T, U> Map<U, List<T>> groupBy(final Function<? super T, ? extends U> keyFn, final Iterable<T> input) {
         if (isNull(keyFn))
-            throw new IllegalArgumentException("groupBy(Func,Iterable): keyFn must not be null");
+            throw new IllegalArgumentException("groupBy(Function<T,U>,Iterable<T>): keyFn must not be null");
         if (isNull(input))
-            throw new IllegalArgumentException("groupBy(Func,Iterable): input must not be null");
+            throw new IllegalArgumentException("groupBy(Function<T,U>,Iterable<T>): input must not be null");
 
         final Map<U, List<T>> intermediateResults = new HashMap<>();
         for (final T element : input) {
@@ -2071,13 +2071,30 @@ public final class Functional {
     }
 
     /**
-     * Lazily-evaluated implementations of various of the algorithms
+     * groupBy: similar to {@link #partition(Predicate, Iterable)} in that the input is grouped according to a function. This is more general than
+     * <tt>partition</tt> though as the output can be an arbitrary number of groups, up to and including one group per item in the
+     * input data set. The 'keyFn' is the grouping operator and it is used to determine the key at which any given element from
+     * the input data set should be added to the output dictionary / map.
      *
-     * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
-     * Note that these functions do not generally expose a restartable sequence. If you want to restart the iteration
-     * then you should make the convert the sequence (the Iterable) to a concrete collection before accessing the
-     * iterator.
+     * @param <T>   the type of the element in the input sequence
+     * @param <U>   the type of the element in the key
+     * @param keyFn the grouping function. Given an element return the key to be used when storing this element in the dictionary
+     * @return a java.util.Map containing a list of elements for each key
      */
+    public static <T, U> Function<Iterable<T>, Map<U, List<T>>> groupBy(final Function<? super T, ? extends U> keyFn) {
+        if(isNull(keyFn))
+            throw new IllegalArgumentException("groupBy(Function<T,U>): keyFn must not be null");
+        return input->groupBy(keyFn, input);
+    }
+
+        /**
+         * Lazily-evaluated implementations of various of the algorithms
+         *
+         * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
+         * Note that these functions do not generally expose a restartable sequence. If you want to restart the iteration
+         * then you should make the convert the sequence (the Iterable) to a concrete collection before accessing the
+         * iterator.
+         */
     public static class seq {
         private seq() {
         }
