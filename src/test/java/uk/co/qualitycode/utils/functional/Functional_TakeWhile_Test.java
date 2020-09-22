@@ -22,10 +22,10 @@ class Functional_TakeWhile_Test {
     void preconditions() {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.takeWhile(null, mock(Iterable.class)))
-                .withMessage("takeWhile(Predicate<T>,List<T>): predicate must not be null");
+                .withMessage("takeWhile(Predicate<T>,Iterable<T>): predicate must not be null");
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.takeWhile(mock(Predicate.class), (Iterable)null))
-                .withMessage("takeWhile(Predicate<T>,List<T>): input must not be null");
+                .withMessage("takeWhile(Predicate<T>,Iterable<T>): input must not be null");
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.takeWhile(null, mock(List.class)))

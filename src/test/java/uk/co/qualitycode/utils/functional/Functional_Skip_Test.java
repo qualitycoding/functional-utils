@@ -97,6 +97,13 @@ class Functional_Skip_Test {
         }
 
         @Test
+        void skipAllUsingIterable() {
+            final List<Integer> expected = new ArrayList<>();
+            final List<Integer> output = Functional.skip(5, (Iterable)input);
+            assertThat(output).containsExactlyElementsOf(expected);
+        }
+
+        @Test
         void curriedSkipNone() {
             final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
             final List<Integer> output = Functional.<Integer>skip(0).apply(input);

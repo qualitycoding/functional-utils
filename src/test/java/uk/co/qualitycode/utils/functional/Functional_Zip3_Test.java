@@ -61,7 +61,7 @@ class Functional_Zip3_Test {
                             final Iterable<Character> input3 = Functional.seq.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
                             Functional.zip3(input1, input2, input3);
                         })
-                        .withMessage("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): Cannot zip three iterables with different lengths"),
+                        .withMessage("zip3(Iterable<A>,Iterable<B>,Iterable<C>): Cannot zip three iterables with different lengths"),
                 () -> assertThatIllegalArgumentException()
                         .isThrownBy(() -> {
                             final Iterable<Integer> input1 = Functional.seq.map(Function.identity(), Arrays.asList(1, 2));
@@ -69,7 +69,7 @@ class Functional_Zip3_Test {
                             final Iterable<Integer> input3 = Functional.seq.map(Function.identity(), Arrays.asList(1, 2));
                             Functional.zip3(input1, input2, input3);
                         })
-                        .withMessage("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): Cannot zip three iterables with different lengths"),
+                        .withMessage("zip3(Iterable<A>,Iterable<B>,Iterable<C>): Cannot zip three iterables with different lengths"),
                 () -> assertThatIllegalArgumentException()
                         .isThrownBy(() -> {
                             final Iterable<Integer> input1 = Functional.seq.map(Function.identity(), Arrays.asList(1, 2));
@@ -77,7 +77,7 @@ class Functional_Zip3_Test {
                             final Iterable<Character> input3 = Functional.seq.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
                             Functional.zip3(input1, input2, input3);
                         })
-                        .withMessage("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): Cannot zip three iterables with different lengths"));
+                        .withMessage("zip3(Iterable<A>,Iterable<B>,Iterable<C>): Cannot zip three iterables with different lengths"));
     }
 
     @Nested

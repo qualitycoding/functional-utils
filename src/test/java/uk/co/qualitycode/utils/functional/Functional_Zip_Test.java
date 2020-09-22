@@ -101,7 +101,7 @@ class Functional_Zip_Test {
 
         assertThatIllegalArgumentException()
                 .isThrownBy(()->Functional.zip(input1, input2))
-                .withMessage("Functional.zip(Iterable<A>,Iterable<B>): Cannot zip two iterables with different lengths");
+                .withMessage("zip(Iterable<A>,Iterable<B>): Cannot zip two iterables with different lengths");
     }
 
     @Test
@@ -130,7 +130,7 @@ class Functional_Zip_Test {
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.zip(input1, input2))
-                .withMessage("Functional.zip(Collection<A>,Collection<B>): The input sequences must have the same number of elements");
+                .withMessage("zip(Collection<A>,Collection<B>): The input sequences must have the same number of elements");
     }
 
     @Nested
@@ -177,7 +177,7 @@ class Functional_Zip_Test {
             final Iterable<Tuple2<Integer, Character>> zip = Functional.seq.zip(input1, input2);
             assertThatExceptionOfType(UnsupportedOperationException.class)
                     .isThrownBy(() -> zip.iterator().remove())
-                    .withMessage("Functional.seq.zip(Iterable,Iterable): it is not possible to remove elements from this sequence");
+                    .withMessage("seq.zip(Iterable,Iterable): it is not possible to remove elements from this sequence");
         }
 
         @Test

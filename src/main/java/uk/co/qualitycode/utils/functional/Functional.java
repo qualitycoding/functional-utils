@@ -1818,12 +1818,7 @@ public final class Functional {
         if (howMany < 0) throw new IllegalArgumentException("skip(int,Iterable<T>): howMany must not be negative");
         if (isNull(input)) throw new IllegalArgumentException("skip(int,Iterable<T>): input must not be negative");
 
-        return Collections.emptyList();
-//        if (howMany == 0) return Collections.unmodifiableList(input);
-//        final int outputListSize = input.size() - howMany;
-//        if (outputListSize <= 0) return new ArrayList<>();
-//
-//        return Collections.unmodifiableList(input.subList(howMany, input.size()));
+        return skip(howMany, asStream(input).collect(Collectors.toList()));
     }
 
     /**
@@ -1878,11 +1873,7 @@ public final class Functional {
         if (isNull(list))
             throw new IllegalArgumentException("skipWhile(Predicate<T>,Iterable<T>): input must not be null");
 
-//        for (int counter = 0; counter < list.size(); ++counter)
-//            if (!predicate.test(list.get(counter)))
-//                return Collections.unmodifiableList(list.subList(counter, list.size()));
-//
-        return Collections.unmodifiableList(new ArrayList<>(0));
+        return skipWhile(predicate, asStream(list).collect(Collectors.toList()));
     }
 
     /**

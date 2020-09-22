@@ -139,18 +139,14 @@ class Functional_SkipWhile_Test {
 
         @Test
         void seqSkipWhileWithoutHasNextTest1() {
-            final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
-            {
-                final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-                final Iterable<Integer> output = Functional.seq.skipWhile(Functional::isEven, l);
-                final Iterator<Integer> iterator = output.iterator();
-                for (final int expct : expected)
-                    assertThat(iterator.next()).isEqualTo(expct);
-            }
+            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
+            final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
+            final Iterable<Integer> output = Functional.seq.skipWhile(Functional::isEven, input);
+            assertThat(output).containsExactlyElementsOf(expected);
         }
 
         @Test
-        void cantRemoveFromseqSkipWhileTest1() {
+        void cantRemoveFromSeqSkipWhileTest1() {
             final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
             {
                 final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
