@@ -1,6 +1,7 @@
-package uk.co.qualitycode.utils.functional;
+package uk.co.qualitycode.utils.functional.monad.transformer;
 
 import org.junit.jupiter.api.Test;
+import uk.co.qualitycode.utils.functional.OptionStream;
 
 import java.util.Optional;
 import java.util.stream.Stream;
