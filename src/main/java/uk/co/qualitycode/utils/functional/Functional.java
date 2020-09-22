@@ -321,7 +321,7 @@ public final class Functional {
         if (isNull(input))
             throw new IllegalArgumentException("findLast(Predicate<A>,Iterable<A>): input must not be null");
 
-        final Tuple2<? extends List<? extends A>, ? extends Iterable<? extends A>> p = takeNAndYield(input, 1);
+        final Tuple2<? extends List<? extends A>, ? extends Iterable<? extends A>> p = takeNAndYield(1, input);
         final Tuple2<A, Boolean> seed = new Tuple2<>(p._1().get(0), f.test(p._1().get(0)));
         final Tuple2<A, Boolean> result = fold((state, item) -> f.test(item) ? new Tuple2<>(item, true) : state, seed, p._2());
 
@@ -2010,14 +2010,14 @@ public final class Functional {
      * This is like <tt>take</tt> but leaves the user with the ability to continue the traversal of the input sequence from the point
      * at which the 'take' stopped.
      *
-     * @param input   the input sequence
-     * @param howMany the number of elements to be included in the first output list
      * @param <A>     the type of the element in the input sequence
+     * @param howMany the number of elements to be included in the first output list
+     * @param input   the input sequence
      * @return a pair: (list, seq) - the list contains 'howMany' elements of 'input' and the sequence contains the remainder
      */
-    public static <A> Tuple2<List<A>, Iterable<A>> takeNAndYield(final Iterable<A> input, final int howMany) {
-        if (isNull(input)) throw new IllegalArgumentException("takeNAndYield: input must not be null");
-        if (howMany < 0) throw new IllegalArgumentException("takeNAndYield: howMany is negative");
+    public static <A> Tuple2<List<A>, Iterable<A>> takeNAndYield(final int howMany, final Iterable<A> input) {
+        if (isNull(input)) throw new IllegalArgumentException("takeNAndYield(int,Iterable<A>): input must not be null");
+        if (howMany < 0) throw new IllegalArgumentException("takeNAndYield(int,Iterable<A>): howMany must not be negative");
 
         int counter = 0;
         final List<A> output = new ArrayList<>(howMany);

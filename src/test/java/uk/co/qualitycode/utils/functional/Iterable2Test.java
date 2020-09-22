@@ -1029,7 +1029,7 @@ class Iterable2Test {
     @Test
     void takeNandYieldTest1() {
         final Iterable2<Integer> input = Iterable2.init(doublingGenerator, 5);
-        final Tuple2<List<Integer>, Iterable<Integer>> output = Functional.takeNAndYield(input, 2);
+        final Tuple2<List<Integer>, Iterable<Integer>> output = Functional.takeNAndYield(2, input);
         final List<Integer> expectedList = Arrays.asList(2, 4);
         final List<Integer> expectedRemainder = Arrays.asList(6, 8, 10);
         assertThat(output._1()).containsExactlyElementsOf(expectedList);
@@ -1039,7 +1039,7 @@ class Iterable2Test {
     @Test
     void takeNandYieldTest2() {
         final Iterable<Integer> input = Iterable2.init(doublingGenerator, 5);
-        final Tuple2<List<Integer>, Iterable<Integer>> output = Functional.takeNAndYield(input, 0);
+        final Tuple2<List<Integer>, Iterable<Integer>> output = Functional.takeNAndYield(0, input);
         final List<Integer> expectedList = Arrays.asList();
         final List<Integer> expectedRemainder = Arrays.asList(2, 4, 6, 8, 10);
         assertThat(output._1()).containsExactlyElementsOf(expectedList);
