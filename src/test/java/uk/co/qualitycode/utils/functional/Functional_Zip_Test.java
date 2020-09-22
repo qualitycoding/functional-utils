@@ -77,8 +77,8 @@ class Functional_Zip_Test {
 
     @Test
     void zipTwoIterables() {
-        final Iterable<Integer> input1 = Functional.seq.map(Function.identity(), Arrays.asList(1, 2, 3, 4, 5));
-        final Iterable<Character> input2 = Functional.seq.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
+        final Iterable<Integer> input1 = Functional.Lazy.map(Function.identity(), Arrays.asList(1, 2, 3, 4, 5));
+        final Iterable<Character> input2 = Functional.Lazy.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
 
         final List<Tuple2<Integer, Character>> expected = new ArrayList<>();
         expected.add(new Tuple2<>(1, 'a'));
@@ -96,8 +96,8 @@ class Functional_Zip_Test {
 
     @Test
     void cannotZipTwoIterablesWithUnequalLengths() {
-        final Iterable<Integer> input1 = Functional.seq.map(Function.identity(), Arrays.asList(1, 2));
-        final Iterable<Character> input2 = Functional.seq.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
+        final Iterable<Integer> input1 = Functional.Lazy.map(Function.identity(), Arrays.asList(1, 2));
+        final Iterable<Character> input2 = Functional.Lazy.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
 
         assertThatIllegalArgumentException()
                 .isThrownBy(()->Functional.zip(input1, input2))
@@ -147,7 +147,7 @@ class Functional_Zip_Test {
             expected.add(new Tuple2<>(4, 'd'));
             expected.add(new Tuple2<>(5, 'e'));
 
-            final Iterable<Tuple2<Integer, Character>> output = Functional.seq.zip(input1, input2);
+            final Iterable<Tuple2<Integer, Character>> output = Functional.Lazy.zip(input1, input2);
 
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -164,7 +164,7 @@ class Functional_Zip_Test {
             expected.add(new Tuple2<>(4, 'd'));
             expected.add(new Tuple2<>(5, 'e'));
 
-            final Iterable<Tuple2<Integer, Character>> output = Functional.seq.<Integer, Character>zip(input1).apply(input2);
+            final Iterable<Tuple2<Integer, Character>> output = Functional.Lazy.<Integer, Character>zip(input1).apply(input2);
 
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -174,10 +174,10 @@ class Functional_Zip_Test {
             final Collection<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);
             final Collection<Character> input2 = Arrays.asList('a', 'b', 'c', 'd', 'e');
 
-            final Iterable<Tuple2<Integer, Character>> zip = Functional.seq.zip(input1, input2);
+            final Iterable<Tuple2<Integer, Character>> zip = Functional.Lazy.zip(input1, input2);
             assertThatExceptionOfType(UnsupportedOperationException.class)
                     .isThrownBy(() -> zip.iterator().remove())
-                    .withMessage("seq.zip(Iterable,Iterable): it is not possible to remove elements from this sequence");
+                    .withMessage("Lazy.zip(Iterable,Iterable): it is not possible to remove elements from this sequence");
         }
 
         @Test
@@ -185,7 +185,7 @@ class Functional_Zip_Test {
             final Collection<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);
             final Collection<Character> input2 = Arrays.asList('a', 'b', 'c', 'd', 'e');
 
-            final Iterable<Tuple2<Integer, Character>> zip = Functional.seq.zip(input1, input2);
+            final Iterable<Tuple2<Integer, Character>> zip = Functional.Lazy.zip(input1, input2);
             try {
                 zip.iterator();
             } catch (final UnsupportedOperationException e) {
@@ -206,7 +206,7 @@ class Functional_Zip_Test {
             expected.add(new Tuple2<>(4, 'd'));
             expected.add(new Tuple2<>(5, 'e'));
 
-            final Iterable<Tuple2<Integer, Character>> output = Functional.seq.zip(input1, input2);
+            final Iterable<Tuple2<Integer, Character>> output = Functional.Lazy.zip(input1, input2);
             final Iterator<Tuple2<Integer, Character>> iterator = output.iterator();
 
             for (int i = 0; i < 20; ++i)
@@ -238,7 +238,7 @@ class Functional_Zip_Test {
             expected.add(new Tuple2<>(4, "4"));
             expected.add(new Tuple2<>(5, "5"));
 
-            final Iterable<Tuple2<Integer, String>> output = Functional.seq.zip(Function.identity(), Functional.stringify(), input);
+            final Iterable<Tuple2<Integer, String>> output = Functional.Lazy.zip(Function.identity(), Functional.stringify(), input);
 
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -247,7 +247,7 @@ class Functional_Zip_Test {
         void cantRemoveFromSeqZipFnTest1() {
             final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
 
-            final Iterable<Tuple2<Integer, String>> output = Functional.seq.zip(Function.identity(), Functional.stringify(), input);
+            final Iterable<Tuple2<Integer, String>> output = Functional.Lazy.zip(Function.identity(), Functional.stringify(), input);
             assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
         }
 
@@ -255,7 +255,7 @@ class Functional_Zip_Test {
         void cantRestartIteratorFromSeqZipFnTest1() {
             final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
 
-            final Iterable<Tuple2<Integer, String>> output = Functional.seq.zip(Function.identity(), Functional.stringify(), input);
+            final Iterable<Tuple2<Integer, String>> output = Functional.Lazy.zip(Function.identity(), Functional.stringify(), input);
             try {
                 output.iterator();
             } catch (final UnsupportedOperationException e) {

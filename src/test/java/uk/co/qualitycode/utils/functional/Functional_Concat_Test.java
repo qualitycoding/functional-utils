@@ -43,8 +43,8 @@ class Functional_Concat_Test {
             final Function<Integer, Integer> doubler = i -> i * 2;
             final List<String> expected = Arrays.asList("1", "2", "3", "4", "5", "2", "4", "6", "8", "10");
 
-            final Iterable<String> strs = Functional.seq.map(Functional.stringify(), input);
-            final Iterable<String> output = Functional.seq.concat(strs, Functional.seq.map(Functional.stringify(), Functional.seq.map(doubler, input)));
+            final Iterable<String> strs = Functional.Lazy.map(Functional.stringify(), input);
+            final Iterable<String> output = Functional.Lazy.concat(strs, Functional.Lazy.map(Functional.stringify(), Functional.Lazy.map(doubler, input)));
 
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -55,8 +55,8 @@ class Functional_Concat_Test {
             final Function<Integer, Integer> doubler = i -> i * 2;
             final List<String> expected = Arrays.asList("1", "2", "3", "4", "5", "2", "4", "6", "8", "10");
 
-            final Iterable<String> strs = Functional.seq.map(Functional.stringify(), input);
-            final Iterable<String> output = Functional.seq.concat(strs, Functional.seq.map(Functional.stringify(), Functional.seq.map(doubler, input)));
+            final Iterable<String> strs = Functional.Lazy.map(Functional.stringify(), input);
+            final Iterable<String> output = Functional.Lazy.concat(strs, Functional.Lazy.map(Functional.stringify(), Functional.Lazy.map(doubler, input)));
 
             assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
         }
@@ -67,8 +67,8 @@ class Functional_Concat_Test {
             final Function<Integer, Integer> doubler = i -> i * 2;
             final List<String> expected = Arrays.asList("1", "2", "3", "4", "5", "2", "4", "6", "8", "10");
 
-            final Iterable<String> strs = Functional.seq.map(Functional.stringify(), input);
-            final Iterable<String> output = Functional.seq.concat(strs, Functional.seq.map(Functional.stringify(), Functional.seq.map(doubler, input)));
+            final Iterable<String> strs = Functional.Lazy.map(Functional.stringify(), input);
+            final Iterable<String> output = Functional.Lazy.concat(strs, Functional.Lazy.map(Functional.stringify(), Functional.Lazy.map(doubler, input)));
             try {
                 output.iterator();
             } catch (final UnsupportedOperationException e) {
@@ -83,8 +83,8 @@ class Functional_Concat_Test {
             final Function<Integer, Integer> doubler = i -> i * 2;
             final List<String> expected = Arrays.asList("1", "2", "3", "4", "5", "2", "4", "6", "8", "10");
 
-            final Iterable<String> strs = Functional.seq.map(Functional.stringify(), input);
-            final Iterable<String> output = Functional.seq.concat(strs, Functional.seq.map(Functional.stringify(), Functional.seq.map(doubler, input)));
+            final Iterable<String> strs = Functional.Lazy.map(Functional.stringify(), input);
+            final Iterable<String> output = Functional.Lazy.concat(strs, Functional.Lazy.map(Functional.stringify(), Functional.Lazy.map(doubler, input)));
             final Iterator<String> iterator = output.iterator();
 
             for (int i = 0; i < 20; ++i)

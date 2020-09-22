@@ -221,11 +221,11 @@ public final class ImperativeAndFunctionalEquivalenceExamples {
 //                        public String apply(Integer integer) {
 //                            return Integer.toString(10 * integer + 1);
 //                        }
-//                    }, seq.init(Functional.constant(integer), 2 * (1 + integer)));
+//                    }, Lazy.init(Functional.constant(integer), 2 * (1 + integer)));
 //                }
 //            };
 //
-//            final Iterable<Tuple2<String, Iterable<String>>> zip = seq.zip(func1, func2, testVals);
+//            final Iterable<Tuple2<String, Iterable<String>>> zip = Lazy.zip(func1, func2, testVals);
 //
 //        }
 

@@ -1419,7 +1419,7 @@ public final class Functional {
 //            }
 //        };
 //
-//        final Iterable<T> output = Functional.seq.unfold(boundsCalculator,finished,seed);
+//        final Iterable<T> output = Functional.Lazy.unfold(boundsCalculator,finished,seed);
 //
 //        final Iterator<T> iterator = output.iterator();
 //        if(iterator==null || !iterator.hasNext()) throw new IllegalStateException("Somehow we have no entries in our sequence of bounds");
@@ -1434,7 +1434,7 @@ public final class Functional {
 //        }
 //        return retval;
 //
-////        return Functional.seq.init(new Function<Integer, Range<T>>() {
+////        return Functional.Lazy.init(new Function<Integer, Range<T>>() {
 ////
 ////            public Range<T> apply(final Integer integer) {
 ////// inefficient - the upper bound is computed twice (once at the end of an iteration and once at the beginning of the next iteration)

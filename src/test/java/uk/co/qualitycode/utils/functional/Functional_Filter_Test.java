@@ -53,7 +53,7 @@ class Functional_Filter_Test {
 
     @Test
     void filterIterableForOddElements() {
-        final Iterable<Integer> l = Functional.seq.init(doublingGenerator, 5);
+        final Iterable<Integer> l = Functional.Lazy.init(doublingGenerator, 5);
         final List<Integer> oddElems = Functional.filter(Functional::isOdd, l);
 
         assertThat(oddElems).isEmpty();
@@ -77,9 +77,9 @@ class Functional_Filter_Test {
 
     @Test
     void filterIterableForEvenElements() {
-        final List<Integer> evenElems = Functional.filter(Functional::isEven, Functional.seq.init(doublingGenerator, 5));
+        final List<Integer> evenElems = Functional.filter(Functional::isEven, Functional.Lazy.init(doublingGenerator, 5));
 
-        assertThat(evenElems).containsExactlyElementsOf(Functional.seq.init(doublingGenerator, 5));
+        assertThat(evenElems).containsExactlyElementsOf(Functional.Lazy.init(doublingGenerator, 5));
     }
 
     @Test
@@ -95,7 +95,7 @@ class Functional_Filter_Test {
         @Test
         void seqFilterTest1() {
             final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-            final Iterable<Integer> oddElems = Functional.seq.filter(Functional::isOdd, l);
+            final Iterable<Integer> oddElems = Functional.Lazy.filter(Functional::isOdd, l);
 
             assertThat(oddElems).isEmpty();
         }
@@ -103,7 +103,7 @@ class Functional_Filter_Test {
         @Test
         void curriedSeqFilterTest1() {
             final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-            final Iterable<Integer> oddElems = Functional.seq.filter(Functional::isOdd).apply(l);
+            final Iterable<Integer> oddElems = Functional.Lazy.filter(Functional::isOdd).apply(l);
 
             assertThat(oddElems).isEmpty();
         }
@@ -111,14 +111,14 @@ class Functional_Filter_Test {
         @Test
         void cantRemoveFromSeqFilterTest1() {
             final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-            final Iterable<Integer> oddElems = Functional.seq.filter(Functional::isOdd, l);
+            final Iterable<Integer> oddElems = Functional.Lazy.filter(Functional::isOdd, l);
             assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> oddElems.iterator().remove());
         }
 
         @Test
         void cantRestartIteratorFromSeqFilterTest1() {
             final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-            final Iterable<Integer> oddElems = Functional.seq.filter(Functional::isOdd, l);
+            final Iterable<Integer> oddElems = Functional.Lazy.filter(Functional::isOdd, l);
             try {
                 oddElems.iterator();
             } catch (final UnsupportedOperationException e) {
@@ -130,7 +130,7 @@ class Functional_Filter_Test {
         @Test
         void seqFilterTest2() {
             final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-            final Iterable<Integer> evenElems = Functional.seq.filter(Functional::isEven, l);
+            final Iterable<Integer> evenElems = Functional.Lazy.filter(Functional::isEven, l);
 
             final Collection<Integer> expected = Arrays.asList(2, 4, 6, 8, 10);
             assertThat(evenElems).containsExactlyElementsOf(expected);
@@ -140,7 +140,7 @@ class Functional_Filter_Test {
         void seqFilterTest3() {
             final Collection<Integer> l = Functional.init(doublingGenerator, 5);
             final int limit = 5;
-            final Iterable<Integer> highElems = Functional.seq.filter(a -> a > limit, l);
+            final Iterable<Integer> highElems = Functional.Lazy.filter(a -> a > limit, l);
 
             final Collection<Integer> expected = Arrays.asList(6, 8, 10);
             assertThat(highElems).containsExactlyElementsOf(expected);
@@ -150,7 +150,7 @@ class Functional_Filter_Test {
         void seqFilterTest4() {
             final Collection<Integer> li = Functional.init(doublingGenerator, 5);
             final int limit = 10;
-            final Iterable<Integer> output = Functional.seq.filter(a -> a > limit, li);
+            final Iterable<Integer> output = Functional.Lazy.filter(a -> a > limit, li);
 
             assertThat(output.iterator().hasNext()).isFalse();
         }
@@ -159,7 +159,7 @@ class Functional_Filter_Test {
         void seqFilterTest5() {
             final Collection<Integer> li = Functional.init(doublingGenerator, 10);
             final Collection<Integer> expected = Arrays.asList(4, 8, 12, 16, 20);
-            final Iterable<Integer> output = Functional.seq.filter(a -> a % 4 == 0, li);
+            final Iterable<Integer> output = Functional.Lazy.filter(a -> a % 4 == 0, li);
 
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -167,7 +167,7 @@ class Functional_Filter_Test {
         @Test
         void seqFilterTest6() {
             final Collection<Integer> input = Functional.init(doublingGenerator, 10);
-            final Iterable<Integer> output = Functional.seq.filter(a -> a % 4 == 0, input);
+            final Iterable<Integer> output = Functional.Lazy.filter(a -> a % 4 == 0, input);
             final Iterator<Integer> iterator = output.iterator();
 
             for (int i = 0; i < 20; ++i)

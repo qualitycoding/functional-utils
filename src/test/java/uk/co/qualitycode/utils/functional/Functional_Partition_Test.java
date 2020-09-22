@@ -141,7 +141,7 @@ class Functional_Partition_Test {
         void cantRemoveFromSeqPartitionRanges() {
             final int noElems = 13;
             final int noPartitions = 5;
-            final Iterable<Functional.Range<Integer>> partitions = Functional.seq.partition(noElems, noPartitions);
+            final Iterable<Functional.Range<Integer>> partitions = Functional.Lazy.partition(noElems, noPartitions);
             assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> partitions.iterator().remove());
         }
 
@@ -149,7 +149,7 @@ class Functional_Partition_Test {
         void cantRestartIteratorFromSeqPartition() {
             final int noElems = 13;
             final int noPartitions = 5;
-            final Iterable<Functional.Range<Integer>> partitions = Functional.seq.partition(noElems, noPartitions);
+            final Iterable<Functional.Range<Integer>> partitions = Functional.Lazy.partition(noElems, noPartitions);
             try {
                 partitions.iterator();
             } catch (final UnsupportedOperationException e) {

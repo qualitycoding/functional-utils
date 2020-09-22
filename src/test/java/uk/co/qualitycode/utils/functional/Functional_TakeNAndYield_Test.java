@@ -24,7 +24,7 @@ class Functional_TakeNAndYield_Test {
 
     @Test
     void takeMoreElementsThanSupplied() {
-        final Iterable<Integer> input = Functional.seq.init(FunctionalTest.doublingGenerator, 5);
+        final Iterable<Integer> input = Functional.Lazy.init(FunctionalTest.doublingGenerator, 5);
         final Tuple2<List<Integer>, Iterable<Integer>> output = Functional.takeNAndYield(20, input);
         final List<Integer> expectedList = Arrays.asList(2, 4, 6, 8, 10);
         final List<Integer> expectedRemainder = Collections.emptyList();
@@ -36,7 +36,7 @@ class Functional_TakeNAndYield_Test {
 
     @Test
     void takeNAndYield() {
-        final Iterable<Integer> input = Functional.seq.init(FunctionalTest.doublingGenerator, 5);
+        final Iterable<Integer> input = Functional.Lazy.init(FunctionalTest.doublingGenerator, 5);
         final Tuple2<List<Integer>, Iterable<Integer>> output = Functional.takeNAndYield(2, input);
         final List<Integer> expectedList = Arrays.asList(2, 4);
         final List<Integer> expectedRemainder = Arrays.asList(6, 8, 10);
@@ -48,7 +48,7 @@ class Functional_TakeNAndYield_Test {
 
     @Test
     void takeNoElementsAndYieldAllInput() {
-        final Iterable<Integer> input = Functional.seq.init(FunctionalTest.doublingGenerator, 5);
+        final Iterable<Integer> input = Functional.Lazy.init(FunctionalTest.doublingGenerator, 5);
         final Tuple2<List<Integer>, Iterable<Integer>> output = Functional.takeNAndYield(0, input);
         final List<Integer> expectedList = Arrays.asList();
         final List<Integer> expectedRemainder = Arrays.asList(2, 4, 6, 8, 10);

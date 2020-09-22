@@ -62,7 +62,7 @@ class Functional_ToDictionary_Test {
         final Map<Integer, String> output = Functional.toDictionary(
                 Function.identity(),
                 Functional.stringify(),
-                Functional.seq.filter(Functional::isEven, li));
+                Functional.Lazy.filter(Functional::isEven, li));
         final Map<Integer, String> expected = of(6, "6", 12, "12").toJavaMap();
         assertThat(output).containsExactlyInAnyOrderEntriesOf(expected);
     }
@@ -70,7 +70,7 @@ class Functional_ToDictionary_Test {
     @Test
     void curriedToDictionaryUsingIterable() {
         final List<Integer> li = Functional.init(triplingGenerator, 5);
-        final Map<Integer, String> output = Functional.<Integer, Integer, String>toDictionary(Functional.seq.filter(Functional::isEven, li))
+        final Map<Integer, String> output = Functional.<Integer, Integer, String>toDictionary(Functional.Lazy.filter(Functional::isEven, li))
                 .withKeyFn(Function.identity())
                 .withValueFn(Functional.stringify());
         final Map<Integer, String> expected = of(6, "6", 12, "12").toJavaMap();

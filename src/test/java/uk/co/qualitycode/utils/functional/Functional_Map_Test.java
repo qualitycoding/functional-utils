@@ -45,7 +45,7 @@ class Functional_Map_Test {
 
     @Test
     void mapIterableOfIntsToStrings() {
-        final List<String> output = map(stringify(), Functional.seq.init(doublingGenerator, 5));
+        final List<String> output = map(stringify(), Functional.Lazy.init(doublingGenerator, 5));
         assertThat(output).containsExactly("2", "4", "6", "8", "10");
     }
 
@@ -57,7 +57,7 @@ class Functional_Map_Test {
 
     @Test
     void mapIterableReturnsImmutableList() {
-        final List<String> output = map(stringify(), Functional.seq.init(doublingGenerator, 5));
+        final List<String> output = map(stringify(), Functional.Lazy.init(doublingGenerator, 5));
         assertThatExceptionOfType(UnsupportedOperationException.class)
                 .isThrownBy(() -> output.add("ighijh"));
     }
@@ -82,7 +82,7 @@ class Functional_Map_Test {
         void seqMapTest1() {
             final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5); //Enumerable.Range(1, 5).ToList();
             final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
-            final Iterable<String> output = Functional.seq.map(Functional.stringify(), input);
+            final Iterable<String> output = Functional.Lazy.map(Functional.stringify(), input);
             final Iterator<String> it = output.iterator();
             for (int i = 0; i < 20; ++i)
                 assertThat(it.hasNext()).isTrue();
@@ -104,7 +104,7 @@ class Functional_Map_Test {
         void curriedSeqMapTest1() {
             final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5); //Enumerable.Range(1, 5).ToList();
             final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
-            final Iterable<String> output = Functional.seq.map(Functional.<Integer>stringify()).apply(input);
+            final Iterable<String> output = Functional.Lazy.map(Functional.<Integer>stringify()).apply(input);
             final Iterator<String> it = output.iterator();
             for (int i = 0; i < 20; ++i)
                 assertThat(it.hasNext()).isTrue();
@@ -126,7 +126,7 @@ class Functional_Map_Test {
         void cantRemoveFromSeqMapTest1() {
             final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5); //Enumerable.Range(1, 5).ToList();
             final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
-            final Iterable<String> output = Functional.seq.map(Functional.stringify(), input);
+            final Iterable<String> output = Functional.Lazy.map(Functional.stringify(), input);
             assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
         }
 
@@ -134,7 +134,7 @@ class Functional_Map_Test {
         void cantRestartIteratorFromSeqMapTest1() {
             final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5); //Enumerable.Range(1, 5).ToList();
             final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
-            final Iterable<String> output = Functional.seq.map(Functional.stringify(), input);
+            final Iterable<String> output = Functional.Lazy.map(Functional.stringify(), input);
             try {
                 output.iterator();
             } catch (final UnsupportedOperationException e) {

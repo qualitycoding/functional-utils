@@ -118,37 +118,37 @@ class Functional_Skip_Test {
             final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
             {
                 final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-                final Iterable<Integer> output = Functional.seq.skip(0, l);
+                final Iterable<Integer> output = Functional.Lazy.skip(0, l);
                 assertThat(output).containsExactlyElementsOf(expected);
             }
             {
                 final List<Integer> expected = Arrays.asList(2, 3, 4, 5);
-                final Iterable<Integer> output = Functional.seq.skip(1, l);
+                final Iterable<Integer> output = Functional.Lazy.skip(1, l);
                 assertThat(output).containsExactlyElementsOf(expected);
             }
             {
                 final List<Integer> expected = Arrays.asList(3, 4, 5);
-                final Iterable<Integer> output = Functional.seq.skip(2, l);
+                final Iterable<Integer> output = Functional.Lazy.skip(2, l);
                 assertThat(output).containsExactlyElementsOf(expected);
             }
             {
                 final List<Integer> expected = Arrays.asList(4, 5);
-                final Iterable<Integer> output = Functional.seq.skip(3, l);
+                final Iterable<Integer> output = Functional.Lazy.skip(3, l);
                 assertThat(output).containsExactlyElementsOf(expected);
             }
             {
                 final List<Integer> expected = Arrays.asList(5);
-                final Iterable<Integer> output = Functional.seq.skip(4, l);
+                final Iterable<Integer> output = Functional.Lazy.skip(4, l);
                 assertThat(output).containsExactlyElementsOf(expected);
             }
             {
                 final List<Integer> expected = new ArrayList<>();
-                final Iterable<Integer> output = Functional.seq.skip(5, l);
+                final Iterable<Integer> output = Functional.Lazy.skip(5, l);
                 assertThat(output).containsExactlyElementsOf(expected);
             }
             {
                 final List<Integer> expected = new ArrayList<>();
-                final Iterable<Integer> output = Functional.seq.skip(6, l);
+                final Iterable<Integer> output = Functional.Lazy.skip(6, l);
                 assertThat(output).containsExactlyElementsOf(expected);
             }
         }
@@ -158,7 +158,7 @@ class Functional_Skip_Test {
             final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
             {
                 final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-                final Iterable<Integer> output = Functional.seq.skip(0, l);
+                final Iterable<Integer> output = Functional.Lazy.skip(0, l);
                 assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
             }
         }
@@ -168,7 +168,7 @@ class Functional_Skip_Test {
             final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
             {
                 final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-                final Iterable<Integer> output = Functional.seq.skip(0, l);
+                final Iterable<Integer> output = Functional.Lazy.skip(0, l);
                 try {
                     output.iterator();
                 } catch (final UnsupportedOperationException e) {
@@ -183,7 +183,7 @@ class Functional_Skip_Test {
             final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
             {
                 final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-                final Iterable<Integer> output = Functional.seq.<Integer>skip(0).apply(l);
+                final Iterable<Integer> output = Functional.Lazy.<Integer>skip(0).apply(l);
                 assertThat(output).containsExactlyElementsOf(expected);
             }
         }
@@ -191,14 +191,14 @@ class Functional_Skip_Test {
         @Test
         void seqSkipTest2() {
             final List<Integer> input = Arrays.asList(1, 2, 3, 4);
-            assertThatIllegalArgumentException().isThrownBy(() -> Functional.seq.skip(-1, input));
+            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.skip(-1, input));
         }
 
         @Test
         void seqSkipTest3() {
             final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
             final List<Integer> expected = Arrays.asList(3, 4, 5);
-            final Iterable<Integer> output = Functional.seq.skip(2, l);
+            final Iterable<Integer> output = Functional.Lazy.skip(2, l);
             final Iterator<Integer> iterator = output.iterator();
 
             for (int i = 0; i < 20; ++i)

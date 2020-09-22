@@ -42,7 +42,7 @@ class FunctionalTest {
 //    public void seqMapiTest1()
 //    {
 //        final IntList input = new IntList(new int[]{1, 2, 3, 4, 5});
-//        final Collection<Tuple2<Integer,String>> output = Functional.toList(Functional.seq.mapi(new BiFunction<Integer, Integer, Tuple2<Integer, String>>() {
+//        final Collection<Tuple2<Integer,String>> output = Functional.toList(Functional.Lazy.mapi(new BiFunction<Integer, Integer, Tuple2<Integer, String>>() {
 //
 //            public Tuple2<Integer, String> apply(final Integer pos, final Integer i) {
 //                return new Tuple2<>(pos, i.toString());
@@ -66,7 +66,7 @@ class FunctionalTest {
 //    public void seqMapiTest2()
 //    {
 //        final IntList input = new IntList(new int[]{1, 2, 3, 4, 5});
-//        final Iterable<Tuple2<Integer, String>> mapi = Functional.seq.mapi(new BiFunction<Integer, Integer, Tuple2<Integer, String>>() {
+//        final Iterable<Tuple2<Integer, String>> mapi = Functional.Lazy.mapi(new BiFunction<Integer, Integer, Tuple2<Integer, String>>() {
 //
 //            public Tuple2<Integer, String> apply(final Integer pos, final Integer i) {
 //                return new Tuple2<>(pos, i.toString());
@@ -531,7 +531,7 @@ class FunctionalTest {
 //    public void seqFilterTest1()
 //    {
 //        final IntList l = Functional.init(DoublingGenerator,5);
-//        final Iterable<Integer> oddElems = Functional.seq.filter(Functional::isOdd, l);
+//        final Iterable<Integer> oddElems = Functional.Lazy.filter(Functional::isOdd, l);
 //
 //        AssertIterable.assertIterableEquals(new ArrayList<Integer>(), oddElems);
 //    }
@@ -540,7 +540,7 @@ class FunctionalTest {
 //    public void seqFilterTest2()
 //    {
 //        final IntList l = Functional.init(DoublingGenerator,5);
-//        final Iterable<Integer> evenElems = Functional.seq.filter(Functional::isEven, l);
+//        final Iterable<Integer> evenElems = Functional.Lazy.filter(Functional::isEven, l);
 //
 //        final IntList expected = new int[]{2,4,6,8,10});
 //        AssertIterable.assertIterableEquals(expected, evenElems);
@@ -551,7 +551,7 @@ class FunctionalTest {
 //    {
 //        final IntList l = Functional.init(DoublingGenerator,5);
 //        final Integer limit = 5;
-//        final Iterable<Integer> highElems = Functional.seq.filter(
+//        final Iterable<Integer> highElems = Functional.Lazy.filter(
 //                new Predicate<Integer>()
 //                {
 //
@@ -567,7 +567,7 @@ class FunctionalTest {
 //    {
 //        final IntList li = Functional.init(DoublingGenerator, 5);
 //        final Integer limit = 10;
-//        final Iterable<Integer> output = Functional.seq.filter(
+//        final Iterable<Integer> output = Functional.Lazy.filter(
 //                new Predicate<Integer>()
 //                {
 //                     public Boolean apply(final Integer a) {return a > limit;}
@@ -581,7 +581,7 @@ class FunctionalTest {
 //    {
 //        final IntList li = Functional.init(DoublingGenerator, 10);
 //        final IntList expected = new int[]{4,8,12,16,20});
-//        final Iterable<Integer> output = Functional.seq.filter(
+//        final Iterable<Integer> output = Functional.Lazy.filter(
 //                new Predicate<Integer>()
 //                {
 //                     public Boolean apply(final Integer a) {return a % 4 ==0;}
@@ -594,7 +594,7 @@ class FunctionalTest {
 //    public void seqFilterTest6()
 //    {
 //        final IntList input = Functional.init(DoublingGenerator, 10);
-//        final Iterable<Integer> output = Functional.seq.filter(
+//        final Iterable<Integer> output = Functional.Lazy.filter(
 //                new Predicate<Integer>()
 //                {
 //                     public Boolean apply(final Integer a) {return a % 4 ==0;}
@@ -671,7 +671,7 @@ class FunctionalTest {
 //    {
 //        final List<Integer> input = new int[]{1,2,3,4,5}); //Enumerable.Range(1, 5).ToList();
 //        final List<String> expected = Arrays.asList(new String[] {"1", "2", "3", "4", "5"});
-//        final Iterable<String> output = Functional.seq.map(Functional.<Integer>dStringify(), input);
+//        final Iterable<String> output = Functional.Lazy.map(Functional.<Integer>dStringify(), input);
 //        final Iterator<String> it = output.iterator();
 //        for(int i=0;i<20;++i)
 //            assertThat().isTrue()(it.hasNext());
@@ -693,7 +693,7 @@ class FunctionalTest {
 //    public void toArrayTest1()
 //    {
 //        final List<Integer> input = new int[]{1,2,3,4,5});
-//        final Iterable<String> strs = Functional.seq.map(Functional.<Integer>dStringify(), input);
+//        final Iterable<String> strs = Functional.Lazy.map(Functional.<Integer>dStringify(), input);
 //        final List<String> expected = Arrays.asList(new String[]{"1", "2", "3", "4", "5"});
 //
 //        final Object[] output = Functional.toArray(strs);
@@ -713,7 +713,7 @@ class FunctionalTest {
 //    public void lastTest2()
 //    {
 //        final List<Integer> input = new int[]{1,2,3,4,5};
-//        final Iterable<String> strs = Functional.seq.map(Functional.<Integer>dStringify(), input);
+//        final Iterable<String> strs = Functional.Lazy.map(Functional.<Integer>dStringify(), input);
 //        assertThat().isEqualTo("5", Functional.last(strs));
 //    }
 
@@ -743,8 +743,8 @@ class FunctionalTest {
 //        };
 //        final List<String> expected = Arrays.asList(new String[]{"1","2","3","4","5","2","4","6","8","10"});
 //
-//        final Iterable<String> strs = Functional.seq.map(Functional.<Integer>dStringify(), input);
-//        final Iterable<String> output = Functional.seq.concat(strs, Functional.seq.map(Functional.<Integer>dStringify(), Functional.seq.map(doubler, input)));
+//        final Iterable<String> strs = Functional.Lazy.map(Functional.<Integer>dStringify(), input);
+//        final Iterable<String> output = Functional.Lazy.concat(strs, Functional.Lazy.map(Functional.<Integer>dStringify(), Functional.Lazy.map(doubler, input)));
 //
 //        AssertIterable.assertIterableEquals(expected, output);
 //    }
@@ -761,8 +761,8 @@ class FunctionalTest {
 //        };
 //        final List<String> expected = Arrays.asList(new String[]{"1","2","3","4","5","2","4","6","8","10"});
 //
-//        final Iterable<String> strs = Functional.seq.map(Functional.<Integer>dStringify(), input);
-//        final Iterable<String> output = Functional.seq.concat(strs, Functional.seq.map(Functional.<Integer>dStringify(), Functional.seq.map(doubler, input)));
+//        final Iterable<String> strs = Functional.Lazy.map(Functional.<Integer>dStringify(), input);
+//        final Iterable<String> output = Functional.Lazy.concat(strs, Functional.Lazy.map(Functional.<Integer>dStringify(), Functional.Lazy.map(doubler, input)));
 //        final Iterator<String> iterator = output.iterator();
 //
 //        for(int i=0;i<20;++i)
@@ -815,7 +815,7 @@ class FunctionalTest {
 //    public void seqChooseTest1()
 //    {
 //        final IntList li = Functional.init(TriplingGenerator,5);
-//        final Iterable<String> output = Functional.seq.choose(
+//        final Iterable<String> output = Functional.Lazy.choose(
 //                new Function<Integer,Option<String>>()
 //                {
 //
@@ -833,7 +833,7 @@ class FunctionalTest {
 //    public void seqChooseTest2()
 //    {
 //        final IntList li = Functional.init(TriplingGenerator, 5);
-//        final Iterable<String> output = Functional.seq.choose(
+//        final Iterable<String> output = Functional.Lazy.choose(
 //                new Function<Integer, Option<String>>() {
 //
 //                    public Option<String> apply(final Integer i) {
@@ -862,14 +862,14 @@ class FunctionalTest {
 //    @Test
 //    public void seqInitTest1()
 //    {
-//        final Iterable<Integer> output = Functional.seq.init(DoublingGenerator, 5);
+//        final Iterable<Integer> output = Functional.Lazy.init(DoublingGenerator, 5);
 //        AssertIterable.assertIterableEquals(new int[]{2,4,6,8,10}), output);
 //    }
 //
 //    @Test
 //    public void seqInitTest3()
 //    {
-//        final Iterable<Integer> output = Functional.seq.init(DoublingGenerator, 5);
+//        final Iterable<Integer> output = Functional.Lazy.init(DoublingGenerator, 5);
 //        final Iterator<Integer> iterator = output.iterator();
 //
 //        for(int i=0;i<20;++i)
@@ -900,13 +900,13 @@ class FunctionalTest {
 //    @Test
 //    public void fwdPipelineTest4()
 //    {
-//        final Iterable<Integer> input = Functional.seq.init(DoublingGenerator, 5);
+//        final Iterable<Integer> input = Functional.Lazy.init(DoublingGenerator, 5);
 //        final Iterable<String> output = Functional.in(input,
 //                new Function<Iterable<Integer>, Iterable<String>>() {
 //
 //                    public Iterable<String> apply(final Iterable<Integer> integers) {
 //                        try {
-//                            return Functional.seq.map(Functional.<Integer>dStringify(), integers);
+//                            return Functional.Lazy.map(Functional.<Integer>dStringify(), integers);
 //                        } catch (final Exception e) {
 //                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 //                            return null; // Argh!!!
@@ -921,7 +921,7 @@ class FunctionalTest {
 //    @Test
 //    public void fwdPipelineTest5()
 //    {
-//        final Iterable<Integer> l = Functional.seq.init(DoublingGenerator, 5);
+//        final Iterable<Integer> l = Functional.Lazy.init(DoublingGenerator, 5);
 //        final Iterable<Integer> oddElems = Functional.in(l,
 //                new Function<Iterable<Integer>, Iterable<Integer>>() {
 //
@@ -978,7 +978,7 @@ class FunctionalTest {
 //    @Test
 //    public void seqInitTest2()
 //    {
-//        final Iterable<Integer> output = Functional.seq.init(DoublingGenerator);
+//        final Iterable<Integer> output = Functional.Lazy.init(DoublingGenerator);
 //        AssertIterable.assertIterableEquals(new int[]{2,4,6,8,10,12,14,16,18,20,22}),Functional.take(11,output));
 //    }
 //
@@ -1034,7 +1034,7 @@ class FunctionalTest {
 //        final List<Integer> output = Functional.collect(new Function<Integer, List<Integer>>() {
 //
 //            public List<Integer> apply(final Integer o) {
-//                return Functional.toList(Functional.seq.take(o, input));
+//                return Functional.toList(Functional.Lazy.take(o, input));
 //            }
 //        }, input);
 //        final List<Integer> expected = Arrays.asList(1,1,2,1,2,3,1,2,3,4,1,2,3,4,5,1,2,3,4,5,6,1,2,3,4,5,6,7,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,10);
@@ -1049,7 +1049,7 @@ class FunctionalTest {
 //        final List<Integer> output = Functional.collect(new Function<Integer, List<Integer>>() {
 //
 //            public List<Integer> apply(final Integer o) {
-//                return Functional.toList(Functional.seq.take(o, input));
+//                return Functional.toList(Functional.Lazy.take(o, input));
 //            }
 //        }, input);
 //        final List<Integer> expected = Arrays.asList(1, 1, 2, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -1121,17 +1121,17 @@ class FunctionalTest {
 //        final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
 //        {
 //            final List<Integer> expected = new ArrayList<Integer>();
-//            final List<Integer> output = Functional.toList(Functional.seq.takeWhile(Functional::isEven, l));
+//            final List<Integer> output = Functional.toList(Functional.Lazy.takeWhile(Functional::isEven, l));
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(1);
-//            final List<Integer> output = Functional.toList(Functional.seq.takeWhile(Functional.isOdd, l));
+//            final List<Integer> output = Functional.toList(Functional.Lazy.takeWhile(Functional.isOdd, l));
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(1,2,3,4);
-//            final List<Integer> output = Functional.toList(Functional.seq.takeWhile(new Predicate<Integer>() {
+//            final List<Integer> output = Functional.toList(Functional.Lazy.takeWhile(new Predicate<Integer>() {
 //                public Boolean apply(final Integer i) {
 //                    return i <= 4;
 //                }
@@ -1140,7 +1140,7 @@ class FunctionalTest {
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-//            final List<Integer> output = Functional.toList(Functional.seq.takeWhile(new Predicate<Integer>() {
+//            final List<Integer> output = Functional.toList(Functional.Lazy.takeWhile(new Predicate<Integer>() {
 //                public Boolean apply(final Integer i) {
 //                    return i <= 6;
 //                }
@@ -1153,7 +1153,7 @@ class FunctionalTest {
 //    public void seqTakeWhileTest2()
 //    {
 //        final List<Integer> input = Arrays.asList(1, 2, 3, 4);
-//        Functional.seq.takeWhile(null, input);
+//        Functional.Lazy.takeWhile(null, input);
 //    }
 //
 //    @Test
@@ -1161,7 +1161,7 @@ class FunctionalTest {
 //    {
 //        final List<Integer> input = Arrays.asList(1, 2, 3, 4);
 //        int counter=10;
-//        final Iterable<Integer> integers = Functional.seq.takeWhile(Functional.constant(true), input);
+//        final Iterable<Integer> integers = Functional.Lazy.takeWhile(Functional.constant(true), input);
 //        final Iterator<Integer> iterator = integers.iterator();
 //        while(counter>=0)
 //        {
@@ -1464,7 +1464,7 @@ class FunctionalTest {
 //        expected.add(new Tuple2<>(4, 'd'));
 //        expected.add(new Tuple2<>(5, 'e'));
 //
-//        final Collection<Tuple2<Integer,Character>> output = Functional.toList(Functional.seq.zip(input1, input2));
+//        final Collection<Tuple2<Integer,Character>> output = Functional.toList(Functional.Lazy.zip(input1, input2));
 //
 //        AssertIterable.assertIterableEquals(expected, output);
 //    }
@@ -1482,7 +1482,7 @@ class FunctionalTest {
 //        expected.add(new Tuple2<>(4, 'd'));
 //        expected.add(new Tuple2<>(5, 'e'));
 //
-//        final Collection<Tuple2<Integer,Character>> output = Functional.toList(Functional.seq.zip(input1, input2));
+//        final Collection<Tuple2<Integer,Character>> output = Functional.toList(Functional.Lazy.zip(input1, input2));
 //        final Iterator<Tuple2<Integer,Character>> iterator = output.iterator();
 //
 //        for(int i=0;i<20;++i)
@@ -1516,7 +1516,7 @@ class FunctionalTest {
 //        expected.add(new Tuple2<>(4, "4"));
 //        expected.add(new Tuple2<>(5, "5"));
 //
-//        final List<Tuple2<Integer, String>> output = Functional.toList(Functional.seq.zip(Functional.<Integer>identity(), Functional.dStringify(), input));
+//        final List<Tuple2<Integer, String>> output = Functional.toList(Functional.Lazy.zip(Functional.<Integer>identity(), Functional.dStringify(), input));
 //
 //        AssertIterable.assertIterableEquals(expected, output);
 //    }
@@ -1592,7 +1592,7 @@ class FunctionalTest {
 //        expected.add(new Tuple3<>(4, 'd', 3.0));
 //        expected.add(new Tuple3<>(5, 'e', 3.5));
 //
-//        final Collection<Tuple3<Integer,Character,Double>> output = Functional.toList(Functional.seq.zip3(input1, input2, input3));
+//        final Collection<Tuple3<Integer,Character,Double>> output = Functional.toList(Functional.Lazy.zip3(input1, input2, input3));
 //
 //        AssertIterable.assertIterableEquals(expected, output);
 //    }
@@ -1611,7 +1611,7 @@ class FunctionalTest {
 //        expected.add(new Tuple3<>(4, 'd', 3.0));
 //        expected.add(new Tuple3<>(5, 'e', 3.5));
 //
-//        final Collection<Tuple3<Integer,Character,Double>> output = Functional.toList(Functional.seq.zip3(input1, input2, input3));
+//        final Collection<Tuple3<Integer,Character,Double>> output = Functional.toList(Functional.Lazy.zip3(input1, input2, input3));
 //        final Iterator<Tuple3<Integer,Character,Double>> iterator = output.iterator();
 //
 //        for(int i=0;i<20;++i)
@@ -1933,8 +1933,8 @@ class FunctionalTest {
 //    @Test
 //    public void seqCollectTest1()
 //    {
-//        final Iterable<Integer> input = Functional.seq.init(DoublingGenerator, 5);
-//        final Iterable<Integer> output = Functional.seq.collect(repeat(3), input);
+//        final Iterable<Integer> input = Functional.Lazy.init(DoublingGenerator, 5);
+//        final Iterable<Integer> output = Functional.Lazy.collect(repeat(3), input);
 //        final List<Integer> expected = Arrays.asList(2,2,2,4,4,4,6,6,6,8,8,8,10,10,10);
 //        AssertIterable.assertIterableEquals(expected, output);
 //    }
@@ -1942,8 +1942,8 @@ class FunctionalTest {
 //    @Test
 //    public void seqCollectTest2()
 //    {
-//        final Iterable<Integer> input = Functional.seq.init(DoublingGenerator, 5);
-//        final Iterable<Integer> output1 = Functional.seq.collect(repeat(3), input);
+//        final Iterable<Integer> input = Functional.Lazy.init(DoublingGenerator, 5);
+//        final Iterable<Integer> output1 = Functional.Lazy.collect(repeat(3), input);
 //        final Iterable<Integer> output2 = output1;
 //        final List<Integer> expected = Arrays.asList(2,2,2,4,4,4,6,6,6,8,8,8,10,10,10);
 //        AssertIterable.assertIterableEquals(expected, output1);
@@ -1953,8 +1953,8 @@ class FunctionalTest {
 //    @Test
 //    public void seqCollectTest3()
 //    {
-//        final Iterable<Integer> input = Functional.seq.init(DoublingGenerator, 5);
-//        final Iterable<Integer> output = Functional.seq.collect(repeat(3), input);
+//        final Iterable<Integer> input = Functional.Lazy.init(DoublingGenerator, 5);
+//        final Iterable<Integer> output = Functional.Lazy.collect(repeat(3), input);
 //        final List<Integer> expected = Arrays.asList(2, 2, 2, 4, 4, 4, 6, 6, 6, 8, 8, 8, 10, 10, 10);
 //        final Iterator<Integer> iterator = output.iterator();
 //
@@ -1980,7 +1980,7 @@ class FunctionalTest {
 //    @Test
 //    public void takeNandYieldTest1()
 //    {
-//        final Iterable<Integer> input = Functional.seq.init(DoublingGenerator, 5);
+//        final Iterable<Integer> input = Functional.Lazy.init(DoublingGenerator, 5);
 //        final Tuple2<List<Integer>,Iterable<Integer>> output = Functional.takeNAndYield(input, 2);
 //        final List<Integer> expectedList = Arrays.asList(2,4);
 //        final List<Integer> expectedRemainder = Arrays.asList(6, 8, 10);
@@ -1991,7 +1991,7 @@ class FunctionalTest {
 //    @Test
 //    public void takeNandYieldTest2()
 //    {
-//        final Iterable<Integer> input = Functional.seq.init(DoublingGenerator, 5);
+//        final Iterable<Integer> input = Functional.Lazy.init(DoublingGenerator, 5);
 //        final Tuple2<List<Integer>,Iterable<Integer>> output = Functional.takeNAndYield(input, 0);
 //        final List<Integer> expectedList = Arrays.asList();
 //        final List<Integer> expectedRemainder = Arrays.asList(2,4,6,8,10);
@@ -2335,7 +2335,7 @@ class FunctionalTest {
 //        };
 //
 //        final List<Integer> expected = Arrays.asList(1,2,3,4,5,6,7,8,9,10);
-//        final Iterable<Integer> output = Functional.seq.unfold(unspool, finished, seed);
+//        final Iterable<Integer> output = Functional.Lazy.unfold(unspool, finished, seed);
 //        AssertIterable.assertIterableEquals(expected,output);
 //    }
 //
@@ -2357,7 +2357,7 @@ class FunctionalTest {
 //        };
 //
 //        final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-//        final Iterable<Integer> output = Functional.seq.unfold(unspool, finished, seed);
+//        final Iterable<Integer> output = Functional.Lazy.unfold(unspool, finished, seed);
 //        final Iterator<Integer> iterator = output.iterator();
 //
 //        for(int i=0;i<20;++i)
@@ -2397,7 +2397,7 @@ class FunctionalTest {
 //        };
 //
 //        final List<Integer> expected = Arrays.asList(2,4,6,8,10,12,14,16,18,20);
-//        final Iterable<Integer> output = Functional.seq.unfold(doubler,finished,seed);
+//        final Iterable<Integer> output = Functional.Lazy.unfold(doubler,finished,seed);
 //        AssertIterable.assertIterableEquals(expected,output);
 //    }
 //
@@ -2413,7 +2413,7 @@ class FunctionalTest {
 //        };
 //
 //        final List<Integer> expected = Arrays.asList(2,4,6,8,10,12,14,16,18,20);
-//        final Iterable<Integer> output = Functional.seq.unfold(doubler,seed);
+//        final Iterable<Integer> output = Functional.Lazy.unfold(doubler,seed);
 //        AssertIterable.assertIterableEquals(expected,output);
 //    }
 //
@@ -2429,7 +2429,7 @@ class FunctionalTest {
 //        };
 //
 //        final List<Integer> expected = Arrays.asList(2,4,6,8,10,12,14,16,18,20);
-//        final Iterable<Integer> output = Functional.seq.unfold(doubler,seed);
+//        final Iterable<Integer> output = Functional.Lazy.unfold(doubler,seed);
 //        final Iterator<Integer> iterator = output.iterator();
 //
 //        for(int i=0;i<20;++i)
@@ -2571,37 +2571,37 @@ class FunctionalTest {
 //        final List<Integer> l = Arrays.asList(1,2,3,4,5);
 //        {
 //            final List<Integer> expected = Arrays.asList(1,2,3,4,5);
-//            final Iterable<Integer> output = Functional.seq.skip(0, l);
+//            final Iterable<Integer> output = Functional.Lazy.skip(0, l);
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(2,3,4,5);
-//            final Iterable<Integer> output = Functional.seq.skip(1,l);
+//            final Iterable<Integer> output = Functional.Lazy.skip(1,l);
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(3,4,5);
-//            final Iterable<Integer> output = Functional.seq.skip(2,l);
+//            final Iterable<Integer> output = Functional.Lazy.skip(2,l);
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(4,5);
-//            final Iterable<Integer> output = Functional.seq.skip(3,l);
+//            final Iterable<Integer> output = Functional.Lazy.skip(3,l);
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(5);
-//            final Iterable<Integer> output = Functional.seq.skip(4,l);
+//            final Iterable<Integer> output = Functional.Lazy.skip(4,l);
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //        {
 //            final List<Integer> expected = new ArrayList<Integer>();
-//            final Iterable<Integer> output = Functional.seq.skip(5,l);
+//            final Iterable<Integer> output = Functional.Lazy.skip(5,l);
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //        {
 //            final List<Integer> expected = new ArrayList<Integer>();
-//            final Iterable<Integer> output = Functional.seq.skip(6,l);
+//            final Iterable<Integer> output = Functional.Lazy.skip(6,l);
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //    }
@@ -2610,7 +2610,7 @@ class FunctionalTest {
 //    public void seqSkipTest2()
 //    {
 //        final List<Integer> input = Arrays.asList(1,2,3,4);
-//        Functional.seq.skip(-1, input);
+//        Functional.Lazy.skip(-1, input);
 //    }
 //
 //    @Test
@@ -2618,7 +2618,7 @@ class FunctionalTest {
 //    {
 //        final List<Integer> l = Arrays.asList(1,2,3,4,5);
 //        final List<Integer> expected = Arrays.asList(3,4,5);
-//        final Iterable<Integer> output = Functional.seq.skip(2,l);
+//        final Iterable<Integer> output = Functional.Lazy.skip(2,l);
 //        final Iterator<Integer> iterator = output.iterator();
 //
 //        for(int i=0;i<20;++i)
@@ -2702,17 +2702,17 @@ class FunctionalTest {
 //        final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
 //        {
 //            final List<Integer> expected = Arrays.asList(1,2,3,4,5);
-//            final List<? extends Integer> output = Functional.toList(Functional.seq.skipWhile(Functional::isEven, l));
+//            final List<? extends Integer> output = Functional.toList(Functional.Lazy.skipWhile(Functional::isEven, l));
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(2,3,4,5);
-//            final List<? extends Integer> output = Functional.toList(Functional.seq.skipWhile(Functional.isOdd, l));
+//            final List<? extends Integer> output = Functional.toList(Functional.Lazy.skipWhile(Functional.isOdd, l));
 //            AssertIterable.assertIterableEquals(expected, output);
 //        }
 //        {
 //            final List<Integer> expected = Arrays.asList(3,4,5);
-//            final List<? extends Integer> output = Functional.toList(Functional.seq.skipWhile(new Predicate<Integer>() {
+//            final List<? extends Integer> output = Functional.toList(Functional.Lazy.skipWhile(new Predicate<Integer>() {
 //                public Boolean apply(final Integer i) {
 //                    return i <= 2;
 //                }
@@ -2721,7 +2721,7 @@ class FunctionalTest {
 //        }
 //        {
 //            final List<Integer> expected = new ArrayList<Integer>();
-//            final List<? extends Integer> output = Functional.toList(Functional.seq.skipWhile(new Predicate<Integer>() {
+//            final List<? extends Integer> output = Functional.toList(Functional.Lazy.skipWhile(new Predicate<Integer>() {
 //                public Boolean apply(final Integer i) {
 //                    return i <= 6;
 //                }
@@ -2734,7 +2734,7 @@ class FunctionalTest {
 //    public void seqSkipWhileTest2()
 //    {
 //        final List<Integer> input = Arrays.asList(1, 2, 3, 4);
-//        Functional.seq.skipWhile(null, input);
+//        Functional.Lazy.skipWhile(null, input);
 //    }
 //
 //    @Test
@@ -2744,7 +2744,7 @@ class FunctionalTest {
 //        for(int i=1;i<10;++i)
 //            input.add(Integer.valueOf(i));
 //
-//        final List<? extends Number> output = Functional.toList(Functional.seq.skipWhile(new Predicate<Object>() {
+//        final List<? extends Number> output = Functional.toList(Functional.Lazy.skipWhile(new Predicate<Object>() {
 //
 //            public Boolean apply(final Object number) {
 //                return ((number instanceof Integer) && ((Integer) number % 2) == 1);
@@ -2761,7 +2761,7 @@ class FunctionalTest {
 //    {
 //        final List<Integer> l = Arrays.asList(1,2,3,4,5);
 //        final List<Integer> expected = Arrays.asList(3,4,5);
-//        final Iterable<Integer> output = Functional.seq.skipWhile(new Predicate<Integer>() {
+//        final Iterable<Integer> output = Functional.Lazy.skipWhile(new Predicate<Integer>() {
 //            public Boolean apply(final Integer i) {
 //                return i <= 2;
 //            }
@@ -2948,7 +2948,7 @@ class FunctionalTest {
 //        final int noElems = 13;
 //        final int noPartitions = 5;
 //        final List<Functional.Range<String>> partitions = Functional.toList(
-//                Functional.seq.partition(
+//                Functional.Lazy.partition(
 //                        new Function<Integer, String>() {
 //                            public String apply(final Integer i) {
 //                                return new Integer(i - 1).toString();
@@ -2976,7 +2976,7 @@ class FunctionalTest {
 //        final int noElems = 13;
 //        final int noPartitions = 5;
 //        final Iterable<Functional.Range<String>> output =
-//                Functional.seq.partition(
+//                Functional.Lazy.partition(
 //                        new Function<Integer, String>() {
 //                            public String apply(final Integer i) {
 //                                return new Integer(i - 1).toString();

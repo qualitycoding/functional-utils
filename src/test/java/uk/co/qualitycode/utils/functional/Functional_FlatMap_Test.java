@@ -78,7 +78,7 @@ class Functional_FlatMap_Test {
 //        void seqMapTest1() {
 //            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5); //Enumerable.Range(1, 5).ToList();
 //            final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
-//            final Iterable<String> output = Functional.seq.flatMap(Collections::singleton, input);
+//            final Iterable<String> output = Functional.Lazy.flatMap(Collections::singleton, input);
 //            final Iterator<String> it = output.iterator();
 //            for (int i = 0; i < 20; ++i)
 //                assertThat(it.hasNext()).isTrue();
@@ -100,7 +100,7 @@ class Functional_FlatMap_Test {
 //        void curriedSeqMapTest1() {
 //            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5); //Enumerable.Range(1, 5).ToList();
 //            final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
-//            final Iterable<String> output = Functional.seq.flatMap(Collections::singleton).apply(input);
+//            final Iterable<String> output = Functional.Lazy.flatMap(Collections::singleton).apply(input);
 //            final Iterator<String> it = output.iterator();
 //            for (int i = 0; i < 20; ++i)
 //                assertThat(it.hasNext()).isTrue();
@@ -122,7 +122,7 @@ class Functional_FlatMap_Test {
 //        void cantRemoveFromSeqMapTest1() {
 //            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5); //Enumerable.Range(1, 5).ToList();
 //            final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
-//            final Iterable<String> output = Functional.seq.flatMap(Collections::singleton, input);
+//            final Iterable<String> output = Functional.Lazy.flatMap(Collections::singleton, input);
 //            assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
 //        }
 //
@@ -130,7 +130,7 @@ class Functional_FlatMap_Test {
 //        void cantRestartIteratorFromSeqMapTest1() {
 //            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5); //Enumerable.Range(1, 5).ToList();
 //            final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
-//            final Iterable<String> output = Functional.seq.flatMap(Collections::singleton, input);
+//            final Iterable<String> output = Functional.Lazy.flatMap(Collections::singleton, input);
 //            try {
 //                output.iterator();
 //            } catch (final UnsupportedOperationException e) {

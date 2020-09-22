@@ -34,7 +34,7 @@ class Functional_Zip3_Test {
     @Test
     void zip3WithThreeIterables() {
         final Collection<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);
-        final Iterable<Character> input2 = Functional.seq.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
+        final Iterable<Character> input2 = Functional.Lazy.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
         final Collection<Double> input3 = Arrays.asList(1.0, 2.0, 2.5, 3.0, 3.5);
 
         final Collection<Tuple3<Integer, Character, Double>> expected = new ArrayList<>();
@@ -56,25 +56,25 @@ class Functional_Zip3_Test {
         assertAll(
                 () -> assertThatIllegalArgumentException()
                         .isThrownBy(() -> {
-                            final Iterable<Integer> input1 = Functional.seq.map(Function.identity(), Arrays.asList(1, 2));
-                            final Iterable<Character> input2 = Functional.seq.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
-                            final Iterable<Character> input3 = Functional.seq.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
+                            final Iterable<Integer> input1 = Functional.Lazy.map(Function.identity(), Arrays.asList(1, 2));
+                            final Iterable<Character> input2 = Functional.Lazy.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
+                            final Iterable<Character> input3 = Functional.Lazy.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
                             Functional.zip3(input1, input2, input3);
                         })
                         .withMessage("zip3(Iterable<A>,Iterable<B>,Iterable<C>): Cannot zip three iterables with different lengths"),
                 () -> assertThatIllegalArgumentException()
                         .isThrownBy(() -> {
-                            final Iterable<Integer> input1 = Functional.seq.map(Function.identity(), Arrays.asList(1, 2));
-                            final Iterable<Character> input2 = Functional.seq.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
-                            final Iterable<Integer> input3 = Functional.seq.map(Function.identity(), Arrays.asList(1, 2));
+                            final Iterable<Integer> input1 = Functional.Lazy.map(Function.identity(), Arrays.asList(1, 2));
+                            final Iterable<Character> input2 = Functional.Lazy.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
+                            final Iterable<Integer> input3 = Functional.Lazy.map(Function.identity(), Arrays.asList(1, 2));
                             Functional.zip3(input1, input2, input3);
                         })
                         .withMessage("zip3(Iterable<A>,Iterable<B>,Iterable<C>): Cannot zip three iterables with different lengths"),
                 () -> assertThatIllegalArgumentException()
                         .isThrownBy(() -> {
-                            final Iterable<Integer> input1 = Functional.seq.map(Function.identity(), Arrays.asList(1, 2));
-                            final Iterable<Integer> input2 = Functional.seq.map(Function.identity(), Arrays.asList(1, 2));
-                            final Iterable<Character> input3 = Functional.seq.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
+                            final Iterable<Integer> input1 = Functional.Lazy.map(Function.identity(), Arrays.asList(1, 2));
+                            final Iterable<Integer> input2 = Functional.Lazy.map(Function.identity(), Arrays.asList(1, 2));
+                            final Iterable<Character> input3 = Functional.Lazy.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
                             Functional.zip3(input1, input2, input3);
                         })
                         .withMessage("zip3(Iterable<A>,Iterable<B>,Iterable<C>): Cannot zip three iterables with different lengths"));
@@ -95,7 +95,7 @@ class Functional_Zip3_Test {
             expected.add(new Tuple3<>(4, 'd', 3.0));
             expected.add(new Tuple3<>(5, 'e', 3.5));
 
-            final Iterable<Tuple3<Integer, Character, Double>> output = Functional.seq.zip3(input1, input2, input3);
+            final Iterable<Tuple3<Integer, Character, Double>> output = Functional.Lazy.zip3(input1, input2, input3);
 
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -113,7 +113,7 @@ class Functional_Zip3_Test {
             expected.add(new Tuple3<>(4, 'd', 3.0));
             expected.add(new Tuple3<>(5, 'e', 3.5));
 
-            final Iterable<Tuple3<Integer, Character, Double>> output = Functional.seq.<Integer, Character, Double>zip3(input1, input2).apply(input3);
+            final Iterable<Tuple3<Integer, Character, Double>> output = Functional.Lazy.<Integer, Character, Double>zip3(input1, input2).apply(input3);
 
             assertThat(output).containsExactlyElementsOf(expected);
         }
@@ -124,7 +124,7 @@ class Functional_Zip3_Test {
             final Collection<Character> input2 = Arrays.asList('a', 'b', 'c', 'd', 'e');
             final Collection<Double> input3 = Arrays.asList(1.0, 2.0, 2.5, 3.0, 3.5);
 
-            final Iterable<Tuple3<Integer, Character, Double>> output = Functional.seq.zip3(input1, input2, input3);
+            final Iterable<Tuple3<Integer, Character, Double>> output = Functional.Lazy.zip3(input1, input2, input3);
 
             assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
         }
@@ -135,7 +135,7 @@ class Functional_Zip3_Test {
             final Collection<Character> input2 = Arrays.asList('a', 'b', 'c', 'd', 'e');
             final Collection<Double> input3 = Arrays.asList(1.0, 2.0, 2.5, 3.0, 3.5);
 
-            final Iterable<Tuple3<Integer, Character, Double>> output = Functional.seq.zip3(input1, input2, input3);
+            final Iterable<Tuple3<Integer, Character, Double>> output = Functional.Lazy.zip3(input1, input2, input3);
             try {
                 output.iterator();
             } catch (final UnsupportedOperationException e) {
@@ -157,7 +157,7 @@ class Functional_Zip3_Test {
             expected.add(new Tuple3<>(4, 'd', 3.0));
             expected.add(new Tuple3<>(5, 'e', 3.5));
 
-            final Iterable<Tuple3<Integer, Character, Double>> output = Functional.seq.zip3(input1, input2, input3);
+            final Iterable<Tuple3<Integer, Character, Double>> output = Functional.Lazy.zip3(input1, input2, input3);
             final Iterator<Tuple3<Integer, Character, Double>> iterator = output.iterator();
 
             for (int i = 0; i < 20; ++i)

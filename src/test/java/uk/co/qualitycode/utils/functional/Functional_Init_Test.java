@@ -51,31 +51,31 @@ class Functional_Init_Test {
     class Seq {
         @Test
         void seqInitWithBound() {
-            final Iterable<Integer> output = Functional.seq.init(doublingGenerator, 5);
+            final Iterable<Integer> output = Functional.Lazy.init(doublingGenerator, 5);
             assertThat(output).containsExactly(2, 4, 6, 8, 10);
         }
 
         @Test
         void seqInitWithoutUpperBound() {
-            final Iterable<Integer> output = Functional.seq.init(doublingGenerator);
+            final Iterable<Integer> output = Functional.Lazy.init(doublingGenerator);
             assertThat(Functional.take(11, output)).containsExactly(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22);
         }
 
         @Test
         void cantRemoveFromSeqInit() {
-            final Iterable<Integer> output = Functional.seq.init(doublingGenerator, 5);
+            final Iterable<Integer> output = Functional.Lazy.init(doublingGenerator, 5);
             assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
         }
 
         @Test
         void cantRemoveFromSeqInitWithoutUpperBound() {
-            final Iterable<Integer> output = Functional.seq.init(doublingGenerator);
+            final Iterable<Integer> output = Functional.Lazy.init(doublingGenerator);
             assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
         }
 
         @Test
         void cantRestartIteratorFromSeqInit() {
-            final Iterable<Integer> output = Functional.seq.init(doublingGenerator);
+            final Iterable<Integer> output = Functional.Lazy.init(doublingGenerator);
             try {
                 output.iterator();
             } catch (final UnsupportedOperationException e) {

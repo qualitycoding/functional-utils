@@ -98,22 +98,22 @@ class Functional_TakeWhile_Test {
             final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
             {
                 final List<Integer> expected = new ArrayList<>();
-                final Iterable<Integer> output = Functional.seq.takeWhile(Functional::isEven, l);
+                final Iterable<Integer> output = Functional.Lazy.takeWhile(Functional::isEven, l);
                 assertThat(output).containsExactlyElementsOf(expected);
             }
             {
                 final List<Integer> expected = Arrays.asList(1);
-                final Iterable<Integer> output = Functional.seq.takeWhile(Functional::isOdd, l);
+                final Iterable<Integer> output = Functional.Lazy.takeWhile(Functional::isOdd, l);
                 assertThat(output).containsExactlyElementsOf(expected);
             }
             {
                 final List<Integer> expected = Arrays.asList(1, 2, 3, 4);
-                final Iterable<Integer> output = Functional.seq.takeWhile(i -> i <= 4, l);
+                final Iterable<Integer> output = Functional.Lazy.takeWhile(i -> i <= 4, l);
                 assertThat(output).containsExactlyElementsOf(expected);
             }
             {
                 final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-                final Iterable<Integer> output = Functional.seq.takeWhile(i -> i <= 6, l);
+                final Iterable<Integer> output = Functional.Lazy.takeWhile(i -> i <= 6, l);
                 assertThat(output).containsExactlyElementsOf(expected);
             }
         }
@@ -123,7 +123,7 @@ class Functional_TakeWhile_Test {
             final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
             {
                 final List<Integer> expected = Arrays.asList(1);
-                final Iterable<Integer> output = Functional.seq.takeWhile(Functional::isOdd, l);
+                final Iterable<Integer> output = Functional.Lazy.takeWhile(Functional::isOdd, l);
                 final Iterator<Integer> iterator = output.iterator();
                 try {
                     assertThat(iterator.next()).isEqualTo(expected.get(0));
@@ -140,7 +140,7 @@ class Functional_TakeWhile_Test {
             final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
             {
                 final List<Integer> expected = Arrays.asList(1);
-                final Iterable<Integer> output = Functional.seq.takeWhile(Functional::isOdd, l);
+                final Iterable<Integer> output = Functional.Lazy.takeWhile(Functional::isOdd, l);
                 final Iterator<Integer> iterator = output.iterator();
                 try {
                     assertThat(iterator.next()).isEqualTo(expected.get(0));
@@ -155,7 +155,7 @@ class Functional_TakeWhile_Test {
         void cantRemoveFromSeqTakeWhileTest1() {
             final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
             {
-                final Iterable<Integer> output = Functional.seq.takeWhile(Functional::isOdd, l);
+                final Iterable<Integer> output = Functional.Lazy.takeWhile(Functional::isOdd, l);
                 assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
             }
         }
@@ -164,7 +164,7 @@ class Functional_TakeWhile_Test {
         void cantRestartIteratorFromSeqTakeWhileTest1() {
             final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
             {
-                final Iterable<Integer> output = Functional.seq.takeWhile(Functional::isOdd, l);
+                final Iterable<Integer> output = Functional.Lazy.takeWhile(Functional::isOdd, l);
                 try {
                     output.iterator();
                 } catch (final UnsupportedOperationException e) {
@@ -179,7 +179,7 @@ class Functional_TakeWhile_Test {
             final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
             {
                 final List<Integer> expected = new ArrayList<>();
-                final Iterable<Integer> output = Functional.seq.takeWhile(Functional::isEven).apply(l);
+                final Iterable<Integer> output = Functional.Lazy.takeWhile(Functional::isEven).apply(l);
                 assertThat(output).containsExactlyElementsOf(expected);
             }
         }
@@ -187,14 +187,14 @@ class Functional_TakeWhile_Test {
         @Test
         void seqTakeWhileTest2() {
             final List<Integer> input = Arrays.asList(1, 2, 3, 4);
-            assertThatIllegalArgumentException().isThrownBy(() -> Functional.seq.takeWhile(null, input));
+            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.takeWhile(null, input));
         }
 
         @Test
         void seqTakeWhileTest3() {
             final List<Integer> input = Arrays.asList(1, 2, 3, 4);
             int counter = 10;
-            final Iterable<Integer> integers = Functional.seq.takeWhile(x -> Functional.constant(true).apply(x), input);
+            final Iterable<Integer> integers = Functional.Lazy.takeWhile(x -> Functional.constant(true).apply(x), input);
             final Iterator<Integer> iterator = integers.iterator();
             while (counter >= 0) {
                 assertThat(iterator.hasNext()).isTrue();

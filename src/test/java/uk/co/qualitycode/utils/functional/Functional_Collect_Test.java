@@ -34,24 +34,24 @@ class Functional_Collect_Test {
 
     @Test
     void seqCollectTest1() {
-        final Iterable<Integer> input = Functional.seq.init(doublingGenerator, 5);
-        final Iterable<Integer> output = Functional.seq.collect(repeat(3), input);
+        final Iterable<Integer> input = Functional.Lazy.init(doublingGenerator, 5);
+        final Iterable<Integer> output = Functional.Lazy.collect(repeat(3), input);
         final List<Integer> expected = Arrays.asList(2, 2, 2, 4, 4, 4, 6, 6, 6, 8, 8, 8, 10, 10, 10);
         assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
     void curriedSeqCollectTest1() {
-        final Iterable<Integer> input = Functional.seq.init(doublingGenerator, 5);
-        final Iterable<Integer> output = Functional.seq.collect(repeat(3)).apply(input);
+        final Iterable<Integer> input = Functional.Lazy.init(doublingGenerator, 5);
+        final Iterable<Integer> output = Functional.Lazy.collect(repeat(3)).apply(input);
         final List<Integer> expected = Arrays.asList(2, 2, 2, 4, 4, 4, 6, 6, 6, 8, 8, 8, 10, 10, 10);
         assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
     void seqCollectTest2() {
-        final Iterable<Integer> input = Functional.seq.init(doublingGenerator, 5);
-        final Iterable<Integer> output = Functional.seq.collect(repeat(3), input);
+        final Iterable<Integer> input = Functional.Lazy.init(doublingGenerator, 5);
+        final Iterable<Integer> output = Functional.Lazy.collect(repeat(3), input);
         try {
             final Iterator<Integer> iterator1 = output.iterator();
         } catch (final UnsupportedOperationException e) {
@@ -62,15 +62,15 @@ class Functional_Collect_Test {
 
     @Test
     void cantRemoveFromSeqCollectTest1() {
-        final Iterable<Integer> input = Functional.seq.init(doublingGenerator, 5);
-        final Iterable<Integer> output = Functional.seq.collect(repeat(3), input);
+        final Iterable<Integer> input = Functional.Lazy.init(doublingGenerator, 5);
+        final Iterable<Integer> output = Functional.Lazy.collect(repeat(3), input);
         assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
     }
 
     @Test
     void seqCollectTest3() {
-        final Iterable<Integer> input = Functional.seq.init(doublingGenerator, 5);
-        final Iterable<Integer> output = Functional.seq.collect(repeat(3), input);
+        final Iterable<Integer> input = Functional.Lazy.init(doublingGenerator, 5);
+        final Iterable<Integer> output = Functional.Lazy.collect(repeat(3), input);
         final List<Integer> expected = Arrays.asList(2, 2, 2, 4, 4, 4, 6, 6, 6, 8, 8, 8, 10, 10, 10);
         final Iterator<Integer> iterator = output.iterator();
 

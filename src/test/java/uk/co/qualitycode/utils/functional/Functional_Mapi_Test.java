@@ -76,7 +76,7 @@ class Functional_Mapi_Test {
         @Test
         void seqMapiTest1() {
             final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-            final Iterable<Tuple2<Integer, String>> output = Functional.seq.mapi((pos, i) -> new Tuple2<>(pos, i.toString()), input);
+            final Iterable<Tuple2<Integer, String>> output = Functional.Lazy.mapi((pos, i) -> new Tuple2<>(pos, i.toString()), input);
             assertThat(Functional.unzip(output)).satisfies(o -> {
                 assertThat(o._1).containsExactly(0, 1, 2, 3, 4);
                 assertThat(o._2).containsExactly("1", "2", "3", "4", "5");
@@ -86,7 +86,7 @@ class Functional_Mapi_Test {
         @Test
         void cantRestartIteratorInSeqMapiTest1() {
             final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-            final Iterable<Tuple2<Integer, String>> output = Functional.seq.mapi((pos, i) -> new Tuple2<>(pos, i.toString()), input);
+            final Iterable<Tuple2<Integer, String>> output = Functional.Lazy.mapi((pos, i) -> new Tuple2<>(pos, i.toString()), input);
             try {
                 output.iterator();
             } catch (final UnsupportedOperationException e) {
@@ -98,7 +98,7 @@ class Functional_Mapi_Test {
         @Test
         void curriedSeqMapiTest1() {
             final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-            final Iterable<Tuple2<Integer, String>> output = Functional.seq.mapi((BiFunction<Integer, Integer, Tuple2<Integer, String>>) (pos, i) -> new Tuple2<>(pos, i.toString())).apply(input);
+            final Iterable<Tuple2<Integer, String>> output = Functional.Lazy.mapi((BiFunction<Integer, Integer, Tuple2<Integer, String>>) (pos, i) -> new Tuple2<>(pos, i.toString())).apply(input);
             assertThat(Functional.unzip(output)).satisfies(o -> {
                 assertThat(o._1).containsExactly(0, 1, 2, 3, 4);
                 assertThat(o._2).containsExactly("1", "2", "3", "4", "5");
@@ -108,14 +108,14 @@ class Functional_Mapi_Test {
         @Test
         void cantRemoveFromSeqMapiTest1() {
             final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-            final Iterable<Tuple2<Integer, String>> output = Functional.seq.mapi((pos, i) -> new Tuple2<>(pos, i.toString()), input);
+            final Iterable<Tuple2<Integer, String>> output = Functional.Lazy.mapi((pos, i) -> new Tuple2<>(pos, i.toString()), input);
             assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
         }
 
         @Test
         void seqMapiTest2() {
             final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-            final Iterable<Tuple2<Integer, String>> mapi = Functional.seq.mapi((pos, i) -> new Tuple2<>(pos, i.toString()), input);
+            final Iterable<Tuple2<Integer, String>> mapi = Functional.Lazy.mapi((pos, i) -> new Tuple2<>(pos, i.toString()), input);
             final Iterator<Tuple2<Integer, String>> iterator = mapi.iterator();
 
             for (int i = 0; i < 10; ++i)

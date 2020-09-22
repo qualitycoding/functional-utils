@@ -92,19 +92,19 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             }
 
             public Iterable2<T> filter(final Predicate<? super T> f) {
-                return of(Functional.seq.filter(f, i));
+                return of(Functional.Lazy.filter(f, i));
             }
 
             public <U> Iterable2<U> map(final Function<? super T, ? extends U> f) {
-                return of(Functional.seq.map(f, i));
+                return of(Functional.Lazy.map(f, i));
             }
 
             public <U> Iterable2<U> mapi(final BiFunction<Integer, T, ? extends U> f) {
-                return of(Functional.seq.mapi(f, i));
+                return of(Functional.Lazy.mapi(f, i));
             }
 
             public <U> Iterable2<U> choose(final Function<? super T, Option<U>> f) {
-                return of(Functional.seq.choose(f, i));
+                return of(Functional.Lazy.choose(f, i));
             }
 
             public boolean exists(final Predicate<? super T> f) {
@@ -136,7 +136,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             }
 
             public Iterable2<T> concat(final Iterable2<T> list2) {
-                return of(Functional.seq.concat(i, list2));
+                return of(Functional.Lazy.concat(i, list2));
             }
 
             public Option<T> find(final Predicate<? super T> f) {
@@ -152,21 +152,21 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             }
 
             public Iterable2<T> take(final int howMany) {
-                return of(Functional.seq.take(howMany, i));
+                return of(Functional.Lazy.take(howMany, i));
             }
 
 
             public Iterable2<T> takeWhile(final Predicate<? super T> f) {
-                return of(Functional.seq.takeWhile(f, i));
+                return of(Functional.Lazy.takeWhile(f, i));
             }
 
             public Iterable2<T> skip(final int howMany) {
-                return of(Functional.seq.skip(howMany, i));
+                return of(Functional.Lazy.skip(howMany, i));
             }
 
 
             public Iterable2<T> skipWhile(final Predicate<? super T> f) {
-                return of(Functional.seq.skipWhile(f, i));
+                return of(Functional.Lazy.skipWhile(f, i));
             }
 
             public String join(final String delimiter) {
@@ -182,16 +182,16 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             }
 
             public <U> Iterable2<Tuple2<T, U>> zip(final Iterable2<? extends U> l2) {
-                return of(Functional.seq.zip(i, l2));
+                return of(Functional.Lazy.zip(i, l2));
             }
 
             //public <U>Tuple2<List<T>,List<U>> unzip(){return Functional.unzip(i);}
             public <U, V> Iterable2<Tuple3<T, U, V>> zip3(final Iterable<? extends U> l2, final Iterable<? extends V> l3) {
-                return of(Functional.seq.zip3(i, l2, l3));
+                return of(Functional.Lazy.zip3(i, l2, l3));
             }
 
             public <U> Iterable2<U> collect(final Function<? super T, ? extends Iterable<U>> f) {
-                return of(Functional.seq.collect(f, i));
+                return of(Functional.Lazy.collect(f, i));
             }
 
             public <U> U in(final Function<Iterable2<T>, U> f) {
@@ -379,11 +379,11 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
     }
 
     static <T> Iterable2<T> init(final Function<Integer, T> f, final int howMany) {
-        return of(Functional.seq.init(f, howMany));
+        return of(Functional.Lazy.init(f, howMany));
     }
 
     static <T> Iterable2<T> init(final Function<Integer, ? extends T> f) {
-        return of(Functional.seq.init(f));
+        return of(Functional.Lazy.init(f));
     }
 
     @SafeVarargs

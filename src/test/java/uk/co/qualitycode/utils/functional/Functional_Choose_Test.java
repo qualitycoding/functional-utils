@@ -96,7 +96,7 @@ class Functional_Choose_Test {
         @Test
         void seqChooseTest1() {
             final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-            final Iterable<String> output = Functional.seq.choose(i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none(), li);
+            final Iterable<String> output = Functional.Lazy.choose(i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none(), li);
 
             final Collection<String> expected = Arrays.asList("6", "12");
             assertThat(output).containsExactlyElementsOf(expected);
@@ -105,7 +105,7 @@ class Functional_Choose_Test {
         @Test
         void curriedSeqChooseTest1() {
             final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-            final Iterable<String> output = Functional.seq.choose((Function<Integer, Option<String>>) i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none()).apply(li);
+            final Iterable<String> output = Functional.Lazy.choose((Function<Integer, Option<String>>) i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none()).apply(li);
 
             final Collection<String> expected = Arrays.asList("6", "12");
             assertThat(output).containsExactlyElementsOf(expected);
@@ -114,14 +114,14 @@ class Functional_Choose_Test {
         @Test
         void cantRemoveFromSeqChooseTest1() {
             final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-            final Iterable<String> output = Functional.seq.choose(i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none(), li);
+            final Iterable<String> output = Functional.Lazy.choose(i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none(), li);
             assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
         }
 
         @Test
         void cantRestartIteratorFromSeqChooseTest1() {
             final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-            final Iterable<String> output = Functional.seq.choose(i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none(), li);
+            final Iterable<String> output = Functional.Lazy.choose(i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none(), li);
             try {
                 output.iterator();
             } catch (final UnsupportedOperationException e) {
@@ -133,7 +133,7 @@ class Functional_Choose_Test {
         @Test
         void seqChooseTest2() {
             final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-            final Iterable<String> output = Functional.seq.choose(i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none(), li);
+            final Iterable<String> output = Functional.Lazy.choose(i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none(), li);
             final Iterator<String> iterator = output.iterator();
 
             for (int i = 0; i < 20; ++i)
