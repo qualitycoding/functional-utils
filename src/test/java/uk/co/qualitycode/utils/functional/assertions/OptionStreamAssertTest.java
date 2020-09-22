@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static uk.co.qualitycode.utils.functional.OptionStreamToStreamTransformer.$;
+import static uk.co.qualitycode.utils.functional.monad.transformer.OptionStreamToStreamTransformer.$;
 
 class OptionStreamAssertTest<T> {
 
