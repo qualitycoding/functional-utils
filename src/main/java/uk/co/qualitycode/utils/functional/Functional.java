@@ -1954,7 +1954,30 @@ public final class Functional {
      * @return a list of type U containing the concatenated sequences of transformed values.
      */
     public static <T, U> List<U> flatMap(final Function<? super T, ? extends Iterable<U>> f, final Iterable<T> input) {
-        List<U> output = input instanceof Collection<?> ? new ArrayList<>(((Collection<?>) input).size()) : new ArrayList<>();
+        if(isNull(f)) throw new IllegalArgumentException("flatMap(Function<A,B>,Iterable<A>): f must not be null");
+        if(isNull(input)) throw new IllegalArgumentException("flatMap(Function<A,B>,Iterable<A>): input must not be null");
+        List<U> output = new ArrayList<>();
+        for (final T element : input)
+            output = Functional.concat(output, f.apply(element));
+        return Collections.unmodifiableList(output);
+    }
+
+    /**
+     * See <a href="http://en.wikipedia.org/wiki/Map_(higher-order_function)">Map</a>
+     * This is a 1-to-1 transformation. Every element in the input sequence will be transformed into a sequence of output elements.
+     * These sequences are concatenated into one final output sequence at the end of the transformation.
+     * map: (T -> U list) -> T list -> U list
+     *
+     * @param <T>   the type of the element in the input sequence
+     * @param <U>   the type of the element in the output sequence
+     * @param f     a transformation function which takes a object of type T and returns a sequence of objects, presumably related, of type U
+     * @param input a sequence to be fed into f
+     * @return a list of type U containing the concatenated sequences of transformed values.
+     */
+    public static <T, U> List<U> flatMap(final Function<? super T, ? extends Iterable<U>> f, final Collection<T> input) {
+        if(isNull(f)) throw new IllegalArgumentException("flatMap(Function<A,B>,Collection<A>): f must not be null");
+        if(isNull(input)) throw new IllegalArgumentException("flatMap(Function<A,B>,Collection<A>): input must not be null");
+        List<U> output = new ArrayList<>(input.size());
         for (final T element : input)
             output = Functional.concat(output, f.apply(element));
         return Collections.unmodifiableList(output);
@@ -1974,6 +1997,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <T, U> Function<Iterable<T>, List<U>> flatMap(final Function<? super T, ? extends Iterable<U>> f) {
+        if(isNull(f)) throw new IllegalArgumentException("flatMap(Function<A,Iterable<B>>): f must not be null");
         return input -> Functional.flatMap(f, input);
     }
 

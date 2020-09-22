@@ -165,5 +165,4 @@ class Functional_Map_Test {
             assertThat(output.containsAll(expected)).isTrue();
         }
     }
-
 }

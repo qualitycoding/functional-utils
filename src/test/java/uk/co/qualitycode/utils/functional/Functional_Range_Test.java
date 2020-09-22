@@ -14,5 +14,4 @@ class Functional_Range_Test {
         assertThat(rangeGenerator.apply(1)).as("First value in the range").isEqualTo(7);
         assertThat(rangeGenerator.apply(2)).as("Second value in the range").isEqualTo(8);
     }
-
 }
