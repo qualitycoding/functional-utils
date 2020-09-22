@@ -2036,45 +2036,6 @@ public final class Functional {
     }
 
     /**
-     * append: given the input sequence and an item, return a new, lazily-evaluated sequence containing the input with the item
-     * as the final element.
-     *
-     * @param t     the item to be appended
-     * @param input the input sequence
-     * @param <T>   the type of the element in the input sequence
-     * @return a sequence containing all the elements of 'input' followed by 't'
-     * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
-     */
-    public static <T> Iterable<T> append(final T t, final Iterable<T> input) {
-        return new Iterable<T>() {
-            private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
-
-            public Iterator<T> iterator() {
-                if (haveCreatedIterator.compareAndSet(false, true))
-                    return new Iterator<T>() {
-                        private int counter;
-                        private final Iterator<? extends T> iterator = input.iterator();
-
-                        public boolean hasNext() {
-                            return counter == 0 || iterator.hasNext();
-                        }
-
-
-                        public T next() {
-                            return counter++ == 0 ? t : iterator.next();
-                        }
-
-
-                        public void remove() {
-                            throw new UnsupportedOperationException("append(T,Iterable<T>): it is not possible to remove elements from this sequence");
-                        }
-                    };
-                else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
-            }
-        };
-    }
-
-    /**
      * groupBy: similar to {@link #partition(Predicate, Iterable)} in that the input is grouped according to a function. This is more general than
      * <tt>partition</tt> though as the output can be an arbitrary number of groups, up to and including one group per item in the
      * input data set. The 'keyFn' is the grouping operator and it is used to determine the key at which any given element from
@@ -2119,6 +2080,45 @@ public final class Functional {
      */
     public static class seq {
         private seq() {
+        }
+
+        /**
+         * append: given the input sequence and an item, return a new, lazily-evaluated sequence containing the input with the item
+         * as the final element.
+         *
+         * @param t     the item to be appended
+         * @param input the input sequence
+         * @param <T>   the type of the element in the input sequence
+         * @return a sequence containing all the elements of 'input' followed by 't'
+         * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
+         */
+        public static <T> Iterable<T> append(final T t, final Iterable<T> input) {
+            return new Iterable<T>() {
+                private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
+
+                public Iterator<T> iterator() {
+                    if (haveCreatedIterator.compareAndSet(false, true))
+                        return new Iterator<T>() {
+                            private int counter;
+                            private final Iterator<? extends T> iterator = input.iterator();
+
+                            public boolean hasNext() {
+                                return counter == 0 || iterator.hasNext();
+                            }
+
+
+                            public T next() {
+                                return counter++ == 0 ? t : iterator.next();
+                            }
+
+
+                            public void remove() {
+                                throw new UnsupportedOperationException("append(T,Iterable<T>): it is not possible to remove elements from this sequence");
+                            }
+                        };
+                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                }
+            };
         }
 
         /**

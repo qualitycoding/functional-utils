@@ -16,7 +16,7 @@ class Functional_Append_Test {
     void appendTest1() {
         final int i = 1;
         final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-        final Iterable<Integer> output = Functional.append(i, l);
+        final Iterable<Integer> output = Functional.seq.append(i, l);
         final List<Integer> expected = Arrays.asList(1, 2, 4, 6, 8, 10);
 
         assertThat(output).containsExactlyElementsOf(expected);
@@ -26,7 +26,7 @@ class Functional_Append_Test {
     void tryToRemoveFromAnIteratorTest1() {
         final int i = 1;
         final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-        final Iterable<Integer> output = Functional.append(i, l);
+        final Iterable<Integer> output = Functional.seq.append(i, l);
         assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
     }
 
@@ -34,7 +34,7 @@ class Functional_Append_Test {
     void appendIterableCanOnlyHaveOneIterator() {
         final int i = 1;
         final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-        final Iterable<Integer> output = Functional.append(i, l);
+        final Iterable<Integer> output = Functional.seq.append(i, l);
         try {
             output.iterator();
         } catch (final UnsupportedOperationException e) {
