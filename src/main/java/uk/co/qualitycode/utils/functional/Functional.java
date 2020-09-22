@@ -1921,7 +1921,7 @@ public final class Functional {
      * @return a function that returns a function that returns the supplied constant
      */
     public static <T> Function<Integer, T> constant(final T constant) {
-        return integer -> constant;
+        return __ -> constant;
     }
 
     /**
