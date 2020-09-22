@@ -20,10 +20,17 @@ class Functional_Skip_Test {
     @Test
     void preconditions() {
         assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.skip(-1, mock(Iterable.class)))
+                .withMessage("skip(int,Iterable<T>): howMany must not be negative");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.skip(1, (Iterable)null))
+                .withMessage("skip(int,Iterable<T>): input must not be negative");
+
+         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.skip(-1, mock(List.class)))
                 .withMessage("skip(int,List<T>): howMany must not be negative");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.skip(1, null))
+                .isThrownBy(() -> Functional.skip(1, (List)null))
                 .withMessage("skip(int,List<T>): input must not be negative");
 
         assertThatIllegalArgumentException()
@@ -51,6 +58,13 @@ class Functional_Skip_Test {
         void skipFirstOne() {
             final List<Integer> expected = Arrays.asList(2, 3, 4, 5);
             final List<Integer> output = Functional.skip(1, input);
+            assertThat(output).containsExactlyElementsOf(expected);
+        }
+
+        @Test
+        void skipFirstOneUsingIterable() {
+            final List<Integer> expected = Arrays.asList(2, 3, 4, 5);
+            final List<Integer> output = Functional.skip(1, (Iterable)input);
             assertThat(output).containsExactlyElementsOf(expected);
         }
 

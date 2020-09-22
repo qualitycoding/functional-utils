@@ -24,11 +24,11 @@ class Functional_Zip3_Test {
     void preconditions() {
         assertAll(
                 () -> assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip3(null, mock(Iterable.class), mock(Iterable.class)))
-                        .withMessage("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): input1 must not be null"),
+                        .withMessage("zip3(Iterable<A>,Iterable<B>,Iterable<C>): input1 must not be null"),
                 () -> assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip3(mock(Iterable.class), null, mock(Iterable.class)))
-                        .withMessage("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): input2 must not be null"),
+                        .withMessage("zip3(Iterable<A>,Iterable<B>,Iterable<C>): input2 must not be null"),
                 () -> assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip3(mock(Iterable.class), mock(Iterable.class), null))
-                        .withMessage("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): input3 must not be null"));
+                        .withMessage("zip3(Iterable<A>,Iterable<B>,Iterable<C>): input3 must not be null"));
     }
 
     @Test

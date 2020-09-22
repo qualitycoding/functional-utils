@@ -24,8 +24,15 @@ class Functional_SkipWhile_Test {
                 .isThrownBy(() -> Functional.skipWhile(null, mock(List.class)))
                 .withMessage("skipWhile(Predicate<T>,List<T>): predicate must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.skipWhile(mock(Predicate.class), null))
+                .isThrownBy(() -> Functional.skipWhile(mock(Predicate.class), (List)null))
                 .withMessage("skipWhile(Predicate<T>,List<T>): input must not be null");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.skipWhile(null, mock(Iterable.class)))
+                .withMessage("skipWhile(Predicate<T>,Iterable<T>): predicate must not be null");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.skipWhile(mock(Predicate.class), (Iterable)null))
+                .withMessage("skipWhile(Predicate<T>,Iterable<T>): input must not be null");
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.skipWhile(null))
@@ -52,6 +59,13 @@ class Functional_SkipWhile_Test {
         void skipWhileDropsFirst() {
             final List<Integer> expected = Arrays.asList(2, 3, 4, 5);
             final List<Integer> output = Functional.skipWhile(Functional::isOdd, input);
+            assertThat(output).containsExactlyElementsOf(expected);
+        }
+
+        @Test
+        void skipWhileDropsFirstUsingIterable() {
+            final List<Integer> expected = Arrays.asList(2, 3, 4, 5);
+            final List<Integer> output = Functional.skipWhile(Functional::isOdd, (Iterable)input);
             assertThat(output).containsExactlyElementsOf(expected);
         }
 

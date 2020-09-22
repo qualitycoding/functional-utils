@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
@@ -30,6 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -46,13 +46,13 @@ public final class Functional {
          * So you have a flatmap function that returns an Option but you want to stream through java.util? Never fear,
          * functional-utils are here.
          *
-         * @param tfm
-         * @param <T>
-         * @param <R>
-         * @return
+         * @param tfm the function that returns an io.vavr.control.Option you want to use
+         * @param <T> the input type of the conversion function
+         * @param <R> the underlying type of the resultant type of the conversion function
+         * @return a function that takes T and returns Optional R
          */
         public static <T, R> Function<T, Optional<R>> convert(final Function<T, io.vavr.control.Option<R>> tfm) {
-            if (tfm == null) throw new IllegalArgumentException("convert(Function<T,Option<R>>): tfm must not be null");
+            if (isNull(tfm)) throw new IllegalArgumentException("convert(Function<T,Option<R>>): tfm must not be null");
             return t -> Option.of(tfm.apply(t)).toJavaOptional();
         }
     }
@@ -62,13 +62,13 @@ public final class Functional {
          * So you have a flatmap function that returns an Optional but you want to stream through vavr? Never fear,
          * functional-utils are here.
          *
-         * @param tfm
-         * @param <T>
-         * @param <R>
-         * @return
+         * @param tfm the function that returns an Optional you want to use
+         * @param <T> the input type of the conversion function
+         * @param <R> the underlying type of the resultant type of the conversion function
+         * @return a function that takes T and returns io.vavr.control.Option R
          */
         public static <T, R> Function<T, io.vavr.control.Option<R>> convert(final Function<T, Optional<R>> tfm) {
-            if (tfm == null)
+            if (isNull(tfm))
                 throw new IllegalArgumentException("convert(Function<T,Optional<R>>): tfm must not be null");
             return t -> Option.of(tfm.apply(t)).toVavrOption();
         }
@@ -79,13 +79,13 @@ public final class Functional {
          * So you have a flatmap function that returns an Optional but you want to stream through the functions here? Never fear,
          * functional-utils are here.
          *
-         * @param tfm
-         * @param <T>
-         * @param <R>
-         * @return
+         * @param tfm the function that returns an Optional you want to use
+         * @param <T> the input type of the conversion function
+         * @param <R> the underlying type of the resultant type of the conversion function
+         * @return a function that takes T and returns Option R
          */
         public static <T, R> Function<T, Option<R>> convert(final Function<T, Optional<R>> tfm) {
-            if (tfm == null)
+            if (isNull(tfm))
                 throw new IllegalArgumentException("convert(Function<T,Optional<R>>): tfm must not be null");
             return t -> Option.of(tfm.apply(t));
         }
@@ -96,13 +96,13 @@ public final class Functional {
          * So you have a flatmap function that returns a Vavr Option but you want to stream through the functions here? Never fear,
          * functional-utils are here.
          *
-         * @param tfm
-         * @param <T>
-         * @param <R>
-         * @return
+         * @param tfm the function that returns an io.vavr.control.Option you want to use
+         * @param <T> the input type of the conversion function
+         * @param <R> the underlying type of the resultant type of the conversion function
+         * @return a function that takes T and returns Option R
          */
         public static <T, R> Function<T, Option<R>> convert(final Function<T, io.vavr.control.Option<R>> tfm) {
-            if (tfm == null)
+            if (isNull(tfm))
                 throw new IllegalArgumentException("convert(Function<T,Option<R>>): tfm must not be null");
             return t -> Option.of(tfm.apply(t));
         }
@@ -116,10 +116,10 @@ public final class Functional {
      * @return a string containing the string representation of each input element separated by the supplied delimiter
      */
     public static <T> Function<Iterable<T>, String> join(final String delimiter) {
-        return strs -> {
-            if (strs == null) return "";
-            return asStream(strs).map(T::toString).collect(Collectors.joining(Objects.isNull(delimiter) ? "" : delimiter));
-        };
+        return strs -> 
+                isNull(strs) 
+                ? "" 
+                : asStream(strs).map(T::toString).collect(Collectors.joining(isNull(delimiter) ? "" : delimiter));
     }
 
     /**
@@ -131,7 +131,7 @@ public final class Functional {
      * @return a string containing the string representation of each input element separated by the supplied delimiter
      */
     public static <T> String join(final String delimiter, final Iterable<T> strs) {
-        return Functional.<T>join(delimiter).apply(strs);
+        return isNull(strs) ? "" : Functional.<T>join(delimiter).apply(strs);
     }
 
     /**
@@ -144,11 +144,11 @@ public final class Functional {
      * @return a string containing the transformed string value of each input element separated by the supplied separator
      */
     public static <T> String join(final String separator, final Iterable<T> l, final Function<? super T, String> tfm) {
-        if (l == null) return "";
-        if (tfm == null)
+        if (isNull(tfm)) 
             throw new IllegalArgumentException("join(String,Iterable<T>,Function<T,String>): tfm must not be null");
 
-        return join(separator, map(tfm, l));
+        return isNull(l) ? "" : join(separator, map(tfm, l));
+
     }
 
     /**
@@ -162,9 +162,9 @@ public final class Functional {
     public static String indentBy(final int howMany, final String unitOfIndentation, final String indentThis) {
         if (howMany < 0)
             throw new IllegalArgumentException("indentBy(int,String,String): Negative numbers must not be supplied as 'howMany'");
-        if (unitOfIndentation == null)
+        if (isNull(unitOfIndentation))
             throw new IllegalArgumentException("indentBy(int,String,String): unitOfIndentation must not be null");
-        if (indentThis == null)
+        if (isNull(indentThis))
             throw new IllegalArgumentException("indentBy(int,String,String): indentThis must not be null");
 
         return fold((state, str) -> str + state, indentThis, init(integer -> unitOfIndentation, howMany));
@@ -181,13 +181,10 @@ public final class Functional {
      * @param input        the input sequence
      * @return the folded value paired with those transformed elements which are Some
      */
-    public static <A, B> Tuple2<A, List<B>> foldAndChoose(
-            final BiFunction<A, B, Tuple2<A, Option<B>>> f,
-            final A initialValue,
-            final Iterable<B> input) {
-        if (f == null)
+    public static <A, B> Tuple2<A, List<B>> foldAndChoose(final BiFunction<A, B, Tuple2<A, Option<B>>> f, final A initialValue, final Iterable<B> input) {
+        if (isNull(f))
             throw new IllegalArgumentException("foldAndChoose(BiFunction<A,B,Tuple2<A,Option<B>>,A,Iterable<B>): fn must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("foldAndChoose(BiFunction<A,B,Tuple2<A,Option<B>>,A,Iterable<B>): input must not be null");
 
         final Tuple2<A, List<B>> initial = new Tuple2<>(initialValue, new ArrayList<>());
@@ -203,31 +200,31 @@ public final class Functional {
     }
 
     /**
-     * @param lowerBound
-     * @param upperBound
-     * @param val
+     * @param lowerBound the lower bound of the range being checked
+     * @param upperBound the upper bound of the range being checked
+     * @param val the value being checked
      * @param <T>        the type of the input element
      * @return lowerBound < val < upperBound
      */
     public static <T extends Comparable<T>> boolean between(final T lowerBound, final T upperBound, final T val) {
-        if (lowerBound == null) throw new IllegalArgumentException("between(T,T,T): lower bound must not be null");
-        if (upperBound == null) throw new IllegalArgumentException("between(T,T,T): upper bound must not be null");
+        if (isNull(lowerBound)) throw new IllegalArgumentException("between(T,T,T): lower bound must not be null");
+        if (isNull(upperBound)) throw new IllegalArgumentException("between(T,T,T): upper bound must not be null");
         if (lowerBound.compareTo(upperBound) > -1)
             throw new IllegalArgumentException("between(T,T,T): lower bound must be less than upper bound");
-        if (val == null) throw new IllegalArgumentException("between(T,T,T): value must not be null");
+        if (isNull(val)) throw new IllegalArgumentException("between(T,T,T): value must not be null");
 
         return val.compareTo(lowerBound) > 0 && val.compareTo(upperBound) < 0;
     }
 
     /**
      * @param bounds is a Tuple2 of (lowerBound, upperBound)
-     * @param val
+     * @param val the value being tested
      * @param <T>    the type of the input element
      * @return lowerBound < val < upperBound
      */
     public static <T extends Comparable<T>> boolean between(final Tuple2<T, T> bounds, final T val) {
-        if (bounds == null) throw new IllegalArgumentException("between(Tuple2<T,T>,T): bounds must not be null");
-        if (val == null) throw new IllegalArgumentException("between(Tuple2<T,T>,T): value must not be null");
+        if (isNull(bounds)) throw new IllegalArgumentException("between(Tuple2<T,T>,T): bounds must not be null");
+        if (isNull(val)) throw new IllegalArgumentException("between(Tuple2<T,T>,T): value must not be null");
         return between(bounds._1, bounds._2, val);
     }
 
@@ -237,6 +234,7 @@ public final class Functional {
      * @return lowerBound < val < upperBound
      */
     public static <T extends Comparable<T>> Predicate<T> between(final Tuple2<T, T> bounds) {
+        if(isNull(bounds)) throw new IllegalArgumentException("between(Tuple2<T,T>): bounds must not be null");
         return val -> between(bounds, val);
     }
 
@@ -252,8 +250,8 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if f or input are null
      */
     public static <A> Option<A> find(final Predicate<? super A> f, final Iterable<A> input) {
-        if (f == null) throw new IllegalArgumentException("find(Predicate<A>,Iterable<A>): f must not be null");
-        if (input == null) throw new IllegalArgumentException("find(Predicate<A>,Iterable<A>): input must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("find(Predicate<A>,Iterable<A>): f must not be null");
+        if (isNull(input)) throw new IllegalArgumentException("find(Predicate<A>,Iterable<A>): input must not be null");
 
         for (final A a : input) {
             if (f.test((a)))
@@ -275,6 +273,8 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A> Function<Iterable<A>, Option<A>> find(final Predicate<? super A> f) {
+        if(isNull(f))
+            throw new IllegalArgumentException("find(Predicate<A>): f must not be null");
         return input -> Functional.find(f, input);
     }
 
@@ -291,8 +291,9 @@ public final class Functional {
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
     public static <A> int findIndex(final Predicate<A> f, final Iterable<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("findIndex(Predicate<A>,Iterable<A>): f must not be null");
-        if (input == null)
+        if (isNull(f)) 
+            throw new IllegalArgumentException("findIndex(Predicate<A>,Iterable<A>): f must not be null");
+        if (isNull(input))
             throw new IllegalArgumentException("findIndex(Predicate<A>,Iterable<A>): input must not be null");
 
         int pos = 0;
@@ -315,8 +316,9 @@ public final class Functional {
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
     public static <A> Option<A> findLast(final Predicate<A> f, final Iterable<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("findLast(Predicate<A>,Iterable<A>): f must not be null");
-        if (input == null)
+        if (isNull(f)) 
+            throw new IllegalArgumentException("findLast(Predicate<A>,Iterable<A>): f must not be null");
+        if (isNull(input))
             throw new IllegalArgumentException("findLast(Predicate<A>,Iterable<A>): input must not be null");
 
         final Tuple2<? extends List<? extends A>, ? extends Iterable<? extends A>> p = takeNAndYield(input, 1);
@@ -338,8 +340,8 @@ public final class Functional {
      * @throws java.util.NoSuchElementException   if no element is found that satisfies the predicate
      */
     public static <A> Option<A> findLast(final Predicate<A> f, final List<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("findLast(Predicate<A>,List<A>): f must not be null");
-        if (input == null) throw new IllegalArgumentException("findLast(Predicate<A>,List<A>): input must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("findLast(Predicate<A>,List<A>): f must not be null");
+        if (isNull(input)) throw new IllegalArgumentException("findLast(Predicate<A>,List<A>): input must not be null");
 
         for (final A a : Iterators.reverse(input)) {
             if (f.test(a))
@@ -361,7 +363,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A> Function<Iterable<A>, Option<A>> findLast(final Predicate<A> f) {
-        if (f == null) throw new IllegalArgumentException("findLast(Predicate<A>): f must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("findLast(Predicate<A>): f must not be null");
         return input -> input instanceof List ? Functional.findLast(f, (List<A>) input) : Functional.findLast(f, input);
     }
 
@@ -378,9 +380,9 @@ public final class Functional {
      * @return the first non-None transformed element of the input sequence
      */
     public static <A, B> Option<B> pick(final Function<? super A, Option<B>> f, final Iterable<A> input) {
-        if (f == null)
+        if (isNull(f))
             throw new IllegalArgumentException("pick(Function<A,Option<B>>, Iterable<A>): f must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("pick(Function<A,Option<B>>, Iterable<A>): input must not be null");
 
         for (final A a : input) {
@@ -407,6 +409,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A, B> Function<Iterable<A>, Option<B>> pick(final Function<? super A, Option<B>> f) {
+        if(isNull(f)) throw new IllegalArgumentException("pick(Function<A,Option<B>): f must not be null");
         return input -> Functional.pick(f, input);
     }
 
@@ -423,12 +426,12 @@ public final class Functional {
      * @return a list of pairs containing the two transformed sequences
      */
     public static <A, B, C> List<Tuple2<B, C>> zip(final Function<? super A, B> f, final Function<? super A, C> g, final Iterable<? extends A> input) {
-        if (f == null)
-            throw new IllegalArgumentException("Functional.zip(Function<A,B>,Function<A,B>,Iterable<A>): zipFunc1 must not be null");
-        if (g == null)
-            throw new IllegalArgumentException("Functional.zip(Function<A,B>,Function<A,B>,Iterable<A>): zipFunc2 must not be null");
-        if (input == null)
-            throw new IllegalArgumentException("Functional.zip(Function<A,B>,Function<A,B>,Iterable<A>): input must not be null");
+        if (isNull(f))
+            throw new IllegalArgumentException("zip(Function<A,B>,Function<A,B>,Iterable<A>): zipFunc1 must not be null");
+        if (isNull(g))
+            throw new IllegalArgumentException("zip(Function<A,B>,Function<A,B>,Iterable<A>): zipFunc2 must not be null");
+        if (isNull(input))
+            throw new IllegalArgumentException("zip(Function<A,B>,Function<A,B>,Iterable<A>): input must not be null");
         return Collections.unmodifiableList(StreamSupport.stream(input.spliterator(), false)
                 .map(element -> new Tuple2<>(f.apply(element), g.apply(element)))
                 .collect(Collectors.toList()));
@@ -446,6 +449,8 @@ public final class Functional {
      * @return a list of pairs containing the two transformed sequences
      */
     public static <A, B, C> Function<Iterable<? extends A>, List<Tuple2<B, C>>> zip(final Function<? super A, B> f, final Function<? super A, C> g) {
+        if(isNull(f)) throw new IllegalArgumentException("zip(Function<A,B>,Function<A,B>): zipFunc1 must not be null");
+        if(isNull(g)) throw new IllegalArgumentException("zip(Function<A,B>,Function<A,B>): zipFunc2 must not be null");
         return input -> zip(f, g, input);
     }
 
@@ -462,10 +467,10 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if either input sequence is null or if the sequences have differing lengths.
      */
     public static <A, B> List<Tuple2<A, B>> zip(final Iterable<? extends A> l1, final Iterable<? extends B> l2) {
-        if (l1 == null)
-            throw new IllegalArgumentException("Functional.zip(Iterable<A>,Iterable<B>): input1 must not be null");
-        if (l2 == null)
-            throw new IllegalArgumentException("Functional.zip(Iterable<A>,Iterable<B>): input2 must not be null");
+        if (isNull(l1))
+            throw new IllegalArgumentException("zip(Iterable<A>,Iterable<B>): input1 must not be null");
+        if (isNull(l2))
+            throw new IllegalArgumentException("zip(Iterable<A>,Iterable<B>): input2 must not be null");
 
         final List<Tuple2<A, B>> output = new ArrayList<>();
         final Iterator<? extends A> l1_it = l1.iterator();
@@ -473,7 +478,7 @@ public final class Functional {
 
         while (l1_it.hasNext() && l2_it.hasNext()) output.add(new Tuple2<>(l1_it.next(), l2_it.next()));
         if (l1_it.hasNext() || l2_it.hasNext())
-            throw new IllegalArgumentException("Functional.zip(Iterable<A>,Iterable<B>): Cannot zip two iterables with different lengths");
+            throw new IllegalArgumentException("zip(Iterable<A>,Iterable<B>): Cannot zip two iterables with different lengths");
 
         return Collections.unmodifiableList(output);
     }
@@ -491,12 +496,12 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if either input sequence is null or if the sequences have differing lengths.
      */
     public static <A, B> List<Tuple2<A, B>> zip(final Collection<? extends A> l1, final Collection<? extends B> l2) {
-        if (l1 == null)
-            throw new IllegalArgumentException("Functional.zip(Collection<A>,Collection<B>): l1 must not be null");
-        if (l2 == null)
-            throw new IllegalArgumentException("Functional.zip(Collection<A>,Collection<B>): l2 must not be null");
+        if (isNull(l1))
+            throw new IllegalArgumentException("zip(Collection<A>,Collection<B>): l1 must not be null");
+        if (isNull(l2))
+            throw new IllegalArgumentException("zip(Collection<A>,Collection<B>): l2 must not be null");
         if (l1.size() != l2.size()) {
-            throw new IllegalArgumentException("Functional.zip(Collection<A>,Collection<B>): The input sequences must have the same number of elements");
+            throw new IllegalArgumentException("zip(Collection<A>,Collection<B>): The input sequences must have the same number of elements");
         }
 
         final Iterator<? extends A> l1_it = l1.iterator();
@@ -505,7 +510,7 @@ public final class Functional {
         final List<Tuple2<A, B>> output = new ArrayList<>(l1.size());
         while (l1_it.hasNext() && l2_it.hasNext()) output.add(new Tuple2<>(l1_it.next(), l2_it.next()));
         if (l1_it.hasNext() || l2_it.hasNext())
-            throw new IllegalArgumentException("Functional.zip(Collection<A>,Collection<B>): The input sequences must have the same number of elements");
+            throw new IllegalArgumentException("zip(Collection<A>,Collection<B>): The input sequences must have the same number of elements");
 
         return Collections.unmodifiableList(output);
     }
@@ -525,19 +530,19 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if any input sequence is null or if the sequences have differing lengths.
      */
     public static <A, B, C> List<Tuple3<A, B, C>> zip3(final Iterable<? extends A> l1, final Iterable<? extends B> l2, final Iterable<? extends C> l3) {
-        if (l1 == null)
-            throw new IllegalArgumentException("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): input1 must not be null");
-        if (l2 == null)
-            throw new IllegalArgumentException("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): input2 must not be null");
-        if (l3 == null)
-            throw new IllegalArgumentException("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): input3 must not be null");
+        if (isNull(l1))
+            throw new IllegalArgumentException("zip3(Iterable<A>,Iterable<B>,Iterable<C>): input1 must not be null");
+        if (isNull(l2))
+            throw new IllegalArgumentException("zip3(Iterable<A>,Iterable<B>,Iterable<C>): input2 must not be null");
+        if (isNull(l3))
+            throw new IllegalArgumentException("zip3(Iterable<A>,Iterable<B>,Iterable<C>): input3 must not be null");
 
         final List<Tuple3<A, B, C>> output;
         if (l1 instanceof Collection<?> && l2 instanceof Collection<?> && l3 instanceof Collection<?>) {
-            if (((Collection) l1).size() != ((Collection) l2).size())
-                throw new IllegalArgumentException("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): l1, l2 and l3 have differing numbers of elements");
+            if (((Collection<?>) l1).size() != ((Collection<?>) l2).size())
+                throw new IllegalArgumentException("zip3(Iterable<A>,Iterable<B>,Iterable<C>): l1, l2 and l3 have differing numbers of elements");
 
-            output = new ArrayList<>(((Collection) l1).size());
+            output = new ArrayList<>(((Collection<?>) l1).size());
         } else output = new ArrayList<>();
         final Iterator<? extends A> l1_it = l1.iterator();
         final Iterator<? extends B> l2_it = l2.iterator();
@@ -546,7 +551,7 @@ public final class Functional {
         while (l1_it.hasNext() && l2_it.hasNext() && l3_it.hasNext())
             output.add(new Tuple3<>(l1_it.next(), l2_it.next(), l3_it.next()));
         if (l1_it.hasNext() || l2_it.hasNext() || l3_it.hasNext())
-            throw new IllegalArgumentException("Functional.zip3(Iterable<A>,Iterable<B>,Iterable<C>): Cannot zip three iterables with different lengths");
+            throw new IllegalArgumentException("zip3(Iterable<A>,Iterable<B>,Iterable<C>): Cannot zip three iterables with different lengths");
 
         return Collections.unmodifiableList(output);
     }
@@ -563,8 +568,8 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if the input sequence is null
      */
     public static <A, B> Tuple2<List<A>, List<B>> unzip(final Iterable<Tuple2<A, B>> input) {
-        if (input == null)
-            throw new IllegalArgumentException("Functional.unzip(Iterable<Tuple2<A,B>>): input must not be null");
+        if (isNull(input))
+            throw new IllegalArgumentException("unzip(Iterable<Tuple2<A,B>>): input must not be null");
 
         final List<A> l1;
         final List<B> l2;
@@ -597,8 +602,8 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if the input sequence is null
      */
     public static <A, B, C> Tuple3<List<A>, List<B>, List<C>> unzip3(final Iterable<Tuple3<A, B, C>> input) {
-        if (input == null)
-            throw new IllegalArgumentException("Functional.unzip3(Iterable<Tuple3<A,B,C>>): input must not be null");
+        if (isNull(input))
+            throw new IllegalArgumentException("unzip3(Iterable<Tuple3<A,B,C>>): input must not be null");
 
         final List<A> l1;
         final List<B> l2;
@@ -642,6 +647,7 @@ public final class Functional {
     /**
      * <tt>count</tt> a function that accepts a counter and another integer and returns 1 + counter
      */
+    @SuppressWarnings("unused")
     public static int count(final int state, final int b) {
         return state + 1;
     }
@@ -695,7 +701,7 @@ public final class Functional {
      * @return a list of 'howMany' elements of type 'T' which were generated by the function 'f'
      */
     public static <T> List<T> init(final Function<Integer, T> f, final int howMany) {
-        if (f == null) throw new IllegalArgumentException("init(Function<Integer,T>,int): f must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("init(Function<Integer,T>,int): f must not be null");
         if (howMany < 0)
             throw new IllegalArgumentException("init(Function<Integer,T>,int): howMany must be non-negative");
 
@@ -717,8 +723,8 @@ public final class Functional {
      * @return a list of type B containing the transformed values.
      */
     public static <A, B> List<B> map(final Function<A, ? extends B> f, final Iterable<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("map(Function<A,B>,Iterable<A>): f must not be null");
-        if (input == null) throw new IllegalArgumentException("map(Function<A,B>,Iterable<A>): input must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("map(Function<A,B>,Iterable<A>): f must not be null");
+        if (isNull(input)) throw new IllegalArgumentException("map(Function<A,B>,Iterable<A>): input must not be null");
         return Collections.unmodifiableList(StreamSupport.stream(input.spliterator(), false).map(f).collect(Collectors.toList()));
     }
 
@@ -734,8 +740,8 @@ public final class Functional {
      * @return a list of type B containing the transformed values.
      */
     public static <A, B> List<B> map(final Function<A, ? extends B> f, final Collection<? extends A> input) {
-        if (f == null) throw new IllegalArgumentException("map(Function<A,B>,Collection<A>): f must not be null");
-        if (input == null)
+        if (isNull(f)) throw new IllegalArgumentException("map(Function<A,B>,Collection<A>): f must not be null");
+        if (isNull(input))
             throw new IllegalArgumentException("map(Function<A,B>,Collection<A>): input must not be null");
         return Collections.unmodifiableList(input.stream().map(f).collect(Collectors.toList()));
     }
@@ -753,7 +759,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A, B> Function<Iterable<A>, Iterable<B>> map(final Function<? super A, ? extends B> f) {
-        if (f == null) throw new IllegalArgumentException("map(Function<A,B>): f must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("map(Function<A,B>): f must not be null");
         return input -> Functional.map(f, input);
     }
 
@@ -770,9 +776,9 @@ public final class Functional {
      * @return a list of type B containing the transformed values.
      */
     public static <A, B> List<B> mapi(final BiFunction<Integer, A, ? extends B> f, final Iterable<? extends A> input) {
-        if (f == null)
+        if (isNull(f))
             throw new IllegalArgumentException("mapi(BiFunction<Integer,A,B>,Iterable<A>): f must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("mapi(BiFunction<Integer,A,B>,Iterable<A>): input must not be null");
         final List<B> output = new ArrayList<>();
         int pos = 0;
@@ -794,9 +800,9 @@ public final class Functional {
      * @return a list of type B containing the transformed values.
      */
     public static <A, B> List<B> mapi(final BiFunction<Integer, A, ? extends B> f, final Collection<? extends A> input) {
-        if (f == null)
+        if (isNull(f))
             throw new IllegalArgumentException("mapi(BiFunction<Integer,A,B>,Collection<A>): f must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("mapi(BiFunction<Integer,A,B>,Collection<A>): input must not be null");
         final List<B> output = new ArrayList<>(input.size());
         int pos = 0;
@@ -819,7 +825,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A, B> Function<Iterable<A>, List<B>> mapi(final BiFunction<Integer, ? super A, ? extends B> f) {
-        if (f == null) throw new IllegalArgumentException("mapi(BiFunction<Integer,A,B>): f must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("mapi(BiFunction<Integer,A,B>): f must not be null");
         return input -> Functional.mapi(f, input);
     }
 
@@ -835,9 +841,9 @@ public final class Functional {
      * @return a sorted list containing all the elements of 'input' sorted using <tt>Collections.sort</tt> and 'f'
      */
     public static <A, AA extends A> List<AA> sortWith(final Comparator<A> f, final Collection<AA> input) {
-        if (f == null)
+        if (isNull(f))
             throw new IllegalArgumentException("sortWith(Comparator<A>,Collection<B>): comparator must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("sortWith(Comparator<A>,Collection<B>): input must not be null");
         return Collections.unmodifiableList(input.stream().sorted(f).collect(Collectors.toList()));
     }
@@ -852,9 +858,9 @@ public final class Functional {
      * @return a sorted list containing all the elements of 'input' sorted using <tt>Collections.sort</tt> and 'f'
      */
     public static <A, AA extends A> List<AA> sortWith(final Comparator<A> f, final Iterable<AA> input) {
-        if (f == null)
+        if (isNull(f))
             throw new IllegalArgumentException("sortWith(Comparator<A>,Iterable<B>): comparator must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("sortWith(Comparator<A>,Iterable<B>): input must not be null");
         return Collections.unmodifiableList(StreamSupport.stream(input.spliterator(), false).sorted(f).collect(Collectors.toList()));
     }
@@ -908,8 +914,8 @@ public final class Functional {
      * function returns true for the element.
      */
     public static <A> List<A> filter(final Predicate<? super A> pred, final Iterable<A> input) {
-        if (pred == null) throw new IllegalArgumentException("filter(Predicate<A>,Iterable<A>): pred must not be null");
-        if (input == null)
+        if (isNull(pred)) throw new IllegalArgumentException("filter(Predicate<A>,Iterable<A>): pred must not be null");
+        if (isNull(input))
             throw new IllegalArgumentException("filter(Predicate<A>,Iterable<A>): input must not be null");
         return Collections.unmodifiableList(StreamSupport.stream(input.spliterator(), false).filter(pred).collect(Collectors.toList()));
     }
@@ -925,9 +931,9 @@ public final class Functional {
      * function returns true for the element.
      */
     public static <A> List<A> filter(final Predicate<? super A> pred, final Collection<A> input) {
-        if (pred == null)
+        if (isNull(pred))
             throw new IllegalArgumentException("filter(Predicate<A>,Collection<A>): pred must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("filter(Predicate<A>,Collection<A>): input must not be null");
         return Collections.unmodifiableList(input.stream().filter(pred).collect(Collectors.toList()));
     }
@@ -944,12 +950,12 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <T> Function<Iterable<T>, List<T>> filter(final Predicate<? super T> f) {
-        if (f == null) throw new IllegalArgumentException("filter(Predicate<A>): pred must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("filter(Predicate<A>): pred must not be null");
         return input -> input instanceof Collection<?> ? Functional.filter(f, (Collection<T>) input) : Functional.filter(f, input);
     }
 
     /**
-     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traveral of the
+     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traversal of the
      * input sequence. Otherwise return false.
      * exists: (A -> bool) -> A list -> bool
      *
@@ -959,15 +965,15 @@ public final class Functional {
      * @return true if the predicate returns true for any element in the input sequence, false otherwise
      */
     public static <A> boolean exists(final Predicate<? super A> f, final Iterable<A> input) {
-        if (f == null)
+        if (isNull(f))
             throw new IllegalArgumentException("exists(Predicate<T>,Iterable<T>): predicate must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("exists(Predicate<T>,Iterable<T>): input must not be null");
         return StreamSupport.stream(input.spliterator(), false).anyMatch(f);
     }
 
     /**
-     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traveral of the
+     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traversal of the
      * input sequence. Otherwise return false.
      * exists: (A -> bool) -> A list -> bool
      *
@@ -977,15 +983,15 @@ public final class Functional {
      * @return true if the predicate returns true for any element in the input sequence, false otherwise
      */
     public static <A> boolean exists(final Predicate<? super A> f, final Collection<A> input) {
-        if (f == null)
+        if (isNull(f))
             throw new IllegalArgumentException("exists(Predicate<T>,Collection<T>): predicate must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("exists(Predicate<T>,Collection<T>): input must not be null");
         return input.stream().anyMatch(f);
     }
 
     /**
-     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traveral of the
+     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traversal of the
      * input sequence. Otherwise return false.
      * exists: (A -> bool) -> A list -> bool
      * This is the curried implementation.
@@ -996,7 +1002,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A> Predicate<Iterable<A>> exists(final Predicate<? super A> f) {
-        if (f == null) throw new IllegalArgumentException("exists(Predicate<T>): predicate must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("exists(Predicate<T>): predicate must not be null");
         return input -> Functional.exists(f, input);
     }
 
@@ -1009,7 +1015,7 @@ public final class Functional {
      * @return true if f returns false, false if f returns true
      */
     public static <A> Predicate<A> not(final Predicate<A> f) {
-        if (f == null) throw new IllegalArgumentException("not(Predicate<A>): predicate must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("not(Predicate<A>): predicate must not be null");
         return a -> !f.test(a);
     }
 
@@ -1023,7 +1029,7 @@ public final class Functional {
      * @return true if f returns false, false if f returns true
      */
     public static <A, B> BiPredicate<A, B> not2(final BiPredicate<A, B> f) {
-        if (f == null) throw new IllegalArgumentException("not(BiPredicate<A,B>): predicate must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("not(BiPredicate<A,B>): predicate must not be null");
         return (a, b) -> !f.test(a, b);
     }
 
@@ -1038,9 +1044,9 @@ public final class Functional {
      * @return true if the predicate returns true for all elements in the input sequence, false otherwise
      */
     public static <A> boolean forAll(final Predicate<A> f, final Iterable<? extends A> input) {
-        if (f == null)
+        if (isNull(f))
             throw new IllegalArgumentException("forAll(Predicate<A>,Iterable<A>): predicate must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("forAll(Predicate<A>,Iterable<A>): input must not be null");
         return !exists(not(f), input);
     }
@@ -1056,9 +1062,9 @@ public final class Functional {
      * @return true if the predicate returns true for all elements in the input sequence, false otherwise
      */
     public static <A> boolean forAll(final Predicate<A> f, final Collection<? extends A> input) {
-        if (f == null)
+        if (isNull(f))
             throw new IllegalArgumentException("forAll(Predicate<A>,Collection<A>): predicate must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("forAll(Predicate<A>,Collection<A>): input must not be null");
         return !exists(not(f), input);
     }
@@ -1075,7 +1081,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A> Predicate<Iterable<A>> forAll(final Predicate<? super A> f) {
-        if (f == null) throw new IllegalArgumentException("forAll(Predicate<A>): predicate must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("forAll(Predicate<A>): predicate must not be null");
         return input -> Functional.forAll(f, input);
     }
 
@@ -1097,17 +1103,17 @@ public final class Functional {
      *                                            of elements
      */
     public static <A, B, AA extends A, BB extends B> boolean forAll2(final BiPredicate<A, B> f, final Iterable<AA> input1, final Iterable<BB> input2) {
-        if (f == null)
+        if (isNull(f))
             throw new IllegalArgumentException("forAll2(BiPredicate<A,B>,Iterable<A>,Iterable<B>): predicate must not be null");
-        if (input1 == null)
+        if (isNull(input1))
             throw new IllegalArgumentException("forAll2(BiPredicate<A,B>,Iterable<A>,Iterable<B>): input1 must not be null");
-        if (input2 == null)
+        if (isNull(input2))
             throw new IllegalArgumentException("forAll2(BiPredicate<A,B>,Iterable<A>,Iterable<B>): input2 must not be null");
 
         try {
             return StreamSupport.stream(seq.zip(input1, input2).spliterator(), false).allMatch(t -> f.test(t._1, t._2));
         } catch (final IllegalArgumentException e) {
-            if (e.getMessage().contains("Functional.seq.zip(Iterable<A>,Iterable<B>): l1 and l2 have differing numbers of elements"))
+            if (e.getMessage().contains("seq.zip(Iterable<A>,Iterable<B>): l1 and l2 have differing numbers of elements"))
                 throw new IllegalArgumentException("forAll2(BiPredicate<A,B>,Iterable<A>,Iterable<B>): Cannot compare two sequences with different numbers of elements");
             throw e;
         }
@@ -1128,9 +1134,9 @@ public final class Functional {
      * @return a pair of lists, the first being the 'true' and the second being the 'false'
      */
     public static <A> Tuple2<List<A>, List<A>> partition(final Predicate<? super A> f, final Iterable<A> input) {
-        if (f == null)
+        if (isNull(f))
             throw new IllegalArgumentException("partition(Predicate<A>,Iterable<A>): predicate must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("partition(Predicate<A>,Iterable<A>): input must not be null");
         final List<A> left;
         final List<A> right;
@@ -1162,7 +1168,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A> Function<Iterable<A>, Tuple2<List<A>, List<A>>> partition(final Predicate<? super A> f) {
-        if (f == null) throw new IllegalArgumentException("partition(Predicate<A>): predicate must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("partition(Predicate<A>): predicate must not be null");
         return input -> Functional.partition(f, input);
     }
 
@@ -1194,7 +1200,7 @@ public final class Functional {
      * @return a list of Range objects
      */
     public static <T> List<Range<T>> partition(final Function<Integer, T> generator, final int howManyElements, final int howManyPartitions) {
-        if (generator == null)
+        if (isNull(generator))
             throw new IllegalArgumentException("partition(Function<Integer,A>,int,int): generator must not be null");
         if (howManyElements <= 0)
             throw new IllegalArgumentException("partition(Function<Integer,A>,int,int): howManyElements must be positive");
@@ -1223,7 +1229,7 @@ public final class Functional {
             if (!iterator.hasNext())
                 throw new IllegalStateException(String.format("Somehow we have fewer entries (%d) in our sequence of bounds than expected (%d)", i, howManyPartitions));
             final T next = iterator.next();
-            retval.add(new Range(last, next));
+            retval.add(new Range<>(last, next));
             last = next;
         }
         return retval;
@@ -1319,9 +1325,9 @@ public final class Functional {
      * @return a list of transformed elements, numbering less than or equal to the number of input elements
      */
     public static <A, B> List<B> choose(final Function<? super A, Option<B>> f, final Iterable<A> input) {
-        if (f == null)
+        if (isNull(f))
             throw new IllegalArgumentException("choose(Function<A,Option<B>>,Iterable<A>): chooser must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("choose(Function<A,Option<B>>,Iterable<A>): input must not be null");
         return Collections.unmodifiableList(chooseReducer(f, StreamSupport.stream(input.spliterator(), false)));
     }
@@ -1339,9 +1345,9 @@ public final class Functional {
      * @return a list of transformed elements, numbering less than or equal to the number of input elements
      */
     public static <A, B> List<B> choose(final Function<? super A, Option<B>> f, final Collection<A> input) {
-        if (f == null)
+        if (isNull(f))
             throw new IllegalArgumentException("choose(Function<A,Option<B>>,Collection<A>): chooser must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("choose(Function<A,Option<B>>,Collection<A>): input must not be null");
 
         return Collections.unmodifiableList(chooseReducer(f, input.stream()));
@@ -1361,7 +1367,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A, B> Function<Iterable<A>, List<B>> choose(final Function<? super A, Option<B>> f) {
-        if (f == null) throw new IllegalArgumentException("choose(Function<A,Option<B>>): chooser must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("choose(Function<A,Option<B>>): chooser must not be null");
         return input -> Functional.choose(f, input);
     }
 
@@ -1378,9 +1384,9 @@ public final class Functional {
      * @return aggregated value
      */
     public static <A, B> A fold(final BiFunction<? super A, ? super B, ? extends A> f, final A initialValue, final Iterable<B> input) {
-        if (f == null)
+        if (isNull(f))
             throw new IllegalArgumentException("fold(BiFunction<A,B,A>,A,Iterable<B>): folder must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("fold(BiFunction<A,B,A>,A,Iterable<B>): input must not be null");
         A state = initialValue;
         for (final B b : input)
@@ -1407,7 +1413,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A, B> Function<Iterable<B>, A> fold(final BiFunction<? super A, ? super B, ? extends A> f, final A initialValue) {
-        if (f == null) throw new IllegalArgumentException("fold(BiFunction<A,B,A>,A): folder must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("fold(BiFunction<A,B,A>,A): folder must not be null");
         return input -> Functional.fold(f, initialValue, input);
     }
 
@@ -1424,7 +1430,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A, B> WithInitialValue<A, Function<Iterable<B>, A>> fold(final BiFunction<? super A, ? super B, ? extends A> f) {
-        if (f == null) throw new IllegalArgumentException("fold(BiFunction<A,B,A>): folder must not be null");
+        if (isNull(f)) throw new IllegalArgumentException("fold(BiFunction<A,B,A>): folder must not be null");
         return initialValue -> input -> Functional.fold(f, initialValue, input);
     }
 
@@ -1439,9 +1445,9 @@ public final class Functional {
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
     public static <A, B> List<A> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Predicate<? super B> finished, final B seed) {
-        if (unspool == null)
+        if (isNull(unspool))
             throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): unspooler must not be null");
-        if (finished == null)
+        if (isNull(finished))
             throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): finished must not be null");
 
         B next = seed;
@@ -1461,9 +1467,9 @@ public final class Functional {
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
     public static <A, B> WithSeed<A, B> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Predicate<? super B> finished) {
-        if (unspool == null)
+        if (isNull(unspool))
             throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>): unspooler must not be null");
-        if (finished == null)
+        if (isNull(finished))
             throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>,Predicate<B>): finished must not be null");
 
         return seed -> Functional.unfold(unspool, finished, seed);
@@ -1476,7 +1482,7 @@ public final class Functional {
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
     public static <A, B> WithFinished<A, B> unfold(final Function<? super B, Tuple2<A, B>> unspool) {
-        if (unspool == null)
+        if (isNull(unspool))
             throw new IllegalArgumentException("unfold(Function<B,Tuple2<A,B>>): unspooler must not be null");
         return finished -> seed -> Functional.unfold(unspool, finished, seed);
     }
@@ -1496,7 +1502,7 @@ public final class Functional {
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
     public static <A, B> List<A> unfold(final Function<? super B, Option<Tuple2<A, B>>> unspool, final B seed) {
-        if (unspool == null)
+        if (isNull(unspool))
             throw new IllegalArgumentException("unfold(Function<B,Option<Tuple2<A,B>>>,B): unspooler must not be null");
 
         B next = seed;
@@ -1525,11 +1531,11 @@ public final class Functional {
      *                                  or value prevents it from being stored in this map
      */
     public static <T, K, V> Map<K, V> toDictionary(final Function<? super T, ? extends K> keyFn, final Function<? super T, ? extends V> valueFn, final Iterable<T> input) {
-        if (keyFn == null)
+        if (isNull(keyFn))
             throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Iterable<T>): keyFn must not be null");
-        if (valueFn == null)
+        if (isNull(valueFn))
             throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Iterable<T>): valueFn must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Iterable<T>): input must not be null");
 
         return Collections.unmodifiableMap(StreamSupport.stream(input.spliterator(), false).collect(Collectors.toMap(keyFn, valueFn)));
@@ -1550,11 +1556,11 @@ public final class Functional {
      *                                  or value prevents it from being stored in this map
      */
     public static <T, K, V> Map<K, V> toDictionary(final Function<? super T, ? extends K> keyFn, final Function<? super T, ? extends V> valueFn, final Collection<T> input) {
-        if (keyFn == null)
+        if (isNull(keyFn))
             throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Collection<T>): keyFn must not be null");
-        if (valueFn == null)
+        if (isNull(valueFn))
             throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Collection<T>): valueFn must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>,Collection<T>): input must not be null");
 
         return Collections.unmodifiableMap(input.stream().collect(Collectors.toMap(keyFn, valueFn)));
@@ -1574,9 +1580,9 @@ public final class Functional {
      *                                  or value prevents it from being stored in this map
      */
     public static <T, K, V> Function<Iterable<T>, Map<K, V>> toDictionary(final Function<? super T, ? extends K> keyFn, final Function<? super T, ? extends V> valueFn) {
-        if (keyFn == null)
+        if (isNull(keyFn))
             throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>): keyFn must not be null");
-        if (valueFn == null)
+        if (isNull(valueFn))
             throw new IllegalArgumentException("toDictionary(Function<T,K>,Function<T,V>): valueFn must not be null");
 
         return input -> toDictionary(keyFn, valueFn, input);
@@ -1594,7 +1600,7 @@ public final class Functional {
      *                                  or value prevents it from being stored in this map
      */
     public static <T, K, V> WithKeyFn<T, K, V> toDictionary(final Iterable<T> input) {
-        if (input == null) throw new IllegalArgumentException("toDictionary(Iterable<T>): input must not be null");
+        if (isNull(input)) throw new IllegalArgumentException("toDictionary(Iterable<T>): input must not be null");
         return keyFn -> valueFn -> toDictionary(keyFn, valueFn, input);
     }
 
@@ -1611,7 +1617,7 @@ public final class Functional {
      *                                  or value prevents it from being stored in this map
      */
     public static <T, K, V> WithKeyFn<T, K, V> toDictionary(final Collection<T> input) {
-        if (input == null) throw new IllegalArgumentException("toDictionary(Collection<T>): input must not be null");
+        if (isNull(input)) throw new IllegalArgumentException("toDictionary(Collection<T>): input must not be null");
         return keyFn -> valueFn -> toDictionary(keyFn, valueFn, input);
     }
 
@@ -1624,7 +1630,7 @@ public final class Functional {
     }
 
     public static <K, V> Map<K, V> toMutableDictionary(final Map<K, V> input) {
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("toMutableDictionary(Map<K,V>): input must not be null");
 
         return io.vavr.collection.HashMap.ofAll(input).toJavaMap();
@@ -1639,12 +1645,12 @@ public final class Functional {
      * @throws java.lang.IllegalArgumentException if the input sequence is null or empty
      */
     public static <T> T last(final Iterable<T> input) {
-        if (input == null) throw new IllegalArgumentException("last(Iterable<T>): input must not be null");
+        if (isNull(input)) throw new IllegalArgumentException("last(Iterable<T>): input must not be null");
 
         T state = null;
         for (final T element : input) state = element;
 
-        if (state == null) throw new IllegalArgumentException("last(Iterable<T>): input must not be empty");
+        if (isNull(state)) throw new IllegalArgumentException("last(Iterable<T>): input must not be empty");
         return state;
     }
 
@@ -1656,7 +1662,7 @@ public final class Functional {
      * @return the last element from the input array
      */
     public static <T> T last(final T[] input) {
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("last(T[]): input must not be null");
         if (input.length == 0)
             throw new IllegalArgumentException("last(T[]): input must not be empty");
@@ -1673,9 +1679,9 @@ public final class Functional {
      * @return a list containing the elements of the first sequence followed by the elements of the second sequence
      */
     public static <T> List<T> concat(final Iterable<T> input1, final Iterable<T> input2) {
-        if (input1 == null)
+        if (isNull(input1))
             throw new IllegalArgumentException("concat(Iterable<T>,Iterable<T>): input1 must not be null");
-        if (input2 == null)
+        if (isNull(input2))
             throw new IllegalArgumentException("concat(Iterable<T>,Iterable<T>): input2 must not be null");
 
         return io.vavr.collection.List.ofAll(input1).appendAll(input2).toJavaList();
@@ -1692,19 +1698,29 @@ public final class Functional {
      */
     public static <T> List<T> take(final int howMany, final Iterable<? extends T> input) {
         if (howMany < 0) throw new IllegalArgumentException("take(int,Iterable<T>): howMany must not be negative");
-        if (input == null) throw new IllegalArgumentException("take(int,Iterable<T>): input must not be null");
+        if (isNull(input)) throw new IllegalArgumentException("take(int,Iterable<T>): input must not be null");
 
         if (howMany == 0) return new ArrayList<>(0);
 
-        final List<T> output = new ArrayList<>(howMany);
-        final Iterator<? extends T> iterator = input.iterator();
-        for (int i = 0; i < howMany; ++i) {
-            if (iterator.hasNext())
-                output.add(iterator.next());
-            else
-                throw new java.util.NoSuchElementException("Cannot take " + howMany + " elements from input list with fewer elements");
-        }
-        return Collections.unmodifiableList(output);
+        return StreamSupport.stream(input.spliterator(),false).limit(howMany).collect(Collectors.toList());
+    }
+
+    /**
+     * take: given a list return another list containing the first 'howMany' elements
+     *
+     * @param howMany a positive number of elements to be returned from the input sequence
+     * @param input    the input sequence
+     * @param <T>     the type of the element in the input sequence
+     * @return a list containing the first 'howMany' elements of 'input'
+     * @throws java.util.NoSuchElementException if more elements are requested than are present in the input sequence
+     */
+    public static <T> List<T> take(final int howMany, final List<? extends T> input) {
+        if (howMany < 0) throw new IllegalArgumentException("take(int,List<T>): howMany must not be negative");
+        if (isNull(input)) throw new IllegalArgumentException("take(int,List<T>): input must not be null");
+
+        if (howMany == 0) return new ArrayList<>(0);
+
+        return input.stream().limit(howMany).collect(Collectors.toList());
     }
 
     /**
@@ -1731,10 +1747,34 @@ public final class Functional {
      * @param input      the input sequence
      * @return a list
      */
+    public static <T> List<T> takeWhile(final Predicate<? super T> predicate, final Iterable<T> input) {
+        if (isNull(predicate))
+            throw new IllegalArgumentException("takeWhile(Predicate<T>,Iterable<T>): predicate must not be null");
+        if (isNull(input))
+            throw new IllegalArgumentException("takeWhile(Predicate<T>,Iterable<T>): input must not be null");
+
+        final List<T> result = new ArrayList<>();
+        final Iterator<T> iterator = input.iterator();
+        T next;
+        while(iterator.hasNext() && predicate.test(next=iterator.next())) {
+            result.add(next);
+        }
+        return Collections.unmodifiableList(result);
+    }
+
+   /**
+     * takeWhile: given a list return another list containing the first elements up and not including the first element for which
+     * the predicate returns false
+     *
+     * @param <T>       the type of the element in the input sequence
+     * @param predicate the predicate to use
+     * @param input      the input sequence
+     * @return a list
+     */
     public static <T> List<T> takeWhile(final Predicate<? super T> predicate, final List<T> input) {
-        if (predicate == null)
+        if (isNull(predicate))
             throw new IllegalArgumentException("takeWhile(Predicate<T>,List<T>): predicate must not be null");
-        if (input == null)
+        if (isNull(input))
             throw new IllegalArgumentException("takeWhile(Predicate<T>,List<T>): input must not be null");
 
         if (input.size() == 0) return new ArrayList<>();
@@ -1760,8 +1800,30 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <T> Function<List<T>, List<T>> takeWhile(final Predicate<? super T> predicate) {
-        if(predicate==null) throw new IllegalArgumentException("takeWhile(Predicate<T>): predicate must not be null");
+        if(isNull(predicate)) throw new IllegalArgumentException("takeWhile(Predicate<T>): predicate must not be null");
         return input -> Functional.takeWhile(predicate, input);
+    }
+
+    /**
+     * skip: the converse of <tt>take</tt>. Given a list return another list containing those elements that follow the
+     * first 'howMany' elements. That is, if we skip(1,[1,2,3]) then we have [2,3]
+     *
+     * @param howMany a non-negative number of elements to be discarded from the input sequence
+     * @param input    the input sequence
+     * @param <T>     the type of the element in the input sequence
+     * @return a list containing the remaining elements after the first 'howMany' elements of 'list' or an empty list if more elements
+     * are skipped than are present in the 'input'
+     */
+    public static <T> List<T> skip(final int howMany, final Iterable<? extends T> input) {
+        if (howMany < 0) throw new IllegalArgumentException("skip(int,Iterable<T>): howMany must not be negative");
+        if (isNull(input)) throw new IllegalArgumentException("skip(int,Iterable<T>): input must not be negative");
+
+        return Collections.emptyList();
+//        if (howMany == 0) return Collections.unmodifiableList(input);
+//        final int outputListSize = input.size() - howMany;
+//        if (outputListSize <= 0) return new ArrayList<>();
+//
+//        return Collections.unmodifiableList(input.subList(howMany, input.size()));
     }
 
     /**
@@ -1776,7 +1838,7 @@ public final class Functional {
      */
     public static <T> List<T> skip(final int howMany, final List<? extends T> input) {
         if (howMany < 0) throw new IllegalArgumentException("skip(int,List<T>): howMany must not be negative");
-        if (input == null) throw new IllegalArgumentException("skip(int,List<T>): input must not be negative");
+        if (isNull(input)) throw new IllegalArgumentException("skip(int,List<T>): input must not be negative");
 
         if (howMany == 0) return Collections.unmodifiableList(input);
         final int outputListSize = input.size() - howMany;
@@ -1810,10 +1872,32 @@ public final class Functional {
      * @param list      the input sequence
      * @return a list containing the remaining elements after and including the first element for which the predicate returns false
      */
+    public static <T> List<T> skipWhile(final Predicate<? super T> predicate, final Iterable<T> list) {
+        if (isNull(predicate))
+            throw new IllegalArgumentException("skipWhile(Predicate<T>,Iterable<T>): predicate must not be null");
+        if (isNull(list))
+            throw new IllegalArgumentException("skipWhile(Predicate<T>,Iterable<T>): input must not be null");
+
+//        for (int counter = 0; counter < list.size(); ++counter)
+//            if (!predicate.test(list.get(counter)))
+//                return Collections.unmodifiableList(list.subList(counter, list.size()));
+//
+        return Collections.unmodifiableList(new ArrayList<>(0));
+    }
+
+    /**
+     * skipWhile: the converse of <tt>takeWhile</tt>. Given a list return another list containing all those elements from,
+     * and including, the first element for which the predicate returns false. That is, if we skip(isOdd,[1,2,3]) then we have [2,3]
+     *
+     * @param <T>       the type of the element in the input sequence
+     * @param predicate ignore elements in the input while the predicate is true.
+     * @param list      the input sequence
+     * @return a list containing the remaining elements after and including the first element for which the predicate returns false
+     */
     public static <T> List<T> skipWhile(final Predicate<? super T> predicate, final List<T> list) {
-        if (predicate == null)
+        if (isNull(predicate))
             throw new IllegalArgumentException("skipWhile(Predicate<T>,List<T>): predicate must not be null");
-        if (list == null)
+        if (isNull(list))
             throw new IllegalArgumentException("skipWhile(Predicate<T>,List<T>): input must not be null");
 
         for (int counter = 0; counter < list.size(); ++counter)
@@ -1833,7 +1917,7 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <T> Function<List<T>, List<T>> skipWhile(final Predicate<? super T> predicate) {
-        if(predicate==null) throw new IllegalArgumentException("skipWhile(Predicate<T>): predicate must not be null");
+        if(isNull(predicate)) throw new IllegalArgumentException("skipWhile(Predicate<T>): predicate must not be null");
         return input -> Functional.skipWhile(predicate, input);
     }
 
@@ -1917,14 +2001,14 @@ public final class Functional {
      * @return a pair: (list, seq) - the list contains 'howMany' elements of 'input' and the sequence contains the remainder
      */
     public static <A> Tuple2<List<A>, Iterable<A>> takeNAndYield(final Iterable<A> input, final int howMany) {
-        if (input == null) throw new IllegalArgumentException("Functional.takeNAndYield: input must not be null");
-        if (howMany < 0) throw new IllegalArgumentException("Functional.takeNAndYield: howMany is negative");
+        if (isNull(input)) throw new IllegalArgumentException("takeNAndYield: input must not be null");
+        if (howMany < 0) throw new IllegalArgumentException("takeNAndYield: howMany is negative");
 
         int counter = 0;
         final List<A> output = new ArrayList<>(howMany);
         if (howMany > 0) {
             final Iterator<A> position = input.iterator();
-            if (howMany > 0 && position.hasNext()) {
+            if (position.hasNext()) {
                 while (counter < howMany) {
                     output.add(position.next());
                     counter++;
@@ -1954,7 +2038,7 @@ public final class Functional {
                 if (haveCreatedIterator.compareAndSet(false, true))
                     return new Iterator<T>() {
                         private int counter;
-                        private Iterator<? extends T> iterator = input.iterator();
+                        private final Iterator<? extends T> iterator = input.iterator();
 
                         public boolean hasNext() {
                             return counter == 0 || iterator.hasNext();
@@ -1967,7 +2051,7 @@ public final class Functional {
 
 
                         public void remove() {
-                            throw new UnsupportedOperationException("Functional.append(T,Iterable<T>): it is not possible to remove elements from this sequence");
+                            throw new UnsupportedOperationException("append(T,Iterable<T>): it is not possible to remove elements from this sequence");
                         }
                     };
                 else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -1988,10 +2072,10 @@ public final class Functional {
      * @return a java.util.Map containing a list of elements for each key
      */
     public static <T, U> Map<U, List<T>> groupBy(final Function<? super T, ? extends U> keyFn, final Iterable<T> input) {
-        if (keyFn == null)
-            throw new IllegalArgumentException("Functional.groupBy(Func,Iterable): keyFn must not be null");
-        if (input == null)
-            throw new IllegalArgumentException("Functional.groupBy(Func,Iterable): input must not be null");
+        if (isNull(keyFn))
+            throw new IllegalArgumentException("groupBy(Func,Iterable): keyFn must not be null");
+        if (isNull(input))
+            throw new IllegalArgumentException("groupBy(Func,Iterable): input must not be null");
 
         final Map<U, List<T>> intermediateResults = new HashMap<>();
         for (final T element : input) {
@@ -2035,8 +2119,8 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T, U> Iterable<U> map(final Function<? super T, ? extends U> f, final Iterable<T> input) {
-            if (f == null) throw new IllegalArgumentException("f");
-            if (input == null) throw new IllegalArgumentException("input");
+            if (isNull(f)) throw new IllegalArgumentException("f");
+            if (isNull(input)) throw new IllegalArgumentException("input");
 
             return new Iterable<U>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2058,7 +2142,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.map(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
+                                throw new UnsupportedOperationException("seq.map(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2096,8 +2180,8 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T, U> Iterable<U> mapi(final BiFunction<Integer, ? super T, ? extends U> f, final Iterable<T> input) {
-            if (f == null) throw new IllegalArgumentException("f");
-            if (input == null) throw new IllegalArgumentException("input");
+            if (isNull(f)) throw new IllegalArgumentException("f");
+            if (isNull(input)) throw new IllegalArgumentException("input");
 
             return new Iterable<U>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2120,7 +2204,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.map(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
+                                throw new UnsupportedOperationException("seq.map(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2155,10 +2239,10 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T> Iterable<T> concat(final Iterable<? extends T> list1, final Iterable<? extends T> list2) {
-            if (list1 == null)
-                throw new IllegalArgumentException("Functional.seq.concat(Iterable<T>,Iterable<T>): list1 must not be null");
-            if (list2 == null)
-                throw new IllegalArgumentException("Functional.seq.concat(Iterable<T>,Iterable<T>): list2 must not be null");
+            if (isNull(list1))
+                throw new IllegalArgumentException("seq.concat(Iterable<T>,Iterable<T>): list1 must not be null");
+            if (isNull(list2))
+                throw new IllegalArgumentException("seq.concat(Iterable<T>,Iterable<T>): list2 must not be null");
 
             return new Iterable<T>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2180,7 +2264,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.concat(Iterable<T>,Iterable<T>): remove is not supported");
+                                throw new UnsupportedOperationException("seq.concat(Iterable<T>,Iterable<T>): remove is not supported");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2201,8 +2285,8 @@ public final class Functional {
          */
         public static <T> Iterable<T> filter(final Predicate<? super T> f, final Iterable<T> input) //throws NoSuchElementException, IllegalArgumentException, UnsupportedOperationException
         {
-            if (f == null) throw new IllegalArgumentException("f");
-            if (input == null) throw new IllegalArgumentException("input");
+            if (isNull(f)) throw new IllegalArgumentException("f");
+            if (isNull(input)) throw new IllegalArgumentException("input");
 
             return new Iterable<T>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2215,7 +2299,7 @@ public final class Functional {
                             private T _next;
 
                             public boolean hasNext() {
-                                while (_next == null && // ie we haven't already read the next element
+                                while (isNull(_next) && // ie we haven't already read the next element
                                         _input.hasNext()) {
                                     final T next = _input.next();
                                     if (_f.test(next)) {
@@ -2238,7 +2322,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.filter(Predicate<T>,Iterable<T>): Removing elements is strictly prohibited");
+                                throw new UnsupportedOperationException("seq.filter(Predicate<T>,Iterable<T>): Removing elements is strictly prohibited");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2274,8 +2358,8 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T, U> Iterable<U> choose(final Function<? super T, Option<U>> f, final Iterable<T> input) {
-            if (f == null) throw new IllegalArgumentException("f");
-            if (input == null) throw new IllegalArgumentException("input");
+            if (isNull(f)) throw new IllegalArgumentException("f");
+            if (isNull(input)) throw new IllegalArgumentException("input");
 
             return new Iterable<U>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2311,7 +2395,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.choose(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
+                                throw new UnsupportedOperationException("seq.choose(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2350,7 +2434,7 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T> Iterable<T> init(final Function<Integer, ? extends T> f, final int howMany) {
-            if (f == null) throw new IllegalArgumentException("f");
+            if (isNull(f)) throw new IllegalArgumentException("f");
             if (howMany < 1) throw new IllegalArgumentException("howMany");
 
             return new Iterable<T>() {
@@ -2375,7 +2459,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.init(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
+                                throw new UnsupportedOperationException("seq.init(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2397,7 +2481,7 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T> Iterable<T> init(final Function<Integer, ? extends T> f) {
-            if (f == null) throw new IllegalArgumentException("f");
+            if (isNull(f)) throw new IllegalArgumentException("f");
 
             return new Iterable<T>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2419,7 +2503,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.init(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
+                                throw new UnsupportedOperationException("seq.init(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2441,8 +2525,8 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T, U> Iterable<U> collect(final Function<? super T, ? extends Iterable<U>> f, final Iterable<T> input) {
-            if (f == null) throw new IllegalArgumentException("Functional.seq.collect: f must not be null");
-            if (input == null) throw new IllegalArgumentException("Functional.seq.collect: input must not be null");
+            if (isNull(f)) throw new IllegalArgumentException("seq.collect: f must not be null");
+            if (isNull(input)) throw new IllegalArgumentException("seq.collect: input must not be null");
 
             return new Iterable<U>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2468,7 +2552,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.collect: remove is not supported");
+                                throw new UnsupportedOperationException("seq.collect: remove is not supported");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2505,9 +2589,9 @@ public final class Functional {
          */
         public static <T> Iterable<T> skip(final int howMany, final Iterable<T> input) {
             if (howMany < 0)
-                throw new IllegalArgumentException("Functional.skip(int,Iterable<T>): howMany is negative");
-            if (input == null)
-                throw new IllegalArgumentException("Functional.skip(int,Iterable<T>): input must not be null");
+                throw new IllegalArgumentException("skip(int,Iterable<T>): howMany is negative");
+            if (isNull(input))
+                throw new IllegalArgumentException("skip(int,Iterable<T>): input must not be null");
 
             return new Iterable<T>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2537,7 +2621,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.skip: remove is not supported");
+                                throw new UnsupportedOperationException("seq.skip: remove is not supported");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2571,10 +2655,10 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T> Iterable<T> skipWhile(final Predicate<? super T> predicate, final Iterable<T> input) {
-            if (predicate == null)
-                throw new IllegalArgumentException("Functional.skipWhile(Func,Iterable<T>): predicate must not be null");
-            if (input == null)
-                throw new IllegalArgumentException("Functional.skipWhile(Func,Iterable<T>): input must not be null");
+            if (isNull(predicate))
+                throw new IllegalArgumentException("skipWhile(Func,Iterable<T>): predicate must not be null");
+            if (isNull(input))
+                throw new IllegalArgumentException("skipWhile(Func,Iterable<T>): input must not be null");
 
             return new Iterable<T>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2614,13 +2698,12 @@ public final class Functional {
                                 }
                                 if (haveWeSkipped && !haveWeReadFirstValue) throw new NoSuchElementException();
                                 if (haveWeSkipped) return it.next();
-                                final boolean another = hasNext();
                                 return next();
                             }
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.skipWhile(Func,Iterable): it is not possible to remove elements from this sequence");
+                                throw new UnsupportedOperationException("seq.skipWhile(Func,Iterable): it is not possible to remove elements from this sequence");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2653,9 +2736,9 @@ public final class Functional {
          */
         public static <T> Iterable<T> take(final int howMany, final Iterable<? extends T> list) {
             if (howMany < 0)
-                throw new IllegalArgumentException("Functional.seq.take(int,Iterable<T>): howMany is negative");
-            if (list == null)
-                throw new IllegalArgumentException("Functional.seq.take(int,Iterable<T>): list must not be null");
+                throw new IllegalArgumentException("seq.take(int,Iterable<T>): howMany is negative");
+            if (isNull(list))
+                throw new IllegalArgumentException("seq.take(int,Iterable<T>): list must not be null");
 
             if (howMany == 0) return new ArrayList<>(0);
 
@@ -2683,7 +2766,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.take: remove is not supported");
+                                throw new UnsupportedOperationException("seq.take: remove is not supported");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2715,10 +2798,10 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T> Iterable<T> takeWhile(final Predicate<? super T> predicate, final Iterable<T> input) {
-            if (predicate == null)
-                throw new IllegalArgumentException("Functional.takeWhile(Func,Iterable<T>): predicate must not be null");
-            if (input == null)
-                throw new IllegalArgumentException("Functional.takeWhile(Func,Iterable<T>): input must not be null");
+            if (isNull(predicate))
+                throw new IllegalArgumentException("takeWhile(Func,Iterable<T>): predicate must not be null");
+            if (isNull(input))
+                throw new IllegalArgumentException("takeWhile(Func,Iterable<T>): input must not be null");
 
             return new Iterable<T>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2770,7 +2853,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.takeWhile(Func,Iterable): it is not possible to remove elements from this sequence");
+                                throw new UnsupportedOperationException("seq.takeWhile(Func,Iterable): it is not possible to remove elements from this sequence");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2799,8 +2882,8 @@ public final class Functional {
          * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
          */
         public static <A, B> Iterable<A> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Predicate<? super B> finished, final B seed) {
-            if (unspool == null) throw new IllegalArgumentException("unspool");
-            if (finished == null) throw new IllegalArgumentException("finished");
+            if (isNull(unspool)) throw new IllegalArgumentException("unspool");
+            if (isNull(finished)) throw new IllegalArgumentException("finished");
 
             return new Iterable<A>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2823,7 +2906,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.unfold(Func,Func,B): it is not possible to remove elements from this sequence");
+                                throw new UnsupportedOperationException("seq.unfold(Func,Func,B): it is not possible to remove elements from this sequence");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2838,7 +2921,7 @@ public final class Functional {
          * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
          */
         public static <A, B> Iterable<A> unfold(final Function<? super B, Option<Tuple2<A, B>>> unspool, final B seed) {
-            if (unspool == null) throw new IllegalArgumentException("unspool");
+            if (isNull(unspool)) throw new IllegalArgumentException("unspool");
 
             return new Iterable<A>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2862,7 +2945,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.unfold(Func,B): it is not possible to remove elements from this sequence");
+                                throw new UnsupportedOperationException("seq.unfold(Func,B): it is not possible to remove elements from this sequence");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2895,9 +2978,9 @@ public final class Functional {
          */
         public static <T> Iterable<Range<T>> partition(final Function<Integer, T> generator, final int howManyElements, final int howManyPartitions) {
             if (howManyElements <= 0)
-                throw new IllegalArgumentException("Functional.partition() howManyElements cannot be non-positive");
+                throw new IllegalArgumentException("partition() howManyElements cannot be non-positive");
             if (howManyPartitions <= 0)
-                throw new IllegalArgumentException("Functional.partition() howManyPartitions cannot be non-positive");
+                throw new IllegalArgumentException("partition() howManyPartitions cannot be non-positive");
 
             final int size = howManyElements / howManyPartitions;
             final int remainder = howManyElements % howManyPartitions;
@@ -2927,13 +3010,13 @@ public final class Functional {
 
                             public Range<T> next() {
                                 final T next = iterator.next();
-                                final Range<T> retval = new Range(last, next);
+                                final Range<T> retval = new Range<>(last, next);
                                 last = next;
                                 return retval;
                             }
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.partition(Func,int,int): it is not possible to remove elements from this sequence");
+                                throw new UnsupportedOperationException("seq.partition(Func,int,int): it is not possible to remove elements from this sequence");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -2954,10 +3037,10 @@ public final class Functional {
          * @throws java.lang.IllegalArgumentException if either input sequence is null or if the sequences have differing lengths.
          */
         public static <A, B> Iterable<Tuple2<A, B>> zip(final Iterable<? extends A> l1, final Iterable<? extends B> l2) {
-            if (l1 == null)
-                throw new IllegalArgumentException("Functional.seq.zip(Iterable<A>,Iterable<B>): l1 must not be null");
-            if (l2 == null)
-                throw new IllegalArgumentException("Functional.seq.zip(Iterable<A>,Iterable<B>): l2 must not be null");
+            if (isNull(l1))
+                throw new IllegalArgumentException("seq.zip(Iterable<A>,Iterable<B>): l1 must not be null");
+            if (isNull(l2))
+                throw new IllegalArgumentException("seq.zip(Iterable<A>,Iterable<B>): l2 must not be null");
 
             return new Iterable<Tuple2<A, B>>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2972,8 +3055,8 @@ public final class Functional {
                                 final boolean l1_it_hasNext = l1_it.hasNext();
                                 final boolean l2_it_hasNext = l2_it.hasNext();
                                 if (l1_it_hasNext != l2_it_hasNext)
-                                    throw new IllegalArgumentException("Functional.seq.zip(Iterable<A>,Iterable<B>): l1 and l2 have differing numbers of elements");
-                                return l1_it_hasNext && l2_it_hasNext;
+                                    throw new IllegalArgumentException("seq.zip(Iterable<A>,Iterable<B>): l1 and l2 have differing numbers of elements");
+                                return l1_it_hasNext;
                             }
 
 
@@ -2983,7 +3066,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.zip(Iterable,Iterable): it is not possible to remove elements from this sequence");
+                                throw new UnsupportedOperationException("seq.zip(Iterable,Iterable): it is not possible to remove elements from this sequence");
                             }
 
                             //
@@ -3015,12 +3098,12 @@ public final class Functional {
          * @throws java.lang.IllegalArgumentException if either input sequence is null or if the sequences have differing lengths.
          */
         public static <A, B, C> Iterable<Tuple3<A, B, C>> zip3(final Iterable<? extends A> l1, final Iterable<? extends B> l2, final Iterable<? extends C> l3) {
-            if (l1 == null)
-                throw new IllegalArgumentException("Functional.seq.zip3(Iterable<A>,Iterable<B>,Iterable<C>): l1 must not be null");
-            if (l2 == null)
-                throw new IllegalArgumentException("Functional.seq.zip3(Iterable<A>,Iterable<B>,Iterable<C>): l2 must not be null");
-            if (l3 == null)
-                throw new IllegalArgumentException("Functional.seq.zip3(Iterable<A>,Iterable<B>,Iterable<C>): l3 must not be null");
+            if (isNull(l1))
+                throw new IllegalArgumentException("seq.zip3(Iterable<A>,Iterable<B>,Iterable<C>): l1 must not be null");
+            if (isNull(l2))
+                throw new IllegalArgumentException("seq.zip3(Iterable<A>,Iterable<B>,Iterable<C>): l2 must not be null");
+            if (isNull(l3))
+                throw new IllegalArgumentException("seq.zip3(Iterable<A>,Iterable<B>,Iterable<C>): l3 must not be null");
 
             return new Iterable<Tuple3<A, B, C>>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -3037,8 +3120,8 @@ public final class Functional {
                                 final boolean l2_it_hasNext = l2_it.hasNext();
                                 final boolean l3_it_hasNext = l3_it.hasNext();
                                 if (l1_it_hasNext != l2_it_hasNext || l1_it_hasNext != l3_it_hasNext)
-                                    throw new IllegalArgumentException("Functional.seq.zip3(Iterable<A>,Iterable<B>,Iterable<C>): the input sequences have differing numbers of elements");
-                                return l1_it_hasNext && l2_it_hasNext && l3_it_hasNext;
+                                    throw new IllegalArgumentException("seq.zip3(Iterable<A>,Iterable<B>,Iterable<C>): the input sequences have differing numbers of elements");
+                                return l1_it_hasNext;
                             }
 
 
@@ -3048,7 +3131,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.zip3(Iterable,Iterable,Iterable): it is not possible to remove elements from this sequence");
+                                throw new UnsupportedOperationException("seq.zip3(Iterable,Iterable,Iterable): it is not possible to remove elements from this sequence");
                             }
 
                             //
@@ -3075,7 +3158,7 @@ public final class Functional {
          * @param f     the first transformation function
          * @param g     the second transformation function
          * @param input the input sequence
-         * @return a sequence of pairs. The first value of the pair is the result of the first transformation and the seocnd value of the
+         * @return a sequence of pairs. The first value of the pair is the result of the first transformation and the second value of the
          * pair of the result of the second transformation.
          */
         public static <A, B, C> Iterable<Tuple2<B, C>> zip(final Function<? super A, B> f, final Function<? super A, C> g, final Iterable<? extends A> input) {
@@ -3099,7 +3182,7 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Functional.seq.zip(Func,Func): it is not possible to remove elements from this sequence");
+                                throw new UnsupportedOperationException("seq.zip(Func,Func): it is not possible to remove elements from this sequence");
                             }
                         };
                     else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
@@ -3160,7 +3243,7 @@ public final class Functional {
          * @return a seq of type B containing the transformed values.
          */
         public static <A, B> Iterable<B> map(final Function<? super A, ? extends B> f, final Iterable<A> input) {
-            return map(f, input.iterator(), input instanceof Collection<?> ? new ArrayList<>(((Collection) input).size()) : new ArrayList<>());
+            return map(f, input.iterator(), input instanceof Collection<?> ? new ArrayList<>(((Collection<?>) input).size()) : new ArrayList<>());
         }
 
         private static <A, B> A fold(final BiFunction<? super A, ? super B, ? extends A> f, final A initialValue, final Iterator<B> input) {
@@ -3302,7 +3385,7 @@ public final class Functional {
          *                                       prevents it from being added to this set
          */
         public static <A, B> Set<B> map(final Function<? super A, ? extends B> f, final Iterable<A> input) {
-            final Set<B> output = input instanceof Collection<?> ? new HashSet<>(((Collection) input).size()) : new HashSet<>();
+            final Set<B> output = input instanceof Collection<?> ? new HashSet<>(((Collection<?>) input).size()) : new HashSet<>();
             for (final A a : input)
                 output.add(f.apply(a));
             return Collections.unmodifiableSet(output);
@@ -3317,16 +3400,16 @@ public final class Functional {
          * @return a set containing the elements of the first sequence and the elements of the second sequence
          */
         public static <T> Set<T> concat(final Set<? extends T> list1, final Set<? extends T> list2) {
-            if (list1 == null)
-                throw new IllegalArgumentException("Functional.concat(Set<T>,List<T>): list1 must not be null");
-            if (list2 == null)
-                throw new IllegalArgumentException("Functional.concat(Set<T>,List<T>): list2 must not be null");
+            if (isNull(list1))
+                throw new IllegalArgumentException("concat(Set<T>,List<T>): list1 must not be null");
+            if (isNull(list2))
+                throw new IllegalArgumentException("concat(Set<T>,List<T>): list2 must not be null");
 
             if (list1.size() == 0) return Collections.unmodifiableSet(list2);
             if (list2.size() == 0) return Collections.unmodifiableSet(list1);
 
             final Set<T> newList = new HashSet<>(list1);
-            final boolean didItChange = newList.addAll(list2);
+            newList.addAll(list2);
             return Collections.unmodifiableSet(newList);
         }
 
@@ -3339,7 +3422,7 @@ public final class Functional {
          *
          * @param e1  input set
          * @param e2  input set
-         * @param <E>
+         * @param <E> the underlying base type of the two input sets
          * @return a set containing those elements which are contained within both sets 'e1' and 'e2'
          */
         public static <E> Set<E> intersection(final Set<? extends E> e1, final Set<? extends E> e2) {
@@ -3353,7 +3436,7 @@ public final class Functional {
          *
          * @param inSet    input set
          * @param notInSet input set
-         * @param <E>
+         * @param <E> the underlying base type of the two input sets
          * @return a set of those elements which are in 'inSet' and not in 'notInSet'
          */
         public static <E> Set<E> asymmetricDifference(final Set<? extends E> inSet, final Set<? extends E> notInSet) {
@@ -3385,11 +3468,10 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Fold_(higher-order_function)">Fold</a>
          */
         public static <T, U> List<T> map(final Function<? super U, ? extends T> f, final Iterable<U> l) {
-            final List<T> l2 = Functional.fold((BiFunction<List<T>, U, List<T>>) (state, o2) -> {
+            return Functional.fold((BiFunction<List<T>, U, List<T>>) (state, o2) -> {
                 state.add(f.apply(o2));
                 return state;
-            }, l instanceof Collection<?> ? new ArrayList<>(((Collection) l).size()) : new ArrayList<>(), l);
-            return l2;
+            }, l instanceof Collection<?> ? new ArrayList<>(((Collection<?>) l).size()) : new ArrayList<>(), l);
         }
 
         /**
@@ -3404,11 +3486,10 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Fold_(higher-order_function)">Fold</a>
          */
         public static <T> List<T> filter(final Predicate<? super T> predicate, final Iterable<T> l) {
-            final List<T> l2 = Functional.fold((BiFunction<List<T>, T, List<T>>) (ts, o) -> {
+            return Functional.fold((BiFunction<List<T>, T, List<T>>) (ts, o) -> {
                 if (predicate.test(o)) ts.add(o);
                 return ts;
-            }, l instanceof Collection<?> ? new ArrayList<>(((Collection) l).size()) : new ArrayList<>(), l);
-            return l2;
+            }, l instanceof Collection<?> ? new ArrayList<>(((Collection<?>) l).size()) : new ArrayList<>(), l);
         }
 
         /**
@@ -3458,7 +3539,7 @@ public final class Functional {
         public static <A, B, AA extends A, BB extends B> Option<Boolean> forAll2(final BiPredicate<A, B> f, final Iterable<AA> input1, final Iterable<BB> input2) {
             final Iterator<AA> enum1 = input1.iterator();
             final Iterator<BB> enum2 = input2.iterator();
-            boolean enum1Moved = false, enum2Moved = false;
+            boolean enum1Moved, enum2Moved;
             do {
                 enum1Moved = enum1.hasNext();
                 enum2Moved = enum2.hasNext();
@@ -3481,9 +3562,9 @@ public final class Functional {
          */
         public static <T> List<T> take(final int howMany, final Iterable<? extends T> list) {
             if (howMany < 0)
-                throw new IllegalArgumentException("Functional.take(int,Iterable<T>): howMany is negative");
-            if (list == null)
-                throw new IllegalArgumentException("Functional.take(int,Iterable<T>): list must not be null");
+                throw new IllegalArgumentException("take(int,Iterable<T>): howMany is negative");
+            if (isNull(list))
+                throw new IllegalArgumentException("take(int,Iterable<T>): list must not be null");
 
             if (howMany == 0) return new ArrayList<>(0);
 
@@ -3518,10 +3599,10 @@ public final class Functional {
      * or false respectively
      */
     public static <A, B> B if_fn(final A a, final Predicate<? super A> predicate, final Function<? super A, ? extends B> thenClause, final Function<? super A, ? extends B> elseClause) {
-        if (a == null) throw new IllegalArgumentException("a");
-        if (predicate == null) throw new IllegalArgumentException("predicate");
-        if (thenClause == null) throw new IllegalArgumentException("thenClause");
-        if (elseClause == null) throw new IllegalArgumentException("elseClause");
+        if (isNull(a)) throw new IllegalArgumentException("a");
+        if (isNull(predicate)) throw new IllegalArgumentException("predicate");
+        if (isNull(thenClause)) throw new IllegalArgumentException("thenClause");
+        if (isNull(elseClause)) throw new IllegalArgumentException("elseClause");
 
         return predicate.test(a) ? thenClause.apply(a) : elseClause.apply(a);
     }
@@ -3536,8 +3617,8 @@ public final class Functional {
      * @return a new Case object
      */
     public static <A, B> Case<A, B> toCase(final Predicate<A> pred, final Function<A, B> result) {
-        if (pred == null) throw new IllegalArgumentException("pred");
-        if (result == null) throw new IllegalArgumentException("res");
+        if (isNull(pred)) throw new IllegalArgumentException("pred");
+        if (isNull(result)) throw new IllegalArgumentException("res");
 
         return new Case<>(pred, result);
     }
@@ -3567,9 +3648,9 @@ public final class Functional {
      * @return the result of the appropriate Case or the result of the 'defaultCase' function
      */
     public static <A, B> B switchBetween(final A input, final Iterable2<Case<A, B>> cases, final Function<A, B> defaultCase) {
-        if (input == null) throw new IllegalArgumentException("input");
-        if (cases == null) throw new IllegalArgumentException("cases");
-        if (defaultCase == null) throw new IllegalArgumentException("defaultCase");
+        if (isNull(input)) throw new IllegalArgumentException("input");
+        if (isNull(cases)) throw new IllegalArgumentException("cases");
+        if (isNull(defaultCase)) throw new IllegalArgumentException("defaultCase");
 
         return cases
                 .find(abCase -> abCase.predicate(input)).toVavrOption()

@@ -23,16 +23,22 @@ class Functional_Zip_Test {
     @Test
     void preconditions() {
         assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip(null, Function.identity(), mock(Iterable.class)))
-                .withMessage("Functional.zip(Function<A,B>,Function<A,B>,Iterable<A>): zipFunc1 must not be null");
+                .withMessage("zip(Function<A,B>,Function<A,B>,Iterable<A>): zipFunc1 must not be null");
         assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip(Function.identity(), null, mock(Iterable.class)))
-                .withMessage("Functional.zip(Function<A,B>,Function<A,B>,Iterable<A>): zipFunc2 must not be null");
+                .withMessage("zip(Function<A,B>,Function<A,B>,Iterable<A>): zipFunc2 must not be null");
         assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip(Function.identity(), Function.identity(), null))
-                .withMessage("Functional.zip(Function<A,B>,Function<A,B>,Iterable<A>): input must not be null");
+                .withMessage("zip(Function<A,B>,Function<A,B>,Iterable<A>): input must not be null");
+
+        assertThatIllegalArgumentException().isThrownBy(()->Functional.zip(null, mock(Function.class)))
+                .withMessage("zip(Function<A,B>,Function<A,B>): zipFunc1 must not be null");
+        assertThatIllegalArgumentException().isThrownBy(()->Functional.zip(mock(Function.class), null))
+                .withMessage("zip(Function<A,B>,Function<A,B>): zipFunc2 must not be null");
 
         assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip(null, mock(Iterable.class)))
-                .withMessage("Functional.zip(Iterable<A>,Iterable<B>): input1 must not be null");
+                .withMessage("zip(Iterable<A>,Iterable<B>): input1 must not be null");
         assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip(mock(Iterable.class), null))
-                .withMessage("Functional.zip(Iterable<A>,Iterable<B>): input2 must not be null");
+                .withMessage("zip(Iterable<A>,Iterable<B>): input2 must not be null");
+
     }
 
     @Test

@@ -21,10 +21,17 @@ class Functional_TakeWhile_Test {
     @Test
     void preconditions() {
         assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.takeWhile(null, mock(Iterable.class)))
+                .withMessage("takeWhile(Predicate<T>,List<T>): predicate must not be null");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.takeWhile(mock(Predicate.class), (Iterable)null))
+                .withMessage("takeWhile(Predicate<T>,List<T>): input must not be null");
+
+        assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.takeWhile(null, mock(List.class)))
                 .withMessage("takeWhile(Predicate<T>,List<T>): predicate must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.takeWhile(mock(Predicate.class), null))
+                .isThrownBy(() -> Functional.takeWhile(mock(Predicate.class), (List)null))
                 .withMessage("takeWhile(Predicate<T>,List<T>): input must not be null");
 
         assertThatIllegalArgumentException()
@@ -52,6 +59,13 @@ class Functional_TakeWhile_Test {
         void takeWhileReturnsAnElement() {
             final List<Integer> expected = Arrays.asList(1);
             final List<Integer> output = Functional.takeWhile(Functional::isOdd, input);
+            assertThat(output).containsExactlyElementsOf(expected);
+        }
+
+        @Test
+        void takeWhileReturnsAnElementUsingIterable() {
+            final List<Integer> expected = Arrays.asList(1);
+            final List<Integer> output = Functional.takeWhile(Functional::isOdd, (Iterable)input);
             assertThat(output).containsExactlyElementsOf(expected);
         }
 

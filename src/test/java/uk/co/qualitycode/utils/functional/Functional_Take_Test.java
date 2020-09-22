@@ -21,8 +21,15 @@ class Functional_Take_Test {
                 .isThrownBy(() -> Functional.take(-1, mock(Iterable.class)))
                 .withMessage("take(int,Iterable<T>): howMany must not be negative");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.take(1, null))
+                .isThrownBy(() -> Functional.take(1, (Iterable)null))
                 .withMessage("take(int,Iterable<T>): input must not be null");
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.take(-1, mock(List.class)))
+                .withMessage("take(int,List<T>): howMany must not be negative");
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.take(1, (List)null))
+                .withMessage("take(int,List<T>): input must not be null");
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.take(-1))
@@ -30,14 +37,15 @@ class Functional_Take_Test {
     }
 
     @Test
-    void takeTooManyItemsTest() {
-        assertThatExceptionOfType(NoSuchElementException.class)
-                .isThrownBy(() -> Functional.take(100, Functional.init(FunctionalTest.doublingGenerator, 10)))
-                .withMessage("Cannot take 100 elements from input list with fewer elements");
+    void takeThreeElementsFromIterable() {
+        final Iterable<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        final List<Integer> output = Functional.take(3, input);
+        final List<Integer> expected = Arrays.asList(1, 2, 3);
+        assertThat(output).containsExactlyElementsOf(expected);
     }
 
     @Test
-    void takeThreeElements() {
+    void takeThreeElementsFromList() {
         final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         final List<Integer> output = Functional.take(3, input);
         final List<Integer> expected = Arrays.asList(1, 2, 3);

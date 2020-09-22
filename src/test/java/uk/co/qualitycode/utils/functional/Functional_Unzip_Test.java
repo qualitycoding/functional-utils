@@ -18,10 +18,10 @@ class Functional_Unzip_Test {
     void preconditions() {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.unzip(null))
-                .withMessage("Functional.unzip(Iterable<Tuple2<A,B>>): input must not be null");
+                .withMessage("unzip(Iterable<Tuple2<A,B>>): input must not be null");
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.unzip3(null))
-                .withMessage("Functional.unzip3(Iterable<Tuple3<A,B,C>>): input must not be null");
+                .withMessage("unzip3(Iterable<Tuple3<A,B,C>>): input must not be null");
     }
 
     @Test
