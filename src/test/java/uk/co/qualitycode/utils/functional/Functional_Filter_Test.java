@@ -91,7 +91,7 @@ class Functional_Filter_Test {
     }
 
     @Nested
-    class Seq {
+    class Lazy {
         @Test
         void seqFilterTest1() {
             final Collection<Integer> l = Functional.init(doublingGenerator, 5);

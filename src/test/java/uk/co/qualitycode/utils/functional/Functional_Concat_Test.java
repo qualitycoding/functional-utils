@@ -36,7 +36,7 @@ class Functional_Concat_Test {
     }
 
     @Nested
-    class Seq {
+    class Lazy {
         @Test
         void seqConcatTest1() {
             final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);

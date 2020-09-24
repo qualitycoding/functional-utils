@@ -88,7 +88,7 @@ class Functional_Unfold_Test {
     }
 
     @Nested
-    class Seq {
+    class Lazy {
         @Test
         void seqUnfoldTest1() {
             final int seed = 0;

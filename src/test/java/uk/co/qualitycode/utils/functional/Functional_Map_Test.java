@@ -77,7 +77,7 @@ class Functional_Map_Test {
     }
 
     @Nested
-    class Seq {
+    class Lazy {
         @Test
         void seqMapTest1() {
             final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5); //Enumerable.Range(1, 5).ToList();

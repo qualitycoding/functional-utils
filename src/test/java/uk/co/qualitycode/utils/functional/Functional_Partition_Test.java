@@ -136,7 +136,7 @@ class Functional_Partition_Test {
     }
 
     @Nested
-    class Seq {
+    class Lazy {
         @Test
         void cantRemoveFromSeqPartitionRanges() {
             final int noElems = 13;

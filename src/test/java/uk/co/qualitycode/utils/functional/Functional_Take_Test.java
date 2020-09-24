@@ -61,7 +61,7 @@ class Functional_Take_Test {
     }
 
     @Nested
-    class Seq {
+    class Lazy {
         @Test
         void seqTakeTest1() {
             final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);

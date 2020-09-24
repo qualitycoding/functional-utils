@@ -72,7 +72,7 @@ class Functional_Mapi_Test {
     }
 
     @Nested
-    class Seq {
+    class Lazy {
         @Test
         void seqMapiTest1() {
             final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);

@@ -48,7 +48,7 @@ class Functional_Init_Test {
     }
 
     @Nested
-    class Seq {
+    class Lazy {
         @Test
         void seqInitWithBound() {
             final Iterable<Integer> output = Functional.Lazy.init(doublingGenerator, 5);

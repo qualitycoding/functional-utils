@@ -92,7 +92,7 @@ class Functional_Choose_Test {
     }
 
     @Nested
-    class Seq {
+    class Lazy {
         @Test
         void seqChooseTest1() {
             final Collection<Integer> li = Functional.init(triplingGenerator, 5);

@@ -81,7 +81,7 @@ class Functional_Zip3_Test {
     }
 
     @Nested
-    class Seq {
+    class Lazy {
         @Test
         void seqZip3Test1() {
             final Collection<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);

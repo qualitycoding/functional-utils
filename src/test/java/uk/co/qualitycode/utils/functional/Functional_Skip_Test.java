@@ -112,7 +112,7 @@ class Functional_Skip_Test {
     }
 
     @Nested
-    class Seq {
+    class Lazy {
         @Test
         void seqSkipTest1() {
             final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);

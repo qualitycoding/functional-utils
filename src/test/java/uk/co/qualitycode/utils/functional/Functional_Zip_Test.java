@@ -134,7 +134,7 @@ class Functional_Zip_Test {
     }
 
     @Nested
-    class Seq {
+    class Lazy {
         @Test
         void seqZipTwoCollections() {
             final Collection<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);

@@ -92,7 +92,7 @@ class Functional_TakeWhile_Test {
     }
 
     @Nested
-    class Seq {
+    class Lazy {
         @Test
         void seqTakeWhileTest1() {
             final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
