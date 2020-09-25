@@ -2237,6 +2237,7 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T, U> Function<Iterable<T>, Iterable<U>> map(final Function<? super T, ? extends U> f) {
+            if (isNull(f)) throw new IllegalArgumentException("Lazy.map(Function<T,R>): f must not be null");
             return input -> Lazy.map(f, input);
         }
 

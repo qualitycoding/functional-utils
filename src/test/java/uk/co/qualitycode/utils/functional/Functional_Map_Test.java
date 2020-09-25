@@ -83,6 +83,10 @@ class Functional_Map_Test {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Functional.Lazy.map(mock(Function.class), null))
                     .withMessage("Lazy.map(Function<T,R>,Iterable<T>): input must not be null");
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.map(null))
+                    .withMessage("Lazy.map(Function<T,R>): f must not be null");
         }
 
         @Test
