@@ -2143,7 +2143,7 @@ public final class Functional {
                                     next = t;
                                     hasNotConsumedAppendee = false;
                                 } else
-                                    throw new RuntimeException("Lazy.append(T,Iterable<T>): Cannot seek beyond the end of the sequence");
+                                    throw new RuntimeException("Lazy.append(T,Iterable<T>): cannot seek beyond the end of the sequence");
                                 return next;
                             }
 
@@ -2152,7 +2152,7 @@ public final class Functional {
                             }
                         };
                     else
-                        throw new UnsupportedOperationException("Lazy.append(T,Iterable<T>): This Iterable does not allow multiple Iterators");
+                        throw new UnsupportedOperationException("Lazy.append(T,Iterable<T>): this Iterable does not allow multiple Iterators");
                 }
             };
         }
@@ -2184,8 +2184,10 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T, U> Iterable<U> map(final Function<? super T, ? extends U> f, final Iterable<T> input) {
-            if (isNull(f)) throw new IllegalArgumentException("f");
-            if (isNull(input)) throw new IllegalArgumentException("input");
+            if (isNull(f))
+                throw new IllegalArgumentException("Lazy.map(Function<T,R>,Iterable<T>): f must not be null");
+            if (isNull(input))
+                throw new IllegalArgumentException("Lazy.map(Function<T,R>,Iterable<T>): input must not be null");
 
             return new Iterable<U>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2193,24 +2195,30 @@ public final class Functional {
                 public Iterator<U> iterator() {
                     if (haveCreatedIterator.compareAndSet(false, true))
                         return new Iterator<U>() {
-                            private final Iterator<T> _input = input.iterator();
-                            private final Function<? super T, ? extends U> _f = f;
+                            private final Iterator<? extends T> iterator = input.iterator();
+                            private boolean hasMoreInput = iterator.hasNext();
 
                             public boolean hasNext() {
-                                return _input.hasNext();
+                                hasMoreInput = iterator.hasNext();
+                                return hasMoreInput;
                             }
-
 
                             public U next() {
-                                return _f.apply(_input.next());
+                                final U next;
+                                if (hasMoreInput) {
+                                    next = f.apply(iterator.next());
+                                    hasMoreInput = iterator.hasNext();
+                                } else
+                                    throw new RuntimeException("Lazy.map(Function<T,R>,Iterable<T>): cannot seek beyond the end of the sequence");
+                                return next;
                             }
-
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.map(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
+                                throw new UnsupportedOperationException("Lazy.map(Function<T,R>,Iterable<T>): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.map(Function<T,R>,Iterable<T>): this Iterable does not allow multiple Iterators");
                 }
             };
         }
