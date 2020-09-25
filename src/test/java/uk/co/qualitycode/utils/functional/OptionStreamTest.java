@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.co.qualitycode.utils.functional.monad.transformer.OptionStreamToStreamTransformer.$;
+import static uk.co.qualitycode.utils.functional.OptionStream.$;
 
 class OptionStreamTest {
 
@@ -19,6 +19,12 @@ class OptionStreamTest {
     @BeforeEach
     public void setup() {
         stream = $(Stream.of(Optional.of(1), Optional.empty(), Optional.of(10)));
+    }
+
+    @Test
+    void factoryMethodIsInAPI() {
+        final OptionStream<Integer> os = $(Stream.of(Optional.of(1), Optional.empty()));
+        assertThat(os).isNotNull();
     }
 
     @Test

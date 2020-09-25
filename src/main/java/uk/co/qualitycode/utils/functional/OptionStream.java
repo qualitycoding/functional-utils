@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 public class OptionStream<T> {
     private final Stream<Optional<T>> stream;
 
-    public OptionStream(final Stream<Optional<T>> streamOfOptionals) {
+    private OptionStream(final Stream<Optional<T>> streamOfOptionals) {
         this.stream = streamOfOptionals;
     }
 
@@ -27,6 +27,10 @@ public class OptionStream<T> {
 
     public <R, A> R collect(final Collector<? super T, A, R> collector) {
         return removeOptional().collect(collector);
+    }
+
+    public static <T> OptionStream<T> $(final Stream<Optional<T>> streamOfOptionals) {
+        return new OptionStream<>(streamOfOptionals);
     }
 
     private Stream<T> removeOptional() {
