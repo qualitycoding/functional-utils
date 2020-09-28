@@ -2158,8 +2158,8 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T, U> Iterable<U> mapi(final BiFunction<Integer, ? super T, ? extends U> f, final Iterable<T> input) {
-            notNull(f, "f", "f");
-            notNull(input, "input", "input");
+            notNull(f, "Lazy.mapi(BiFunction<Integer,U,V>,Iterable<U>)", "f");
+            notNull(input, "Lazy.mapi(BiFunction<Integer,U,V>,Iterable<U>)", "input");
 
             return new Iterable<U>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2167,25 +2167,32 @@ public final class Functional {
                 public Iterator<U> iterator() {
                     if (haveCreatedIterator.compareAndSet(false, true))
                         return new Iterator<U>() {
-                            private final Iterator<T> _input = input.iterator();
-                            private final BiFunction<Integer, ? super T, ? extends U> _f = f;
+                            private final Iterator<? extends T> iterator = input.iterator();
+                            private boolean hasMoreInput = iterator.hasNext();
                             private int counter;
 
                             public boolean hasNext() {
-                                return _input.hasNext();
+                                hasMoreInput = iterator.hasNext();
+                                return hasMoreInput;
                             }
-
 
                             public U next() {
-                                return _f.apply(counter++, _input.next());
-                            }
+                                final U next;
+                                if (hasMoreInput) {
+                                    next = f.apply(counter++, iterator.next());
+                                    hasMoreInput = iterator.hasNext();
+                                } else
+                                    throw new NoSuchElementException("Lazy.mapi(BiFunction<Integer,U,V>,Iterable<U>): cannot seek beyond the end of the sequence");
+                                return next;
 
+                            }
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.map(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
+                                throw new UnsupportedOperationException("Lazy.mapi(BiFunction<Integer,U,V>,Iterable<U>): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.mapi(BiFunction<Integer,U,V>,Iterable<U>): this Iterable does not allow multiple Iterators");
                 }
             };
         }
@@ -2204,6 +2211,7 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T, U> Function<Iterable<T>, Iterable<U>> mapi(final BiFunction<Integer, ? super T, ? extends U> f) {
+            notNull(f, "Lazy.mapi(BiFunction<Integer,U,V>)", "f");
             return input -> Lazy.mapi(f, input);
         }
 
