@@ -34,6 +34,16 @@ class Functional_Concat_Test {
     @Nested
     class Lazy extends IterableResultTest<Iterable<Integer>, Integer, Integer> {
         @Test
+        void preconditions() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.concat(null, mock(Iterable.class)))
+                    .withMessage("Lazy.concat(Iterable<T>,Iterable<T>): input1 must not be null");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.concat(mock(Iterable.class), null))
+                    .withMessage("Lazy.concat(Iterable<T>,Iterable<T>): input2 must not be null");
+        }
+
+        @Test
         void seqConcatTest1() {
             final List<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);
             final List<Integer> input2 = Arrays.asList(6, 7, 8, 9, 10);
