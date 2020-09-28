@@ -2367,7 +2367,6 @@ public final class Functional {
                                 return _next.isSome();
                             }
 
-
                             public U next() {
                                 if (hasNext()) {
                                     final Option<U> next = _next;
@@ -2376,7 +2375,6 @@ public final class Functional {
                                 }
                                 throw new NoSuchElementException("Lazy.choose(Function<T,Option<U>>,Iterable<T>): cannot seek beyond the end of the sequence");
                             }
-
 
                             public void remove() {
                                 throw new UnsupportedOperationException("Lazy.choose(Function<T,Option<U>>,Iterable<T>): it is not possible to remove elements from this sequence");
@@ -2420,8 +2418,9 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T> Iterable<T> init(final Function<Integer, ? extends T> f, final int howMany) {
-            notNull(f, "f", "f");
-            if (howMany < 1) throw new IllegalArgumentException("howMany");
+            notNull(f, "Lazy.init(Function<Integer,T>,int)", "f");
+            if (howMany < 1)
+                throw new IllegalArgumentException("Lazy.init(Function<Integer,T>,int): howMany must be non-negative");
 
             return new Iterable<T>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2436,19 +2435,18 @@ public final class Functional {
                                 return _counter <= howMany;
                             }
 
-
                             public T next() {
                                 if (!hasNext())
-                                    throw new NoSuchElementException();
+                                    throw new NoSuchElementException("Lazy.init(Function<Integer,T>,int): cannot seek beyond the end of the sequence");
                                 return _f.apply(_counter++);
                             }
 
-
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.init(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
+                                throw new UnsupportedOperationException("Lazy.init(Function<Integer,T>,int): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.init(Function<Integer,T>,int): this Iterable does not allow multiple Iterators");
                 }
             };
         }
@@ -2467,7 +2465,7 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T> Iterable<T> init(final Function<Integer, ? extends T> f) {
-            notNull(f, "f", "f");
+            notNull(f, "Lazy.init(Function<Integer,T>)", "f");
 
             return new Iterable<T>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2482,17 +2480,16 @@ public final class Functional {
                                 return true;
                             }
 
-
                             public T next() {
                                 return _f.apply(_counter++);
                             }
 
-
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.init(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
+                                throw new UnsupportedOperationException("Lazy.init(Function<Integer,T>): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.init(Function<Integer,T>): this Iterable does not allow multiple Iterators");
                 }
             };
         }
@@ -2528,14 +2525,12 @@ public final class Functional {
                                 return it.hasNext() || cacheIterator.hasNext();
                             }
 
-
                             public U next() {
                                 if (cacheIterator.hasNext()) return cacheIterator.next();
                                 cache = StreamSupport.stream(f.apply(it.next()).spliterator(), false).collect(Collectors.toList());
                                 cacheIterator = cache.iterator();
                                 return cacheIterator.next();
                             }
-
 
                             public void remove() {
                                 throw new UnsupportedOperationException("Lazy.collect: remove is not supported");
@@ -2587,7 +2582,6 @@ public final class Functional {
                             private final Iterator<T> it = input.iterator();
                             private boolean haveWeSkipped;
 
-
                             public boolean hasNext() {
                                 if (haveWeSkipped && it.hasNext()) return true;
                                 if (haveWeSkipped) return false;
@@ -2598,12 +2592,10 @@ public final class Functional {
                                 return it.hasNext();
                             }
 
-
                             public T next() {
                                 if (!hasNext()) throw new NoSuchElementException();
                                 return it.next();
                             }
-
 
                             public void remove() {
                                 throw new UnsupportedOperationException("Lazy.skip: remove is not supported");

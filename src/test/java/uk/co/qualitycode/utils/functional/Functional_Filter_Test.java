@@ -87,7 +87,7 @@ class Functional_Filter_Test {
     }
 
     @Nested
-    class Lazy extends IterableResultTest<Integer, Integer, Integer> {
+    class Lazy extends FiniteIterableTest<Integer, Integer, Integer> {
         @Test
         void preconditions() {
             assertThatIllegalArgumentException()

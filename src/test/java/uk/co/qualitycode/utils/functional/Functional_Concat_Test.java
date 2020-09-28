@@ -32,7 +32,7 @@ class Functional_Concat_Test {
     }
 
     @Nested
-    class Lazy extends IterableResultTest<Iterable<Integer>, Integer, Integer> {
+    class Lazy extends FiniteIterableTest<Iterable<Integer>, Integer, Integer> {
         @Test
         void preconditions() {
             assertThatIllegalArgumentException()

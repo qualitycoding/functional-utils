@@ -53,22 +53,22 @@ class FunctionalTest {
 
         @Test
         void convertOptionalAcceptsTfmThatReturnsNull() {
-            assertThat(Functional.ConvertFlatMapOptionalToFlatMapVavrOption.convert(o->null).apply(new Object())).isEmpty();
+            assertThat(Functional.ConvertFlatMapOptionalToFlatMapVavrOption.convert(o -> null).apply(new Object())).isEmpty();
         }
 
         @Test
         void convertOptionAcceptsTfmThatReturnsNull() {
-            assertThat(Functional.ConvertFlatMapVavrOptionToFlatMapOptional.convert(o->null).apply(new Object())).isEmpty();
+            assertThat(Functional.ConvertFlatMapVavrOptionToFlatMapOptional.convert(o -> null).apply(new Object())).isEmpty();
         }
 
         @Test
         void convertOptionalToOptionAcceptsTfmThatReturnsNull() {
-            OptionAssert.assertThat(Functional.ConvertFlatMapOptionalToFlatMapOption.convert(o->null).apply(new Object())).isEmpty();
+            OptionAssert.assertThat(Functional.ConvertFlatMapOptionalToFlatMapOption.convert(o -> null).apply(new Object())).isEmpty();
         }
 
         @Test
         void convertOptionToOptionAcceptsTfmThatReturnsNull() {
-            OptionAssert.assertThat(Functional.ConvertFlatMapVavrOptionToFlatMapOption.convert(o->null).apply(new Object())).isEmpty();
+            OptionAssert.assertThat(Functional.ConvertFlatMapVavrOptionToFlatMapOption.convert(o -> null).apply(new Object())).isEmpty();
         }
 
         @Test
@@ -500,7 +500,7 @@ class FunctionalTest {
     }
 
     public static Function<Integer, List<Integer>> repeat(final int howMany) {
-        return integer -> Functional.init((Function<Integer, Integer>) counter -> integer, howMany);
+        return integer -> Functional.init(counter -> integer, howMany);
     }
 
     @Test

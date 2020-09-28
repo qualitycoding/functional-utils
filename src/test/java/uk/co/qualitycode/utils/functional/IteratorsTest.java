@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.assertj.core.api.Assertions.fail;
 
 class IteratorsTest {
-    private static Function<Integer, Integer> DoublingGenerator = a -> 2 * a;
+    private static final Function<Integer, Integer> DoublingGenerator = a -> 2 * a;
 
     @Test
     void reverseTest1() {
@@ -68,7 +68,7 @@ class IteratorsTest {
     void steppedEnumTest1() {
         final StringBuilder sb = new StringBuilder();
         for (final String s : Iterators.everyNth(3, list))
-            sb.append(s.toString());
+            sb.append(s);
 
         final String expected =
                 new StringBuilder("minus one").append("one hundred").append("zero zero UFO").toString();
@@ -79,7 +79,7 @@ class IteratorsTest {
     void steppedEnumTest2() {
         final StringBuilder sb = new StringBuilder();
         for (final String s : Iterators.everyNth(2, list))
-            sb.append(s.toString());
+            sb.append(s);
 
         final String expected =
                 new StringBuilder("minus one").append("one").append("ten").append("zero zero UFO").toString();
@@ -90,7 +90,7 @@ class IteratorsTest {
     void steppedEnumTest3() {
         final StringBuilder sb = new StringBuilder();
         for (final String s : Iterators.everyNth(1, list))
-            sb.append(s.toString());
+            sb.append(s);
 
         final String expected =
                 new StringBuilder("minus one").append("ninety seven").append("one").append("one hundred").append("ten").append("two").
@@ -102,7 +102,7 @@ class IteratorsTest {
     void steppedEnumTest4() {
         final StringBuilder sb = new StringBuilder();
         for (final String s : Iterators.everyNth(4, Iterators.reverse(list)))
-            sb.append(s.toString());
+            sb.append(s);
 
         final String expected =
                 new StringBuilder("zero zero UFO").append("one").toString();

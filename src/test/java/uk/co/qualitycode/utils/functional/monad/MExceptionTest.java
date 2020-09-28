@@ -51,7 +51,7 @@ class MExceptionTest {
         }
     }
 
-    private static Function<Integer, Integer> doublingGenerator = a -> 2 * a;
+    private static final Function<Integer, Integer> doublingGenerator = a -> 2 * a;
 
     @Test
     void returnWithFuncTest2() {

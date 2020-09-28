@@ -88,7 +88,7 @@ class Functional_Choose_Test {
     }
 
     @Nested
-    class Lazy extends IterableResultTest<Function<Integer, Option<String>>, Integer, String> {
+    class Lazy extends FiniteIterableTest<Function<Integer, Option<String>>, Integer, String> {
         @Test
         void preconditions() {
             assertThatIllegalArgumentException()

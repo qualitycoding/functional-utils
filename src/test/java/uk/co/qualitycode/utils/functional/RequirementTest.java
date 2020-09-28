@@ -28,7 +28,7 @@ class RequirementTest {
     @Test
     void requireNonNullThrows() {
         assertThatExceptionOfType(RequirementException.class)
-                .isThrownBy(()->require(null).toBe().nonNull())
+                .isThrownBy(() -> require(null).toBe().nonNull())
                 .withMessage("value must not be null");
     }
 }

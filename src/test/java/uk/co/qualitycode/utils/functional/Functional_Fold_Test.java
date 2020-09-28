@@ -31,7 +31,7 @@ class Functional_Fold_Test {
                 .withMessage("fold(BiFunction<A,B,A>,A,Iterable<B>): folder must not be null");
         // null is an allowable initialValue
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.fold(mock(BiFunction.class), new Object(), (Iterable) null))
+                .isThrownBy(() -> Functional.fold(mock(BiFunction.class), new Object(), null))
                 .withMessage("fold(BiFunction<A,B,A>,A,Iterable<B>): input must not be null");
 
 //        assertThatIllegalArgumentException()

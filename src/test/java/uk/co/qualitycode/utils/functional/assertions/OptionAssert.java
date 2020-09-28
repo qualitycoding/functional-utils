@@ -3,7 +3,7 @@ package uk.co.qualitycode.utils.functional.assertions;
 import uk.co.qualitycode.utils.functional.monad.Option;
 
 public class OptionAssert<T> {
-    private Option<T> option;
+    private final Option<T> option;
 
     public OptionAssert(final Option<T> option) {
         this.option = option;

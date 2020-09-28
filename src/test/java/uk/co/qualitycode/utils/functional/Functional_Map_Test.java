@@ -74,7 +74,7 @@ class Functional_Map_Test {
     }
 
     @Nested
-    class Lazy extends IterableResultTest<Function<Integer, String>, Integer, String> {
+    class Lazy extends FiniteIterableTest<Function<Integer, String>, Integer, String> {
         @Test
         void preconditions() {
             assertThatIllegalArgumentException()

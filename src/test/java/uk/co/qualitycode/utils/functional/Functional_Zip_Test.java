@@ -29,9 +29,9 @@ class Functional_Zip_Test {
         assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip(Function.identity(), Function.identity(), null))
                 .withMessage("zip(Function<A,B>,Function<A,B>,Iterable<A>): input must not be null");
 
-        assertThatIllegalArgumentException().isThrownBy(()->Functional.zip(null, mock(Function.class)))
+        assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip(null, mock(Function.class)))
                 .withMessage("zip(Function<A,B>,Function<A,B>): zipFunc1 must not be null");
-        assertThatIllegalArgumentException().isThrownBy(()->Functional.zip(mock(Function.class), null))
+        assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip(mock(Function.class), null))
                 .withMessage("zip(Function<A,B>,Function<A,B>): zipFunc2 must not be null");
 
         assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip(null, mock(Iterable.class)))
@@ -56,7 +56,7 @@ class Functional_Zip_Test {
 
         assertThat(output).containsExactlyElementsOf(expected);
         assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(()->output.add(new Tuple2<>(1,"hjh")));
+                .isThrownBy(() -> output.add(new Tuple2<>(1, "hjh")));
     }
 
     @Test
@@ -91,7 +91,7 @@ class Functional_Zip_Test {
 
         assertThat(output).containsExactlyElementsOf(expected);
         assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(()->output.add(new Tuple2<>(1,'d')));
+                .isThrownBy(() -> output.add(new Tuple2<>(1, 'd')));
     }
 
     @Test
@@ -100,7 +100,7 @@ class Functional_Zip_Test {
         final Iterable<Character> input2 = Functional.Lazy.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
 
         assertThatIllegalArgumentException()
-                .isThrownBy(()->Functional.zip(input1, input2))
+                .isThrownBy(() -> Functional.zip(input1, input2))
                 .withMessage("zip(Iterable<A>,Iterable<B>): Cannot zip two iterables with different lengths");
     }
 
@@ -120,7 +120,7 @@ class Functional_Zip_Test {
 
         assertThat(output).containsExactlyElementsOf(expected);
         assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(()->output.add(new Tuple2<>(1,'d')));
+                .isThrownBy(() -> output.add(new Tuple2<>(1, 'd')));
     }
 
     @Test

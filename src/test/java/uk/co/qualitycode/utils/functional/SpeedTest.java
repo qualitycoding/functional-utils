@@ -64,7 +64,7 @@ class SpeedTest {
         }
     }
 
-    private static Function<Integer, Integer> DoublingGenerator = a -> 2 * a;
+    private static final Function<Integer, Integer> DoublingGenerator = a -> 2 * a;
 
     public static <A> List<A> filterWithIterable(final Predicate<? super A> pred, final Iterable<A> input) {
         final List<A> output = new ArrayList<>();

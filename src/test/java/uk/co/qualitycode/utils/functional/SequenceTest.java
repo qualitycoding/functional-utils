@@ -3,14 +3,11 @@ package uk.co.qualitycode.utils.functional;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.junit.jupiter.api.Assertions.fail;
 
-abstract class IterableResultTest<T1, T2, R> {
+abstract class SequenceTest<T1, T2, R> {
     protected abstract Collection<T2> initialValues();
 
     protected abstract Iterable<R> testFunction(final Iterable<T2> l);
@@ -19,30 +16,11 @@ abstract class IterableResultTest<T1, T2, R> {
 
     protected abstract int noOfElementsInOutput();
 
-    @Test
-    void nextThrowsIfThereAreNoMoreElements() {
-        final Collection<T2> l = initialValues();
-        final Iterable<R> output = testFunction(l);
-
-        final Iterator<R> iterator = output.iterator();
-        Functional.init(i -> iterator.next(), noOfElementsInOutput());
-        assertThatExceptionOfType(NoSuchElementException.class)
-                .isThrownBy(iterator::next)
-                .withMessage(methodNameInExceptionMessage() + ": cannot seek beyond the end of the sequence");
-    }
+    protected abstract void consumeSequenceWithoutCallingHasNext();
 
     @Test
     void canConsumeSequenceWithoutCallingHasNext() {
-        final Collection<T2> l = initialValues();
-        final Iterable<R> output = testFunction(l);
-
-        final Iterator<R> iterator = output.iterator();
-        assertThatNoException()
-                .as("read all the elements in the sequence")
-                .isThrownBy(() -> Functional.init(i -> iterator.next(), noOfElementsInOutput()));
-        assertThatExceptionOfType(NoSuchElementException.class)
-                .as("attempt (and fail) to read beyond the end of the sequence")
-                .isThrownBy(iterator::next);
+        consumeSequenceWithoutCallingHasNext();
     }
 
     @Test

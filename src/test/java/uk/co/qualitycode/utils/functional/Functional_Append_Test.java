@@ -14,7 +14,7 @@ import static org.mockito.Mockito.mock;
 
 class Functional_Append_Test {
     @Nested
-    class Lazy extends IterableResultTest<Integer, Integer, Integer> {
+    class Lazy extends FiniteIterableTest<Integer, Integer, Integer> {
         @Test
         void preconditions() {
             assertThatIllegalArgumentException()

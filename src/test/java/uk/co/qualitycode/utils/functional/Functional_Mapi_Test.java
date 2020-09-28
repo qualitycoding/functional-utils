@@ -69,7 +69,7 @@ class Functional_Mapi_Test {
     }
 
     @Nested
-    class Lazy extends IterableResultTest<BiFunction<Integer, Integer, Integer>, Integer, Tuple2<Integer, String>> {
+    class Lazy extends FiniteIterableTest<BiFunction<Integer, Integer, Integer>, Integer, Tuple2<Integer, String>> {
         @Test
         void preconditions() {
             assertThatIllegalArgumentException()
