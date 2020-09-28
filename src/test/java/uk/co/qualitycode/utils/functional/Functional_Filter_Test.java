@@ -7,16 +7,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.FunctionalTest.doublingGenerator;
 
@@ -43,7 +39,7 @@ class Functional_Filter_Test {
                 .withMessage("filter(Predicate<A>): predicate must not be null");
     }
 
-   @Test
+    @Test
     void filterCollectionForOddElements() {
         final List<Integer> l = Functional.init(doublingGenerator, 5);
         final List<Integer> oddElems = Functional.filter(Functional::isOdd, l);
@@ -91,107 +87,55 @@ class Functional_Filter_Test {
     }
 
     @Nested
-    class Lazy {
+    class Lazy extends IterableResultTest<Integer, Integer, Integer> {
         @Test
-        void seqFilterTest1() {
-            final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-            final Iterable<Integer> oddElems = Functional.Lazy.filter(Functional::isOdd, l);
+        void preconditions() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.filter(null, mock(Iterable.class)))
+                    .withMessage("Lazy.filter(Predicate<T>,Iterable<T>): predicate must not be null");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.filter(mock(Predicate.class), null))
+                    .withMessage("Lazy.filter(Predicate<T>,Iterable<T>): input must not be null");
 
-            assertThat(oddElems).isEmpty();
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.filter(null))
+                    .withMessage("Lazy.filter(Predicate<T>): predicate must not be null");
         }
 
         @Test
-        void curriedSeqFilterTest1() {
-            final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-            final Iterable<Integer> oddElems = Functional.Lazy.filter(Functional::isOdd).apply(l);
-
-            assertThat(oddElems).isEmpty();
-        }
-
-        @Test
-        void cantRemoveFromSeqFilterTest1() {
-            final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-            final Iterable<Integer> oddElems = Functional.Lazy.filter(Functional::isOdd, l);
-            assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> oddElems.iterator().remove());
-        }
-
-        @Test
-        void cantRestartIteratorFromSeqFilterTest1() {
-            final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-            final Iterable<Integer> oddElems = Functional.Lazy.filter(Functional::isOdd, l);
-            try {
-                oddElems.iterator();
-            } catch (final UnsupportedOperationException e) {
-                fail("Shouldn't reach this point");
-            }
-            assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(oddElems::iterator);
-        }
-
-        @Test
-        void seqFilterTest2() {
-            final Collection<Integer> l = Functional.init(doublingGenerator, 5);
+        void filterReturnsEvens() {
+            final Collection<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
             final Iterable<Integer> evenElems = Functional.Lazy.filter(Functional::isEven, l);
 
-            final Collection<Integer> expected = Arrays.asList(2, 4, 6, 8, 10);
-            assertThat(evenElems).containsExactlyElementsOf(expected);
+            assertThat(evenElems).containsExactly(2, 4);
         }
 
         @Test
-        void seqFilterTest3() {
-            final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-            final int limit = 5;
-            final Iterable<Integer> highElems = Functional.Lazy.filter(a -> a > limit, l);
+        void curriedFilterReturnsEvens() {
+            final Collection<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
+            final Iterable<Integer> evenElems = Functional.Lazy.filter(Functional::isEven).apply(l);
 
-            final Collection<Integer> expected = Arrays.asList(6, 8, 10);
-            assertThat(highElems).containsExactlyElementsOf(expected);
+            assertThat(evenElems).containsExactly(2, 4);
         }
 
-        @Test
-        void seqFilterTest4() {
-            final Collection<Integer> li = Functional.init(doublingGenerator, 5);
-            final int limit = 10;
-            final Iterable<Integer> output = Functional.Lazy.filter(a -> a > limit, li);
-
-            assertThat(output.iterator().hasNext()).isFalse();
+        @Override
+        protected Collection<Integer> initialValues() {
+            return Arrays.asList(1, 2, 3, 4, 5);
         }
 
-        @Test
-        void seqFilterTest5() {
-            final Collection<Integer> li = Functional.init(doublingGenerator, 10);
-            final Collection<Integer> expected = Arrays.asList(4, 8, 12, 16, 20);
-            final Iterable<Integer> output = Functional.Lazy.filter(a -> a % 4 == 0, li);
-
-            assertThat(output).containsExactlyElementsOf(expected);
+        @Override
+        protected Iterable<Integer> testFunction(final Iterable<Integer> l) {
+            return Functional.Lazy.filter(Functional::isOdd, l);
         }
 
-        @Test
-        void seqFilterTest6() {
-            final Collection<Integer> input = Functional.init(doublingGenerator, 10);
-            final Iterable<Integer> output = Functional.Lazy.filter(a -> a % 4 == 0, input);
-            final Iterator<Integer> iterator = output.iterator();
+        @Override
+        protected String methodNameInExceptionMessage() {
+            return "Lazy.filter(Predicate<T>,Iterable<T>)";
+        }
 
-            for (int i = 0; i < 20; ++i)
-                assertThat(iterator.hasNext()).isTrue();
-
-            int next = iterator.next();
-            assertThat(next).isEqualTo(4);
-            next = iterator.next();
-            assertThat(next).isEqualTo(8);
-            next = iterator.next();
-            assertThat(next).isEqualTo(12);
-            next = iterator.next();
-            assertThat(next).isEqualTo(16);
-            next = iterator.next();
-            assertThat(next).isEqualTo(20);
-
-            assertThat(iterator.hasNext()).isFalse();
-            try {
-                iterator.next();
-            } catch (final NoSuchElementException e) {
-                return;
-            }
-
-            fail("Should not reach this point");
+        @Override
+        protected int noOfElementsInOutput() {
+            return 3;
         }
     }
 

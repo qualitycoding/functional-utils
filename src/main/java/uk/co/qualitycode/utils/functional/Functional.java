@@ -2260,18 +2260,17 @@ public final class Functional {
         /**
          * See <a href="http://en.wikipedia.org/wiki/Filter_(higher-order_function)">Filter</a>
          *
-         * @param <T>   the type of the element in the input sequence
-         * @param f     a filter function. This is passed each input element in turn and returns either true or false. If true then
-         *              the input element is passed through to the output otherwise it is ignored.
-         * @param input a sequence of objects
+         * @param <T>       the type of the element in the input sequence
+         * @param predicate a filter function. This is passed each input element in turn and returns either true or false. If true then
+         *                  the input element is passed through to the output otherwise it is ignored.
+         * @param input     a sequence of objects
          * @return a lazily-evaluated sequence which contains zero or more of the elements of the input sequence. Each element is included only if
          * the filter function returns true for the element.
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
-        public static <T> Iterable<T> filter(final Predicate<? super T> f, final Iterable<T> input) //throws NoSuchElementException, IllegalArgumentException, UnsupportedOperationException
-        {
-            notNull(f, "f", "f");
-            notNull(input, "input", "input");
+        public static <T> Iterable<T> filter(final Predicate<? super T> predicate, final Iterable<T> input) {
+            notNull(predicate, "Lazy.filter(Predicate<T>,Iterable<T>)", "predicate");
+            notNull(input, "Lazy.filter(Predicate<T>,Iterable<T>)", "input");
 
             return new Iterable<T>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2280,7 +2279,7 @@ public final class Functional {
                     if (haveCreatedIterator.compareAndSet(false, true))
                         return new Iterator<T>() {
                             private final Iterator<T> _input = input.iterator();
-                            private final Predicate<? super T> _f = f;
+                            private final Predicate<? super T> _f = predicate;
                             private T _next;
 
                             public boolean hasNext() {
@@ -2295,22 +2294,21 @@ public final class Functional {
                                 return _next != null;
                             }
 
-
                             public T next() {
                                 if (hasNext()) {
                                     final T next = _next;
                                     _next = null;
                                     return next;
                                 }
-                                throw new java.util.NoSuchElementException();
+                                throw new NoSuchElementException("Lazy.filter(Predicate<T>,Iterable<T>): cannot seek beyond the end of the sequence");
                             }
-
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.filter(Predicate<T>,Iterable<T>): Removing elements is strictly prohibited");
+                                throw new UnsupportedOperationException("Lazy.filter(Predicate<T>,Iterable<T>): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.filter(Predicate<T>,Iterable<T>): this Iterable does not allow multiple Iterators");
                 }
             };
         }
@@ -2318,15 +2316,16 @@ public final class Functional {
         /**
          * See <a href="http://en.wikipedia.org/wiki/Filter_(higher-order_function)">Filter</a>
          *
-         * @param <T> the type of the element in the input sequence
-         * @param f   a filter function. This is passed each input element in turn and returns either true or false. If true then
-         *            the input element is passed through to the output otherwise it is ignored.
+         * @param <T>       the type of the element in the input sequence
+         * @param predicate a filter function. This is passed each input element in turn and returns either true or false. If true then
+         *                  the input element is passed through to the output otherwise it is ignored.
          * @return a lazily-evaluated sequence which contains zero or more of the elements of the input sequence. Each element is included only if
          * the filter function returns true for the element.
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
-        public static <T> Function<Iterable<T>, Iterable<T>> filter(final Predicate<? super T> f) {
-            return input -> Lazy.filter(f, input);
+        public static <T> Function<Iterable<T>, Iterable<T>> filter(final Predicate<? super T> predicate) {
+            notNull(predicate, "Lazy.filter(Predicate<T>)", "predicate");
+            return input -> Lazy.filter(predicate, input);
         }
 
         /**
