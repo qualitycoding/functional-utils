@@ -4,18 +4,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import uk.co.qualitycode.utils.functional.monad.Option;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.FunctionalTest.triplingGenerator;
 
@@ -92,65 +88,61 @@ class Functional_Choose_Test {
     }
 
     @Nested
-    class Lazy {
+    class Lazy extends IterableResultTest<Function<Integer, Option<String>>, Integer, String> {
         @Test
-        void seqChooseTest1() {
-            final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-            final Iterable<String> output = Functional.Lazy.choose(i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none(), li);
+        void preconditions() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.choose(null, mock(Iterable.class)))
+                    .withMessage("Lazy.choose(Function<A,Option<B>>,Iterable<A>): chooser must not be null");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.choose(mock(Function.class), (Iterable) null))
+                    .withMessage("Lazy.choose(Function<A,Option<B>>,Iterable<A>): input must not be null");
 
-            final Collection<String> expected = Arrays.asList("6", "12");
-            assertThat(output).containsExactlyElementsOf(expected);
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.choose(null))
+                    .withMessage("Lazy.choose(Function<A,Option<B>>): chooser must not be null");
         }
 
         @Test
-        void curriedSeqChooseTest1() {
-            final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-            final Iterable<String> output = Functional.Lazy.choose((Function<Integer, Option<String>>) i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none()).apply(li);
-
-            final Collection<String> expected = Arrays.asList("6", "12");
-            assertThat(output).containsExactlyElementsOf(expected);
+        void chooseEvenNumsAsStringsUsingIterable() {
+            final Iterable<Integer> li = Functional.init(triplingGenerator, 5);
+            final Iterable<String> o = Functional.Lazy.choose(
+                    Functional.ConvertFlatMapOptionalToFlatMapOption.convert(
+                            i -> Optional.of(i).filter(Functional::isEven).map(Object::toString)),
+                    li);
+            assertThat(o).containsExactly("6", "12");
         }
 
         @Test
-        void cantRemoveFromSeqChooseTest1() {
-            final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-            final Iterable<String> output = Functional.Lazy.choose(i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none(), li);
-            assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
+        void curriedChooseEvenNumsAsStringsUsingIterable() {
+            final Iterable<Integer> li = Functional.init(triplingGenerator, 5);
+            final Iterable<String> o = Functional.Lazy.choose(
+                    Functional.ConvertFlatMapOptionalToFlatMapOption.convert(
+                            (Integer i) -> Optional.of(i).filter(Functional::isEven).map(Object::toString))).apply(li);
+            assertThat(o).containsExactly("6", "12");
         }
 
-        @Test
-        void cantRestartIteratorFromSeqChooseTest1() {
-            final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-            final Iterable<String> output = Functional.Lazy.choose(i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none(), li);
-            try {
-                output.iterator();
-            } catch (final UnsupportedOperationException e) {
-                fail("Shouldn't reach this point");
-            }
-            assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(output::iterator);
+        @Override
+        protected Collection<Integer> initialValues() {
+            return Functional.init(triplingGenerator, 5);
         }
 
-        @Test
-        void seqChooseTest2() {
-            final Collection<Integer> li = Functional.init(triplingGenerator, 5);
-            final Iterable<String> output = Functional.Lazy.choose(i -> i % 2 == 0 ? Option.of(i.toString()) : Option.none(), li);
-            final Iterator<String> iterator = output.iterator();
+        @Override
+        protected Iterable<String> testFunction(final Iterable<Integer> l) {
+            return Functional.Lazy.choose(
+                    Functional.ConvertFlatMapOptionalToFlatMapOption.convert(
+                            i -> Optional.of(i).filter(Functional::isEven).map(Object::toString)),
+                    l);
+        }
 
-            for (int i = 0; i < 20; ++i)
-                assertThat(iterator.hasNext()).isTrue();
+        @Override
+        protected String methodNameInExceptionMessage() {
+            return "Lazy.choose(Function<T,Option<U>>,Iterable<T>)";
+        }
 
-            String next = iterator.next();
-            assertThat(next).isEqualTo("6");
-            next = iterator.next();
-            assertThat(next).isEqualTo("12");
-            assertThat(iterator.hasNext()).isFalse();
-            try {
-                iterator.next();
-            } catch (final NoSuchElementException e) {
-                return;
-            }
-
-            fail("Should not reach this point");
+        @Override
+        protected int noOfElementsInOutput() {
+            return 2;
         }
     }
 }

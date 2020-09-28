@@ -2334,16 +2334,16 @@ public final class Functional {
          * See <a href="http://en.wikipedia.org/wiki/Map_(higher-order_function)">Map</a>
          * choose: (A -> B option) -> A list -> B list
          *
-         * @param <T>   the type of the element in the input sequence
-         * @param <U>   the type of the element in the output sequence
-         * @param f     map function. This transforms the input element into an Option
-         * @param input input sequence
+         * @param <T>     the type of the element in the input sequence
+         * @param <U>     the type of the element in the output sequence
+         * @param chooser map function. This transforms the input element into an Option
+         * @param input   input sequence
          * @return a lazily-evaluated sequence of transformed elements, numbering less than or equal to the number of input elements
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
-        public static <T, U> Iterable<U> choose(final Function<? super T, Option<U>> f, final Iterable<T> input) {
-            notNull(f, "f", "f");
-            notNull(input, "input", "input");
+        public static <T, U> Iterable<U> choose(final Function<? super T, Option<U>> chooser, final Iterable<T> input) {
+            notNull(chooser, "Lazy.choose(Function<A,Option<B>>,Iterable<A>)", "chooser");
+            notNull(input, "Lazy.choose(Function<A,Option<B>>,Iterable<A>)", "input");
 
             return new Iterable<U>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2352,7 +2352,7 @@ public final class Functional {
                     if (haveCreatedIterator.compareAndSet(false, true))
                         return new Iterator<U>() {
                             private final Iterator<T> _input = input.iterator();
-                            private final Function<? super T, Option<U>> _f = f;
+                            private final Function<? super T, Option<U>> _f = chooser;
                             private Option<U> _next = Option.none();
 
                             public boolean hasNext() {
@@ -2374,15 +2374,16 @@ public final class Functional {
                                     _next = Option.none();
                                     return next.get();
                                 }
-                                throw new java.util.NoSuchElementException();
+                                throw new NoSuchElementException("Lazy.choose(Function<T,Option<U>>,Iterable<T>): cannot seek beyond the end of the sequence");
                             }
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.choose(Function<T,U>,Iterable<T>): Removing elements is strictly prohibited");
+                                throw new UnsupportedOperationException("Lazy.choose(Function<T,Option<U>>,Iterable<T>): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.choose(Function<T,Option<U>>,Iterable<T>): this Iterable does not allow multiple Iterators");
                 }
             };
         }
@@ -2393,14 +2394,15 @@ public final class Functional {
          * See <a href="http://en.wikipedia.org/wiki/Map_(higher-order_function)">Map</a>
          * choose: (A -> B option) -> A list -> B list
          *
-         * @param <T> the type of the element in the input sequence
-         * @param <U> the type of the element in the output sequence
-         * @param f   map function. This transforms the input element into an Option
+         * @param <T>     the type of the element in the input sequence
+         * @param <U>     the type of the element in the output sequence
+         * @param chooser map function. This transforms the input element into an Option
          * @return a lazily-evaluated sequence of transformed elements, numbering less than or equal to the number of input elements
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
-        public static <T, U> Function<Iterable<T>, Iterable<U>> choose(final Function<? super T, Option<U>> f) {
-            return input -> Lazy.choose(f, input);
+        public static <T, U> Function<Iterable<T>, Iterable<U>> choose(final Function<? super T, Option<U>> chooser) {
+            notNull(chooser, "Lazy.choose(Function<A,Option<B>>)", "chooser");
+            return input -> Lazy.choose(chooser, input);
         }
 
         /**

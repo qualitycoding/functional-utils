@@ -38,7 +38,11 @@ abstract class IterableResultTest<T1, T2, R> {
 
         final Iterator<R> iterator = output.iterator();
         assertThatNoException()
+                .as("read all the elements in the sequence")
                 .isThrownBy(() -> Functional.init(i -> iterator.next(), noOfElementsInOutput()));
+        assertThatExceptionOfType(NoSuchElementException.class)
+                .as("attempt (and fail) to read beyond the end of the sequence")
+                .isThrownBy(iterator::next);
     }
 
     @Test
