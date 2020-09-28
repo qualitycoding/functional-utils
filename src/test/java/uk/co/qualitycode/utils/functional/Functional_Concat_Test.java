@@ -44,7 +44,7 @@ class Functional_Concat_Test {
         }
 
         @Test
-        void seqConcatTest1() {
+        void concatTwoSequencesOfIntegers() {
             final List<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);
             final List<Integer> input2 = Arrays.asList(6, 7, 8, 9, 10);
             final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
