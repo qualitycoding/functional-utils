@@ -2241,17 +2241,18 @@ public final class Functional {
                                 return _s1.hasNext() || _s2.hasNext();
                             }
 
-
                             public T next() {
-                                return _s1.hasNext() ? _s1.next() : _s2.next();
+                                if (_s1.hasNext()) return _s1.next();
+                                if (_s2.hasNext()) return _s2.next();
+                                throw new NoSuchElementException("Lazy.concat(Iterable<T>,Iterable<T>): cannot seek beyond the end of the sequence");
                             }
-
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.concat(Iterable<T>,Iterable<T>): remove is not supported");
+                                throw new UnsupportedOperationException("Lazy.concat(Iterable<T>,Iterable<T>): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.concat(Iterable<T>,Iterable<T>): this Iterable does not allow multiple Iterators");
                 }
             };
         }
