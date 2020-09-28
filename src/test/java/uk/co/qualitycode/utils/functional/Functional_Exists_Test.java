@@ -76,7 +76,7 @@ class Functional_Exists_Test {
                     .withMessage("not(Predicate<A>): predicate must not be null");
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Functional.not2(null))
-                    .withMessage("not(BiPredicate<A,B>): predicate must not be null");
+                    .withMessage("not2(BiPredicate<A,B>): predicate must not be null");
         }
 
         @Test

@@ -23,15 +23,15 @@ class Functional_Skip_Test {
                 .isThrownBy(() -> Functional.skip(-1, mock(Iterable.class)))
                 .withMessage("skip(int,Iterable<T>): howMany must not be negative");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.skip(1, (Iterable)null))
-                .withMessage("skip(int,Iterable<T>): input must not be negative");
+                .isThrownBy(() -> Functional.skip(1, (Iterable) null))
+                .withMessage("skip(int,Iterable<T>): input must not be null");
 
-         assertThatIllegalArgumentException()
+        assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.skip(-1, mock(List.class)))
                 .withMessage("skip(int,List<T>): howMany must not be negative");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.skip(1, (List)null))
-                .withMessage("skip(int,List<T>): input must not be negative");
+                .isThrownBy(() -> Functional.skip(1, (List) null))
+                .withMessage("skip(int,List<T>): input must not be null");
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.skip(-1))

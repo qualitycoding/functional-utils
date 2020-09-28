@@ -16,14 +16,14 @@ class Functional_Between_Test {
         void lowerBound() {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Functional.between(null, 4, 3))
-                    .withMessage("between(T,T,T): lower bound must not be null");
+                    .withMessage("between(T,T,T): lowerBound must not be null");
         }
 
         @Test
         void upperBound() {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Functional.between(1, null, 3))
-                    .withMessage("between(T,T,T): upper bound must not be null");
+                    .withMessage("between(T,T,T): upperBound must not be null");
         }
 
         @Test

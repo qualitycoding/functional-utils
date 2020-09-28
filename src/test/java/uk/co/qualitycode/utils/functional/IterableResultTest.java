@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -25,7 +26,7 @@ abstract class IterableResultTest<T1, T2, R> {
 
         final Iterator<R> iterator = output.iterator();
         Functional.init(i -> iterator.next(), noOfElementsInOutput());
-        assertThatExceptionOfType(RuntimeException.class)
+        assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(iterator::next)
                 .withMessage(methodNameInExceptionMessage() + ": cannot seek beyond the end of the sequence");
     }

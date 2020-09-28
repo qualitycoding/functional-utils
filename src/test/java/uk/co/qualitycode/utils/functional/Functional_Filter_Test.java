@@ -26,21 +26,21 @@ class Functional_Filter_Test {
     void preconditions() {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.filter(null, mock(Iterable.class)))
-                .withMessage("filter(Predicate<A>,Iterable<A>): pred must not be null");
+                .withMessage("filter(Predicate<A>,Iterable<A>): predicate must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.filter(mock(Predicate.class), (Iterable)null))
+                .isThrownBy(() -> Functional.filter(mock(Predicate.class), (Iterable) null))
                 .withMessage("filter(Predicate<A>,Iterable<A>): input must not be null");
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.filter(null, mock(Collection.class)))
-                .withMessage("filter(Predicate<A>,Collection<A>): pred must not be null");
+                .withMessage("filter(Predicate<A>,Collection<A>): predicate must not be null");
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.filter(mock(Predicate.class), null))
                 .withMessage("filter(Predicate<A>,Collection<A>): input must not be null");
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.filter(null))
-                .withMessage("filter(Predicate<A>): pred must not be null");
+                .withMessage("filter(Predicate<A>): predicate must not be null");
     }
 
    @Test
