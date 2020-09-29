@@ -1,5 +1,6 @@
 package uk.co.qualitycode.utils.functional;
 
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -27,6 +28,14 @@ public class OptionStream<T> {
 
     public <R, A> R collect(final Collector<? super T, A, R> collector) {
         return removeOptional().collect(collector);
+    }
+
+    public Optional<T> findFirst() {
+        return removeOptional().findFirst();
+    }
+
+    public Optional<T> max(final Comparator<T> comparator) {
+        return removeOptional().max(comparator);
     }
 
     public static <T> OptionStream<T> $(final Stream<Optional<T>> streamOfOptionals) {

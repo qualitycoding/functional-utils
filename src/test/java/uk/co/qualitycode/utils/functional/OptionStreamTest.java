@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,6 +53,18 @@ class OptionStreamTest {
     void collectIsInAPI() {
         final List<Integer> os = stream.collect(Collectors.toList());
         assertThat(os).isNotNull().containsExactly(1, 10);
+    }
+
+    @Test
+    void findFirstIsInAPI() {
+        final Optional<Integer> os = stream.findFirst();
+        assertThat(os).isNotNull().hasValue(1);
+    }
+
+    @Test
+    void maxIsInAPI() {
+        final Optional<Integer> os = stream.max(Comparator.naturalOrder());
+        assertThat(os).isNotNull().hasValue(10);
     }
 
     @Test

@@ -1,11 +1,15 @@
 package uk.co.qualitycode.utils.functional;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,6 +17,8 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.Functional.flatMap;
+import static uk.co.qualitycode.utils.functional.FunctionalTest.doublingGenerator;
+import static uk.co.qualitycode.utils.functional.FunctionalTest.repeat;
 
 class Functional_FlatMap_Test {
     @Test
@@ -21,7 +27,7 @@ class Functional_FlatMap_Test {
                 .isThrownBy(() -> flatMap(null, new ArrayList<>()))
                 .withMessage("flatMap(Function<A,B>,Collection<A>): f must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> flatMap(i -> Collections.emptyList(), (List)null))
+                .isThrownBy(() -> flatMap(i -> Collections.emptyList(), (List) null))
                 .withMessage("flatMap(Function<A,B>,Collection<A>): input must not be null");
 
         assertThatIllegalArgumentException()
@@ -34,7 +40,6 @@ class Functional_FlatMap_Test {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> flatMap(null))
                 .withMessage("flatMap(Function<A,Iterable<B>>): f must not be null");
-
     }
 
     @Test
@@ -44,7 +49,7 @@ class Functional_FlatMap_Test {
         assertThat(output).containsExactlyElementsOf(expected);
     }
 
-        @Test
+    @Test
     void flatMapUsingList() {
         final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
         final List<Integer> output = flatMap(Collections::singleton, expected);
@@ -53,7 +58,7 @@ class Functional_FlatMap_Test {
 
     @Test
     void flatMapUsingIterableReturnsImmutableList() {
-        final List<Integer> output = flatMap(Collections::singleton, (Iterable)Arrays.asList(1, 2, 3, 4, 5));
+        final List<Integer> output = flatMap(Collections::singleton, (Iterable) Arrays.asList(1, 2, 3, 4, 5));
         assertThatExceptionOfType(UnsupportedOperationException.class)
                 .isThrownBy(() -> output.add(10));
     }
@@ -69,76 +74,60 @@ class Functional_FlatMap_Test {
     void curriedFlatMap() {
         final Function<Iterable<Object>, List<Object>> flatMapFunc = flatMap(Collections::singleton);
         final List<Object> output = flatMapFunc.apply(Arrays.asList(1, 2, 3, 4, 5));
-        assertThat(output).containsExactly(1,2,3,4,5);
+        assertThat(output).containsExactly(1, 2, 3, 4, 5);
     }
 
-//    @Nested
-//    class Seq {
-//        @Test
-//        void seqMapTest1() {
-//            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5); //Enumerable.Range(1, 5).ToList();
-//            final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
-//            final Iterable<String> output = Functional.Lazy.flatMap(Collections::singleton, input);
-//            final Iterator<String> it = output.iterator();
-//            for (int i = 0; i < 20; ++i)
-//                assertThat(it.hasNext()).isTrue();
-//
-//            for (int i = 0; i < expected.size(); ++i)
-//                assertThat(it.next()).isEqualTo(expected.get(i));
-//
-//            assertThat(it.hasNext()).isFalse();
-//            try {
-//                it.next();
-//            } catch (final NoSuchElementException e) {
-//                return;
-//            }
-//
-//            fail("Should not reach this point");
-//        }
-//
-//        @Test
-//        void curriedSeqMapTest1() {
-//            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5); //Enumerable.Range(1, 5).ToList();
-//            final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
-//            final Iterable<String> output = Functional.Lazy.flatMap(Collections::singleton).apply(input);
-//            final Iterator<String> it = output.iterator();
-//            for (int i = 0; i < 20; ++i)
-//                assertThat(it.hasNext()).isTrue();
-//
-//            for (int i = 0; i < expected.size(); ++i)
-//                assertThat(it.next()).isEqualTo(expected.get(i));
-//
-//            assertThat(it.hasNext()).isFalse();
-//            try {
-//                it.next();
-//            } catch (final NoSuchElementException e) {
-//                return;
-//            }
-//
-//            fail("Should not reach this point");
-//        }
-//
-//        @Test
-//        void cantRemoveFromSeqMapTest1() {
-//            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5); //Enumerable.Range(1, 5).ToList();
-//            final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
-//            final Iterable<String> output = Functional.Lazy.flatMap(Collections::singleton, input);
-//            assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
-//        }
-//
-//        @Test
-//        void cantRestartIteratorFromSeqMapTest1() {
-//            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5); //Enumerable.Range(1, 5).ToList();
-//            final List<String> expected = Arrays.asList("1", "2", "3", "4", "5");
-//            final Iterable<String> output = Functional.Lazy.flatMap(Collections::singleton, input);
-//            try {
-//                output.iterator();
-//            } catch (final UnsupportedOperationException e) {
-//                fail("Shouldn't reach this point");
-//            }
-//            assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(output::iterator);
-//        }
-//    }
+    @Nested
+    class Lazy extends FiniteIterableTest<Integer, Integer, Integer> {
+        @Test
+        void preconditions() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.flatMap(null, mock(Iterable.class)))
+                    .withMessage("Lazy.flatMap(Function<A,Iterable<B>>,Iterable<A>): f must not be null");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.flatMap(i -> Collections.emptyList(), (Iterable) null))
+                    .withMessage("Lazy.flatMap(Function<A,Iterable<B>>,Iterable<A>): input must not be null");
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.flatMap(null))
+                    .withMessage("Lazy.flatMap(Function<A,Iterable<B>>): f must not be null");
+        }
+
+        @Test
+        void flatMapUsingIterable() {
+            final Iterable<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
+            final Iterable<Integer> output = Functional.Lazy.flatMap(Collections::singleton, expected);
+            assertThat(output).containsExactlyElementsOf(expected);
+        }
+
+        @Test
+        void curriedFlatMapUsingIterable() {
+            final Iterable<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
+            final Iterable<Integer> output = Functional.Lazy.<Integer, Integer>flatMap(Collections::singleton).apply(expected);
+            assertThat(output).containsExactlyElementsOf(expected);
+        }
+
+        @Override
+        protected Collection<Integer> initialValues() {
+            return Arrays.asList(1, 2, 3, 4, 5);
+        }
+
+        @Override
+        protected Iterable<Integer> testFunction(final Iterable<Integer> l) {
+            return Functional.Lazy.flatMap(Collections::singleton, l);
+        }
+
+        @Override
+        protected String methodNameInExceptionMessage() {
+            return "Lazy.flatMap(Function<T,Iterable<U>>,Iterable<T>)";
+        }
+
+        @Override
+        protected int noOfElementsInOutput() {
+            return 5;
+        }
+    }
+
 
 //    @Nested
 //    class RecMap {
@@ -150,7 +139,7 @@ class Functional_FlatMap_Test {
 //        }
 //    }
 
-//    @Nested
+    //    @Nested
 //    class SetMap {
 //        @Test
 //        void setMapTest1() {
@@ -161,4 +150,30 @@ class Functional_FlatMap_Test {
 //            assertThat(output.containsAll(expected)).isTrue();
 //        }
 //    }
+
+    @Nested
+    class SetFlatMap {
+        @Test
+        void setCollectTest1() {
+            final Iterable<Integer> input = Functional.init(doublingGenerator, 5);
+            final Set<Integer> output = Functional.set.flatMap(repeat(3), input);
+            final Set<Integer> expected = new HashSet<>(Arrays.asList(2, 4, 6, 8, 10));
+
+            assertThat(expected.containsAll(output)).isTrue();
+            assertThat(output.containsAll(expected)).isTrue();
+        }
+
+        @Test
+        void setCollectTest2() {
+            final Iterable<Integer> input = Functional.init(doublingGenerator, 5);
+            final Set<Integer> output1 = Functional.set.flatMap(repeat(3), input);
+            final Set<Integer> output2 = output1;
+            final Set<Integer> expected = new HashSet<>(Arrays.asList(2, 4, 6, 8, 10));
+
+            assertThat(expected.containsAll(output1)).isTrue();
+            assertThat(output1.containsAll(expected)).isTrue();
+            assertThat(expected.containsAll(output2)).isTrue();
+            assertThat(output2.containsAll(expected)).isTrue();
+        }
+    }
 }

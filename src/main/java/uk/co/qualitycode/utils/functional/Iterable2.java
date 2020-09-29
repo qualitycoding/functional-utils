@@ -191,7 +191,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
             }
 
             public <U> Iterable2<U> collect(final Function<? super T, ? extends Iterable<U>> f) {
-                return of(Functional.Lazy.collect(f, i));
+                return of(Functional.Lazy.flatMap(f, i));
             }
 
             public <U> U in(final Function<Iterable2<T>, U> f) {

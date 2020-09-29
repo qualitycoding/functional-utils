@@ -5,7 +5,7 @@ import uk.co.qualitycode.utils.functional.monad.Option;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class OptionAssertTest<T> {
+class OptionAssertTest {
     @Test
     void hasValue() {
         final Object t = new Object();

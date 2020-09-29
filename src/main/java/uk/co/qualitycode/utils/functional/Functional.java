@@ -1903,7 +1903,7 @@ public final class Functional {
      * This is a 1-to-1 transformation. Every element in the input sequence will be transformed into a sequence of output elements.
      * These sequences are concatenated into one final output sequence at the end of the transformation.
      * map: (T -> U list) -> T list -> U list
-     * This is a curried implementation of 'collect'
+     * This is a curried implementation of 'flatMap'
      *
      * @param <T> the type of the element in the input sequence
      * @param <U> the type of the element in the output sequence
@@ -2507,9 +2507,9 @@ public final class Functional {
          * @return a lazily-evaluated sequence of type U containing the concatenated sequences of transformed values.
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
-        public static <T, U> Iterable<U> collect(final Function<? super T, ? extends Iterable<U>> f, final Iterable<T> input) {
-            notNull(f, "Lazy.collect", "f");
-            notNull(input, "Lazy.collect", "input");
+        public static <T, U> Iterable<U> flatMap(final Function<? super T, ? extends Iterable<U>> f, final Iterable<T> input) {
+            notNull(f, "Lazy.flatMap(Function<A,Iterable<B>>,Iterable<A>)", "f");
+            notNull(input, "Lazy.flatMap(Function<A,Iterable<B>>,Iterable<A>)", "input");
 
             return new Iterable<U>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2526,6 +2526,8 @@ public final class Functional {
                             }
 
                             public U next() {
+                                if (!hasNext())
+                                    throw new NoSuchElementException("Lazy.flatMap(Function<T,Iterable<U>>,Iterable<T>): cannot seek beyond the end of the sequence");
                                 if (cacheIterator.hasNext()) return cacheIterator.next();
                                 cache = StreamSupport.stream(f.apply(it.next()).spliterator(), false).collect(Collectors.toList());
                                 cacheIterator = cache.iterator();
@@ -2533,10 +2535,11 @@ public final class Functional {
                             }
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.collect: remove is not supported");
+                                throw new UnsupportedOperationException("Lazy.flatMap(Function<T,Iterable<U>>,Iterable<T>): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.flatMap(Function<T,Iterable<U>>,Iterable<T>): this Iterable does not allow multiple Iterators");
                 }
             };
         }
@@ -2553,8 +2556,9 @@ public final class Functional {
          * @return a function returning a lazily-evaluated sequence of type U containing the concatenated sequences of transformed values.
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
-        public static <T, U> Function<Iterable<T>, Iterable<U>> collect(final Function<? super T, ? extends Iterable<U>> f) {
-            return input -> Lazy.collect(f, input);
+        public static <T, U> Function<Iterable<T>, Iterable<U>> flatMap(final Function<? super T, ? extends Iterable<U>> f) {
+            notNull(f, "Lazy.flatMap(Function<A,Iterable<B>>)", "f");
+            return input -> Lazy.flatMap(f, input);
         }
 
         /**
