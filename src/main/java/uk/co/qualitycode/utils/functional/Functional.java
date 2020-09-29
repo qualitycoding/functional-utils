@@ -2574,8 +2574,8 @@ public final class Functional {
          */
         public static <T> Iterable<T> skip(final int howMany, final Iterable<T> input) {
             if (howMany < 0)
-                throw new IllegalArgumentException("skip(int,Iterable<T>): howMany is negative");
-            notNull(input, "skip(int,Iterable<T>)", "input");
+                throw new IllegalArgumentException("Lazy.skip(int,Iterable<T>): howMany must not be negative");
+            notNull(input, "Lazy.skip(int,Iterable<T>)", "input");
 
             return new Iterable<T>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2597,15 +2597,17 @@ public final class Functional {
                             }
 
                             public T next() {
-                                if (!hasNext()) throw new NoSuchElementException();
+                                if (!hasNext())
+                                    throw new NoSuchElementException("Lazy.skip(int,Iterable<T>): cannot seek beyond the end of the sequence");
                                 return it.next();
                             }
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.skip: remove is not supported");
+                                throw new UnsupportedOperationException("Lazy.skip(int,Iterable<T>): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.skip(int,Iterable<T>): this Iterable does not allow multiple Iterators");
                 }
             };
         }
@@ -2621,6 +2623,8 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T> Function<Iterable<T>, Iterable<T>> skip(final int howMany) {
+            if (howMany < 0)
+                throw new IllegalArgumentException("Lazy.skip(int): howMany must not be negative");
             return input -> Lazy.skip(howMany, input);
         }
 
