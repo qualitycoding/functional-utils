@@ -2587,8 +2587,7 @@ public final class Functional {
                             private boolean haveWeSkipped;
 
                             public boolean hasNext() {
-                                if (haveWeSkipped && it.hasNext()) return true;
-                                if (haveWeSkipped) return false;
+                                if (haveWeSkipped) return it.hasNext();
                                 for (int i = 0; i < howMany; ++i)
                                     if (it.hasNext()) it.next();
                                     else return false;
@@ -2640,8 +2639,8 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T> Iterable<T> skipWhile(final Predicate<? super T> predicate, final Iterable<T> input) {
-            notNull(predicate, "skipWhile(Func,Iterable<T>)", "predicate");
-            notNull(input, "skipWhile(Func,Iterable<T>)", "input");
+            notNull(predicate, "Lazy.skipWhile(Predicate<T>,Iterable<T>)", "predicate");
+            notNull(input, "Lazy.skipWhile(Predicate<T>,Iterable<T>)", "input");
 
             return new Iterable<T>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2650,46 +2649,41 @@ public final class Functional {
                     if (haveCreatedIterator.compareAndSet(false, true))
                         return new Iterator<T>() {
                             private final Iterator<T> it = input.iterator();
-                            private boolean haveWeSkipped;
-                            private boolean haveWeReadFirstValue;
-                            private T firstValue;
-
+                            private boolean haveWeSkipped = false;
+                            private T next;
+                            private boolean haveWeConsumedNext = false;
+                            private boolean nextIsSet = false;
 
                             public boolean hasNext() {
-                                if (haveWeSkipped && it.hasNext()) return true;
-                                if (haveWeSkipped) return false;
-                                while (true) {
-                                    if (it.hasNext()) {
-                                        final T next = it.next();
-                                        if (!predicate.test(next)) {
-                                            haveWeSkipped = true;
-                                            firstValue = next;
-                                            return true;
-                                        }
-                                    } else {
+                                if (haveWeSkipped) return it.hasNext();
+                                if (it.hasNext()) {
+                                    boolean hasNext;
+                                    while ((hasNext = it.hasNext()) && predicate.test(next = it.next())) ;
+                                    if (hasNext) {
+                                        nextIsSet = true;
                                         haveWeSkipped = true;
-                                        return false;
-                                    }
+                                        return true;
+                                    } else return false;
                                 }
+                                haveWeSkipped = true;
+                                return false;
                             }
-
 
                             public T next() {
-                                if (haveWeSkipped && !haveWeReadFirstValue && firstValue != null) {
-                                    haveWeReadFirstValue = true;
-                                    return firstValue;
-                                }
-                                if (haveWeSkipped && !haveWeReadFirstValue) throw new NoSuchElementException();
-                                if (haveWeSkipped) return it.next();
-                                return next();
+                                if (!hasNext())
+                                    throw new NoSuchElementException("Lazy.skipWhile(Predicate<T>,Iterable<T>): cannot seek beyond the end of the sequence");
+                                if (haveWeConsumedNext && !nextIsSet) next = it.next();
+                                haveWeConsumedNext = true;
+                                nextIsSet = false;
+                                return next;
                             }
-
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.skipWhile(Func,Iterable): it is not possible to remove elements from this sequence");
+                                throw new UnsupportedOperationException("Lazy.skipWhile(Predicate<T>,Iterable<T>): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.skipWhile(Predicate<T>,Iterable<T>): this Iterable does not allow multiple Iterators");
                 }
             };
         }
@@ -2705,6 +2699,7 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T> Function<Iterable<T>, Iterable<T>> skipWhile(final Predicate<? super T> predicate) {
+            notNull(predicate, "Lazy.skipWhile(Predicate<T>)", "predicate");
             return input -> Lazy.skipWhile(predicate, input);
         }
 

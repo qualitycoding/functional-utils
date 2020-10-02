@@ -6,15 +6,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
 class Functional_SkipWhile_Test {
@@ -92,136 +90,97 @@ class Functional_SkipWhile_Test {
     }
 
     @Nested
-    class Lazy {
-        @Test
-        void skipWhileTest2() {
-            final List<Integer> input = Arrays.asList(1, 2, 3, 4);
-            assertThatIllegalArgumentException().isThrownBy(() -> Functional.skipWhile(null, input));
+    class Lazy extends FiniteIterableTest<Integer, Integer, Integer> {
+        private List<Integer> input;
+
+        @BeforeEach
+        void setup() {
+            input = Arrays.asList(1, 2, 3, 4, 5);
         }
 
         @Test
-        void skipWhileTest3() {
-            final List<Number> input = new ArrayList<>();
-            for (int i = 1; i < 10; ++i)
-                input.add(Integer.valueOf(i));
+        void preconditions() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.skipWhile(null, mock(Iterable.class)))
+                    .withMessage("Lazy.skipWhile(Predicate<T>,Iterable<T>): predicate must not be null");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.skipWhile(mock(Predicate.class), (Iterable) null))
+                    .withMessage("Lazy.skipWhile(Predicate<T>,Iterable<T>): input must not be null");
 
-            final List<Number> output = Functional.skipWhile(number -> ((number instanceof Integer) && ((Integer) number % 2) == 1), input);
-
-            final List<Integer> expected = Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9);
-
-            assertThat(output).containsExactlyElementsOf(expected);
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Lazy.skipWhile(null))
+                    .withMessage("Lazy.skipWhile(Predicate<T>): predicate must not be null");
         }
 
         @Test
-        void seqSkipWhileTest1() {
-            final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
-            {
-                final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-                final Iterable<Integer> output = Functional.Lazy.skipWhile(Functional::isEven, l);
-                assertThat(output).containsExactlyElementsOf(expected);
-            }
-            {
-                final List<Integer> expected = Arrays.asList(2, 3, 4, 5);
-                final Iterable<Integer> output = Functional.Lazy.skipWhile(Functional::isOdd, l);
-                assertThat(output).containsExactlyElementsOf(expected);
-            }
-            {
-                final List<Integer> expected = Arrays.asList(3, 4, 5);
-                final Iterable<Integer> output = Functional.Lazy.skipWhile(i -> i <= 2, l);
-                assertThat(output).containsExactlyElementsOf(expected);
-            }
-            {
-                final List<Integer> expected = new ArrayList<>();
-                final Iterable<Integer> output = Functional.Lazy.skipWhile(i -> i <= 6, l);
-                assertThat(output).containsExactlyElementsOf(expected);
-            }
+        void multipleCallsToHasNextDoesNotAdvancePosition() {
+            final Iterable<Integer> output = Functional.Lazy.skipWhile(Functional::isEven, input);
+            final Iterator<Integer> iterator = output.iterator();
+            assertThat(iterator.hasNext()).isTrue();
+            assertThat(iterator.hasNext()).isTrue();
+            assertThat(iterator.hasNext()).isTrue();
+            assertThat(iterator.next()).isEqualTo(1);
         }
 
         @Test
-        void seqSkipWhileWithoutHasNextTest1() {
-            final List<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
+        void skipWhileDropsNone() {
             final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
             final Iterable<Integer> output = Functional.Lazy.skipWhile(Functional::isEven, input);
             assertThat(output).containsExactlyElementsOf(expected);
         }
 
         @Test
-        void cantRemoveFromSeqSkipWhileTest1() {
-            final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
-            {
-                final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-                final Iterable<Integer> output = Functional.Lazy.skipWhile(Functional::isEven, l);
-                assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
-            }
-        }
-
-        @Test
-        void cantRestartIteratorFromseqSkipWhileTest1() {
-            final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
-            {
-                final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-                final Iterable<Integer> output = Functional.Lazy.skipWhile(Functional::isEven, l);
-                try {
-                    output.iterator();
-                } catch (final UnsupportedOperationException e) {
-                    fail("Shouldn't reach this point");
-                }
-                assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(output::iterator);
-            }
-        }
-
-        @Test
-        void curriedSeqSkipWhileTest1() {
-            final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
-            {
-                final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
-                final Iterable<Integer> output = Functional.Lazy.skipWhile(Functional::isEven).apply(l);
-                assertThat(output).containsExactlyElementsOf(expected);
-            }
-        }
-
-        @Test
-        void seqSkipWhileTest2() {
-            final List<Integer> input = Arrays.asList(1, 2, 3, 4);
-            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.skipWhile(null, input));
-        }
-
-        @Test
-        void seqSkipWhileTest3() {
-            final List<Number> input = new ArrayList<>();
-            for (int i = 1; i < 10; ++i)
-                input.add(i);
-
-            final Iterable<Number> output = Functional.Lazy.skipWhile(number -> number instanceof Integer && (Integer) number % 2 == 1, input);
-
-            final List<Integer> expected = Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9);
-
+        void skipWhileDropsFirst() {
+            final List<Integer> expected = Arrays.asList(2, 3, 4, 5);
+            final Iterable<Integer> output = Functional.Lazy.skipWhile(Functional::isOdd, input);
             assertThat(output).containsExactlyElementsOf(expected);
         }
 
         @Test
-        void seqSkipWhileTest4() {
-            final List<Integer> l = Arrays.asList(1, 2, 3, 4, 5);
+        void skipWhileDropsFirstUsingIterable() {
+            final List<Integer> expected = Arrays.asList(2, 3, 4, 5);
+            final Iterable<Integer> output = Functional.Lazy.skipWhile(Functional::isOdd, (Iterable) input);
+            assertThat(output).containsExactlyElementsOf(expected);
+        }
+
+        @Test
+        void skipWhileDropsSecond() {
             final List<Integer> expected = Arrays.asList(3, 4, 5);
-            final Iterable<Integer> output = Functional.Lazy.skipWhile(i -> i <= 2, l);
-            final Iterator<Integer> iterator = output.iterator();
+            final Iterable<Integer> output = Functional.Lazy.skipWhile(i -> i <= 2, input);
+            assertThat(output).containsExactlyElementsOf(expected);
+        }
 
-            for (int i = 0; i < 20; ++i)
-                assertThat(iterator.hasNext()).isTrue();
+        @Test
+        void skipWhileDropsAll() {
+            final Iterable<Integer> output = Functional.Lazy.skipWhile(i -> true, input);
+            assertThat(output).isEmpty();
+        }
 
-            for (final int element : expected) {
-                final int next = iterator.next();
-                assertThat(next).isEqualTo(element);
-            }
+        @Test
+        void curriedSkipWhileDropsNone() {
+            final List<Integer> expected = Arrays.asList(1, 2, 3, 4, 5);
+            final Iterable<Integer> output = Functional.Lazy.skipWhile(Functional::isEven).apply(input);
+            assertThat(output).containsExactlyElementsOf(expected);
+        }
 
-            assertThat(iterator.hasNext()).isFalse();
-            try {
-                iterator.next();
-            } catch (final NoSuchElementException e) {
-                return;
-            }
+        @Override
+        protected Collection<Integer> initialValues() {
+            return Arrays.asList(1, 2, 3, 4, 5);
+        }
 
-            fail("Should not reach this point");
+        @Override
+        protected Iterable<Integer> testFunction(final Iterable<Integer> l) {
+            return Functional.Lazy.skipWhile(i -> i <= 2, input);
+        }
+
+        @Override
+        protected String methodNameInExceptionMessage() {
+            return "Lazy.skipWhile(Predicate<T>,Iterable<T>)";
+        }
+
+        @Override
+        protected int noOfElementsInOutput() {
+            return 3;
         }
     }
 }

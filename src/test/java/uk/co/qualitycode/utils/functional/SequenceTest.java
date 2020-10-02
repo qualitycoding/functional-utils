@@ -3,7 +3,10 @@ package uk.co.qualitycode.utils.functional;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.stream.IntStream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -44,5 +47,18 @@ abstract class SequenceTest<T1, T2, R> {
         assertThatExceptionOfType(UnsupportedOperationException.class)
                 .isThrownBy(output::iterator)
                 .withMessage(methodNameInExceptionMessage() + ": this Iterable does not allow multiple Iterators");
+    }
+
+    @Test
+    void canCallHasNextMultipleTimesWithoutAdvancingThePosition() {
+        if (noOfElementsInOutput() <= 0) return;
+        final Collection<T2> l = initialValues();
+        final Iterable<R> output = testFunction(l);
+        final Iterator<R> iterator = output.iterator();
+        IntStream.range(0, noOfElementsInOutput())
+                .forEach(i -> assertThat(iterator.hasNext()).isTrue());
+        iterator.next();
+        IntStream.range(0, noOfElementsInOutput())
+                .forEach(i -> assertThat(iterator.hasNext()).isTrue());
     }
 }
