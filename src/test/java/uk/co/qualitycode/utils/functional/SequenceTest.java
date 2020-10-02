@@ -58,7 +58,7 @@ abstract class SequenceTest<T1, T2, R> {
         IntStream.range(0, noOfElementsInOutput())
                 .forEach(i -> assertThat(iterator.hasNext()).isTrue());
         iterator.next();
-        IntStream.range(0, noOfElementsInOutput())
+        IntStream.range(1, noOfElementsInOutput())
                 .forEach(i -> assertThat(iterator.hasNext()).isTrue());
     }
 }
