@@ -2714,7 +2714,7 @@ public final class Functional {
          */
         public static <T> Iterable<T> take(final int howMany, final Iterable<? extends T> input) {
             if (howMany < 0)
-                throw new IllegalArgumentException("Lazy.take(int,Iterable<T>): howMany is negative");
+                throw new IllegalArgumentException("Lazy.take(int,Iterable<T>): howMany must not be negative");
             notNull(input, "Lazy.take(int,Iterable<T>)", "input");
 
             if (howMany == 0) return new ArrayList<>(0);
@@ -2732,21 +2732,20 @@ public final class Functional {
                                 return howManyHaveWeRetrievedAlready < howMany && it.hasNext();
                             }
 
-
                             public T next() {
                                 if (howManyHaveWeRetrievedAlready >= howMany)
-                                    throw new java.util.NoSuchElementException("Cannot request additional elements from input");
+                                    throw new java.util.NoSuchElementException("Lazy.take(int,Iterable<T>): cannot seek beyond the end of the sequence");
                                 final T next = it.next();
                                 howManyHaveWeRetrievedAlready++;
                                 return next;
                             }
 
-
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.take: remove is not supported");
+                                throw new UnsupportedOperationException("Lazy.take(int,Iterable<T>): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.take(int,Iterable<T>): this Iterable does not allow multiple Iterators");
                 }
             };
         }
@@ -2760,6 +2759,8 @@ public final class Functional {
          * @throws java.util.NoSuchElementException if more elements are requested than are present in the input sequence
          */
         public static <T> Function<Iterable<T>, Iterable<T>> take(final int howMany) {
+            if (howMany < 0)
+                throw new IllegalArgumentException("Lazy.take(int): howMany must not be negative");
             return input -> Lazy.take(howMany, input);
         }
 
