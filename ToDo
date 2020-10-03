@@ -3,3 +3,5 @@ ToDo:
  - Consider FunctionalInterface return types from partial functions, eg as in fold
  - Tests for all the ? super and ? extends
  - Space out the preconditions from the body
+ - Lazy.skipWhile is complex, possibly more complex than required
+ - Lazy.takeWhile has some suspicious code in hasNext() and next()

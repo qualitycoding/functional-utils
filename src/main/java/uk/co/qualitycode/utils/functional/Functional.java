@@ -2776,8 +2776,8 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T> Iterable<T> takeWhile(final Predicate<? super T> predicate, final Iterable<T> input) {
-            notNull(predicate, "takeWhile(Func,Iterable<T>)", "predicate");
-            notNull(input, "takeWhile(Func,Iterable<T>)", "input");
+            notNull(predicate, "Lazy.takeWhile(Predicate<T>,Iterable<T>)", "predicate");
+            notNull(input, "Lazy.takeWhile(Predicate<T>,Iterable<T>)", "input");
 
             return new Iterable<T>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2789,7 +2789,6 @@ public final class Functional {
                             private boolean haveWeFinished;
                             private T next;
                             private boolean haveWeCheckedTheCurrentElement;
-
 
                             public boolean hasNext() {
                                 if (!haveWeFinished) {
@@ -2816,23 +2815,24 @@ public final class Functional {
                                 }
                             }
 
-
                             public T next() {
                                 if (!haveWeFinished) {
                                     if (hasNext()) {
                                         haveWeCheckedTheCurrentElement = false;
                                         return next;
-                                    } else throw new NoSuchElementException();
+                                    } else
+                                        throw new NoSuchElementException("Lazy.takeWhile(Predicate<T>,Iterable<T>): cannot seek beyond the end of the sequence");
                                 }
                                 throw new NoSuchElementException();
                             }
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.takeWhile(Func,Iterable): it is not possible to remove elements from this sequence");
+                                throw new UnsupportedOperationException("Lazy.takeWhile(Predicate<T>,Iterable<T>): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.takeWhile(Predicate<T>,Iterable<T>): this Iterable does not allow multiple Iterators");
                 }
             };
         }
@@ -2848,6 +2848,7 @@ public final class Functional {
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T> Function<Iterable<T>, Iterable<T>> takeWhile(final Predicate<? super T> predicate) {
+            notNull(predicate, "Lazy.takeWhile(Predicate<T>)", "predicate");
             return input -> Lazy.takeWhile(predicate, input);
         }
 
