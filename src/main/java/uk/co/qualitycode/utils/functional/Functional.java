@@ -2859,8 +2859,8 @@ public final class Functional {
          * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
          */
         public static <A, B> Iterable<A> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Predicate<? super B> finished, final B seed) {
-            notNull(unspool, "unspool", "unspool");
-            notNull(finished, "finished", "finished");
+            notNull(unspool, "Lazy.unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B)", "unspooler");
+            notNull(finished, "Lazy.unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B)", "finished");
 
             return new Iterable<A>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2883,12 +2883,45 @@ public final class Functional {
 
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.unfold(Func,Func,B): it is not possible to remove elements from this sequence");
+                                throw new UnsupportedOperationException("Lazy.unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): this Iterable does not allow multiple Iterators");
                 }
             };
+        }
+
+        /**
+         * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a> and
+         * <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
+         * This is the converse of <tt>fold</tt>
+         * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
+         */
+        public static <A, B> Functional.Lazy.WithSeed<A, B> unfold(final Function<? super B, Tuple2<A, B>> unspooler, final Predicate<? super B> finished) {
+            notNull(unspooler, "Lazy.unfold(Function<B,Tuple2<A,B>>,Predicate<B>)", "unspooler");
+            notNull(finished, "Lazy.unfold(Function<B,Tuple2<A,B>>,Predicate<B>)", "finished");
+
+            return seed -> Functional.Lazy.unfold(unspooler, finished, seed);
+        }
+
+        /**
+         * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a> and
+         * <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
+         * This is the converse of <tt>fold</tt>
+         * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
+         */
+        public static <A, B> Functional.Lazy.WithFinished<A, B> unfold(final Function<? super B, Tuple2<A, B>> unspooler) {
+            notNull(unspooler, "Lazy.unfold(Function<B,Tuple2<A,B>>)", "unspooler");
+            return finished -> seed -> Functional.Lazy.unfold(unspooler, finished, seed);
+        }
+
+        public interface WithSeed<A, B> {
+            Iterable<A> withSeed(B seed);
+        }
+
+        public interface WithFinished<A, B> {
+            Functional.Lazy.WithSeed<A, B> withFinished(Predicate<? super B> finished);
         }
 
         /**
@@ -2897,8 +2930,8 @@ public final class Functional {
          * This is the converse of <tt>fold</tt>
          * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
          */
-        public static <A, B> Iterable<A> unfold(final Function<? super B, Option<Tuple2<A, B>>> unspool, final B seed) {
-            notNull(unspool, "unspool", "unspool");
+        public static <A, B> Iterable<A> unfold(final Function<? super B, Option<Tuple2<A, B>>> unspooler, final B seed) {
+            notNull(unspooler, "Lazy.unfold(Function<B,Option<Tuple2<A,B>>>,B)", "unspooler");
 
             return new Iterable<A>() {
                 private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
@@ -2909,23 +2942,22 @@ public final class Functional {
                             B next = seed;
 
                             public boolean hasNext() {
-                                return unspool.apply(next).isSome();
+                                return unspooler.apply(next).isSome();
                             }
 
-
                             public A next() {
-                                final Option<Tuple2<A, B>> temp = unspool.apply(next);
+                                final Option<Tuple2<A, B>> temp = unspooler.apply(next);
                                 if (temp.isNone()) throw new NoSuchElementException();
                                 next = temp.get()._2();
                                 return temp.get()._1();
                             }
 
-
                             public void remove() {
                                 throw new UnsupportedOperationException("Lazy.unfold(Func,B): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.unfold(Func,B): This Iterable does not allow multiple Iterators");
                 }
             };
         }

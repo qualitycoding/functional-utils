@@ -2,7 +2,6 @@ package uk.co.qualitycode.utils.functional;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.IntStream;
 
@@ -11,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.fail;
 
 abstract class SequenceTest<T1, T2, R> {
-    protected abstract Collection<T2> initialValues();
+    protected abstract Iterable<T2> initialValues();
 
     protected abstract Iterable<R> testFunction(final Iterable<T2> l);
 
@@ -28,7 +27,7 @@ abstract class SequenceTest<T1, T2, R> {
 
     @Test
     void tryToRemoveFromAnIterator() {
-        final Collection<T2> l = initialValues();
+        final Iterable<T2> l = initialValues();
         final Iterable<R> output = testFunction(l);
         assertThatExceptionOfType(UnsupportedOperationException.class)
                 .isThrownBy(() -> output.iterator().remove())
@@ -37,7 +36,7 @@ abstract class SequenceTest<T1, T2, R> {
 
     @Test
     void iterableCanOnlyHaveOneIterator() {
-        final Collection<T2> l = initialValues();
+        final Iterable<T2> l = initialValues();
         final Iterable<R> output = testFunction(l);
         try {
             output.iterator();
@@ -52,7 +51,7 @@ abstract class SequenceTest<T1, T2, R> {
     @Test
     void canCallHasNextMultipleTimesWithoutAdvancingThePosition() {
         if (noOfElementsInOutput() <= 0) return;
-        final Collection<T2> l = initialValues();
+        final Iterable<T2> l = initialValues();
         final Iterable<R> output = testFunction(l);
         final Iterator<R> iterator = output.iterator();
         IntStream.range(0, noOfElementsInOutput())

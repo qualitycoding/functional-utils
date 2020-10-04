@@ -2,7 +2,6 @@ package uk.co.qualitycode.utils.functional;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -12,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 abstract class FiniteIterableTest<T1, T2, R> extends SequenceTest<T1, T2, R> {
     @Test
     void nextThrowsIfThereAreNoMoreElements() {
-        final Collection<T2> l = initialValues();
+        final Iterable<T2> l = initialValues();
         final Iterable<R> output = testFunction(l);
 
         final Iterator<R> iterator = output.iterator();
@@ -23,7 +22,7 @@ abstract class FiniteIterableTest<T1, T2, R> extends SequenceTest<T1, T2, R> {
     }
 
     protected void consumeSequenceWithoutCallingHasNext() {
-        final Collection<T2> l = initialValues();
+        final Iterable<T2> l = initialValues();
         final Iterable<R> output = testFunction(l);
 
         final Iterator<R> iterator = output.iterator();
