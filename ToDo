@@ -5,3 +5,4 @@ ToDo:
  - Space out the preconditions from the body
  - Lazy.skipWhile is complex, possibly more complex than required
  - Lazy.takeWhile has some suspicious code in hasNext() and next()
+ - Lazy.unfold does not really need to be supplied with an Iterable of initial values
