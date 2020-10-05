@@ -2972,7 +2972,11 @@ public final class Functional {
          * @return a list of Range objects
          */
         public static Iterable<Range<Integer>> partition(final int howManyElements, final int howManyPartitions) {
-            return partition(Functional.range(0), howManyElements, howManyPartitions);
+            if (howManyElements <= 0)
+                throw new IllegalArgumentException("Lazy.partition(int,int): howManyElements must be positive");
+            if (howManyPartitions <= 0)
+                throw new IllegalArgumentException("Lazy.partition(int,int): howManyPartitions must be positive");
+            return partition(Functional.range(1), howManyElements, howManyPartitions);
         }
 
         /**
@@ -2986,10 +2990,11 @@ public final class Functional {
          * @return a list of Range objects
          */
         public static <T> Iterable<Range<T>> partition(final Function<Integer, T> generator, final int howManyElements, final int howManyPartitions) {
+            notNull(generator, "Lazy.partition(Function<Integer,T>,int,int)", "generator");
             if (howManyElements <= 0)
-                throw new IllegalArgumentException("partition() howManyElements cannot be non-positive");
+                throw new IllegalArgumentException("Lazy.partition(Function<Integer,T>,int,int): howManyElements must be positive");
             if (howManyPartitions <= 0)
-                throw new IllegalArgumentException("partition() howManyPartitions cannot be non-positive");
+                throw new IllegalArgumentException("Lazy.partition(Function<Integer,T>,int,int): howManyPartitions must be positive");
 
             final int size = howManyElements / howManyPartitions;
             final int remainder = howManyElements % howManyPartitions;
@@ -3018,6 +3023,8 @@ public final class Functional {
                             }
 
                             public Range<T> next() {
+                                if (!iterator.hasNext())
+                                    throw new NoSuchElementException("Lazy.partition(Function<Integer,T>,int,int): cannot seek beyond the end of the sequence");
                                 final T next = iterator.next();
                                 final Range<T> retval = new Range<>(last, next);
                                 last = next;
@@ -3025,10 +3032,11 @@ public final class Functional {
                             }
 
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.partition(Func,int,int): it is not possible to remove elements from this sequence");
+                                throw new UnsupportedOperationException("Lazy.partition(Function<Integer,T>,int,int): it is not possible to remove elements from this sequence");
                             }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.partition(Function<Integer,T>,int,int): this Iterable does not allow multiple Iterators");
                 }
             };
         }
