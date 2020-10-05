@@ -3042,6 +3042,70 @@ public final class Functional {
         }
 
         /**
+         * Convolution of functions
+         * See <a href="http://en.wikipedia.org/wiki/Zip_(higher-order_function)">Zip</a>
+         *
+         * @param <A>      the type of the input sequence
+         * @param <B>      the result type of the first transformation
+         * @param <C>      the result type of the second transformation
+         * @param zipFunc1 the first transformation function
+         * @param zipFunc2 the second transformation function
+         * @param input    the input sequence
+         * @return a sequence of pairs. The first value of the pair is the result of the first transformation and the second value of the
+         * pair of the result of the second transformation.
+         */
+        public static <A, B, C> Iterable<Tuple2<B, C>> zip(final Function<? super A, B> zipFunc1, final Function<? super A, C> zipFunc2, final Iterable<? extends A> input) {
+            notNull(zipFunc1, "Lazy.zip(Function<A,B>,Function<A,B>,Iterable<A>)", "zipFunc1");
+            notNull(zipFunc2, "Lazy.zip(Function<A,B>,Function<A,B>,Iterable<A>)", "zipFunc2");
+            notNull(input, "Lazy.zip(Function<A,B>,Function<A,B>,Iterable<A>)", "input");
+
+            return new Iterable<Tuple2<B, C>>() {
+                private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
+
+                public Iterator<Tuple2<B, C>> iterator() {
+                    if (haveCreatedIterator.compareAndSet(false, true))
+                        return new Iterator<Tuple2<B, C>>() {
+                            private final Iterator<? extends A> iterator = input.iterator();
+
+                            public boolean hasNext() {
+                                return iterator.hasNext();
+                            }
+
+                            public Tuple2<B, C> next() {
+                                if (!iterator.hasNext())
+                                    throw new NoSuchElementException("Lazy.zip(Function<A,B>,Function<A,C>,Iterable<A>): cannot seek beyond the end of the sequence");
+                                final A next = iterator.next();
+                                return new Tuple2<>(zipFunc1.apply(next), zipFunc2.apply(next));
+                            }
+
+                            public void remove() {
+                                throw new UnsupportedOperationException("Lazy.zip(Function<A,B>,Function<A,C>,Iterable<A>): it is not possible to remove elements from this sequence");
+                            }
+                        };
+                    else
+                        throw new UnsupportedOperationException("Lazy.zip(Function<A,B>,Function<A,C>,Iterable<A>): this Iterable does not allow multiple Iterators");
+                }
+            };
+        }
+
+        /**
+         * Convolution of functions. That is, apply two transformation functions 'simultaneously' and return a list of pairs,
+         * each of which contains one part of the results.
+         *
+         * @param zipFunc1 the transformation function that generates the first value in the resultant pair
+         * @param zipFunc2 the transformation function that generates the second value in the resultant pair
+         * @param <A>      a type that all the elements in the input list extend and that both of the transformation functions accept as input
+         * @param <B>      the resulting type of the first transformation
+         * @param <C>      the resulting type of the second transformation
+         * @return a list of pairs containing the two transformed sequences
+         */
+        public static <A, B, C> Function<Iterable<? extends A>, Iterable<Tuple2<B, C>>> zip(final Function<? super A, B> zipFunc1, final Function<? super A, C> zipFunc2) {
+            notNull(zipFunc1, "Lazy.zip(Function<A,B>,Function<A,B>)", "zipFunc1");
+            notNull(zipFunc2, "Lazy.zip(Function<A,B>,Function<A,B>)", "zipFunc2");
+            return input -> Lazy.zip(zipFunc1, zipFunc2, input);
+        }
+
+        /**
          * The Convolution operator
          * See <a href="http://en.wikipedia.org/wiki/Zip_(higher-order_function)">Zip</a>
          *
@@ -3067,35 +3131,31 @@ public final class Functional {
                             private final Iterator<? extends B> l2_it = input2.iterator();
 
                             public boolean hasNext() {
-                                final boolean l1_it_hasNext = l1_it.hasNext();
-                                final boolean l2_it_hasNext = l2_it.hasNext();
-                                if (l1_it_hasNext != l2_it_hasNext)
-                                    throw new IllegalArgumentException("Lazy.zip(Iterable<A>,Iterable<B>): input1 and input2 have differing numbers of elements");
-                                return l1_it_hasNext;
+                                return bothHaveNext();
                             }
 
-
                             public Tuple2<A, B> next() {
+                                if (!bothHaveNext())
+                                    throw new NoSuchElementException();
                                 return new Tuple2<>(l1_it.next(), l2_it.next());
                             }
 
-
                             public void remove() {
-                                throw new UnsupportedOperationException("Lazy.zip(Iterable,Iterable): it is not possible to remove elements from this sequence");
+                                throw new UnsupportedOperationException("Lazy.zip(Iterable<A>,Iterable<B>): it is not possible to remove elements from this sequence");
                             }
 
-                            //
-                            //                        public void forEachRemaining(Consumer<? super Tuple2<A, B>> action) {
-                            //
-                            //                        }
+                            private boolean bothHaveNext() {
+                                final boolean l1_it_hasNext = l1_it.hasNext();
+                                final boolean l2_it_hasNext = l2_it.hasNext();
+                                if (l1_it_hasNext != l2_it_hasNext)
+                                    throw new IllegalArgumentException("Lazy.zip(Iterable<A>,Iterable<B>): cannot zip two iterables with different lengths");
+                                return l1_it_hasNext;
+                            }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.zip(Iterable,Iterable): this Iterable does not allow multiple Iterators");
                 }
             };
-        }
-
-        public static <A, B> Function<Iterable<B>, Iterable<Tuple2<A, B>>> zip(final Iterable<? extends A> l1) {
-            return l2 -> Lazy.zip(l1, l2);
         }
 
         /**
@@ -3158,48 +3218,6 @@ public final class Functional {
 
         public static <A, B, C> Function<Iterable<C>, Iterable<Tuple3<A, B, C>>> zip3(final Iterable<? extends A> l1, final Iterable<? extends B> l2) {
             return l3 -> Lazy.zip3(l1, l2, l3);
-        }
-
-        /**
-         * Convolution of functions
-         * See <a href="http://en.wikipedia.org/wiki/Zip_(higher-order_function)">Zip</a>
-         *
-         * @param <A>   the type of the input sequence
-         * @param <B>   the result type of the first transformation
-         * @param <C>   the result type of the second transformation
-         * @param f     the first transformation function
-         * @param g     the second transformation function
-         * @param input the input sequence
-         * @return a sequence of pairs. The first value of the pair is the result of the first transformation and the second value of the
-         * pair of the result of the second transformation.
-         */
-        public static <A, B, C> Iterable<Tuple2<B, C>> zip(final Function<? super A, B> f, final Function<? super A, C> g, final Iterable<? extends A> input) {
-            return new Iterable<Tuple2<B, C>>() {
-                private final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
-
-                public Iterator<Tuple2<B, C>> iterator() {
-                    if (haveCreatedIterator.compareAndSet(false, true))
-                        return new Iterator<Tuple2<B, C>>() {
-                            private final Iterator<? extends A> iterator = input.iterator();
-
-                            public boolean hasNext() {
-                                return iterator.hasNext();
-                            }
-
-
-                            public Tuple2<B, C> next() {
-                                final A next = iterator.next();
-                                return new Tuple2<>(f.apply(next), g.apply(next));
-                            }
-
-
-                            public void remove() {
-                                throw new UnsupportedOperationException("Lazy.zip(Func,Func): it is not possible to remove elements from this sequence");
-                            }
-                        };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
-                }
-            };
         }
     }
 
@@ -3767,7 +3785,8 @@ public final class Functional {
         return StreamSupport.stream(split, (a.isParallel() || b.isParallel()));
     }
 
-    private static <B> Stream<B> asStream(final Iterable<B> input) {
+    @VisibleForTesting
+    static <B> Stream<B> asStream(final Iterable<B> input) {
         return StreamSupport.stream(input.spliterator(), false);
     }
 

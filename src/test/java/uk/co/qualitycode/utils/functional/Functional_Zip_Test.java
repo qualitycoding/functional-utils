@@ -8,16 +8,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
+import static uk.co.qualitycode.utils.functional.Functional.asStream;
 
 class Functional_Zip_Test {
     @Test
@@ -77,8 +76,8 @@ class Functional_Zip_Test {
 
     @Test
     void zipTwoIterables() {
-        final Iterable<Integer> input1 = Functional.Lazy.map(Function.identity(), Arrays.asList(1, 2, 3, 4, 5));
-        final Iterable<Character> input2 = Functional.Lazy.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
+        final Iterable<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);
+        final Iterable<Character> input2 = Arrays.asList('a', 'b', 'c', 'd', 'e');
 
         final List<Tuple2<Integer, Character>> expected = new ArrayList<>();
         expected.add(new Tuple2<>(1, 'a'));
@@ -96,8 +95,8 @@ class Functional_Zip_Test {
 
     @Test
     void cannotZipTwoIterablesWithUnequalLengths() {
-        final Iterable<Integer> input1 = Functional.Lazy.map(Function.identity(), Arrays.asList(1, 2));
-        final Iterable<Character> input2 = Functional.Lazy.map(Function.identity(), Arrays.asList('a', 'b', 'c', 'd', 'e'));
+        final Iterable<Integer> input1 = Arrays.asList(1, 2);
+        final Iterable<Character> input2 = Arrays.asList('a', 'b', 'c', 'd', 'e');
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.zip(input1, input2))
@@ -134,134 +133,106 @@ class Functional_Zip_Test {
     }
 
     @Nested
-    class Lazy {
+    class Lazy extends FiniteIterableTest<Integer, Integer, Tuple2<Integer, String>> {
         @Test
-        void seqZipTwoCollections() {
-            final Collection<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);
-            final Collection<Character> input2 = Arrays.asList('a', 'b', 'c', 'd', 'e');
+        void preconditions() {
+            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.zip(null, Function.identity(), mock(Iterable.class)))
+                    .withMessage("Lazy.zip(Function<A,B>,Function<A,B>,Iterable<A>): zipFunc1 must not be null");
+            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.zip(Function.identity(), null, mock(Iterable.class)))
+                    .withMessage("Lazy.zip(Function<A,B>,Function<A,B>,Iterable<A>): zipFunc2 must not be null");
+            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.zip(Function.identity(), Function.identity(), null))
+                    .withMessage("Lazy.zip(Function<A,B>,Function<A,B>,Iterable<A>): input must not be null");
 
-            final Collection<Tuple2<Integer, Character>> expected = new ArrayList<>();
-            expected.add(new Tuple2<>(1, 'a'));
-            expected.add(new Tuple2<>(2, 'b'));
-            expected.add(new Tuple2<>(3, 'c'));
-            expected.add(new Tuple2<>(4, 'd'));
-            expected.add(new Tuple2<>(5, 'e'));
+            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.zip(null, mock(Function.class)))
+                    .withMessage("Lazy.zip(Function<A,B>,Function<A,B>): zipFunc1 must not be null");
+            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.zip(mock(Function.class), null))
+                    .withMessage("Lazy.zip(Function<A,B>,Function<A,B>): zipFunc2 must not be null");
 
-            final Iterable<Tuple2<Integer, Character>> output = Functional.Lazy.zip(input1, input2);
+            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.zip(null, mock(Iterable.class)))
+                    .withMessage("Lazy.zip(Iterable<A>,Iterable<B>): input1 must not be null");
+            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.zip(mock(Iterable.class), null))
+                    .withMessage("Lazy.zip(Iterable<A>,Iterable<B>): input2 must not be null");
+        }
+
+        @Test
+        void zipTwoFuncs() {
+            final List<Integer> ints = Arrays.asList(1, 2, 3, 4, 5);
+
+            final List<Tuple2<Integer, String>> expected = new ArrayList<>();
+            expected.add(new Tuple2<>(2, "1"));
+            expected.add(new Tuple2<>(3, "2"));
+            expected.add(new Tuple2<>(4, "3"));
+            expected.add(new Tuple2<>(5, "4"));
+            expected.add(new Tuple2<>(6, "5"));
+
+            final Iterable<Tuple2<Integer, String>> output = Functional.Lazy.zip(i -> i + 1, Functional.stringify(), ints);
 
             assertThat(output).containsExactlyElementsOf(expected);
         }
 
         @Test
-        void curriedSeqZipTwoCollections() {
-            final Collection<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);
-            final Collection<Character> input2 = Arrays.asList('a', 'b', 'c', 'd', 'e');
+        void curriedZipTwoFuncs() {
+            final List<Integer> ints = Arrays.asList(1, 2, 3, 4, 5);
 
-            final Collection<Tuple2<Integer, Character>> expected = new ArrayList<>();
-            expected.add(new Tuple2<>(1, 'a'));
-            expected.add(new Tuple2<>(2, 'b'));
-            expected.add(new Tuple2<>(3, 'c'));
-            expected.add(new Tuple2<>(4, 'd'));
-            expected.add(new Tuple2<>(5, 'e'));
-
-            final Iterable<Tuple2<Integer, Character>> output = Functional.Lazy.<Integer, Character>zip(input1).apply(input2);
-
-            assertThat(output).containsExactlyElementsOf(expected);
-        }
-
-        @Test
-        void cantRemoveFromSeqZip() {
-            final Collection<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);
-            final Collection<Character> input2 = Arrays.asList('a', 'b', 'c', 'd', 'e');
-
-            final Iterable<Tuple2<Integer, Character>> zip = Functional.Lazy.zip(input1, input2);
-            assertThatExceptionOfType(UnsupportedOperationException.class)
-                    .isThrownBy(() -> zip.iterator().remove())
-                    .withMessage("Lazy.zip(Iterable,Iterable): it is not possible to remove elements from this sequence");
-        }
-
-        @Test
-        void cantRestartIteratorFromSeqZipTest1() {
-            final Collection<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);
-            final Collection<Character> input2 = Arrays.asList('a', 'b', 'c', 'd', 'e');
-
-            final Iterable<Tuple2<Integer, Character>> zip = Functional.Lazy.zip(input1, input2);
-            try {
-                zip.iterator();
-            } catch (final UnsupportedOperationException e) {
-                fail("Shouldn't reach this point");
-            }
-            assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(zip::iterator).withMessage("This Iterable does not allow multiple Iterators");
-        }
-
-        @Test
-        void seqZipTest2() {
-            final Collection<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);
-            final Collection<Character> input2 = Arrays.asList('a', 'b', 'c', 'd', 'e');
-
-            final Collection<Tuple2<Integer, Character>> expected = new ArrayList<>();
-            expected.add(new Tuple2<>(1, 'a'));
-            expected.add(new Tuple2<>(2, 'b'));
-            expected.add(new Tuple2<>(3, 'c'));
-            expected.add(new Tuple2<>(4, 'd'));
-            expected.add(new Tuple2<>(5, 'e'));
-
-            final Iterable<Tuple2<Integer, Character>> output = Functional.Lazy.zip(input1, input2);
-            final Iterator<Tuple2<Integer, Character>> iterator = output.iterator();
-
-            for (int i = 0; i < 20; ++i)
-                assertThat(iterator.hasNext()).isTrue();
-
-            for (final Tuple2<Integer, Character> element : expected) {
-                final Tuple2<Integer, Character> next = iterator.next();
-                assertThat(next).isEqualTo(element);
-            }
-
-            assertThat(iterator.hasNext()).isFalse();
-            try {
-                iterator.next();
-            } catch (final NoSuchElementException e) {
-                return;
-            }
-
-            fail("Should not reach this point");
-        }
-
-        @Test
-        void seqZipFnTest1() {
-            final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-
-            final Collection<Tuple2<Integer, String>> expected = new ArrayList<>();
+            final List<Tuple2<Integer, String>> expected = new ArrayList<>();
             expected.add(new Tuple2<>(1, "1"));
             expected.add(new Tuple2<>(2, "2"));
             expected.add(new Tuple2<>(3, "3"));
             expected.add(new Tuple2<>(4, "4"));
             expected.add(new Tuple2<>(5, "5"));
 
-            final Iterable<Tuple2<Integer, String>> output = Functional.Lazy.zip(Function.identity(), Functional.stringify(), input);
+            final Iterable<Tuple2<Integer, String>> output = Functional.Lazy.zip(Function.<Integer>identity(), Functional.stringify()).apply(ints);
 
             assertThat(output).containsExactlyElementsOf(expected);
         }
 
         @Test
-        void cantRemoveFromSeqZipFnTest1() {
-            final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
+        void zipTwoIterables() {
+            final Iterable<Integer> input1 = Arrays.asList(1, 2, 3, 4, 5);
+            final Iterable<Character> input2 = Arrays.asList('a', 'b', 'c', 'd', 'e');
 
-            final Iterable<Tuple2<Integer, String>> output = Functional.Lazy.zip(Function.identity(), Functional.stringify(), input);
-            assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> output.iterator().remove());
+            final List<Tuple2<Integer, Character>> expected = new ArrayList<>();
+            expected.add(new Tuple2<>(1, 'a'));
+            expected.add(new Tuple2<>(2, 'b'));
+            expected.add(new Tuple2<>(3, 'c'));
+            expected.add(new Tuple2<>(4, 'd'));
+            expected.add(new Tuple2<>(5, 'e'));
+
+            final Iterable<Tuple2<Integer, Character>> output = Functional.Lazy.zip(input1, input2);
+
+            assertThat(output).containsExactlyElementsOf(expected);
         }
 
         @Test
-        void cantRestartIteratorFromSeqZipFnTest1() {
-            final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
+        void cannotZipTwoIterablesWithUnequalLengths() {
+            final Iterable<Integer> input1 = Arrays.asList(1, 2);
+            final Iterable<Character> input2 = Arrays.asList('a', 'b', 'c', 'd', 'e');
 
-            final Iterable<Tuple2<Integer, String>> output = Functional.Lazy.zip(Function.identity(), Functional.stringify(), input);
-            try {
-                output.iterator();
-            } catch (final UnsupportedOperationException e) {
-                fail("Shouldn't reach this point");
-            }
-            assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(output::iterator);
+            final Iterable<Tuple2<Integer, Character>> zip = Functional.Lazy.zip(input1, input2);
+
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> asStream(zip).collect(Collectors.toSet()))
+                    .withMessage("Lazy.zip(Iterable<A>,Iterable<B>): cannot zip two iterables with different lengths");
+        }
+
+        @Override
+        protected Iterable<Integer> initialValues() {
+            return Arrays.asList(1, 2, 3, 4, 5);
+        }
+
+        @Override
+        protected Iterable<Tuple2<Integer, String>> testFunction(final Iterable<Integer> l) {
+            return Functional.Lazy.zip(i -> i + 1, Functional.stringify(), l);
+        }
+
+        @Override
+        protected String methodNameInExceptionMessage() {
+            return "Lazy.zip(Function<A,B>,Function<A,C>,Iterable<A>)";
+        }
+
+        @Override
+        protected int noOfElementsInOutput() {
+            return 5;
         }
     }
 }
