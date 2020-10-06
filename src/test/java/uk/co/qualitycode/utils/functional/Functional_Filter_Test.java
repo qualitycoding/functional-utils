@@ -144,7 +144,7 @@ class Functional_Filter_Test {
         @Test
         void recFilterTest1() {
             final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-            final Iterable<Integer> oddElems = Functional.rec.filter(Functional::isOdd, l);
+            final Iterable<Integer> oddElems = Functional.Rec.filter(Functional::isOdd, l);
 
             assertThat(oddElems).containsExactlyElementsOf(new ArrayList<>());
         }

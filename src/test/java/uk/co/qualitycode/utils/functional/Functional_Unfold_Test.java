@@ -187,7 +187,7 @@ class Functional_Unfold_Test {
             final Predicate<Integer> finished = integer -> integer > 10;
 
             final List<Integer> expected = Arrays.asList(2, 4, 6, 8, 10, 12, 14, 16, 18, 20);
-            final List<Integer> output = Functional.rec.unfold(doubler, finished, seed);
+            final List<Integer> output = Functional.Rec.unfold(doubler, finished, seed);
             assertThat(output).containsExactlyElementsOf(expected);
         }
 
@@ -197,7 +197,7 @@ class Functional_Unfold_Test {
             final Function<Integer, Option<Tuple2<Integer, Integer>>> doubler = integer -> integer > 10 ? Option.none() : Option.of(new Tuple2<>(integer * 2, integer + 1));
 
             final List<Integer> expected = Arrays.asList(2, 4, 6, 8, 10, 12, 14, 16, 18, 20);
-            final List<Integer> output = Functional.rec.unfold(doubler, seed);
+            final List<Integer> output = Functional.Rec.unfold(doubler, seed);
             assertThat(output).containsExactlyElementsOf(expected);
         }
     }

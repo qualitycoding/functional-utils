@@ -1063,7 +1063,7 @@ public final class Functional {
         try {
             return StreamSupport.stream(Lazy.zip(input1, input2).spliterator(), false).allMatch(t -> predicate.test(t._1, t._2));
         } catch (final IllegalArgumentException e) {
-            if (e.getMessage().contains("Lazy.zip(Iterable<A>,Iterable<B>): input1 and input2 have differing numbers of elements"))
+            if (e.getMessage().contains("Lazy.zip(Iterable<A>,Iterable<B>): cannot zip two iterables with different lengths"))
                 throw new IllegalArgumentException("forAll2(BiPredicate<A,B>,Iterable<A>,Iterable<B>): Cannot compare two sequences with different numbers of elements");
             throw e;
         }
@@ -3193,7 +3193,7 @@ public final class Functional {
 
                             public Tuple3<A, B, C> next() {
                                 if (!allHaveNext())
-                                    throw new NoSuchElementException("Lazy.zip3(Iterable<A>,Iterable<B>,Iterable<C>): cannot zip three iterables with different lengths");
+                                    throw new NoSuchElementException("Lazy.zip3(Iterable<A>,Iterable<B>,Iterable<C>): cannot seek beyond the end of the sequence");
                                 return new Tuple3<>(l1_it.next(), l2_it.next(), l3_it.next());
                             }
 
@@ -3215,18 +3215,14 @@ public final class Functional {
                 }
             };
         }
-
-        public static <A, B, C> Function<Iterable<C>, Iterable<Tuple3<A, B, C>>> zip3(final Iterable<? extends A> l1, final Iterable<? extends B> l2) {
-            return l3 -> Lazy.zip3(l1, l2, l3);
-        }
     }
 
     /**
      * See <a href="http://en.wikipedia.org/wiki/Recursion_(computer_science)">Recursion</a>
      * Recursive implementations of (some of) the algorithms contained herein
      */
-    public static class rec {
-        private rec() {
+    public static class Rec {
+        private Rec() {
         }
 
         private static <A> Iterable<A> filter(final Predicate<? super A> f, final Iterator<A> input, final Collection<A> accumulator) {

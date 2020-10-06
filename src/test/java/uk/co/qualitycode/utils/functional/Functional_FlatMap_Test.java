@@ -134,7 +134,7 @@ class Functional_FlatMap_Test {
 //        @Test
 //        void recMapTest1() {
 //            final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-//            final Iterable<String> output = Functional.rec.flatMap(Collections::singleton, input);
+//            final Iterable<String> output = Functional.Rec.flatMap(Collections::singleton, input);
 //            assertThat(output).isEqualTo(Arrays.asList("1", "2", "3", "4", "5"));
 //        }
 //    }

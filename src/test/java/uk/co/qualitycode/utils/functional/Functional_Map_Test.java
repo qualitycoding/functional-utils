@@ -130,7 +130,7 @@ class Functional_Map_Test {
         @Test
         void recMapTest1() {
             final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-            final Iterable<String> output = Functional.rec.map(Functional.stringify(), input);
+            final Iterable<String> output = Functional.Rec.map(Functional.stringify(), input);
             assertThat(output).isEqualTo(Arrays.asList("1", "2", "3", "4", "5"));
         }
     }

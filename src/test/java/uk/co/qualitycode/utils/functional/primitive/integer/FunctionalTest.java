@@ -2003,7 +2003,7 @@ class FunctionalTest {
 //    public void recFilterTest1()
 //    {
 //        final IntList l = Functional.init(DoublingGenerator, 5);
-//        final Iterable<Integer> oddElems = Functional.rec.filter(Functional.isOdd, l);
+//        final Iterable<Integer> oddElems = Functional.Rec.filter(Functional.isOdd, l);
 //
 //        AssertIterable.assertIterableEquals(new ArrayList<Integer>(), oddElems);
 //    }
@@ -2012,7 +2012,7 @@ class FunctionalTest {
 //    public void recMapTest1()
 //    {
 //        final IntList input = new int[]{1, 2, 3, 4, 5});
-//        final Iterable<String> output = Functional.rec.map(Functional.<Integer>dStringify(), input);
+//        final Iterable<String> output = Functional.Rec.map(Functional.<Integer>dStringify(), input);
 //        AssertIterable.assertIterableEquals(Arrays.asList("1", "2", "3", "4", "5"), output);
 //    }
 //
@@ -2020,9 +2020,9 @@ class FunctionalTest {
 //    public void recFoldvsMapTest1()
 //    {
 //        final IntList li = Functional.init(DoublingGenerator, 5);
-//        final String s1 = Functional.join(",", Functional.rec.map(Functional.<Integer>dStringify(), li));
+//        final String s1 = Functional.join(",", Functional.Rec.map(Functional.<Integer>dStringify(), li));
 //        assertThat().isEqualTo("2,4,6,8,10", s1);
-//        final String s2 = Functional.rec.fold(
+//        final String s2 = Functional.Rec.fold(
 //                new BiFunction<String, Integer, String>() {
 //
 //                    public String apply(final String s1, final Integer s2) {
@@ -2469,7 +2469,7 @@ class FunctionalTest {
 //        };
 //
 //        final List<Integer> expected = Arrays.asList(2,4,6,8,10,12,14,16,18,20);
-//        final List<Integer> output = Functional.rec.unfold(doubler, finished, seed);
+//        final List<Integer> output = Functional.Rec.unfold(doubler, finished, seed);
 //        AssertIterable.assertIterableEquals(expected,output);
 //    }
 //
@@ -2485,7 +2485,7 @@ class FunctionalTest {
 //        };
 //
 //        final List<Integer> expected = Arrays.asList(2,4,6,8,10,12,14,16,18,20);
-//        final List<Integer> output = Functional.rec.unfold(doubler, seed);
+//        final List<Integer> output = Functional.Rec.unfold(doubler, seed);
 //        AssertIterable.assertIterableEquals(expected, output);
 //    }
 //
