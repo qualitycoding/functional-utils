@@ -11,10 +11,8 @@ import uk.co.qualitycode.utils.functional.primitive.integer.Func_int_int;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -475,28 +473,6 @@ class FunctionalTest {
 
         final Collection<Integer> expected = Arrays.asList(1, 5);
         assertThat(posInts).containsExactlyElementsOf(expected);
-    }
-
-    @Test
-    void mapDictTest1() {
-        final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-        final Map<String, String> output = Functional.map_dict(i -> new Map.Entry<String, String>() {
-            public String setValue(final String v) {
-                throw new UnsupportedOperationException();
-            }
-
-            public String getValue() {
-                return Functional.<Integer>stringify().apply(i);
-            }
-
-            public String getKey() {
-                return Functional.<Integer>stringify().apply(i);
-            }
-        }, input);
-
-        final List<String> keys = new ArrayList<>(output.keySet());
-        Collections.sort(keys);
-        assertThat(keys).containsExactly("1", "2", "3", "4", "5");
     }
 
     public static Function<Integer, List<Integer>> repeat(final int howMany) {

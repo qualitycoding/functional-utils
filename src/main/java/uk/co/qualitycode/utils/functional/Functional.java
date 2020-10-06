@@ -1576,7 +1576,6 @@ public final class Functional {
         T state = null;
         for (final T element : input) state = element;
 
-        notNull(state, "last(Iterable<T>): input must not be empty");
         return state;
     }
 
@@ -3347,10 +3346,22 @@ public final class Functional {
         */
 
     public static <A, B, C> Map<B, C> map_dict(final Function<? super A, Map.Entry<B, C>> f, final Iterable<A> input) {
+        notNull(f, "map_dict(Function<A,Map.Entry<B,C>>,Iterable<A>)", "f");
+        notNull(input, "map_dict(Function<A,Map.Entry<B,C>>,Iterable<A>)", "input");
+        return map_dict_(f, Map.Entry::getKey, Map.Entry::getValue, input);
+    }
+
+    public static <A, B, C> Map<B, C> map_dict_t2(final Function<? super A, Tuple2<B, C>> f, final Iterable<A> input) {
+        notNull(f, "map_dict_t2(Function<A,Tuple2<B,C>>,Iterable<A>)", "f");
+        notNull(input, "map_dict_t2(Function<A,Tuple2<B,C>>,Iterable<A>)", "input");
+        return map_dict_(f, Tuple2::_1, Tuple2::_2, input);
+    }
+
+    private static <A, B, C, T> Map<B, C> map_dict_(final Function<? super A, T> f, final Function<T, B> keyFn, final Function<T, C> valueFn, final Iterable<A> input) {
         final Map<B, C> results = new HashMap<>();
         for (final A a : input) {
-            final Map.Entry<B, C> intermediate = f.apply(a);
-            results.put(intermediate.getKey(), intermediate.getValue());
+            final T intermediate = f.apply(a);
+            results.put(keyFn.apply(intermediate), valueFn.apply(intermediate));
         }
         return results;
     }
