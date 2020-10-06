@@ -137,4 +137,38 @@ class Functional_Fold_Test {
 //        assertThatExceptionOfType(UnsupportedOperationException.class)
 //                .isThrownBy(()->output._2().add(new FunctionalTest.myInt(0)));
     }
+
+    @Nested
+    class Rec {
+        @Test
+        void preconditions() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Rec.fold(null, new Object(), mock(Iterable.class)))
+                    .withMessage("Rec.fold(BiFunction<A,B,A>,A,Iterable<B>): folder must not be null");
+            // null is an allowable initialValue
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Rec.fold(mock(BiFunction.class), new Object(), null))
+                    .withMessage("Rec.fold(BiFunction<A,B,A>,A,Iterable<B>): input must not be null");
+        }
+
+        @Test
+        void foldIntegersStartingWithNull() {
+            final Collection<Integer> li = Functional.init(doublingGenerator, 5);
+            final String s1 = ",2,4,6,8,10";
+
+            final String s2 = Functional.Rec.fold((state, val) -> StringUtils.join(state, ",", val), null, li);
+
+            assertThat(s2).isEqualTo(s1);
+        }
+
+        @Test
+        void foldIntegers() {
+            final Collection<Integer> li = Functional.init(doublingGenerator, 5);
+            final String s1 = "0,2,4,6,8,10";
+
+            final String s2 = Functional.Rec.fold(csv, "0", li);
+
+            assertThat(s2).isEqualTo(s1);
+        }
+    }
 }

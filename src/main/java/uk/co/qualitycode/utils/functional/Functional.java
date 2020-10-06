@@ -3225,34 +3225,30 @@ public final class Functional {
         private Rec() {
         }
 
-        private static <A> Iterable<A> filter(final Predicate<? super A> f, final Iterator<A> input, final Collection<A> accumulator) {
-            if (input.hasNext()) {
-                final A next = input.next();
-                if (f.test(next)) accumulator.add(next);
-                return filter(f, input, accumulator);
-            } else return accumulator;
-        }
-
         /**
          * See <A href="http://en.wikipedia.org/wiki/Filter_(higher-order_function)">Filter</A>
          * This is a recursive implementation of filter.
          * See <a href="http://en.wikipedia.org/wiki/Recursion_(computer_science)">Recursion</a>
          *
-         * @param <A> the type of the element in the input sequence
-         * @param f   a filter function. This is passed each input element in turn and returns either true or false. If true then
-         *            the input element is passed through to the output otherwise it is ignored.
+         * @param <A>       the type of the element in the input sequence
+         * @param predicate a filter function. This is passed each input element in turn and returns either true or false. If true then
+         *                  the input element is passed through to the output otherwise it is ignored.
          * @return a sequence which contains zero or more of the elements of the input sequence. Each element is included only if
          * the filter function returns true for the element.
          */
-        public static <A> Iterable<A> filter(final Predicate<? super A> f, final Iterable<A> input) {
-            return filter(f, input.iterator(), input instanceof Collection<?> ? new ArrayList<>(((Collection<?>) input).size()) : new ArrayList<>());
+        public static <A> Iterable<A> filter(final Predicate<? super A> predicate, final Iterable<A> input) {
+            notNull(predicate, "Rec.filter(Predicate<A>,Iterable<A>)", "predicate");
+            notNull(input, "Rec.filter(Predicate<A>,Iterable<A>)", "input");
+            return filter(predicate, input.iterator(), new ArrayList<>());
         }
 
-        private static <A, B> Iterable<B> map(final Function<? super A, ? extends B> f, final Iterator<A> input, final Collection<B> accumulator) {
+        private static <A> Iterable<A> filter(final Predicate<? super A> f, final Iterator<A> input, final Collection<A> accumulator) {
             if (input.hasNext()) {
-                accumulator.add(f.apply(input.next()));
-                return map(f, input, accumulator);
-            } else return accumulator;
+                final A next = input.next();
+                if (f.test(next)) accumulator.add(next);
+                return filter(f, input, accumulator);
+            }
+            return accumulator;
         }
 
         /**
@@ -3269,14 +3265,17 @@ public final class Functional {
          * @return a seq of type B containing the transformed values.
          */
         public static <A, B> Iterable<B> map(final Function<? super A, ? extends B> f, final Iterable<A> input) {
-            return map(f, input.iterator(), input instanceof Collection<?> ? new ArrayList<>(((Collection<?>) input).size()) : new ArrayList<>());
+            notNull(f, "Rec.map(Function<A,B>,Iterable<A>)", "f");
+            notNull(input, "Rec.map(Function<A,B>,Iterable<A>)", "input");
+            return map(f, input.iterator(), new ArrayList<>());
         }
 
-        private static <A, B> A fold(final BiFunction<? super A, ? super B, ? extends A> f, final A initialValue, final Iterator<B> input) {
+        private static <A, B> Iterable<B> map(final Function<? super A, ? extends B> f, final Iterator<A> input, final Collection<B> accumulator) {
             if (input.hasNext()) {
-                final B next = input.next();
-                return fold(f, f.apply(initialValue, next), input);
-            } else return initialValue;
+                accumulator.add(f.apply(input.next()));
+                return map(f, input, accumulator);
+            }
+            return accumulator;
         }
 
         /**
@@ -3287,12 +3286,35 @@ public final class Functional {
          *
          * @param <A>          the type of the initialValue / seed
          * @param <B>          the type of the element in the output sequence
-         * @param f            the aggregation function
+         * @param folder       the aggregation function
          * @param initialValue the seed for the aggregation
          * @return the aggregated value
          */
-        public static <A, B> A fold(final BiFunction<? super A, ? super B, ? extends A> f, final A initialValue, final Iterable<B> input) {
-            return fold(f, initialValue, input.iterator());
+        public static <A, B> A fold(final BiFunction<? super A, ? super B, ? extends A> folder, final A initialValue, final Iterable<B> input) {
+            notNull(folder, "Rec.fold(BiFunction<A,B,A>,A,Iterable<B>)", "folder");
+            notNull(input, "Rec.fold(BiFunction<A,B,A>,A,Iterable<B>)", "input");
+            return fold(folder, initialValue, input.iterator());
+        }
+
+        private static <A, B> A fold(final BiFunction<? super A, ? super B, ? extends A> f, final A initialValue, final Iterator<B> input) {
+            if (input.hasNext()) {
+                final B next = input.next();
+                return fold(f, f.apply(initialValue, next), input);
+            }
+            return initialValue;
+        }
+
+        /**
+         * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a>
+         * and <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
+         * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
+         * This is a recursive implementation of unfold
+         * See <a href="http://en.wikipedia.org/wiki/Recursion_(computer_science)">Recursion</a>
+         */
+        public static <A, B> List<A> unfold(final Function<? super B, Tuple2<A, B>> unspooler, final Predicate<? super B> finished, final B seed) {
+            notNull(unspooler, "Rec.unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B)", "unspooler");
+            notNull(finished, "Rec.unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B)", "finished");
+            return unfold(unspooler, finished, seed, new ArrayList<>());
         }
 
         private static <A, B> List<A> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Predicate<? super B> finished, final B seed, final List<A> accumulator) {
@@ -3309,8 +3331,8 @@ public final class Functional {
          * This is a recursive implementation of unfold
          * See <a href="http://en.wikipedia.org/wiki/Recursion_(computer_science)">Recursion</a>
          */
-        public static <A, B> List<A> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Predicate<? super B> finished, final B seed) {
-            return unfold(unspool, finished, seed, new ArrayList<>());
+        public static <A, B> List<A> unfold(final Function<? super B, Option<Tuple2<A, B>>> unspool, final B seed) {
+            return unfold(unspool, seed, new ArrayList<>());
         }
 
         private static <A, B> List<A> unfold(final Function<? super B, Option<Tuple2<A, B>>> unspool, final B seed, final List<A> accumulator) {
@@ -3318,17 +3340,6 @@ public final class Functional {
             if (p.isNone()) return accumulator;
             accumulator.add(p.get()._1());
             return unfold(unspool, p.get()._2(), accumulator);
-        }
-
-        /**
-         * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a>
-         * and <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
-         * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
-         * This is a recursive implementation of unfold
-         * See <a href="http://en.wikipedia.org/wiki/Recursion_(computer_science)">Recursion</a>
-         */
-        public static <A, B> List<A> unfold(final Function<? super B, Option<Tuple2<A, B>>> unspool, final B seed) {
-            return unfold(unspool, seed, new ArrayList<>());
         }
     }
         /*

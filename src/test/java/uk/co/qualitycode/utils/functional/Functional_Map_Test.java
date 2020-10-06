@@ -126,17 +126,26 @@ class Functional_Map_Test {
     }
 
     @Nested
-    class RecMap {
+    class Rec {
         @Test
-        void recMapTest1() {
-            final Collection<Integer> input = Arrays.asList(1, 2, 3, 4, 5);
-            final Iterable<String> output = Functional.Rec.map(Functional.stringify(), input);
-            assertThat(output).isEqualTo(Arrays.asList("1", "2", "3", "4", "5"));
+        void preconditions() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Rec.map(null, mock(Iterable.class)))
+                    .withMessage("Rec.map(Function<A,B>,Iterable<A>): f must not be null");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Rec.map(i -> i, null))
+                    .withMessage("Rec.map(Function<A,B>,Iterable<A>): input must not be null");
+        }
+
+        @Test
+        void mapIntsToStrings() {
+            final Iterable<String> output = Functional.Rec.map(stringify(), Arrays.asList(1, 2, 3, 4, 5));
+            assertThat(output).containsExactly("1", "2", "3", "4", "5");
         }
     }
 
     @Nested
-    class SetMap {
+    class Set_ {
         @Test
         void setMapTest1() {
             final Set<Integer> input = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5));

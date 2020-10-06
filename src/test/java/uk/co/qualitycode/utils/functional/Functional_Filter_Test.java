@@ -142,11 +142,29 @@ class Functional_Filter_Test {
     @Nested
     class Rec {
         @Test
-        void recFilterTest1() {
-            final Collection<Integer> l = Functional.init(doublingGenerator, 5);
+        void preconditions() {
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Rec.filter(null, mock(Iterable.class)))
+                    .withMessage("Rec.filter(Predicate<A>,Iterable<A>): predicate must not be null");
+            assertThatIllegalArgumentException()
+                    .isThrownBy(() -> Functional.Rec.filter(mock(Predicate.class), (Iterable<?>) null))
+                    .withMessage("Rec.filter(Predicate<A>,Iterable<A>): input must not be null");
+        }
+
+        @Test
+        void filterForOddElements() {
+            final Iterable<Integer> l = Functional.init(doublingGenerator, 5);
             final Iterable<Integer> oddElems = Functional.Rec.filter(Functional::isOdd, l);
 
-            assertThat(oddElems).containsExactlyElementsOf(new ArrayList<>());
+            assertThat(oddElems).isEmpty();
+        }
+
+        @Test
+        void filterForEvenElements() {
+            final Iterable<Integer> l = Functional.init(doublingGenerator, 5);
+            final Iterable<Integer> evenElems = Functional.Rec.filter(Functional::isEven, l);
+
+            assertThat(evenElems).containsExactlyElementsOf(l);
         }
     }
 
