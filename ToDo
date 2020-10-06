@@ -7,4 +7,4 @@ ToDo:
  - Lazy.takeWhile has some suspicious code in hasNext() and next()
  - Lazy.unfold does not really need to be supplied with an Iterable of initial values, similarly for Lazy.partition
  - Do we have the range checks for the variations of the lazy functions, eg there are multiple
- instances of unfold, partition, etc.? Are they all checked for bounds conformance?
+ instances of unfold, partition, zip, etc.? Are they all checked for bounds conformance?

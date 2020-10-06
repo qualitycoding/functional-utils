@@ -515,7 +515,7 @@ public final class Functional {
         final List<Tuple3<A, B, C>> output;
         if (input1 instanceof Collection<?> && input2 instanceof Collection<?> && input3 instanceof Collection<?>) {
             if (((Collection<?>) input1).size() != ((Collection<?>) input2).size())
-                throw new IllegalArgumentException("zip3(Iterable<A>,Iterable<B>,Iterable<C>): input1, input2 and input3 have differing numbers of elements");
+                throw new IllegalArgumentException("zip3(Iterable<A>,Iterable<B>,Iterable<C>): cannot zip three iterables with different lengths");
 
             output = new ArrayList<>(((Collection<?>) input1).size());
         } else output = new ArrayList<>();
@@ -526,7 +526,7 @@ public final class Functional {
         while (l1_it.hasNext() && l2_it.hasNext() && l3_it.hasNext())
             output.add(new Tuple3<>(l1_it.next(), l2_it.next(), l3_it.next()));
         if (l1_it.hasNext() || l2_it.hasNext() || l3_it.hasNext())
-            throw new IllegalArgumentException("zip3(Iterable<A>,Iterable<B>,Iterable<C>): Cannot zip three iterables with different lengths");
+            throw new IllegalArgumentException("zip3(Iterable<A>,Iterable<B>,Iterable<C>): cannot zip three iterables with different lengths");
 
         return Collections.unmodifiableList(output);
     }
@@ -3153,7 +3153,7 @@ public final class Functional {
                             }
                         };
                     else
-                        throw new UnsupportedOperationException("Lazy.zip(Iterable,Iterable): this Iterable does not allow multiple Iterators");
+                        throw new UnsupportedOperationException("Lazy.zip(Iterable<A>,Iterable<B>): this Iterable does not allow multiple Iterators");
                 }
             };
         }
@@ -3188,30 +3188,30 @@ public final class Functional {
                             private final Iterator<? extends C> l3_it = input3.iterator();
 
                             public boolean hasNext() {
+                                return allHaveNext();
+                            }
+
+                            public Tuple3<A, B, C> next() {
+                                if (!allHaveNext())
+                                    throw new NoSuchElementException("Lazy.zip3(Iterable<A>,Iterable<B>,Iterable<C>): cannot zip three iterables with different lengths");
+                                return new Tuple3<>(l1_it.next(), l2_it.next(), l3_it.next());
+                            }
+
+                            public void remove() {
+                                throw new UnsupportedOperationException("Lazy.zip3(Iterable<A>,Iterable<B>,Iterable<C>): it is not possible to remove elements from this sequence");
+                            }
+
+                            private boolean allHaveNext() {
                                 final boolean l1_it_hasNext = l1_it.hasNext();
                                 final boolean l2_it_hasNext = l2_it.hasNext();
                                 final boolean l3_it_hasNext = l3_it.hasNext();
                                 if (l1_it_hasNext != l2_it_hasNext || l1_it_hasNext != l3_it_hasNext)
-                                    throw new IllegalArgumentException("Lazy.zip3(Iterable<A>,Iterable<B>,Iterable<C>): the input sequences have differing numbers of elements");
+                                    throw new IllegalArgumentException("Lazy.zip3(Iterable<A>,Iterable<B>,Iterable<C>): cannot zip three iterables with different lengths");
                                 return l1_it_hasNext;
                             }
-
-
-                            public Tuple3<A, B, C> next() {
-                                return new Tuple3<>(l1_it.next(), l2_it.next(), l3_it.next());
-                            }
-
-
-                            public void remove() {
-                                throw new UnsupportedOperationException("Lazy.zip3(Iterable,Iterable,Iterable): it is not possible to remove elements from this sequence");
-                            }
-
-                            //
-                            //                        public void forEachRemaining(Consumer<? super Tuple2<A, B>> action) {
-                            //
-                            //                        }
                         };
-                    else throw new UnsupportedOperationException("This Iterable does not allow multiple Iterators");
+                    else
+                        throw new UnsupportedOperationException("Lazy.zip3(Iterable<A>,Iterable<B>,Iterable<C>): this Iterable does not allow multiple Iterators");
                 }
             };
         }
