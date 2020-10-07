@@ -3466,78 +3466,8 @@ public final class Functional {
         }
     }
 
-    /**
-     * This class provides alternative implementations of those standard functions which would ordinarily throw an exception
-     * in the event of an unexpected failure. The functions in this class will indicate the failure in a different manner, typically
-     * using the Option type.
-     */
-    public static class noException {
-        private noException() {
-        }
-
-        /**
-         * forAll2: the predicate 'f' is applied to all elements in the input sequences input1 and input2 as pairs. If the predicate returns
-         * true for all pairs and there is the same number of elements in both input sequences then forAll2 returns true. If the predicate
-         * returns false at any point then the traversal of the input sequences halts and forAll2 returns false.
-         * forAll2: (A -> B -> bool) -> A list -> B list -> bool option
-         *
-         * @param f      predicate to which each successive pair (input1_i, input2_i) is applied
-         * @param input1 input sequence
-         * @param input2 input sequence
-         * @param <A>    the base type of the element in the first input sequence
-         * @param <B>    the base type of the element in the second input sequence
-         * @param <AA>   the type of the element in the first input sequence
-         * @param <BB>   the type of the element in the second input sequence
-         * @return true if the predicate 'f' evaluates true for all pairs, false otherwise or None
-         * if the predicate returns true for all pairs and the sequences contain differing numbers
-         * of elements
-         */
-        public static <A, B, AA extends A, BB extends B> Option<Boolean> forAll2(final BiPredicate<A, B> f, final Iterable<AA> input1, final Iterable<BB> input2) {
-            final Iterator<AA> enum1 = input1.iterator();
-            final Iterator<BB> enum2 = input2.iterator();
-            boolean enum1Moved, enum2Moved;
-            do {
-                enum1Moved = enum1.hasNext();
-                enum2Moved = enum2.hasNext();
-                if (enum1Moved && enum2Moved && !f.test(enum1.next(), enum2.next()))
-                    return Option.of(false);
-            } while (enum1Moved && enum2Moved);
-            if (enum1Moved != enum2Moved)
-                return Option.none();
-            return Option.of(true);
-        }
-
-        /**
-         * take: given a input return another input containing the first 'howMany' elements or fewer if there are not enough elements
-         * in the input sequence
-         *
-         * @param howMany a positive upper bound for the number of elements to be returned from the input sequence
-         * @param input   the input sequence
-         * @param <T>     the type of the element in the input sequence
-         * @return a input containing the first 'howMany' elements of 'input'
-         */
-        public static <T> List<T> take(final int howMany, final Iterable<? extends T> input) {
-            if (howMany < 0)
-                throw new IllegalArgumentException("take(int,Iterable<T>): howMany is negative");
-            notNull(input, "take(int,Iterable<T>)", "input");
-
-            if (howMany == 0) return new ArrayList<>(0);
-
-            final List<T> output = new ArrayList<>(howMany);
-            final Iterator<? extends T> iterator = input.iterator();
-            for (int i = 0; i < howMany; ++i) {
-                if (iterator.hasNext())
-                    output.add(iterator.next());
-                else
-                    break;
-            }
-            return Collections.unmodifiableList(output);
-        }
-
-    }
-
     /*
-    // Following are control structures, eg if, switch
+     * Following are control structures, eg if, switch
      */
 
     /**
@@ -3553,13 +3483,28 @@ public final class Functional {
      * @return the results of evaluating the 'thenClause' or the 'elseClause', depending on whether the 'predicate' evaluates to true
      * or false respectively
      */
-    public static <A, B> B if_fn(final A a, final Predicate<? super A> predicate, final Function<? super A, ? extends B> thenClause, final Function<? super A, ? extends B> elseClause) {
-        notNull(a, "a", "a");
-        notNull(predicate, "predicate", "predicate");
-        notNull(thenClause, "thenClause", "thenClause");
-        notNull(elseClause, "elseClause", "elseClause");
+    public static <A, B> B if_(final A a, final Predicate<? super A> predicate, final Function<? super A, ? extends B> thenClause, final Function<? super A, ? extends B> elseClause) {
+        notNull(predicate, "if_(A,Predicate<A>,Function<A,B>,Function<A,B>)", "predicate");
+        notNull(thenClause, "if_(A,Predicate<A>,Function<A,B>,Function<A,B>)", "thenClause");
+        notNull(elseClause, "if_(A,Predicate<A>,Function<A,B>,Function<A,B>)", "elseClause");
 
         return predicate.test(a) ? thenClause.apply(a) : elseClause.apply(a);
+    }
+
+    public static <A, B> WithPredicate<A, B> if_(final A a) {
+        return predicate -> thenClause -> elseClause -> if_(a, predicate, thenClause, elseClause);
+    }
+
+    public interface WithPredicate<A, B> {
+        Then<A, B> withPredicate(final Predicate<? super A> predicate);
+    }
+
+    public interface Then<A, B> {
+        Else<A, B> then(final Function<? super A, ? extends B> thenClause);
+    }
+
+    public interface Else<A, B> {
+        B else_(final Function<? super A, ? extends B> elseClause);
     }
 
     /**
