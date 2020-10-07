@@ -2064,7 +2064,7 @@ class FunctionalTest {
 //    {
 //        final IntList l = Functional.init(DoublingGenerator,5);
 //        final Set<Integer> sl = new HashSet<Integer>(l);
-//        final Set<Integer> oddElems = Functional.set.filter(Functional.isOdd, sl);
+//        final Set<Integer> oddElems = Functional.Set.filter(Functional.isOdd, sl);
 //
 //        AssertIterable.assertIterableEquals(new ArrayList<Integer>(), oddElems);
 //    }
@@ -2074,7 +2074,7 @@ class FunctionalTest {
 //    {
 //        final IntList l = Functional.init(DoublingGenerator,5);
 //        final Set<Integer> sl = new HashSet<Integer>(l);
-//        final Set<Integer> evenElems = Functional.set.filter(Functional::isEven, sl);
+//        final Set<Integer> evenElems = Functional.Set.filter(Functional::isEven, sl);
 //
 //        final IntList expected = new int[]{2,4,6,8,10});
 //        assertThat().isTrue()(expected.containsAll(evenElems));
@@ -2087,7 +2087,7 @@ class FunctionalTest {
 //        final IntList l = Functional.init(DoublingGenerator,5);
 //        final Integer limit = 5;
 //        final Set<Integer> sl = new HashSet<Integer>(l);
-//        final Set<Integer> highElems = Functional.set.filter(
+//        final Set<Integer> highElems = Functional.Set.filter(
 //                new Predicate<Integer>()
 //                {
 //
@@ -2105,7 +2105,7 @@ class FunctionalTest {
 //        final IntList li = Functional.init(DoublingGenerator, 5);
 //        final Integer limit = 10;
 //        final Set<Integer> sl = new HashSet<Integer>(li);
-//        final Set<Integer> output = Functional.set.filter(
+//        final Set<Integer> output = Functional.Set.filter(
 //                new Predicate<Integer>() {
 //
 //                    public Boolean apply(final Integer a) {
@@ -2122,7 +2122,7 @@ class FunctionalTest {
 //        final IntList li = Functional.init(DoublingGenerator, 10);
 //        final IntList expected = new int[]{4, 8, 12, 16, 20});
 //        final Set<Integer> sl = new HashSet<Integer>(li);
-//        final Set<Integer> output = Functional.set.filter(
+//        final Set<Integer> output = Functional.Set.filter(
 //                new Predicate<Integer>()
 //                {
 //                     public Boolean apply(final Integer a) {return a % 4 ==0;}
@@ -2136,7 +2136,7 @@ class FunctionalTest {
 //    public void setCollectTest1()
 //    {
 //        final Iterable<Integer> input = Functional.init(DoublingGenerator, 5);
-//        final Set<Integer> output = Functional.set.collect(repeat(3), input);
+//        final Set<Integer> output = Functional.Set.collect(repeat(3), input);
 //        final Set<Integer> expected = new HashSet<Integer>(Arrays.asList(2,4,6,8,10));
 //
 //        assertThat().isTrue()(expected.containsAll(output));
@@ -2147,7 +2147,7 @@ class FunctionalTest {
 //    public void setCollectTest2()
 //    {
 //        final Iterable<Integer> input = Functional.init(DoublingGenerator, 5);
-//        final Set<Integer> output1 = Functional.set.collect(repeat(3), input);
+//        final Set<Integer> output1 = Functional.Set.collect(repeat(3), input);
 //        final Set<Integer> output2 = output1;
 //        final Set<Integer> expected = new HashSet<Integer>(Arrays.asList(2,4,6,8,10));
 //
@@ -2161,7 +2161,7 @@ class FunctionalTest {
 //    public void setMapTest1()
 //    {
 //        final Set<Integer> input = new HashSet<Integer>(new int[]{1, 2, 3, 4, 5}));
-//        final Set<String> output = Functional.set.map(Functional.<Integer>dStringify(), input);
+//        final Set<String> output = Functional.Set.map(Functional.<Integer>dStringify(), input);
 //        final Set<String> expected = new HashSet<String>(Arrays.asList("1","2","3","4","5"));
 //        assertThat().isTrue()(expected.containsAll(output));
 //        assertThat().isTrue()(output.containsAll(expected));
@@ -2179,8 +2179,8 @@ class FunctionalTest {
 //        };
 //        final Set<String> expected = new HashSet<String>(Arrays.asList("1","2","3","4","5","6","8","10"));
 //
-//        final Set<String> strs = Functional.set.map(Functional.<Integer>dStringify(), input);
-//        final Set<String> output = Functional.set.concat(strs, Functional.set.map(Functional.<Integer>dStringify(), Functional.set.map(doubler, input)));
+//        final Set<String> strs = Functional.Set.map(Functional.<Integer>dStringify(), input);
+//        final Set<String> output = Functional.Set.concat(strs, Functional.Set.map(Functional.<Integer>dStringify(), Functional.Set.map(doubler, input)));
 //
 //        assertThat().isTrue()(expected.containsAll(output));
 //        assertThat().isTrue()(output.containsAll(expected));
@@ -2192,7 +2192,7 @@ class FunctionalTest {
 //        final Set<Integer> input1 = new HashSet<Integer>(Arrays.asList(1,2,3,4,5));
 //        final Set<Integer> input2 = new HashSet<Integer>(Arrays.asList(1,2,3,4,5));
 //
-//        final Set<Integer> intersection = Functional.set.intersection(input1,input2);
+//        final Set<Integer> intersection = Functional.Set.intersection(input1,input2);
 //        assertThat().isTrue()(intersection.containsAll(input1));
 //        assertThat().isTrue()(input1.containsAll(intersection));
 //    }
@@ -2204,7 +2204,7 @@ class FunctionalTest {
 //        final Set<Integer> input2 = new HashSet<Integer>(Arrays.asList(4,5,6,7,8));
 //        final Set<Integer> expected = new HashSet<Integer>(Arrays.asList(4,5));
 //
-//        final Set<Integer> intersection = Functional.set.intersection(input1, input2);
+//        final Set<Integer> intersection = Functional.Set.intersection(input1, input2);
 //        assertThat().isTrue()(intersection.containsAll(expected));
 //        assertThat().isTrue()(expected.containsAll(intersection));
 //    }
@@ -2216,7 +2216,7 @@ class FunctionalTest {
 //        final Set<Integer> input2 = new HashSet<Integer>(Arrays.asList(6,7,8));
 //        final Set<Integer> expected = Collections.emptySet();
 //
-//        final Set<Integer> intersection = Functional.set.intersection(input1, input2);
+//        final Set<Integer> intersection = Functional.Set.intersection(input1, input2);
 //        assertThat().isTrue()(intersection.containsAll(expected));
 //        assertThat().isTrue()(expected.containsAll(intersection));
 //    }
@@ -2228,7 +2228,7 @@ class FunctionalTest {
 //        final Set<Integer> input2 = new HashSet<Integer>(Arrays.asList(4,5,6,7,8));
 //        final Set<Integer> expected = new HashSet<Integer>(Arrays.asList(1,2,3));
 //
-//        final Set<Integer> diff = Functional.set.asymmetricDifference(input1, input2);
+//        final Set<Integer> diff = Functional.Set.asymmetricDifference(input1, input2);
 //        assertThat().isTrue()(diff.containsAll(expected));
 //        assertThat().isTrue()(expected.containsAll(diff));
 //        assertThat().isFalse()(input2.containsAll(diff));
@@ -2241,7 +2241,7 @@ class FunctionalTest {
 //        final Set<Integer> input2 = new HashSet<Integer>(Arrays.asList(6,7,8));
 //        final Set<Integer> expected = Collections.emptySet();
 //
-//        final Set<Integer> diff = Functional.set.asymmetricDifference(input1, input2);
+//        final Set<Integer> diff = Functional.Set.asymmetricDifference(input1, input2);
 //        assertThat().isTrue()(diff.containsAll(input1));
 //        assertThat().isTrue()(input1.containsAll(diff));
 //    }

@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -72,22 +70,6 @@ class Functional_Concat_Test {
         @Override
         protected int noOfElementsInOutput() {
             return 10;
-        }
-    }
-
-    @Nested
-    class Set {
-        @Test
-        void setConcatTest1() {
-            final java.util.Set<Integer> input = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5));
-            final Function<Integer, Integer> doubler = i -> i * 2;
-            final java.util.Set<String> expected = new HashSet<>(Arrays.asList("1", "2", "3", "4", "5", "6", "8", "10"));
-
-            final java.util.Set<String> strs = Functional.set.map(Functional.stringify(), input);
-            final java.util.Set<String> output = Functional.set.concat(strs, Functional.set.map(Functional.stringify(), Functional.set.map(doubler, input)));
-
-            assertThat(expected.containsAll(output)).isTrue();
-            assertThat(output.containsAll(expected)).isTrue();
         }
     }
 }

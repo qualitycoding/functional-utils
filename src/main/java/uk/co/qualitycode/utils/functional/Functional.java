@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -3370,98 +3369,9 @@ public final class Functional {
      * Implementations of the algorithms contained herein which return sets
      * See <a href="http://en.wikipedia.org/wiki/Set_(computer_science)">Set</a>
      */
-    public static class set {
-        private set() {
+    public static class Set {
+        private Set() {
         }
-
-        /**
-         * See <a href="http://en.wikipedia.org/wiki/Filter_(higher-order_function)">Filter</a>
-         *
-         * @param <A>   the type of the element in the input sequence
-         * @param pred  a filter function. This is passed each input element in turn and returns either true or false. If true then
-         *              the input element is passed through to the output otherwise it is ignored.
-         * @param input a sequence of objects
-         * @return a set which contains zero or more of the elements of the input sequence. Each element is included only if the filter
-         * function returns true for the element.
-         */
-        public static <A> Set<A> filter(final Predicate<? super A> pred, final Iterable<A> input) {
-            final Set<A> output = input instanceof Collection<?> ? new HashSet<>(((Collection<?>) input).size()) : new HashSet<>();
-            for (final A element : input) {
-                if (pred.test(element))
-                    output.add(element);
-            }
-            return Collections.unmodifiableSet(output);
-        }
-
-        /**
-         * See <a href="http://en.wikipedia.org/wiki/Map_(higher-order_function)">Map</a>
-         * This is a 1-to-1 transformation. Every element in the input sequence will be transformed into a sequence of output elements.
-         * These sequences are concatenated into one final output sequence at the end of the transformation.
-         * map: (T -> U list) -> T list -> U list
-         *
-         * @param <T>   the type of the element in the input sequence
-         * @param <U>   the type of the element in the output sequence
-         * @param f     a transformation function which takes a object of type T and returns a sequence of objects, presumably related, of type U
-         * @param input a sequence to be fed into f
-         * @return a set of type U containing the concatenated sequences of transformed values.
-         */
-        public static <T, U> Set<U> flatMap(final Function<? super T, ? extends Iterable<U>> f, final Iterable<T> input) {
-            final Set<U> output = input instanceof Collection<?> ? new HashSet<>(((Collection<?>) input).size()) : new HashSet<>();
-            for (final T element : input)
-                output.addAll(io.vavr.collection.HashSet.ofAll(f.apply(element)).toJavaSet());
-            return Collections.unmodifiableSet(output);
-        }
-
-        /**
-         * See <a href="http://en.wikipedia.org/wiki/Map_(higher-order_function)">Map</a>
-         * This implementation of the map function returns a set instead of an ordered sequence. It is a 1-to-1 transformation.
-         * Every element in the input sequence will be transformed into an element in the output sequence.
-         * map: (A -> B) -> A seq -> B set
-         *
-         * @param <A>   the type of the element in the input sequence
-         * @param <B>   the type of the element in the output sequence
-         * @param f     a transformation function which takes a object of type A and returns an object, presumably related, of type B
-         * @param input a sequence to be fed into f
-         * @return a set of type B containing the transformed values.
-         * @throws UnsupportedOperationException if the <tt>add</tt> operation
-         *                                       is not supported by this set
-         * @throws ClassCastException            if the class of the specified element
-         *                                       prevents it from being added to this set
-         * @throws NullPointerException          if the specified element is null and this
-         *                                       set does not permit null elements
-         * @throws IllegalArgumentException      if some property of the specified element
-         *                                       prevents it from being added to this set
-         */
-        public static <A, B> Set<B> map(final Function<? super A, ? extends B> f, final Iterable<A> input) {
-            final Set<B> output = input instanceof Collection<?> ? new HashSet<>(((Collection<?>) input).size()) : new HashSet<>();
-            for (final A a : input)
-                output.add(f.apply(a));
-            return Collections.unmodifiableSet(output);
-        }
-
-        /**
-         * Concatenate two sequences and return a new list containing the concatenation.
-         *
-         * @param input1 first input sequence
-         * @param input2 second input sequence
-         * @param <T>    the type of the element in the input sequence
-         * @return a set containing the elements of the first sequence and the elements of the second sequence
-         */
-        public static <T> Set<T> concat(final Set<? extends T> input1, final Set<? extends T> input2) {
-            notNull(input1, "concat(Set<T>,List<T>)", "input1");
-            notNull(input2, "concat(Set<T>,List<T>)", "input2");
-
-            if (input1.size() == 0) return Collections.unmodifiableSet(input2);
-            if (input2.size() == 0) return Collections.unmodifiableSet(input1);
-
-            final Set<T> newList = new HashSet<>(input1);
-            newList.addAll(input2);
-            return Collections.unmodifiableSet(newList);
-        }
-
-        /*
-         * Non-destructive wrappers for set intersection and set difference
-         */
 
         /**
          * Non-destructive wrapper for set intersection
@@ -3471,8 +3381,8 @@ public final class Functional {
          * @param <E> the underlying base type of the two input sets
          * @return a set containing those elements which are contained within both sets 'e1' and 'e2'
          */
-        public static <E> Set<E> intersection(final Set<? extends E> e1, final Set<? extends E> e2) {
-            final Set<E> i = new HashSet<>(e1);
+        public static <E> java.util.Set<E> intersection(final java.util.Set<? extends E> e1, final java.util.Set<? extends E> e2) {
+            final java.util.Set<E> i = new HashSet<>(e1);
             i.retainAll(e2);
             return Collections.unmodifiableSet(i);
         }
@@ -3485,8 +3395,8 @@ public final class Functional {
          * @param <E>      the underlying base type of the two input sets
          * @return a set of those elements which are in 'inSet' and not in 'notInSet'
          */
-        public static <E> Set<E> asymmetricDifference(final Set<? extends E> inSet, final Set<? extends E> notInSet) {
-            final Set<E> i = new HashSet<>(inSet);
+        public static <E> java.util.Set<E> asymmetricDifference(final java.util.Set<? extends E> inSet, final java.util.Set<? extends E> notInSet) {
+            final java.util.Set<E> i = new HashSet<>(inSet);
             i.removeAll(notInSet);
             return Collections.unmodifiableSet(i);
         }

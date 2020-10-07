@@ -3,12 +3,9 @@ package uk.co.qualitycode.utils.functional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -165,62 +162,6 @@ class Functional_Filter_Test {
             final Iterable<Integer> evenElems = Functional.Rec.filter(Functional::isEven, l);
 
             assertThat(evenElems).containsExactlyElementsOf(l);
-        }
-    }
-
-    @Nested
-    class Set_ {
-        @Test
-        void setFilterTest1() {
-            final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-            final Set<Integer> sl = new HashSet<>(l);
-            final Set<Integer> oddElems = Functional.set.filter(Functional::isOdd, sl);
-
-            assertThat(oddElems).containsExactlyElementsOf(new ArrayList<>());
-        }
-
-        @Test
-        void setFilterTest2() {
-            final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-            final Set<Integer> sl = new HashSet<>(l);
-            final Set<Integer> evenElems = Functional.set.filter(Functional::isEven, sl);
-
-            final Collection<Integer> expected = Arrays.asList(2, 4, 6, 8, 10);
-            assertThat(expected.containsAll(evenElems)).isTrue();
-            assertThat(evenElems.containsAll(expected)).isTrue();
-        }
-
-        @Test
-        void setFilterTest3() {
-            final Collection<Integer> l = Functional.init(doublingGenerator, 5);
-            final int limit = 5;
-            final Set<Integer> sl = new HashSet<>(l);
-            final Set<Integer> highElems = Functional.set.filter(a -> a > limit, sl);
-
-            final Collection<Integer> expected = Arrays.asList(6, 8, 10);
-            assertThat(expected.containsAll(highElems)).isTrue();
-            assertThat(highElems.containsAll(expected)).isTrue();
-        }
-
-        @Test
-        void setFilterTest4() {
-            final Collection<Integer> li = Functional.init(doublingGenerator, 5);
-            final int limit = 10;
-            final Set<Integer> sl = new HashSet<>(li);
-            final Set<Integer> output = Functional.set.filter(a -> a > limit, sl);
-
-            assertThat(output.iterator().hasNext()).isFalse();
-        }
-
-        @Test
-        void setFilterTest5() {
-            final Collection<Integer> li = Functional.init(doublingGenerator, 10);
-            final Collection<Integer> expected = Arrays.asList(4, 8, 12, 16, 20);
-            final Set<Integer> sl = new HashSet<>(li);
-            final Set<Integer> output = Functional.set.filter(a -> a % 4 == 0, sl);
-
-            assertThat(expected.containsAll(output)).isTrue();
-            assertThat(output.containsAll(expected)).isTrue();
         }
     }
 }

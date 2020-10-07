@@ -6,9 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -141,18 +139,6 @@ class Functional_Map_Test {
         void mapIntsToStrings() {
             final Iterable<String> output = Functional.Rec.map(stringify(), Arrays.asList(1, 2, 3, 4, 5));
             assertThat(output).containsExactly("1", "2", "3", "4", "5");
-        }
-    }
-
-    @Nested
-    class Set_ {
-        @Test
-        void setMapTest1() {
-            final Set<Integer> input = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5));
-            final Set<String> output = Functional.set.map(Functional.stringify(), input);
-            final Set<String> expected = new HashSet<>(Arrays.asList("1", "2", "3", "4", "5"));
-            assertThat(expected.containsAll(output)).isTrue();
-            assertThat(output.containsAll(expected)).isTrue();
         }
     }
 }
