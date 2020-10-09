@@ -25,13 +25,13 @@ class Functional_If_Test {
                 .withMessage("if_(A,Predicate<A>,Function<A,B>,Function<A,B>): elseClause must not be null");
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.if_(new Object()).withPredicate(null).then(mock(Function.class)).else_(mock(Function.class)))
+                .isThrownBy(() -> Functional.if_(new Object()).withPredicate(null).then(mock(Function.class)).orElse(mock(Function.class)))
                 .withMessage("if_(A,Predicate<A>,Function<A,B>,Function<A,B>): predicate must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.if_(new Object()).withPredicate(mock(Predicate.class)).then(null).else_(mock(Function.class)))
+                .isThrownBy(() -> Functional.if_(new Object()).withPredicate(mock(Predicate.class)).then(null).orElse(mock(Function.class)))
                 .withMessage("if_(A,Predicate<A>,Function<A,B>,Function<A,B>): thenClause must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> Functional.if_(new Object()).withPredicate(mock(Predicate.class)).then(mock(Function.class)).else_(null))
+                .isThrownBy(() -> Functional.if_(new Object()).withPredicate(mock(Predicate.class)).then(mock(Function.class)).orElse(null))
                 .withMessage("if_(A,Predicate<A>,Function<A,B>,Function<A,B>): elseClause must not be null");
 
     }
@@ -53,7 +53,7 @@ class Functional_If_Test {
                 .<Integer, Integer>if_(input)
                 .withPredicate(Functional.greaterThan(ii))
                 .then(FunctionalTest.doublingGenerator)
-                .else_(FunctionalTest.triplingGenerator));
+                .orElse(FunctionalTest.triplingGenerator));
         final List<Integer> expected = Arrays.asList(2, 3, 3);
         assertThat(result).containsExactlyElementsOf(expected);
     }

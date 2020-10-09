@@ -721,11 +721,11 @@ class Iterable2Test {
     /*[Test]
     public void switchTest1() {
         Assert.AreEqual(1,
-                Iterable2.Switch(10,
+                Iterable2.Matcher(10,
                         new[]
         {
-            Case.ToCase((int a) => a < 5, a => -1),
-            Case.ToCase((int a) => a > 5, a => 1)
+            Match.ToCase((int a) => a < 5, a => -1),
+            Match.ToCase((int a) => a > 5, a => 1)
         }, a => 0));
     } */
 
@@ -746,13 +746,13 @@ class Iterable2Test {
         Function<A, IEnumerable<Function<int, object>>> c2 =
                 a => c1.Select<Function<A, object>, Function<int, object>>(f => j => f(a));
 
-        Function<A, IEnumerable<Iterable2.Case<int, object>>> cases =
-                a => c2(a).Select((f, i) => Case.ToCase(i.Equals, f));
+        Function<A, IEnumerable<Iterable2.Match<int, object>>> cases =
+                a => c2(a).Select((f, i) => Match.ToCase(i.Equals, f));
 
         var theA = new A {id = 1, name = "one"};
 
         IEnumerable<object> results =
-                Enumerable.Range(0, 3).Select(i => Iterable2.Switch(i, cases(theA), aa => "oh dear"));
+                Enumerable.Range(0, 3).Select(i => Iterable2.Matcher(i, cases(theA), aa => "oh dear"));
         var expected = new object[] {"one", 1, "oh dear"};
         CollectionAssert.AreEquivalent(expected, results);
     }*/

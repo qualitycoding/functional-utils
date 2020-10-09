@@ -1222,11 +1222,11 @@ class FunctionalTest {
 //    public void switchTest1()
 //    {
 //        Assert.AreEqual(1,
-//                Functional.Switch(10,
+//                Functional.Matcher(10,
 //                        new[]
 //        {
-//            Case.ToCase((int a) => a < 5, a => -1),
-//            Case.ToCase((int a) => a > 5, a => 1)
+//            Match.ToCase((int a) => a < 5, a => -1),
+//            Match.ToCase((int a) => a > 5, a => 1)
 //        }, a => 0));
 //    } */
 //
@@ -1250,13 +1250,13 @@ class FunctionalTest {
 //        Function<A, IEnumerable<Function<int, object>>> c2 =
 //                a => c1.Select<Function<A, object>, Function<int, object>>(f => j => f(a));
 //
-//        Function<A, IEnumerable<Functional.Case<int, object>>> cases =
-//                a => c2(a).Select((f, i) => Case.ToCase(i.Equals, f));
+//        Function<A, IEnumerable<Functional.Match<int, object>>> cases =
+//                a => c2(a).Select((f, i) => Match.ToCase(i.Equals, f));
 //
 //        var theA = new A {id = 1, name = "one"};
 //
 //        IEnumerable<object> results =
-//                Enumerable.Range(0, 3).Select(i => Functional.Switch(i, cases(theA), aa => "oh dear"));
+//                Enumerable.Range(0, 3).Select(i => Functional.Matcher(i, cases(theA), aa => "oh dear"));
 //        var expected = new object[] {"one", 1, "oh dear"};
 //        CollectionAssert.AreEquivalent(expected, results);
 //    }*/
@@ -2051,7 +2051,7 @@ class FunctionalTest {
 //    public void switchTest1()
 //    {
 //        assertThat().isEqualTo(new Integer(1),
-//                Functional.Switch(new Integer(10),
+//                Functional.Matcher(new Integer(10),
 //                        Arrays.asList(
 //
 //                                Functional.toCase(Functional.lessThan(new Integer(5)), Functional.constant(new Integer(-1))),

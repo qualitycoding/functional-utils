@@ -8,6 +8,7 @@ import uk.co.qualitycode.utils.functional.function.FunctionWithExceptionDeclarat
 import uk.co.qualitycode.utils.functional.monad.Option;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -3504,58 +3505,260 @@ public final class Functional {
     }
 
     public interface Else<A, B> {
-        B else_(final Function<? super A, ? extends B> elseClause);
+        B orElse(final Function<? super A, ? extends B> elseClause);
     }
 
-    /**
-     * toCase: a Case builder function.
-     *
-     * @param pred   predicate
-     * @param result the result function to be applied if the predicate evaluates to true
-     * @param <A>    the type of the element being passed to the predicate
-     * @param <B>    the type of the result of the transformation function
-     * @return a new Case object
-     */
-    public static <A, B> Case<A, B> toCase(final Predicate<A> pred, final Function<A, B> result) {
-        notNull(pred, "pred", "pred");
-        notNull(result, "res", "result");
+    public static final class Matcher {
+        private Matcher() {
+        }
 
-        return new Case<>(pred, result);
-    }
+        /**
+         * Functional switch statement. Provide a sequence of Cases and a function which will be evaluated if none of the Cases are true.
+         *
+         * @param input       the value to be tested
+         * @param cases       sequence of Match objects
+         * @param defaultCase function to be evaluated if none of the Cases are true
+         * @param <A>         the type of the element passed to the predicate in the {@link Match}
+         * @param <B>         the type of the result
+         * @return the result of the appropriate Match or the result of the 'defaultCase' function
+         */
+        public static <A, B> WithMatches<A, B> findMatch(final A input) {
+            return cases -> defaultCase -> switchBetween(input, cases, defaultCase);
+        }
 
-    /**
-     * Functional switch statement. Provide a sequence of Cases and a function which will be evaluated if none of the Cases are true.
-     *
-     * @param input       the value to be tested
-     * @param cases       sequence of Case objects
-     * @param defaultCase function to be evaluated if none of the Cases are true
-     * @param <A>         the type of the element being passed to the predicates in the {@link uk.co.qualitycode.utils.functional.Case}
-     * @param <B>         the type of the result
-     * @return the result of the appropriate Case or the result of the 'defaultCase' function
-     */
-    public static <A, B> B switchBetween(final A input, final Iterable<Case<A, B>> cases, final Function<A, B> defaultCase) {
-        return switchBetween(input, Iterable2.of(cases), defaultCase);
-    }
+        public interface WithMatches<A, B> {
+            WithDefaultCase<A, B> from(Matches<A, B> cases);
+        }
 
-    /**
-     * Functional switch statement. Provide a sequence of Cases and a function which will be evaluated if none of the Cases are true.
-     *
-     * @param input       the value to be tested
-     * @param cases       sequence of Case objects
-     * @param defaultCase function to be evaluated if none of the Cases are true
-     * @param <A>         the type of the element passed to the predicate in the {@link uk.co.qualitycode.utils.functional.Case}
-     * @param <B>         the type of the result
-     * @return the result of the appropriate Case or the result of the 'defaultCase' function
-     */
-    public static <A, B> B switchBetween(final A input, final Iterable2<Case<A, B>> cases, final Function<A, B> defaultCase) {
-        notNull(input, "input", "input");
-        notNull(cases, "cases", "cases");
-        notNull(defaultCase, "defaultCase", "defaultCase");
+        public interface WithDefaultCase<A, B> {
+            B orElse(Function<A, B> defaultCase);
+        }
 
-        return cases
-                .find(abCase -> abCase.predicate(input)).toVavrOption()
-                .map(c -> c.results(input))
-                .getOrElse(() -> defaultCase.apply(input));
+        public interface Matches<A, B> extends Iterable2<Match<A, B>> {
+            static <A, B> Matches<A, B> of(final java.lang.Iterable<Match<A, B>> it) {
+                if (it instanceof Matches) return (Matches<A, B>) it;
+                return new Matches<A, B>() {
+                    private final Iterable2<Match<A, B>> i = Iterable2.of(it);
+
+                    @Override
+                    public Iterator<Match<A, B>> iterator() {
+                        return null;
+                    }
+
+                    @Override
+                    public Iterable2<Match<A, B>> filter(final Predicate<? super Match<A, B>> f) {
+                        return null;
+                    }
+
+                    @Override
+                    public <U> Iterable2<U> map(final Function<? super Match<A, B>, ? extends U> f) {
+                        return null;
+                    }
+
+                    @Override
+                    public <U> Iterable2<U> mapi(final BiFunction<Integer, Match<A, B>, ? extends U> f) {
+                        return null;
+                    }
+
+                    @Override
+                    public <U> Iterable2<U> choose(final Function<? super Match<A, B>, Option<U>> f) {
+                        return null;
+                    }
+
+                    @Override
+                    public boolean exists(final Predicate<? super Match<A, B>> f) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean forAll(final Predicate<? super Match<A, B>> f) {
+                        return false;
+                    }
+
+                    @Override
+                    public <U> boolean forAll2(final BiPredicate<? super U, ? super Match<A, B>> f, final Iterable<U> input1) {
+                        return false;
+                    }
+
+                    @Override
+                    public <U> U fold(final BiFunction<? super U, ? super Match<A, B>, ? extends U> f, final U seed) {
+                        return null;
+                    }
+
+                    @Override
+                    public <K, V> Map<K, V> toDictionary(final Function<? super Match<A, B>, ? extends K> keyFn, final Function<? super Match<A, B>, ? extends V> valueFn) {
+                        return null;
+                    }
+
+                    @Override
+                    public Match<A, B> last() {
+                        return null;
+                    }
+
+                    @Override
+                    public Iterable2<Match<A, B>> sortWith(final Comparator<Match<A, B>> f) {
+                        return null;
+                    }
+
+                    @Override
+                    public Iterable2<Match<A, B>> concat(final Iterable2<Match<A, B>> list2) {
+                        return null;
+                    }
+
+                    @Override
+                    public Option<Match<A, B>> find(final Predicate<? super Match<A, B>> f) {
+                        return i.find(f);
+                    }
+
+                    @Override
+                    public int findIndex(final Predicate<? super Match<A, B>> f) {
+                        return 0;
+                    }
+
+                    @Override
+                    public <U> Option<U> pick(final Function<? super Match<A, B>, Option<U>> f) {
+                        return null;
+                    }
+
+                    @Override
+                    public <U> Iterable2<U> collect(final Function<? super Match<A, B>, ? extends Iterable<U>> f) {
+                        return null;
+                    }
+
+                    @Override
+                    public Iterable2<Match<A, B>> take(final int howMany) {
+                        return null;
+                    }
+
+                    @Override
+                    public Iterable2<Match<A, B>> takeWhile(final Predicate<? super Match<A, B>> f) {
+                        return null;
+                    }
+
+                    @Override
+                    public Iterable2<Match<A, B>> skip(final int howMany) {
+                        return null;
+                    }
+
+                    @Override
+                    public Iterable2<Match<A, B>> skipWhile(final Predicate<? super Match<A, B>> f) {
+                        return null;
+                    }
+
+                    @Override
+                    public String join(final String delimiter) {
+                        return null;
+                    }
+
+                    @Override
+                    public Option<Match<A, B>> findLast(final Predicate<Match<A, B>> f) {
+                        return null;
+                    }
+
+                    @Override
+                    public Tuple2<List<Match<A, B>>, List<Match<A, B>>> partition(final Predicate<? super Match<A, B>> f) {
+                        return null;
+                    }
+
+                    @Override
+                    public <U> Iterable2<Tuple2<Match<A, B>, U>> zip(final Iterable2<? extends U> l2) {
+                        return null;
+                    }
+
+                    @Override
+                    public <U, V> Iterable2<Tuple3<Match<A, B>, U, V>> zip3(final Iterable<? extends U> l2, final Iterable<? extends V> l3) {
+                        return null;
+                    }
+
+                    @Override
+                    public <U> U in(final Function<Iterable2<Match<A, B>>, U> f) {
+                        return null;
+                    }
+
+                    @Override
+                    public <U> Map<U, List<Match<A, B>>> groupBy(final Function<? super Match<A, B>, ? extends U> keyFn) {
+                        return null;
+                    }
+
+                    @Override
+                    public List<Match<A, B>> toList() {
+                        return null;
+                    }
+
+                    @Override
+                    public java.util.Set<Match<A, B>> toSet() {
+                        return null;
+                    }
+                };
+            }
+        }
+
+        /**
+         * matcher: a Match builder function.
+         *
+         * @param predicate predicate
+         * @param result    the result function to be applied if the predicate evaluates to true
+         * @param <A>       the type of the element being passed to the predicate
+         * @param <B>       the type of the result of the transformation function
+         * @return a new Match object
+         */
+        public static <A, B> Match<A, B> matcher(final Predicate<A> predicate, final Function<A, B> result) {
+            notNull(predicate, "matcher(Predicate<A>,Function<A,B>)", "predicate");
+            notNull(result, "matcher(Predicate<A>,Function<A,B>)", "result");
+
+            return Match.of(predicate, result);
+        }
+
+        public static <A, B> Matches<A, B> matchers(final Match<A, B> match1) {
+            return Matches.of(Arrays.asList(match1));
+        }
+
+        public static <A, B> Matches<A, B> matchers(final Match<A, B> match1, final Match<A, B> match2) {
+            return Matches.of(Arrays.asList(match1, match2));
+        }
+
+        public static <A, B> Matches<A, B> matchers(final Match<A, B> match1, final Match<A, B> match2, final Match<A, B> match3) {
+            return Matches.of(Arrays.asList(match1, match2, match3));
+        }
+
+        public static <A, B> Matches<A, B> matchers(final Match<A, B> match1, final Match<A, B> match2, final Match<A, B> match3, final Match<A, B> match4) {
+            return Matches.of(Arrays.asList(match1, match2, match3, match4));
+        }
+
+        public static <A, B> Matches<A, B> matchers(final Match<A, B> match1, final Match<A, B> match2, final Match<A, B> match3, final Match<A, B> match4, final Match<A, B> match5) {
+            return Matches.of(Arrays.asList(match1, match2, match3, match4, match5));
+        }
+
+        private static final class Match<A, B> {
+            private final Predicate<A> check;
+            private final Function<A, B> result;
+
+            private Match(final Predicate<A> chk, final Function<A, B> res) {
+                this.check = chk;
+                this.result = res;
+            }
+
+            public static <A, B> Match<A, B> of(final Predicate<A> chk, final Function<A, B> res) {
+                return new Match<>(chk, res);
+            }
+
+            public boolean test(final A a) {
+                return check.test(a);
+            }
+
+            public B getResultsFor(final A a) {
+                return result.apply(a);
+            }
+        }
+
+        private static <A, B> B switchBetween(final A input, final Matches<A, B> cases, final Function<A, B> defaultCase) {
+            notNull(cases, "findMatch(A).from(Matches<A,B>).orElse(Function<A,B>)", "cases");
+            notNull(defaultCase, "findMatch(A).from(Matches<A,B>).orElse(Function<A,B>)", "defaultCase");
+            return cases
+                    .find(abMatch -> abMatch.test(input)).toVavrOption()
+                    .map(c -> c.getResultsFor(input))
+                    .getOrElse(() -> defaultCase.apply(input));
+        }
     }
 
     /**

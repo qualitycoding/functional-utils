@@ -83,7 +83,8 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
      * @param <T> the type of the underlying data in the input sequence
      * @return an Iterable2
      */
-    public static <T> Iterable2<T> of(final java.lang.Iterable<T> it) {
+    static <T> Iterable2<T> of(final java.lang.Iterable<T> it) {
+        if (it instanceof Iterable2) return (Iterable2<T>) it;
         return new Iterable2<T>() {
             private final java.lang.Iterable<T> i = it;
 
