@@ -3762,44 +3762,21 @@ public final class Functional {
     }
 
     /**
-     * Helper function to return the first element in a Tuple2
+     * Wrap the application of fn so that if an exception is thrown then Either.left() is returned otherwise Either.right() is returned.
      *
-     * @param <A> the type of the first element in the pair
-     * @param <B> the type of the second element in the pair
-     * @return a function that returns the first element in a Tuple2
+     * @param fn  this function declares that it throws EX
+     * @param <A> the type of the input data
+     * @param <R> the return type of the function
+     * @param <E> the checked exception that could be thrown by the function
+     * @return a function that will return Either.left() if the supplied fn throws an exception, Either.right() otherwise
+     * @throws NullPointerException if fn is null.
      */
-    public static <A, B> Function<Tuple2<A, B>, A> first() {
-        return Tuple2::_1;
-    }
-
-    /**
-     * Helper function to return the second element in a Tuple2
-     *
-     * @param <A> the type of the first element in the pair
-     * @param <B> the type of the second element in the pair
-     * @return a function that returns the second element in a Tuple2
-     */
-    public static <A, B> Function<Tuple2<A, B>, B> second() {
-        return Tuple2::_2;
-    }
-
-
-    /**
-     * Wrap the application of the function so that if an exception is thrown then Either.left() is returned otherwise Either.right() is returned.
-     *
-     * @param function this function declares that it throws EX
-     * @param <A>      the type of the input data
-     * @param <R>      the return type of the function
-     * @param <E>      the checked exception that could be thrown by the function
-     * @return a function that will return Either.left() if the supplied function throws an exception, Either.right() otherwise
-     * @throws NullPointerException if the function is null.
-     */
-    public static <A, R, E extends Exception> Function<A, Either<Exception, R>> $(final FunctionWithExceptionDeclaration<A, R, E> function) {
-        requireNonNull(function, "function must not be null");
+    public static <A, R, E extends Exception> Function<A, Either<Exception, R>> $(final FunctionWithExceptionDeclaration<A, R, E> fn) {
+        notNull(fn, "$(FunctionWithExceptionDeclaration<A,R,E>)", "fn");
 
         return a -> {
             try {
-                return Either.right(function.apply(a));
+                return Either.right(fn.apply(a));
             } catch (final Exception e) {
                 return Either.left(e);
             }
@@ -3859,6 +3836,10 @@ public final class Functional {
 
         final Spliterator<C> split = Spliterators.spliterator(cIterator, zipSize, characteristics);
         return StreamSupport.stream(split, (a.isParallel() || b.isParallel()));
+    }
+
+    public static Function<Integer, List<Integer>> repeat(final int howMany) {
+        return integer -> Functional.init(counter -> integer, howMany);
     }
 
     @VisibleForTesting
