@@ -1574,9 +1574,11 @@ public final class Functional {
         notNull(input, "last(Iterable<T>)", "input");
 
         T state = null;
-        for (final T element : input) state = element;
-
-        return state;
+        for (final T element : input) {
+            notNull(element, "last(Iterable<T>): input must not contains nulls");
+            state = element;
+        }
+        return notNull(state, "last(Iterable<T>): input must not be empty");
     }
 
     /**
@@ -3397,6 +3399,8 @@ public final class Functional {
          * @return a set of those elements which are in 'inSet' and not in 'notInSet'
          */
         public static <E> java.util.Set<E> asymmetricDifference(final java.util.Set<? extends E> inSet, final java.util.Set<? extends E> notInSet) {
+            notNull(inSet, "Set.asymmetricDifference(Set<A>,Set<A>): input1 must not be null");
+            notNull(notInSet, "Set.asymmetricDifference(Set<A>,Set<A>): input2 must not be null");
             final java.util.Set<E> i = new HashSet<>(inSet);
             i.removeAll(notInSet);
             return Collections.unmodifiableSet(i);
