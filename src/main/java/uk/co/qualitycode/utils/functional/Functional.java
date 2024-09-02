@@ -1578,8 +1578,7 @@ public final class Functional {
             notNull(element, "last(Iterable<T>): input must not contains nulls");
             state = element;
         }
-        notNull(state, "last(Iterable<T>): input must not be empty");
-        return state;
+        return notNull(state, "last(Iterable<T>): input must not be empty");
     }
 
     /**
