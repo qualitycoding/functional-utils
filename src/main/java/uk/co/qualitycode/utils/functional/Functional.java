@@ -1574,11 +1574,11 @@ public final class Functional {
         notNull(input, "last(Iterable<T>)", "input");
 
         T state = null;
-        for (final T element : input) state = element;
-
-        if (state == null)
-            throw new IllegalArgumentException("last(Iterable<T>): input must not be empty");
-
+        for (final T element : input) {
+            notNull(element, "last(Iterable<T>): input must not contains nulls");
+            state = element;
+        }
+        notNull(state, "last(Iterable<T>): input must not be empty");
         return state;
     }
 
