@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * An implementation of {@link java.util.function.BiFunction} that is intended for use by the {@link uk.co.qualitycode.utils.functional.MException}
+ * An implementation of {@link java.util.function.BiFunction} that is intended for use by the {@link uk.co.qualitycode.utils.functional.monad.MException}
  *
  * @param <A> the type of the first argument of the function
  * @param <B> the type of the second argument of the function
@@ -24,7 +24,7 @@ public abstract class BinaryFunction<A, B, C> implements BiFunction<A, B, C> {
 
     /**
      * Helper function. The same as {@link #toFunc(Object)} above with the addition that the curried function is partially applied
-     * by passing the argument <tt>b</tt>
+     * by passing the argument b
      *
      * @param b the argument to be passed to the curried function
      * @return a function that accepts an argument of type A and returns an object of type C
@@ -38,7 +38,7 @@ public abstract class BinaryFunction<A, B, C> implements BiFunction<A, B, C> {
     }
 
     /**
-     * Given a {@link uk.co.qualitycode.utils.functional.function.Func2} and its two arguments, produce a function of no arguments that
+     * Given a {@link uk.co.qualitycode.utils.functional.function.BinaryFunction} and its two arguments, produce a function of no arguments that
      * can be evaluated at a later point.
      *
      * @param <A> the type of the first parameter of f

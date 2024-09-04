@@ -10,7 +10,7 @@ package uk.co.qualitycode.utils.functional.primitive.integer;
  */
 public interface Func_T_int<A> {
     /**
-     * Call <tt>apply</tt> to evaluate the function object
+     * Call apply to evaluate the function object
      *
      * @param a the input value
      * @return an integer (int)

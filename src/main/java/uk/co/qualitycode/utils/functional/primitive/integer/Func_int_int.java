@@ -11,7 +11,7 @@ import java.util.function.IntUnaryOperator;
  */
 public interface Func_int_int extends IntUnaryOperator {
     /**
-     * Call <tt>apply</tt> to evaluate the function object
+     * Call apply to evaluate the function object
      *
      * @param a the input value
      * @return an integer (int)

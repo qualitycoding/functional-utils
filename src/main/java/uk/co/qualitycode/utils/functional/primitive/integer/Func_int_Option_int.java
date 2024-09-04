@@ -9,7 +9,7 @@ package uk.co.qualitycode.utils.functional.primitive.integer;
  */
 public interface Func_int_Option_int {
     /**
-     * Call <tt>apply</tt> to evaluate the function object
+     * Call apply to evaluate the function object
      *
      * @param a the input value
      * @return an integer (int)

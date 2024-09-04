@@ -5,13 +5,13 @@ package uk.co.qualitycode.utils.functional.primitive.integer;
  * a function that takes two arguments.
  * See <a href="http://en.wikipedia.org/wiki/Anonymous_function">Lambda function</a>
  *
- * @param <B> the type of the second input value
+ * @param <A> the type of the first input value
  * @param <C> the type of the return value
  * @see <a href="http://en.wikipedia.org/wiki/Closure_(computer_programming)">Closure</a>
  */
 public interface Func2_T_int_T<A, C> {
     /**
-     * Call <tt>apply</tt> to evaluate the function object
+     * Call apply to evaluate the function object
      *
      * @param a the first input value
      * @param b the second input value

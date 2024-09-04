@@ -11,7 +11,7 @@ import java.util.function.IntSupplier;
  */
 public interface Func0_int extends IntSupplier {
     /**
-     * Call <tt>apply</tt> to evaluate the function object
+     * Call apply to evaluate the function object
      *
      * @return an element of type R
      */

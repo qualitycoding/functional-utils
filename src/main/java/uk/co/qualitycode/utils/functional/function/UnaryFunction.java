@@ -4,7 +4,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * An implementation of {@link uk.co.qualitycode.utils.functional.Func} that is intended for use by the {@link me.shaftesbury.utils.functional.MException}
+ * An implementation of {@link uk.co.qualitycode.utils.functional.Functional} that is intended for use by the {@link uk.co.qualitycode.utils.functional.monad.MException}
  *
  * @param <A> the type of the argument of the function
  * @param <B> the type of the return value of the function

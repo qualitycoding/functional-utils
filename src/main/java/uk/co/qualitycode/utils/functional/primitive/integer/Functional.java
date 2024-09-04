@@ -51,11 +51,11 @@ public final class Functional {
     }
 
     /**
-     * Analogue of string.Join for List<T> with the addition of a user-defined map function
+     * Analogue of string.Join for List{@literal <T>} with the addition of a user-defined map function
      *
      * @param separator inserted between each transformed element
      * @param l         the input sequence
-     * @param fn        map function (see <tt>map</tt>) which is used to transform the input sequence
+     * @param fn        map function (see map) which is used to transform the input sequence
      * @return a string containing the transformed string value of each input element separated by the supplied separator
      */
     public static String join(final String separator, final IntIterable l, final Func_int_T<String> fn) {
@@ -89,7 +89,7 @@ public final class Functional {
     }
 
     /**
-     * As <tt>find</tt> except that here we return the zero-based position in the input sequence of the found element
+     * As find except that here we return the zero-based position in the input sequence of the found element
      * findIndex: (A -> bool) -> A list -> int
      *
      * @param f     predicate
@@ -115,7 +115,7 @@ public final class Functional {
     }
 
     /**
-     * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
+     * As find except that here we return the last element in the input sequence that satisfies the predicate 'f'
      * findLast: (A -> bool) -> A list -> A
      *
      * @param f     predicate
@@ -139,7 +139,7 @@ public final class Functional {
     }
 
 //    /**
-//     * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
+//     * As find except that here we return the last element in the input sequence that satisfies the predicate 'f'
 //     * findLast: (A -> bool) -> A seq -> A
 //     * @param f predicate
 //     * @param input sequence
@@ -163,7 +163,7 @@ public final class Functional {
 //    }
 
     /**
-     * 'pick' is an analogue of <tt>find</tt>. Instead of a predicate, 'pick' is passed a map function which returns an <tt>Option</tt>.
+     * 'pick' is an analogue of find. Instead of a predicate, 'pick' is passed a map function which returns an Option.
      * Each element of the input sequence is supplied in turn to the map function 'f' and the first non-None Option to be returned from
      * the map function is returned by 'pick' to the calling code.
      * pick: (A -> B option) -> A seq -> B
@@ -197,7 +197,7 @@ public final class Functional {
     }
 
     /**
-     * <tt>isEven</tt> a function that accepts an integer and returns a boolean that indicates whether the passed integer
+     * isEven a function that accepts an integer and returns a boolean that indicates whether the passed integer
      * is or is not an even integer
      */
     public static boolean isEven(final int i) {
@@ -205,7 +205,7 @@ public final class Functional {
     }
 
     /**
-     * <tt>isOdd</tt> a function that accepts an integer and returns a boolean that indicates whether the passed integer
+     * isOdd a function that accepts an integer and returns a boolean that indicates whether the passed integer
      * is or is not an odd integer
      */
     public static boolean isOdd(final int i) {
@@ -213,14 +213,14 @@ public final class Functional {
     }
 
     /**
-     * <tt>count</tt> a function that accepts a counter and another integer and returns 1 + counter
+     * count a function that accepts a counter and another integer and returns 1 + counter
      */
     public static int count(final int state, final int b) {
         return state + 1;
     }
 
     /**
-     * @param <T> the type of <tt>that</tt>, the input argument
+     * @param <T> the type of that, the input argument
      * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' is greater than
      * 'that' or false otherwise
      */
@@ -229,7 +229,7 @@ public final class Functional {
     }
 
     /**
-     * @param <T> the type of <tt>that</tt>, the input argument
+     * @param <T> the type of that, the input argument
      * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' is greater than
      * or equal to 'that' or false otherwise
      */
@@ -238,8 +238,8 @@ public final class Functional {
     }
 
     /**
-     * @param <T> the type of <tt>that</tt>, the input argument
-     * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' is less than
+     * @param <T> the type of that, the input argument
+     * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' {@literal : <}
      * 'that' or false otherwise
      */
     public static <T extends Comparable<T>> Predicate<T> lessThan(final T that) {
@@ -247,8 +247,8 @@ public final class Functional {
     }
 
     /**
-     * @param <T> the type of <tt>that</tt>, the input argument
-     * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' is less than
+     * @param <T> the type of that, the input argument
+     * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' {@literal : <}
      * or equal to 'that' or false otherwise
      */
     public static <T extends Comparable<T>> Predicate<T> lessThanOrEqual(final T that) {
@@ -359,9 +359,9 @@ public final class Functional {
     }
 
     /**
-     * A transformation function that wraps <tt>Stringify</tt>
+     * A transformation function that wraps Stringify
      *
-     * @return a function that calls <tt>Stringify</tt>
+     * @return a function that calls Stringify
      */
     public static Func_int_T<String> dStringify() {
         return Integer::toString;
@@ -485,7 +485,7 @@ public final class Functional {
     }
 
     /**
-     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traveral of the
+     * The converse operation to forAll. If the predicate returns true then 'exists' returns true and halts the traveral of the
      * input sequence. Otherwise return false.
      * exists: (A -> bool) -> A list -> bool
      *
@@ -515,7 +515,7 @@ public final class Functional {
     }
 
     /**
-     * The converse operation to <tt>exists</tt>. If the predicate returns true for all elements in the input sequence then 'forAll'
+     * The converse operation to exists. If the predicate returns true for all elements in the input sequence then 'forAll'
      * returns true otherwise return false.
      * forAll: (A -> bool) -> A list -> bool
      *
@@ -582,7 +582,7 @@ public final class Functional {
      * @param f     map function. This transforms the input element into an Option
      * @param input input sequence
      * @param <B>   the type of the element in the output sequence
-     * @return a list of transformed elements, numbering less than or equal to the number of input elements
+     * @return a list of transformed elements, numbering {@literal : <=} to the number of input elements
      */
     public static <B> List<B> choose(final Func_int_T<Option<B>> f, final IntIterable input) {
         final List<B> results = input instanceof IntList ? new ArrayList<>(((IntList) input).size()) : new ArrayList<>();
@@ -604,7 +604,7 @@ public final class Functional {
      *
      * @param f     map function. This transforms the input element into an Option
      * @param input input sequence
-     * @return a list of transformed elements, numbering less than or equal to the number of input elements
+     * @return a list of transformed elements, numbering {@literal : <=} to the number of input elements
      */
     public static IntList choose(final Func_int_Option_int f, final IntIterable input) {
         final int[] results = input instanceof IntList ? new int[(((IntList) input).size())] : new int[]{};
@@ -643,7 +643,7 @@ public final class Functional {
     /**
      * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a> and
      * <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
-     * This is the converse of <tt>fold</tt>
+     * This is the converse of fold
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
     public static <A, B> List<A> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Predicate<? super B> finished, final B seed) {
@@ -663,7 +663,7 @@ public final class Functional {
     /**
      * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a>
      * and <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
-     * This is the converse of <tt>fold</tt>
+     * This is the converse of fold
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
     public static <A, B> List<A> unfold(final Function<? super B, Option<Tuple2<A, B>>> unspool, final B seed) {
@@ -684,7 +684,7 @@ public final class Functional {
      * @param lowerBound
      * @param upperBound
      * @param val
-     * @return lowerBound < val < upperBound
+     * @return lowerBound is {@literal : <=} to val {@literal : <}
      */
     public static boolean between(final int lowerBound, final int upperBound, final int val) {
         return lowerBound < val && val < upperBound;
@@ -944,7 +944,7 @@ public final class Functional {
     }
 
     /**
-     * skip: the converse of <tt>take</tt>. Given a list return another list containing those elements that follow the
+     * skip: the converse of take. Given a list return another list containing those elements that follow the
      * first 'howMany' elements. That is, if we skip(1,[1,2,3]) then we have [2,3]
      *
      * @param howMany a non-negative number of elements to be discarded from the input sequence
@@ -965,7 +965,7 @@ public final class Functional {
     }
 
     /**
-     * skip: the converse of <tt>take</tt>. Given a list return another list containing those elements that follow the
+     * skip: the converse of take. Given a list return another list containing those elements that follow the
      * first 'howMany' elements. That is, if we skip(1,[1,2,3]) then we have [2,3]
      * This is the curried implementation
      *
@@ -980,7 +980,7 @@ public final class Functional {
     }
 
     /**
-     * skipWhile: the converse of <tt>takeWhile</tt>. Given a list return another list containing all those elements from,
+     * skipWhile: the converse of takeWhile. Given a list return another list containing all those elements from,
      * and including, the first element for which the predicate returns false. That is, if we skip(isOdd,[1,2,3]) then we have [2,3]
      *
      * @param predicate ignore elements in the input while the predicate is true.
@@ -1002,7 +1002,7 @@ public final class Functional {
     }
 
     /**
-     * skipWhile: the converse of <tt>takeWhile</tt>. Given a list return another list containing all those elements from,
+     * skipWhile: the converse of takeWhile. Given a list return another list containing all those elements from,
      * and including, the first element for which the predicate returns false. That is, if we skip(isOdd,[1,2,3]) then we have [2,3]
      *
      * @param predicate ignore elements in the input while the predicate is true.
@@ -1016,7 +1016,7 @@ public final class Functional {
 
     /**
      * constant: a function that returns a map function f(n) that returns the supplied 'constant'. Typically this would be
-     * used in <tt>init</tt>
+     * used in init
      *
      * @param constant the desired constant value to be returned
      * @param <T>      the type of the constant
@@ -1028,7 +1028,7 @@ public final class Functional {
 
     /**
      * range: a function that returns a map function f(n) that returns an integer from the open-ended range [startFrom+n, infinity).
-     * Typically this would be used in <tt>init</tt>
+     * Typically this would be used in init
      *
      * @param startFrom the lower bound of the range
      * @return a function that returns a function that returns an integer from the range [startFrom+n, infinity)
@@ -1233,7 +1233,7 @@ public final class Functional {
      * elements of the 'input' sequence. The 'input' sequence is traversed only as far as is required to produce the first list
      * and so the remainder of the 'input' sequence remains unevaluated. If 'howMany' is greater than the number of elements in
      * 'input' then the output list will contain all the elements of the input and the output sequence will be empty.
-     * This is like <tt>take</tt> but leaves the user with the ability to continue the traversal of the input sequence from the point
+     * This is like take but leaves the user with the ability to continue the traversal of the input sequence from the point
      * at which the 'take' stopped.
      *
      * @param input   the input sequence
@@ -1264,7 +1264,6 @@ public final class Functional {
      *
      * @param t     the item to be appended
      * @param input the input sequence
-     * @param <T>   the type of the element in the input sequence
      * @return a sequence containing all the elements of 'input' followed by 't'
      * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
      */
@@ -1291,7 +1290,7 @@ public final class Functional {
 
     /**
      * groupBy: similar to {@link #partition(Predicate_int, IntIterable)} in that the input is grouped according to a function. This is more general than
-     * <tt>partition</tt> though as the output can be an arbitrary number of groups, up to and including one group per item in the
+     * partition though as the output can be an arbitrary number of groups, up to and including one group per item in the
      * input data set. The 'keyFn' is the grouping operator and it is used to determine the key at which any given element from
      * the input data set should be added to the output dictionary / map.
      *
@@ -1325,7 +1324,7 @@ public final class Functional {
     }
 
     /**
-     * The Range class holds an inclusive lower bound and an exclusive upper bound. That is lower <= pos < upper
+     * The Range class holds an inclusive lower bound and an exclusive upper bound. That is lower is {@literal : <=} to pos is lower than upper
      */
     public static class Range<T> {
         private final T lowerBound;
