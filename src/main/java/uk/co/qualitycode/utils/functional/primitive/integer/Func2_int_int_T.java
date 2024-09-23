@@ -10,7 +10,7 @@ package uk.co.qualitycode.utils.functional.primitive.integer;
  */
 public interface Func2_int_int_T<C> {
     /**
-     * Call <tt>apply</tt> to evaluate the function object
+     * Call apply to evaluate the function object
      *
      * @param a the first input value
      * @param b the second input value

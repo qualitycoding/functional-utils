@@ -13,7 +13,7 @@ import java.util.function.IntFunction;
 @FunctionalInterface
 public interface Func_int_T<A> extends IntFunction<A> {
     /**
-     * Call <tt>apply</tt> to evaluate the function object
+     * Call apply to evaluate the function object
      *
      * @param a the input value
      * @return an integer (int)

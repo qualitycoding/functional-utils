@@ -132,12 +132,12 @@ public final class Functional {
     }
 
     /**
-     * Analogue of string.Join for List<T> with the addition of a user-defined map function
+     * Analogue of string.Join for List{@literal <T>} with the addition of a user-defined map function
      *
      * @param <T>       the type of the element in the input sequence
      * @param separator inserted between each transformed element
      * @param l         the input sequence
-     * @param tfm       map function (see <tt>map</tt>) which is used to transform the input sequence
+     * @param tfm       map function (see map) which is used to transform the input sequence
      * @return a string containing the transformed string value of each input element separated by the supplied separator
      */
     public static <T> String join(final String separator, final Iterable<T> l, final Function<? super T, String> tfm) {
@@ -165,8 +165,8 @@ public final class Functional {
     }
 
     /**
-     * foldAndChoose: <tt>fold</tt> except that instead of folding every element in the input sequence, <tt>fold</tt>
-     * only those for which the fold function 'f' returns a Some value (see <tt>Option</tt>)
+     * foldAndChoose: fold except that instead of folding every element in the input sequence, fold
+     * only those for which the fold function 'f' returns a Some value (see Option)
      *
      * @param <A>          the type of the initialValue / seed
      * @param <B>          the type of the element in the input sequence
@@ -196,7 +196,7 @@ public final class Functional {
      * @param upperBound the upper bound of the range being checked
      * @param val        the value being checked
      * @param <T>        the type of the input element
-     * @return lowerBound < val < upperBound
+     * @return lowerBound is {@literal : <=} to val {@literal : <} upperBound
      */
     public static <T extends Comparable<T>> boolean between(final T lowerBound, final T upperBound, final T val) {
         notNull(lowerBound, "between(T,T,T)", "lowerBound");
@@ -212,7 +212,7 @@ public final class Functional {
      * @param bounds is a Tuple2 of (lowerBound, upperBound)
      * @param value  the value being tested
      * @param <T>    the type of the input element
-     * @return lowerBound < value < upperBound
+     * @return lowerBound is {@literal : <=} to val {@literal : <}
      */
     public static <T extends Comparable<T>> boolean between(final Tuple2<T, T> bounds, final T value) {
         notNull(bounds, "between(Tuple2<T,T>,T)", "bounds");
@@ -223,7 +223,7 @@ public final class Functional {
     /**
      * @param bounds is a Tuple2 of (lowerBound, upperBound)
      * @param <T>    the type of the input element
-     * @return lowerBound < val < upperBound
+     * @return lowerBound is {@literal : <=} to val {@literal : <}
      */
     public static <T extends Comparable<T>> Predicate<T> between(final Tuple2<T, T> bounds) {
         notNull(bounds, "between(Tuple2<T,T>)", "bounds");
@@ -270,7 +270,7 @@ public final class Functional {
     }
 
     /**
-     * As <tt>find</tt> except that here we return the zero-based position in the input sequence of the found element
+     * As find except that here we return the zero-based position in the input sequence of the found element
      * findIndex: (A -> bool) -> A list -> int
      *
      * @param f     predicate
@@ -294,7 +294,7 @@ public final class Functional {
     }
 
     /**
-     * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
+     * As find except that here we return the last element in the input sequence that satisfies the predicate 'f'
      * findLast: (A -> bool) -> A seq -> A option
      *
      * @param f     predicate
@@ -316,7 +316,7 @@ public final class Functional {
     }
 
     /**
-     * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
+     * As find except that here we return the last element in the input sequence that satisfies the predicate 'f'
      * findLast: (A -> bool) -> A list -> A option
      *
      * @param f     predicate
@@ -339,7 +339,7 @@ public final class Functional {
 
     /**
      * A curried version of findLast.
-     * As <tt>find</tt> except that here we return the last element in the input sequence that satisfies the predicate 'f'
+     * As find except that here we return the last element in the input sequence that satisfies the predicate 'f'
      * findLast: (A -> bool) -> A list -> A option
      *
      * @param f   predicate
@@ -355,7 +355,7 @@ public final class Functional {
     }
 
     /**
-     * 'pick' is an analogue of <tt>find</tt>. Instead of a predicate, 'pick' is passed a map function which returns an <tt>Option</tt>.
+     * 'pick' is an analogue of find. Instead of a predicate, 'pick' is passed a map function which returns an Option.
      * Each element of the input sequence is supplied in turn to the map function 'f' and the first non-None Option to be returned from
      * the map function is returned by 'pick' to the calling code.
      * pick: (A -> B option) -> A seq -> B option
@@ -379,7 +379,7 @@ public final class Functional {
     }
 
     /**
-     * 'pick' is an analogue of <tt>find</tt>. Instead of a predicate, 'pick' is passed a map function which returns an <tt>Option</tt>.
+     * 'pick' is an analogue of find. Instead of a predicate, 'pick' is passed a map function which returns an Option.
      * Each element of the input sequence is supplied in turn to the map function 'f' and the first non-None Option to be returned from
      * the map function is returned by 'pick' to the calling code.
      * <p>
@@ -602,7 +602,7 @@ public final class Functional {
     }
 
     /**
-     * <tt>isEven</tt> a function that accepts an integer and returns a boolean that indicates whether the passed integer
+     * isEven a function that accepts an integer and returns a boolean that indicates whether the passed integer
      * is or is not an even integer
      */
     public static boolean isEven(final int i) {
@@ -610,7 +610,7 @@ public final class Functional {
     }
 
     /**
-     * <tt>isOdd</tt> a function that accepts an integer and returns a boolean that indicates whether the passed integer
+     * isOdd a function that accepts an integer and returns a boolean that indicates whether the passed integer
      * is or is not an odd integer
      */
     public static boolean isOdd(final int i) {
@@ -618,7 +618,7 @@ public final class Functional {
     }
 
     /**
-     * <tt>count</tt> a function that accepts a counter and another integer and returns 1 + counter
+     * count a function that accepts a counter and another integer and returns 1 + counter
      */
     @SuppressWarnings("unused")
     public static int count(final int state, final int b) {
@@ -626,7 +626,7 @@ public final class Functional {
     }
 
     /**
-     * @param <T> the type of <tt>that</tt>, the input argument
+     * @param <T> the type of that, the input argument
      * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' is greater than
      * 'that' or false otherwise
      */
@@ -635,7 +635,7 @@ public final class Functional {
     }
 
     /**
-     * @param <T> the type of <tt>that</tt>, the input argument
+     * @param <T> the type of that, the input argument
      * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' is greater than
      * or equal to 'that' or false otherwise
      */
@@ -644,8 +644,8 @@ public final class Functional {
     }
 
     /**
-     * @param <T> the type of <tt>that</tt>, the input argument
-     * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' is less than
+     * @param <T> the type of that, the input argument
+     * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' {@literal : <}
      * 'that' or false otherwise
      */
     public static <T extends Comparable<T>> Predicate<T> lessThan(final T that) {
@@ -653,8 +653,8 @@ public final class Functional {
     }
 
     /**
-     * @param <T> the type of <tt>that</tt>, the input argument
-     * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' is less than
+     * @param <T> the type of that, the input argument
+     * @return a function that compares its supplied argument with the 'that' argument and returns true if 'this' {@literal : <}
      * or equal to 'that' or false otherwise
      */
     public static <T extends Comparable<T>> Predicate<T> lessThanOrEqual(final T that) {
@@ -800,13 +800,13 @@ public final class Functional {
     /// <summary> sortWith: (A -> A -> int) -> A list -> A list</summary>
 
     /**
-     * sortWith: a wrapper for <tt>Collections.sort</tt> which preserves the input sequence.
+     * sortWith: a wrapper for Collections.sort which preserves the input sequence.
      *
-     * @param comparator the <tt>Comparator</tt> to use for the sort
+     * @param comparator the Comparator to use for the sort
      * @param input      the input
-     * @param <A>        the type of the <tt>Comparator</tt>
+     * @param <A>        the type of the Comparator
      * @param <AA>       the type of the element in the input sequence
-     * @return a sorted list containing all the elements of 'input' sorted using <tt>Collections.sort</tt> and 'comparator'
+     * @return a sorted list containing all the elements of 'input' sorted using Collections.sort and 'comparator'
      */
     public static <A, AA extends A> List<AA> sortWith(final Comparator<A> comparator, final Collection<AA> input) {
         notNull(comparator, "sortWith(Comparator<A>,Collection<B>)", "comparator");
@@ -815,13 +815,13 @@ public final class Functional {
     }
 
     /**
-     * sortWith: a wrapper for <tt>Collections.sort</tt> which preserves the input sequence.
+     * sortWith: a wrapper for Collections.sort which preserves the input sequence.
      *
-     * @param comparator the <tt>Comparator</tt> to use for the sort
+     * @param comparator the Comparator to use for the sort
      * @param input      the input
-     * @param <A>        the type of the <tt>Comparator</tt>
+     * @param <A>        the type of the Comparator
      * @param <AA>       the type of the element in the input sequence
-     * @return a sorted list containing all the elements of 'input' sorted using <tt>Collections.sort</tt> and 'comparator'
+     * @return a sorted list containing all the elements of 'input' sorted using Collections.sort and 'comparator'
      */
     public static <A, AA extends A> List<AA> sortWith(final Comparator<A> comparator, final Iterable<AA> input) {
         notNull(comparator, "sortWith(Comparator<A>,Iterable<B>)", "comparator");
@@ -847,7 +847,7 @@ public final class Functional {
     public static Comparator<Integer> sorter = Functional::sorter;
 
     /**
-     * A wrapper around <tt>toString()</tt>
+     * A wrapper around toString()
      *
      * @param a   the element to be turned into a string using T.toString()
      * @param <T> the type of element 'a'
@@ -858,10 +858,10 @@ public final class Functional {
     }
 
     /**
-     * A transformation function that wraps <tt>Stringify</tt>
+     * A transformation function that wraps Stringify
      *
      * @param <T> the type of the element which we will render as a String
-     * @return a function that calls <tt>Stringify</tt>
+     * @return a function that calls Stringify
      */
     public static <T> Function<T, String> stringify() {
         return Functional::stringify;
@@ -916,7 +916,7 @@ public final class Functional {
     }
 
     /**
-     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traversal of the
+     * The converse operation to forAll. If the predicate returns true then 'exists' returns true and halts the traversal of the
      * input sequence. Otherwise return false.
      * exists: (A -> bool) -> A list -> bool
      *
@@ -932,7 +932,7 @@ public final class Functional {
     }
 
     /**
-     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traversal of the
+     * The converse operation to forAll. If the predicate returns true then 'exists' returns true and halts the traversal of the
      * input sequence. Otherwise return false.
      * exists: (A -> bool) -> A list -> bool
      *
@@ -948,7 +948,7 @@ public final class Functional {
     }
 
     /**
-     * The converse operation to <tt>forAll</tt>. If the predicate returns true then 'exists' returns true and halts the traversal of the
+     * The converse operation to forAll. If the predicate returns true then 'exists' returns true and halts the traversal of the
      * input sequence. Otherwise return false.
      * exists: (A -> bool) -> A list -> bool
      * This is the curried implementation.
@@ -967,7 +967,7 @@ public final class Functional {
      * not reverses the result of the applied predicate
      * not: (A -> bool) -> (A -> bool)
      *
-     * @param <A>       the type of the input to the function <tt>predicate</tt>
+     * @param <A>       the type of the input to the function predicate
      * @param predicate the applied predicate
      * @return true if predicate returns false, false if predicate returns true
      */
@@ -980,8 +980,8 @@ public final class Functional {
      * not2 reverses the result of the applied predicate
      * not2: (A -> B -> bool) -> (A -> B -> bool)
      *
-     * @param <A>       the type of the first input to the function <tt>predicate</tt>
-     * @param <B>       the type of the second input to the function <tt>predicate</tt>
+     * @param <A>       the type of the first input to the function predicate
+     * @param <B>       the type of the second input to the function predicate
      * @param predicate the applied predicate
      * @return true if predicate returns false, false if predicate returns true
      */
@@ -991,7 +991,7 @@ public final class Functional {
     }
 
     /**
-     * The converse operation to <tt>exists</tt>. If the predicate returns true for all elements in the input sequence then 'forAll'
+     * The converse operation to exists. If the predicate returns true for all elements in the input sequence then 'forAll'
      * returns true otherwise return false.
      * forAll: (A -> bool) -> A list -> bool
      *
@@ -1007,7 +1007,7 @@ public final class Functional {
     }
 
     /**
-     * The converse operation to <tt>exists</tt>. If the predicate returns true for all elements in the input sequence then 'forAll'
+     * The converse operation to exists. If the predicate returns true for all elements in the input sequence then 'forAll'
      * returns true otherwise return false.
      * forAll: (A -> bool) -> A list -> bool
      *
@@ -1023,7 +1023,7 @@ public final class Functional {
     }
 
     /**
-     * The converse operation to <tt>exists</tt>. If the predicate returns true for all elements in the input sequence then 'forAll'
+     * The converse operation to exists. If the predicate returns true for all elements in the input sequence then 'forAll'
      * returns true otherwise return false.
      * forAll: (A -> bool) -> A list -> bool
      * This is a curried implementation of 'forAll
@@ -1193,7 +1193,7 @@ public final class Functional {
     }
 
     /**
-     * The Range class holds an inclusive lower bound and an exclusive upper bound. That is lower <= pos < upper
+     * The Range class holds an inclusive lower bound and an exclusive upper bound. That is lower is {@literal : <=} to pos {@literal : <} upper.
      */
     public static class Range<T> {
         private final T lowerBound;
@@ -1269,7 +1269,7 @@ public final class Functional {
      * @param <B>     the type of the element in the output sequence
      * @param chooser map function. This transforms the input element into an Option
      * @param input   input sequence
-     * @return a list of transformed elements, numbering less than or equal to the number of input elements
+     * @return a list of transformed elements, numbering {@literal : <=} to the number of input elements
      */
     public static <A, B> List<B> choose(final Function<? super A, Option<B>> chooser, final Iterable<A> input) {
         notNull(chooser, "choose(Function<A,Option<B>>,Iterable<A>)", "chooser");
@@ -1287,7 +1287,7 @@ public final class Functional {
      * @param <B>     the type of the element in the output sequence
      * @param chooser map function. This transforms the input element into an Option
      * @param input   input sequence
-     * @return a list of transformed elements, numbering less than or equal to the number of input elements
+     * @return a list of transformed elements, numbering {@literal : <=} to the number of input elements
      */
     public static <A, B> List<B> choose(final Function<? super A, Option<B>> chooser, final Collection<A> input) {
         notNull(chooser, "choose(Function<A,Option<B>>,Collection<A>)", "chooser");
@@ -1306,7 +1306,7 @@ public final class Functional {
      * @param <A>     the type of the element in the input sequence
      * @param <B>     the type of the element in the output sequence
      * @param chooser map function. This transforms the input element into an Option
-     * @return a list of transformed elements, numbering less than or equal to the number of input elements
+     * @return a list of transformed elements, numbering {@literal : <=} to the number of input elements
      * @see <a href="http://en.wikipedia.org/wiki/Currying">Currying</a>
      */
     public static <A, B> Function<Iterable<A>, List<B>> choose(final Function<? super A, Option<B>> chooser) {
@@ -1382,7 +1382,7 @@ public final class Functional {
     /**
      * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a> and
      * <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
-     * This is the converse of <tt>fold</tt>
+     * This is the converse of fold
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
     public static <A, B> List<A> unfold(final Function<? super B, Tuple2<A, B>> unspooler, final Predicate<? super B> finished, final B seed) {
@@ -1402,7 +1402,7 @@ public final class Functional {
     /**
      * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a> and
      * <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
-     * This is the converse of <tt>fold</tt>
+     * This is the converse of fold
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
     public static <A, B> WithSeed<A, B> unfold(final Function<? super B, Tuple2<A, B>> unspooler, final Predicate<? super B> finished) {
@@ -1415,7 +1415,7 @@ public final class Functional {
     /**
      * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a> and
      * <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
-     * This is the converse of <tt>fold</tt>
+     * This is the converse of fold
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
     public static <A, B> WithFinished<A, B> unfold(final Function<? super B, Tuple2<A, B>> unspooler) {
@@ -1434,7 +1434,7 @@ public final class Functional {
     /**
      * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a>
      * and <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
-     * This is the converse of <tt>fold</tt>
+     * This is the converse of fold
      * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
      */
     public static <A, B> List<A> unfold(final Function<? super B, Option<Tuple2<A, B>>> unspooler, final B seed) {
@@ -1725,7 +1725,7 @@ public final class Functional {
     }
 
     /**
-     * skip: the converse of <tt>take</tt>. Given a list return another list containing those elements that follow the
+     * skip: the converse of take. Given a list return another list containing those elements that follow the
      * first 'howMany' elements. That is, if we skip(1,[1,2,3]) then we have [2,3]
      *
      * @param howMany a non-negative number of elements to be discarded from the input sequence
@@ -1742,7 +1742,7 @@ public final class Functional {
     }
 
     /**
-     * skip: the converse of <tt>take</tt>. Given a list return another list containing those elements that follow the
+     * skip: the converse of take. Given a list return another list containing those elements that follow the
      * first 'howMany' elements. That is, if we skip(1,[1,2,3]) then we have [2,3]
      *
      * @param howMany a non-negative number of elements to be discarded from the input sequence
@@ -1763,7 +1763,7 @@ public final class Functional {
     }
 
     /**
-     * skip: the converse of <tt>take</tt>. Given a list return another list containing those elements that follow the
+     * skip: the converse of take. Given a list return another list containing those elements that follow the
      * first 'howMany' elements. That is, if we skip(1,[1,2,3]) then we have [2,3]
      * This is the curried implementation
      *
@@ -1779,7 +1779,7 @@ public final class Functional {
     }
 
     /**
-     * skipWhile: the converse of <tt>takeWhile</tt>. Given a input return another input containing all those elements from,
+     * skipWhile: the converse of takeWhile. Given a input return another input containing all those elements from,
      * and including, the first element for which the predicate returns false. That is, if we skip(isOdd,[1,2,3]) then we have [2,3]
      *
      * @param <T>       the type of the element in the input sequence
@@ -1795,7 +1795,7 @@ public final class Functional {
     }
 
     /**
-     * skipWhile: the converse of <tt>takeWhile</tt>. Given a input return another input containing all those elements from,
+     * skipWhile: the converse of takeWhile. Given a input return another input containing all those elements from,
      * and including, the first element for which the predicate returns false. That is, if we skip(isOdd,[1,2,3]) then we have [2,3]
      *
      * @param <T>       the type of the element in the input sequence
@@ -1815,7 +1815,7 @@ public final class Functional {
     }
 
     /**
-     * skipWhile: the converse of <tt>takeWhile</tt>. Given a list return another list containing all those elements from,
+     * skipWhile: the converse of takeWhile. Given a list return another list containing all those elements from,
      * and including, the first element for which the predicate returns false. That is, if we skip(isOdd,[1,2,3]) then we have [2,3]
      *
      * @param <T>       the type of the element in the input sequence
@@ -1830,7 +1830,7 @@ public final class Functional {
 
     /**
      * constant: a function that returns a map function f(n) that returns the supplied 'constant'. Typically this would be
-     * used in <tt>init</tt>
+     * used in init
      *
      * @param <T>      the type of the constant
      * @param constant the desired constant value to be returned
@@ -1842,7 +1842,7 @@ public final class Functional {
 
     /**
      * range: a function that returns a map function f(n) that returns an integer from the open-ended range [startFrom+n, infinity).
-     * Typically this would be used in <tt>init</tt>
+     * Typically this would be used in init
      *
      * @param startFrom the lower bound of the range
      * @return a function that returns a function that returns an integer from the range [startFrom+n, infinity)
@@ -1923,7 +1923,7 @@ public final class Functional {
      * elements of the 'input' sequence. The 'input' sequence is traversed only as far as is required to produce the first list
      * and so the remainder of the 'input' sequence remains unevaluated. If 'howMany' is greater than the number of elements in
      * 'input' then the output list will contain all the elements of the input and the output sequence will be empty.
-     * This is like <tt>take</tt> but leaves the user with the ability to continue the traversal of the input sequence from the point
+     * This is like take but leaves the user with the ability to continue the traversal of the input sequence from the point
      * at which the 'take' stopped.
      *
      * @param <A>     the type of the element in the input sequence
@@ -1954,7 +1954,7 @@ public final class Functional {
 
     /**
      * groupBy: similar to {@link #partition(Predicate, Iterable)} in that the input is grouped according to a function. This is more general than
-     * <tt>partition</tt> though as the output can be an arbitrary number of groups, up to and including one group per item in the
+     * partition though as the output can be an arbitrary number of groups, up to and including one group per item in the
      * input data set. The 'keyFn' is the grouping operator and it is used to determine the key at which any given element from
      * the input data set should be added to the output dictionary / map.
      *
@@ -1987,7 +1987,7 @@ public final class Functional {
 
     /**
      * groupBy: similar to {@link #partition(Predicate, Iterable)} in that the input is grouped according to a function. This is more general than
-     * <tt>partition</tt> though as the output can be an arbitrary number of groups, up to and including one group per item in the
+     * partition though as the output can be an arbitrary number of groups, up to and including one group per item in the
      * input data set. The 'keyFn' is the grouping operator and it is used to determine the key at which any given element from
      * the input data set should be added to the output dictionary / map.
      *
@@ -2339,7 +2339,7 @@ public final class Functional {
          * @param <U>     the type of the element in the output sequence
          * @param chooser map function. This transforms the input element into an Option
          * @param input   input sequence
-         * @return a lazily-evaluated sequence of transformed elements, numbering less than or equal to the number of input elements
+         * @return a lazily-evaluated sequence of transformed elements, numbering {@literal : <=} to the number of input elements
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T, U> Iterable<U> choose(final Function<? super T, Option<U>> chooser, final Iterable<T> input) {
@@ -2396,7 +2396,7 @@ public final class Functional {
          * @param <T>     the type of the element in the input sequence
          * @param <U>     the type of the element in the output sequence
          * @param chooser map function. This transforms the input element into an Option
-         * @return a lazily-evaluated sequence of transformed elements, numbering less than or equal to the number of input elements
+         * @return a lazily-evaluated sequence of transformed elements, numbering {@literal : <=} to the number of input elements
          * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
          */
         public static <T, U> Function<Iterable<T>, Iterable<U>> choose(final Function<? super T, Option<U>> chooser) {
@@ -2563,7 +2563,7 @@ public final class Functional {
         }
 
         /**
-         * skip: the converse of <tt>take</tt>. Given a list return another list containing those elements that follow the
+         * skip: the converse of take. Given a list return another list containing those elements that follow the
          * first 'howMany' elements. That is, if we skip(1,[1,2,3]) then we have [2,3]
          *
          * @param howMany a non-negative number of elements to be discarded from the input sequence
@@ -2613,7 +2613,7 @@ public final class Functional {
         }
 
         /**
-         * skip: the converse of <tt>take</tt>. Given a list return another list containing those elements that follow the
+         * skip: the converse of take. Given a list return another list containing those elements that follow the
          * first 'howMany' elements. That is, if we skip(1,[1,2,3]) then we have [2,3]
          *
          * @param <T>     the type of the element in the input sequence
@@ -2629,7 +2629,7 @@ public final class Functional {
         }
 
         /**
-         * skipWhile: the converse of <tt>takeWhile</tt>. Given a list return another list containing all those elements from,
+         * skipWhile: the converse of takeWhile. Given a list return another list containing all those elements from,
          * and including, the first element for which the predicate returns false. That is, if we skip(isOdd,[1,2,3]) then we have [2,3]
          *
          * @param <T>       the type of the element in the input sequence
@@ -2690,7 +2690,7 @@ public final class Functional {
         }
 
         /**
-         * skipWhile: the converse of <tt>takeWhile</tt>. Given a list return another list containing all those elements from,
+         * skipWhile: the converse of takeWhile. Given a list return another list containing all those elements from,
          * and including, the first element for which the predicate returns false. That is, if we skip(isOdd,[1,2,3]) then we have [2,3]
          *
          * @param <T>       the type of the element in the input sequence
@@ -2766,7 +2766,7 @@ public final class Functional {
         }
 
         /**
-         * takeWhile: the converse of <tt>takeWhile</tt>. Given a list return another list containing all those elements from,
+         * takeWhile: the converse of takeWhile. Given a list return another list containing all those elements from,
          * and including, the first element for which the predicate returns false. That is, if we skip(isOdd,[1,2,3]) then we have [2,3]
          *
          * @param <T>       the type of the element in the input sequence
@@ -2839,7 +2839,7 @@ public final class Functional {
         }
 
         /**
-         * takeWhile: the converse of <tt>takeWhile</tt>. Given a list return another list containing all those elements from,
+         * takeWhile: the converse of takeWhile. Given a list return another list containing all those elements from,
          * and including, the first element for which the predicate returns false. That is, if we skip(isOdd,[1,2,3]) then we have [2,3]
          *
          * @param <T>       the type of the element in the input sequence
@@ -2856,7 +2856,7 @@ public final class Functional {
         /**
          * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a> and
          * <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
-         * This is the converse of <tt>fold</tt>
+         * This is the converse of fold
          * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
          */
         public static <A, B> Iterable<A> unfold(final Function<? super B, Tuple2<A, B>> unspool, final Predicate<? super B> finished, final B seed) {
@@ -2896,7 +2896,7 @@ public final class Functional {
         /**
          * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a> and
          * <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
-         * This is the converse of <tt>fold</tt>
+         * This is the converse of fold
          * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
          */
         public static <A, B> Functional.Lazy.WithSeed<A, B> unfold(final Function<? super B, Tuple2<A, B>> unspooler, final Predicate<? super B> finished) {
@@ -2909,7 +2909,7 @@ public final class Functional {
         /**
          * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a> and
          * <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
-         * This is the converse of <tt>fold</tt>
+         * This is the converse of fold
          * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
          */
         public static <A, B> Functional.Lazy.WithFinished<A, B> unfold(final Function<? super B, Tuple2<A, B>> unspooler) {
@@ -2928,7 +2928,7 @@ public final class Functional {
         /**
          * See <a href="http://en.wikipedia.org/wiki/Unfold_(higher-order_function)">Unfold</a>
          * and <a href="http://en.wikipedia.org/wiki/Anamorphism">Anamorphism</a>
-         * This is the converse of <tt>fold</tt>
+         * This is the converse of fold
          * unfold: (b -> (a, b)) -> (b -> Bool) -> b -> [a]
          */
         public static <A, B> Iterable<A> unfold(final Function<? super B, Option<Tuple2<A, B>>> unspooler, final B seed) {
@@ -3484,7 +3484,7 @@ public final class Functional {
      * @param thenClause function
      * @param elseClause function
      * @param <A>        the type of the element which we are passing to the predicate
-     * @param <B>        the type of the result of the <tt>thenClause</tt> and <tt>elseClause</tt>
+     * @param <B>        the type of the result of the thenClause and elseClause
      * @return the results of evaluating the 'thenClause' or the 'elseClause', depending on whether the 'predicate' evaluates to true
      * or false respectively
      */
@@ -3520,8 +3520,8 @@ public final class Functional {
          * Functional switch statement. Provide a sequence of Cases and a function which will be evaluated if none of the Cases are true.
          *
          * @param input       the value to be tested
-         * @param cases       sequence of Match objects
-         * @param defaultCase function to be evaluated if none of the Cases are true
+         * cases              sequence of Match objects
+         * defaultCase        function to be evaluated if none of the Cases are true
          * @param <A>         the type of the element passed to the predicate in the {@link Match}
          * @param <B>         the type of the result
          * @return the result of the appropriate Match or the result of the 'defaultCase' function

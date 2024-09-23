@@ -40,7 +40,7 @@ public final class ArrayIterable<T> implements Iterable<T> {
     }
 
     /**
-     * Factory method to create a new <tt>ArrayIterable</tt> given an array of <tt>T</tt>.
+     * Factory method to create a new ArrayIterable given an array of T.
      *
      * @param array the input array
      * @param <T>   the type of the elements in the input array

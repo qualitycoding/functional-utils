@@ -3,7 +3,7 @@ package uk.co.qualitycode.utils.functional.primitive.integer;
 import uk.co.qualitycode.utils.functional.monad.OptionNoValueAccessException;
 
 /**
- * Option is an implementation of the <tt>option monad</tt>.
+ * Option is an implementation of the option monad.
  * See http://en.wikipedia.org/wiki/Option_type
  * {@see http://en.wikipedia.org/wiki/Monad_(functional_programming)}
  */
@@ -38,7 +38,7 @@ public final class Option_int {
      * if a null is passed as the argument. {@link #toOption(int)} returns a None.
      *
      * @param t the object which is to be wrapped in an Option
-     * @return the Option containing <tt>t</tt>
+     * @return the Option containing t
      * @throws OptionNoValueAccessException
      */
     public static Option_int of(final int t) {
@@ -73,13 +73,13 @@ public final class Option_int {
     }
 
     /**
-     * Equality operator. If the two Options are of the same type, they are both {@link #isSome()} and {@link #of()} are
-     * both equal then the two Options are considered to be equal. If one or both is {@link #none()}, <tt>o</tt> is not an
-     * Option, <tt>o</tt> is an Option of another type or <tt>o</tt> is an Option of the same type but having a non-equal
+     * Equality operator. If the two Options are of the same type, they are both {@link #isSome()} and {@link #of(int)} are
+     * both equal then the two Options are considered to be equal. If one or both is {@link #none()}, o is not an
+     * Option, o is an Option of another type or o is an Option of the same type but having a non-equal
      * underlying value (as determined using the underlying value's {@link #equals(Object)} function) then the two are not
      * considered equal.
      *
-     * @param o the Option which we wish to compare for equality with <tt>this</tt>.
+     * @param o the Option which we wish to compare for equality with this.
      * @return true if they compare equally, false otherwise
      */
     public boolean equals(final Object o) {
@@ -118,7 +118,7 @@ public final class Option_int {
      * if a null is passed as the argument. {@link #toOption(int)} throws an exception.
      *
      * @param t the object which is to be wrapped in an Option
-     * @return the Option containing <tt>t</tt>
+     * @return the Option containing t
      */
     public static Option_int toOption(final int t) {
         return new Option_int(t);
@@ -129,7 +129,7 @@ public final class Option_int {
      * {@see http://en.wikipedia.org/wiki/Monad_(functional_programming)}
      *
      * @param f the function to be bound
-     * @return an Option containing either {@link #none()} or the result of the function <tt>f</tt>
+     * @return an Option containing either {@link #none()} or the result of the function f
      */
     public Option_int bind(final Func_int_T<Option_int> f) {
         if (isSome()) return f.apply(get());
@@ -141,9 +141,9 @@ public final class Option_int {
      * a wrapped Option containing the result or {@link #none()}.
      *
      * @param f  the binary function to be lifted
-     * @param o1 the first Option to be passed to the lift function <tt>f</tt>
-     * @param o2 the second Option to be passed to the lift function <tt>f</tt>
-     * @return an Option containing the result of the lifted function as applied to <tt>o1</tt> and <tt>o2</tt> or {@link #none()}
+     * @param o1 the first Option to be passed to the lift function f
+     * @param o2 the second Option to be passed to the lift function f
+     * @return an Option containing the result of the lifted function as applied to o1 and o2 or {@link #none()}
      */
     public static Option_int lift(final Func2_int_int_int f, final Option_int o1, final Option_int o2) {
         if (o1.isSome() && o2.isSome()) return toOption(f.apply(o1.get(), o2.get()));

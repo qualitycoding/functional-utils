@@ -62,7 +62,7 @@ public final class FunctionalHelper {
      * @param input the input sequence
      * @param <T>   the type of the underlying data
      * @return a lazily-evaluated sequence containing the underlying data
-     * @throws java.util.NoSuchElementException if {@link Option#isNone()} is true for any element in <tt>input</tt>
+     * @throws java.util.NoSuchElementException if {@link Option#isNone()} is true for any element in input
      */
     public static <T> Iterable2<T> some(final Iterable<Option<T>> input) {
         return Iterable2.of(input).map(Option::get);

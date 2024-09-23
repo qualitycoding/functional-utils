@@ -15,8 +15,8 @@ import static java.util.Objects.requireNonNull;
  * the map and flatMap functions will work on the right side of the IOr, which in our case is the B value.
  * </p>
  *
- * @param <L>
- * @param <R>
+ * @param <L> The left input
+ * @param <R> The right input
  */
 public class IOr<L, R> implements Comparable<IOr<L, R>> {
     private final io.vavr.control.Option<L> left;

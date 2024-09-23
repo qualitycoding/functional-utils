@@ -49,7 +49,7 @@ public final class Option<T> {
     /**
      * Convert this Option to a java.util.Optional
      *
-     * @return the Optional containing <tt>t</tt>
+     * @return the Optional containing t
      */
     public Optional<T> toJavaOptional() {
         return t.toJavaOptional();
@@ -58,7 +58,7 @@ public final class Option<T> {
     /**
      * Convert this Option to a Vavr Option
      *
-     * @return the Option containing <tt>t</tt>
+     * @return the Option containing t
      */
     public io.vavr.control.Option<T> toVavrOption() {
         return t;
@@ -70,7 +70,7 @@ public final class Option<T> {
      *
      * @param <U> the type of the resulting Option type
      * @param f   the function to be bound
-     * @return an Option containing the result of the function <tt>f</tt> or empty
+     * @return an Option containing the result of the function f or empty
      */
     public <U> Option<U> bind(final Function<T, Option<U>> f) {
         return t.map(f).getOrElse(Option::none);
@@ -81,12 +81,12 @@ public final class Option<T> {
      * a wrapped Option containing the result or empty.
      *
      * @param f   the binary function to be lifted
-     * @param o1  the first Option to be passed to the lift function <tt>f</tt>
-     * @param o2  the second Option to be passed to the lift function <tt>f</tt>
+     * @param o1  the first Option to be passed to the lift function f
+     * @param o2  the second Option to be passed to the lift function f
      * @param <A> the type of the first Option
      * @param <B> the type of the second Option
      * @param <C> the type of the resulting Option
-     * @return an Option containing the result of the lifted function as applied to <tt>o1</tt> and <tt>o2</tt> or empty
+     * @return an Option containing the result of the lifted function as applied to o1 and o2 or empty
      */
     public static <A, B, C> Option<C> lift(final BiFunction<A, B, C> f, final Option<A> o1, final Option<B> o2) {
         return o1.toVavrOption().isDefined() && o2.toVavrOption().isDefined()

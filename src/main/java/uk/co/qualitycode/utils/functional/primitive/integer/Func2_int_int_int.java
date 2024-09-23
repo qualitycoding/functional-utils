@@ -11,7 +11,7 @@ import java.util.function.IntBinaryOperator;
  */
 public interface Func2_int_int_int extends IntBinaryOperator {
     /**
-     * Call <tt>apply</tt> to evaluate the function object
+     * Call apply to evaluate the function object
      *
      * @param a the first input value
      * @param b the second input value

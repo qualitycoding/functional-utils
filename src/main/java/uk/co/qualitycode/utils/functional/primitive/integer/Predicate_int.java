@@ -10,7 +10,7 @@ package uk.co.qualitycode.utils.functional.primitive.integer;
 @FunctionalInterface
 public interface Predicate_int {
     /**
-     * Call <tt>test</tt> to evaluate the function object
+     * Call test to evaluate the function object
      *
      * @param a the input value
      * @return an integer (int)
