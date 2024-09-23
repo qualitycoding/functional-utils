@@ -9,9 +9,9 @@
         <version>9</version>
     </parent>
 
-    <groupId>io.github.excitedkettle</groupId>
+    <groupId>uk.co.qualitycode</groupId>
     <artifactId>functional-utils</artifactId>
-    <version>2.0</version>
+    <version>2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Functional Utils</name>
@@ -51,18 +51,24 @@
         <maven.version>3.3.9</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <assertj-core.version>3.17.2</assertj-core.version>
-        <assertj-vavr.version>0.2.0</assertj-vavr.version>
-        <commons-lang3.version>3.11</commons-lang3.version>
-        <junit-jupiter.version>5.7.0-M1</junit-jupiter.version>
-        <mockito-core.version>3.5.10</mockito-core.version>
-        <vavr.version>1.0.0-alpha-3</vavr.version>
-        <vavr-test.version>0.10.3</vavr-test.version>
+        <assertj-core.version>3.26.3</assertj-core.version>
+        <assertj-vavr.version>0.4.3</assertj-vavr.version>
+        <commons-lang3.version>3.17.0</commons-lang3.version>
+        <junit-jupiter.version>5.11.0</junit-jupiter.version>
+        <mockito-core.version>5.13.0</mockito-core.version>
+        <mockito-junit-jupiter.version>5.13.0</mockito-junit-jupiter.version>
+        <vavr.version>0.10.4</vavr.version>
+        <vavr-test.version>0.10.4</vavr-test.version>
 
+        <central-publishing-maven-plugin.version>0.5.0</central-publishing-maven-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
-        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <!-- 3.1.0 seems to be the latest version of gpg that is supported by maven 3.3.9 -->
+        <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
+        <!-- 3.6.3 seems to be the latest version of javadoc that is supported by maven 3.3.9 -->
+        <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
         <maven-release-plugin.version>3.0.0-M1</maven-release-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
     </properties>
 
@@ -85,7 +91,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.2</version>
+                <version>${maven-javadoc-plugin.version}</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
@@ -101,7 +107,7 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.5.0</version>
+                <version>${central-publishing-maven-plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
@@ -126,7 +132,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
+                <version>${maven-source-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -239,6 +245,13 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito-core.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
