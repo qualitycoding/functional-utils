@@ -1,6 +1,6 @@
 package uk.co.qualitycode.utils.functional;
 
-public class IsBetween<T extends Comparable<T>> {
+public final class IsBetween<T extends Comparable<T>> {
     private enum Not {IS, NOT;}
 
     private final T value;

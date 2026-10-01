@@ -9,7 +9,6 @@ import io.vavr.Tuple4;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static uk.co.qualitycode.utils.functional.UsingWrapper.using;
 
@@ -47,16 +46,6 @@ class UsingWrapperTest {
     @Test
     void inShouldRejectNullFunction4() {
         assertThatNullPointerException().isThrownBy(() -> using(new Object(), new Object(), new Object(), new Object()).in((Function4) null));
-    }
-
-    @Test
-    void inShouldExpectTheSameNumberofParametersAsUsing3() {
-        assertThatIllegalArgumentException().isThrownBy(() -> using(new Object(), new Object()).in((x, y, z) -> x));
-    }
-
-    @Test
-    void inShouldExpectTheSameNumberofParametersAsUsing4() {
-        assertThatIllegalArgumentException().isThrownBy(() -> using(new Object(), new Object(), new Object()).in((x, y, z, a) -> x));
     }
 
     @Test

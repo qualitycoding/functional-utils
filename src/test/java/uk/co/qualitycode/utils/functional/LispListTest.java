@@ -182,4 +182,69 @@ class LispListTest {
     void emptyListHasNoTailTest1() {
         assertThatExceptionOfType(EmptyListHasNoTail.class).isThrownBy(() -> LispList.<Integer>nil().tail());
     }
+
+    private static final int LONGER_THAN_THE_STACK_ALLOWS = 200_000;
+
+    private static List<Integer> longList() {
+        return java.util.stream.IntStream.range(0, LONGER_THAN_THE_STACK_ALLOWS)
+                .boxed()
+                .reduce(LispList.<Integer>nil(), (l, i) -> cons(i, l), (a, b) -> b);
+    }
+
+    @Test
+    void foldDoesNotOverflowTheStackOnALongList() {
+        assertThat(fold((count, i) -> count + 1, 0, longList())).isEqualTo(LONGER_THAN_THE_STACK_ALLOWS);
+    }
+
+    @Test
+    void foldRightDoesNotOverflowTheStackOnALongList() {
+        assertThat(foldRight((i, count) -> count + 1, 0, longList())).isEqualTo(LONGER_THAN_THE_STACK_ALLOWS);
+    }
+
+    @Test
+    void mapDoesNotOverflowTheStackOnALongList() {
+        final List<Integer> doubled = map(i -> i * 2, longList());
+        assertThat(doubled.head()).isEqualTo(2 * (LONGER_THAN_THE_STACK_ALLOWS - 1));
+    }
+
+    @Test
+    void filterDoesNotOverflowTheStackOnALongList() {
+        final List<Integer> evens = filter(i -> i % 2 == 0, longList());
+        assertThat(fold((count, i) -> count + 1, 0, evens)).isEqualTo(LONGER_THAN_THE_STACK_ALLOWS / 2);
+    }
+
+    @Test
+    void reverseDoesNotOverflowTheStackOnALongList() {
+        assertThat(reverse(longList()).head()).isZero();
+    }
+
+    @Test
+    void equalsHashCodeAndToStringDoNotOverflowTheStackOnALongList() {
+        assertThat(longList()).isEqualTo(longList()).hasSameHashCodeAs(longList());
+        assertThat(longList().toString()).startsWith("( " + (LONGER_THAN_THE_STACK_ALLOWS - 1) + ", ");
+    }
+
+    @Test
+    void equalListsHaveEqualHashCodes() {
+        assertThat(compose(1, 2)).isEqualTo(compose(1, 2)).hasSameHashCodeAs(compose(1, 2));
+        assertThat(LispList.nil()).hasSameHashCodeAs(LispList.nil());
+    }
+
+    @Test
+    void listsDifferingInLengthAreNotEqual() {
+        assertThat(compose(1, 2)).isNotEqualTo(list(1, LispList.nil()));
+    }
+
+    @Test
+    void describesItselfAsNestedPairs() {
+        assertThat(compose(1, 2)).hasToString("( 1, ( 2, ( ) ) )");
+        assertThat(LispList.nil()).hasToString("( )");
+    }
+
+    @Test
+    void mapAppliesTheFunctionToElementsInOrder() {
+        final java.util.List<Integer> seen = new java.util.ArrayList<>();
+        map(i -> seen.add(i), compose(1, 2));
+        assertThat(seen).containsExactly(1, 2);
+    }
 }

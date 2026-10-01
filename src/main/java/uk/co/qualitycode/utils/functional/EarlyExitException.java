@@ -1,6 +1,6 @@
 package uk.co.qualitycode.utils.functional;
 
-public class EarlyExitException extends RuntimeException {
+public final class EarlyExitException extends RuntimeException {
     private static final long serialVersionUID = 74664975984990L;
 
     public EarlyExitException(final String message, final Throwable reason) {

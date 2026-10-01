@@ -6,7 +6,7 @@ import io.vavr.Function1;
 import static java.util.Objects.requireNonNull;
 import static uk.co.qualitycode.utils.functional.UsingWrapper.using;
 
-public class Using<T> {
+public final class Using<T> {
     private final Function0<T> value;
 
     Using(final Function0<T> value) {

@@ -1,11 +1,12 @@
 package uk.co.qualitycode.utils.functional.monad;
 
-import io.vavr.Tuple2;
 import org.junit.jupiter.api.Test;
 import uk.co.qualitycode.utils.functional.Functional;
 import uk.co.qualitycode.utils.functional.Iterable2;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -100,8 +101,7 @@ class MExceptionTest {
         });
 
         assertThat(m1.hasException()).isTrue();
-        final Tuple2<RuntimeException, StackTraceElement[]> exceptionWithStackTrace = m1.getExceptionWithStackTrace();
-        assertThat(exceptionWithStackTrace._1().getMessage()).isEqualTo("Argh");
+        assertThat(m1.getExceptionWithStackTrace().get()._1()).hasMessage("Argh");
     }
 
     @Test
@@ -116,8 +116,7 @@ class MExceptionTest {
 
         assertThat(m1.hasException()).isTrue();
         assertThat(m.hasException()).isTrue();
-        final Tuple2<RuntimeException, StackTraceElement[]> exceptionWithStackTrace = m1.getExceptionWithStackTrace();
-        assertThat(exceptionWithStackTrace._1().getMessage()).isEqualTo("Argh");
+        assertThat(m1.getExceptionWithStackTrace().get()._1()).hasMessage("Argh");
     }
 
     @Test
@@ -128,5 +127,72 @@ class MExceptionTest {
         final MException<Integer> c = MException.lift(Integer::sum, a, b);
         assertThat(c.hasException()).isFalse();
         assertThat(c.read()).isEqualTo(Integer.valueOf(3));
+    }
+
+    @Test
+    void evaluatesTheSupplierAtMostOnce() {
+        final AtomicInteger evaluations = new AtomicInteger();
+        final MException<Integer> m = MException.toMException(evaluations::incrementAndGet);
+
+        m.hasException();
+        m.read();
+        m.read();
+
+        assertThat(evaluations).hasValue(1);
+    }
+
+    @Test
+    void remembersANullResultRatherThanReEvaluating() {
+        final AtomicInteger evaluations = new AtomicInteger();
+        final MException<Object> m = MException.toMException(() -> {
+            evaluations.incrementAndGet();
+            return null;
+        });
+
+        m.read();
+        m.read();
+
+        assertThat(evaluations).hasValue(1);
+    }
+
+    @Test
+    void evaluatesOnceWhenReadConcurrently() {
+        final AtomicInteger evaluations = new AtomicInteger();
+        final MException<Integer> m = MException.toMException(evaluations::incrementAndGet);
+
+        IntStream.range(0, 1_000).parallel().forEach(i -> m.read());
+
+        assertThat(evaluations).hasValue(1);
+    }
+
+    @Test
+    void hasNoExceptionWhenTheComputationSucceeds() {
+        final MException<Integer> m = MException.toMException(() -> 1);
+
+        assertThat(m.getException()).isEqualTo(Option.none());
+        assertThat(m.getExceptionWithStackTrace()).isEqualTo(Option.none());
+    }
+
+    @Test
+    void exposesTheExceptionWhenTheComputationFails() {
+        final IllegalStateException failure = new IllegalStateException("broken");
+        final MException<Integer> m = MException.toMException(() -> {
+            throw failure;
+        });
+
+        assertThat(m.getException()).isEqualTo(Option.of(failure));
+    }
+
+    @Test
+    void returnsACopyOfTheStackTrace() {
+        final MException<Integer> m = MException.toMException(() -> {
+            throw new IllegalStateException();
+        });
+        final StackTraceElement[] first = m.getExceptionWithStackTrace().get()._2();
+        final StackTraceElement original = first[0];
+
+        first[0] = null;
+
+        assertThat(m.getExceptionWithStackTrace().get()._2()[0]).isSameAs(original);
     }
 }

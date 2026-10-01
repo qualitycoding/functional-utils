@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.function.Predicate;
 
 public final class GenericCollections {
+    private GenericCollections() {
+    }
+
     public interface Generator<A> {
         Collection<A> initialiseEmptyContainer();
 
@@ -16,7 +19,7 @@ public final class GenericCollections {
         return new GenericCollections().new ArrayListGenerator<>();
     }
 
-    public class ArrayListGenerator<A> implements Generator<A> {
+    public final class ArrayListGenerator<A> implements Generator<A> {
 
         public Collection<A> initialiseEmptyContainer() {
             return new ArrayList<>();
@@ -31,7 +34,7 @@ public final class GenericCollections {
         return new GenericCollections().new HashSetGenerator<>();
     }
 
-    public class HashSetGenerator<A> implements Generator<A> {
+    public final class HashSetGenerator<A> implements Generator<A> {
 
         public Collection<A> initialiseEmptyContainer() {
             return new HashSet<>();

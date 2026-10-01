@@ -1,10 +1,20 @@
 package uk.co.qualitycode.utils.functional;
 
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * A minimal immutable cons list with Lisp-style accessors.
+ * <p>
+ * Java does not eliminate tail calls, so every traversal here is written iteratively (via {@link #fold}) rather than
+ * recursively: recursion depth would otherwise grow with list length and overflow the stack on long lists.
+ */
 public final class LispList {
+    private LispList() {
+    }
+
     public interface List<T> {
         T head();
 
@@ -13,40 +23,27 @@ public final class LispList {
         boolean isEmpty();
     }
 
-    private static <T> List<T> reverse(final List<T> input, final List<T> accumulator) {
-        return input.isEmpty() ? accumulator : reverse(input.tail(), list(input.head(), accumulator));
-    }
-
     public static <T> List<T> reverse(final List<T> input) {
-        return reverse(input, nil());
-    }
-
-    private static <T> List<T> filter(final Predicate<T> f, final List<T> input, final List<T> accumulator) {
-        return input.isEmpty()
-                ? accumulator
-                : filter(f, input.tail(), f.test(input.head()) ? list(input.head(), accumulator) : accumulator);
+        return fold((reversed, t) -> list(t, reversed), LispList.<T>nil(), input);
     }
 
     public static <T> List<T> filter(final Predicate<T> f, final List<T> input) {
-        return reverse(filter(f, input, nil()));
+        return reverse(fold((kept, t) -> f.test(t) ? list(t, kept) : kept, LispList.<T>nil(), input));
     }
 
     public static <T, R> List<R> map(final Function<T, R> f, final List<T> input) {
-        return input.isEmpty()
-                ? (List<R>) nil()
-                : list(f.apply(input.head()), map(f, input.tail()));
+        return reverse(fold((mapped, t) -> list(f.apply(t), mapped), LispList.<R>nil(), input));
     }
 
     public static <T, R> R fold(final BiFunction<R, T, R> f, final R initialValue, final List<T> input) {
-        return input.isEmpty()
-                ? initialValue
-                : fold(f, f.apply(initialValue, input.head()), input.tail());
+        R accumulator = initialValue;
+        for (List<T> remaining = input; !remaining.isEmpty(); remaining = remaining.tail())
+            accumulator = f.apply(accumulator, remaining.head());
+        return accumulator;
     }
 
     public static <T, R> R foldRight(final BiFunction<T, R, R> f, final R initialValue, final List<T> input) {
-        return input.isEmpty()
-                ? initialValue
-                : f.apply(input.head(), foldRight(f, initialValue, input.tail()));
+        return fold((accumulator, t) -> f.apply(t, accumulator), initialValue, reverse(input));
     }
 
     public static <T> List<T> cons(final T t, final List<T> l) {
@@ -69,76 +66,101 @@ public final class LispList {
         return list(t1, list(t2, nil()));
     }
 
-    public static class EmptyListHasNoHead extends RuntimeException {
+    public static final class EmptyListHasNoHead extends RuntimeException {
     }
 
-    public static class EmptyListHasNoTail extends RuntimeException {
+    public static final class EmptyListHasNoTail extends RuntimeException {
     }
 
-    private static LispList ll = new LispList();
-
-    public final class NonEmptyList<T> implements List<T> {
-        final private T _head;
-        final private List<T> _tail;
+    public static final class NonEmptyList<T> implements List<T> {
+        private final T head;
+        private final List<T> tail;
 
         NonEmptyList(final T head, final List<T> tail) {
-            _head = head;
-            _tail = tail;
+            this.head = head;
+            this.tail = tail;
         }
 
-
+        @Override
         public T head() {
-            return _head;
+            return head;
         }
 
-
+        @Override
         public List<T> tail() {
-            return _tail;
+            return tail;
         }
 
-
+        @Override
         public boolean isEmpty() {
             return false;
         }
 
+        @Override
         public boolean equals(final Object o) {
-            if (o == null) return false;
-            if (o instanceof NonEmptyList<?>)
-                return ((NonEmptyList<?>) o).head().equals(head()) && ((NonEmptyList<?>) o).tail().equals(tail());
-            else return false;
+            if (!(o instanceof NonEmptyList<?>)) return false;
+            List<?> mine = this;
+            List<?> theirs = (List<?>) o;
+            while (!mine.isEmpty() && !theirs.isEmpty()) {
+                if (!Objects.equals(mine.head(), theirs.head())) return false;
+                mine = mine.tail();
+                theirs = theirs.tail();
+            }
+            return mine.isEmpty() && theirs.isEmpty();
         }
 
-        public java.lang.String toString() {
-            return "( " + head() + ", " + tail().toString() + " )";
+        @Override
+        public int hashCode() {
+            return fold((hash, t) -> 31 * hash + Objects.hashCode(t), 1, this);
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder text = new StringBuilder();
+            int depth = 0;
+            for (List<?> remaining = this; !remaining.isEmpty(); remaining = remaining.tail(), depth++)
+                text.append("( ").append(remaining.head()).append(", ");
+            text.append("( )");
+            for (int i = 0; i < depth; i++) text.append(" )");
+            return text.toString();
         }
     }
 
     public static <T> List<T> nil() {
         return new List<T>() {
+            @Override
             public T head() {
                 throw new EmptyListHasNoHead();
             }
 
+            @Override
             public List<T> tail() {
                 throw new EmptyListHasNoTail();
             }
 
+            @Override
             public boolean isEmpty() {
                 return true;
             }
 
+            @Override
             public boolean equals(final Object o) {
-                if (o == null) return false;
                 return o instanceof List<?> && ((List<?>) o).isEmpty();
             }
 
-            public java.lang.String toString() {
+            @Override
+            public int hashCode() {
+                return 1;
+            }
+
+            @Override
+            public String toString() {
                 return "( )";
             }
         };
     }
 
     public static <T> List<T> list(final T head, final List<T> tail) {
-        return ll.new NonEmptyList<>(head, tail);
+        return new NonEmptyList<>(head, tail);
     }
 }

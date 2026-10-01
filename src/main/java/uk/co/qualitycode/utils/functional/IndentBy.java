@@ -1,6 +1,6 @@
 package uk.co.qualitycode.utils.functional;
 
-public class IndentBy {
+public final class IndentBy {
 
     private final String indentThis;
 

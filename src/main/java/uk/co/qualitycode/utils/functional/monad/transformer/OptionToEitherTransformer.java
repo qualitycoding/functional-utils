@@ -30,7 +30,10 @@ import static java.util.Objects.requireNonNull;
  *
  * @param <T>
  */
-public class OptionToEitherTransformer<T> {
+public final class OptionToEitherTransformer<T> {
+    private OptionToEitherTransformer() {
+    }
+
     public static <R> Either<? extends Exception, R> of(final io.vavr.control.Option<R> option) {
         requireNonNull(option, "option must not be null");
         return option.map(Either::<Exception, R>right).getOrElse(Either.left(new RuntimeException("No value was contained in the option prior to transformation")));

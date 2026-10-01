@@ -9,7 +9,10 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
-public class OptionToSetTransformer {
+public final class OptionToSetTransformer {
+    private OptionToSetTransformer() {
+    }
+
     public static <T> Set<T> of(final Option<T> value) {
         requireNonNull(value, "value must not be null");
         return value.isDefined() ? HashSet.of(value.get()) : HashSet.empty();

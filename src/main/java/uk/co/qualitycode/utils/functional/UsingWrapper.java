@@ -9,7 +9,10 @@ import static java.util.Objects.requireNonNull;
  * See <a href="http://en.wikipedia.org/wiki/Function_composition_(computer_science)">Function Composition</a>
  * @param <T>
  */
-public class UsingWrapper<T> {
+public final class UsingWrapper<T> {
+    private UsingWrapper() {
+    }
+
     public static <T> Using<T> using(final T value) {
         return new Using<>(() -> value);
     }
@@ -20,14 +23,14 @@ public class UsingWrapper<T> {
     }
 
     public static <X, Y> Using2<X, Y> using(final X x, final Y y) {
-        return new Using2<>(() -> x, using(() -> y));
+        return new Using2<>(() -> x, () -> y);
     }
 
-    public static <X, Y, Z> Using2<X, Using2<Y, Z>> using(final X x, final Y y, final Z z) {
-        return using(x, using(y, z));
+    public static <X, Y, Z> Using3<X, Y, Z> using(final X x, final Y y, final Z z) {
+        return new Using3<>(() -> x, () -> y, () -> z);
     }
 
-    public static <X, Y, Z, Z1> Using2<X, Using2<Y, Using2<Z, Z1>>> using(final X x, final Y y, final Z z, final Z1 z1) {
-        return using(x, using(y, using(z, z1)));
+    public static <W, X, Y, Z> Using4<W, X, Y, Z> using(final W w, final X x, final Y y, final Z z) {
+        return new Using4<>(() -> w, () -> x, () -> y, () -> z);
     }
 }

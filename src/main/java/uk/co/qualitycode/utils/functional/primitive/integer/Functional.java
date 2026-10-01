@@ -875,7 +875,7 @@ public final class Functional {
         if (howMany < 0) throw new IllegalArgumentException("Functional.take(int,Iterable<T>): howMany is negative");
         if (list == null) throw new IllegalArgumentException("Functional.take(int,Iterable<T>): list must not be null");
 
-        if (howMany == 0) return new ArrayList<>(0);
+        if (howMany == 0) return Collections.emptyList();
 
         final List<T> output = new ArrayList<>(howMany);
         final Iterator<? extends T> iterator = list.iterator();
@@ -917,16 +917,7 @@ public final class Functional {
         if (list == null)
             throw new IllegalArgumentException("Functional.take(Func,Iterable<T>): list must not be null");
 
-        if (list.size() == 0) return new ArrayList<>();
-
-        for (int i = 0; i < list.size(); ++i) {
-            final T element = list.get(i);
-            if (!predicate.test(element)) {
-                if (i == 0) return new ArrayList<>();
-                return Collections.unmodifiableList(list.subList(0, i));
-            }
-        }
-        return Collections.unmodifiableList(list);
+        return uk.co.qualitycode.utils.functional.Functional.takeWhile(predicate, list);
     }
 
     /**
@@ -957,11 +948,7 @@ public final class Functional {
         if (howMany < 0) throw new IllegalArgumentException("Functional.skip(int,List<T>): howMany is negative");
         if (list == null) throw new IllegalArgumentException("Functional.skip(int,List<T>): list must not be null");
 
-        if (howMany == 0) return Collections.unmodifiableList(list);
-        final int outputListSize = list.size() - howMany;
-        if (outputListSize <= 0) return new ArrayList<>();
-
-        return Collections.unmodifiableList(list.subList(howMany, list.size()));
+        return uk.co.qualitycode.utils.functional.Functional.skip(howMany, list);
     }
 
     /**
@@ -994,11 +981,7 @@ public final class Functional {
         if (list == null)
             throw new IllegalArgumentException("Functional.skipWhile(Func,List<T>): list must not be null");
 
-        for (int counter = 0; counter < list.size(); ++counter)
-            if (!predicate.test(list.get(counter)))
-                return Collections.unmodifiableList(list.subList(counter, list.size()));
-
-        return Collections.unmodifiableList(new ArrayList<>(0));
+        return uk.co.qualitycode.utils.functional.Functional.skipWhile(predicate, list);
     }
 
     /**
@@ -1327,7 +1310,7 @@ public final class Functional {
     /**
      * The Range class holds an inclusive lower bound and an exclusive upper bound. That is lower <= pos < upper
      */
-    public static class Range<T> {
+    public static final class Range<T> {
         private final T lowerBound;
         private final T upperExBound;
 

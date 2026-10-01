@@ -1,6 +1,9 @@
 package uk.co.qualitycode.utils.functional;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * ArrayIterable exists because the native Java array does not implement {@link java.lang.Iterable}. This, therefore, is
@@ -9,44 +12,38 @@ import java.util.Iterator;
  * @param <T> type of the underlying data element
  */
 public final class ArrayIterable<T> implements Iterable<T> {
-    private final T[] _a;
+    private final T[] elements;
 
     private ArrayIterable(final T[] array) {
-        _a = array;
+        // Copy, so that later changes to the caller's array do not show through this Iterable.
+        elements = array.clone();
     }
 
-    /**
-     * Expose a new {@link java.util.Iterator} to the underlying data array
-     *
-     * @return a {@link java.util.Iterator}
-     */
+    @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
-            private final T[] _array = _a;
-            private int _posn;
+            private int position;
 
+            @Override
             public boolean hasNext() {
-                return _posn < _array.length;
+                return position < elements.length;
             }
 
+            @Override
             public T next() {
-                return _array[_posn++];
+                if (!hasNext())
+                    throw new NoSuchElementException("ArrayIterable: cannot seek beyond the end of the array");
+                return elements[position++];
             }
 
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException("remove is not permitted in ArrayIterable");
             }
         };
     }
 
-    /**
-     * Factory method to create a new <tt>ArrayIterable</tt> given an array of <tt>T</tt>.
-     *
-     * @param array the input array
-     * @param <T>   the type of the elements in the input array
-     * @return an ArrayIterable object which wraps the input array
-     */
     public static <T> ArrayIterable<T> create(final T[] array) {
-        return new ArrayIterable<>(array);
+        return new ArrayIterable<>(requireNonNull(array, "create(T[]): array must not be null"));
     }
 }

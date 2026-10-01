@@ -89,8 +89,24 @@ public final class Option<T> {
      * @return an Option containing the result of the lifted function as applied to <tt>o1</tt> and <tt>o2</tt> or empty
      */
     public static <A, B, C> Option<C> lift(final BiFunction<A, B, C> f, final Option<A> o1, final Option<B> o2) {
-        return o1.toVavrOption().isDefined() && o2.toVavrOption().isDefined()
-                ? of(f.apply(o1.toVavrOption().get(), o2.toVavrOption().get()))
-                : new Option<>(io.vavr.control.Option.none());
+        return of(o1.t.flatMap(a -> o2.t.flatMap(b -> io.vavr.control.Option.of(f.apply(a, b)))));
+    }
+
+    /**
+     * Two Options are equal when both are empty, or both contain equal values.
+     */
+    @Override
+    public boolean equals(final Object o) {
+        return this == o || o instanceof Option && t.equals(((Option<?>) o).t);
+    }
+
+    @Override
+    public int hashCode() {
+        return t.hashCode();
+    }
+
+    @Override
+    public java.lang.String toString() {
+        return t.isDefined() ? "Some(" + t.get() + ")" : "None";
     }
 }

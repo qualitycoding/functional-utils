@@ -7,5 +7,5 @@ package uk.co.qualitycode.utils.functional;
  * Time: 13:28
  * To change this template use File | Settings | File Templates.
  */
-public class ChoiceNoValueAccessException extends RuntimeException {
+public final class ChoiceNoValueAccessException extends RuntimeException {
 }

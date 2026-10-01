@@ -227,7 +227,7 @@ public interface Iterable2<T> extends java.lang.Iterable<T> {
 
     Set<T> toSet();
 
-    class EmptyList<T> implements Iterable2<T> {
+    final class EmptyList<T> implements Iterable2<T> {
         private EmptyList() {
         }
 

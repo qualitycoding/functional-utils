@@ -1,6 +1,7 @@
 package uk.co.qualitycode.utils.functional.monad;
 
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static java.util.Objects.isNull;
@@ -18,7 +19,7 @@ import static java.util.Objects.requireNonNull;
  * @param <L>
  * @param <R>
  */
-public class IOr<L, R> implements Comparable<IOr<L, R>> {
+public final class IOr<L, R> implements Comparable<IOr<L, R>> {
     private final io.vavr.control.Option<L> left;
     private final io.vavr.control.Option<R> right;
 
@@ -44,7 +45,7 @@ public class IOr<L, R> implements Comparable<IOr<L, R>> {
         return both_(left, right);
     }
 
-    public static <L, R> IOr<L, R> both_(final L left, final R right) {
+    private static <L, R> IOr<L, R> both_(final L left, final R right) {
         return new IOr<>(io.vavr.control.Option.of(left), io.vavr.control.Option.of(right));
     }
 
@@ -124,6 +125,26 @@ public class IOr<L, R> implements Comparable<IOr<L, R>> {
 
     private <Y> Y getOrElseThrowNPE(final io.vavr.control.Option<Y> y) {
         return y.getOrElseThrow(() -> new NullPointerException("tfm must not produce null values"));
+    }
+
+    /**
+     * Reduce this IOr to a single value, handling each of its three possible shapes. Unlike {@link #get()} and
+     * {@link #_1()} this never throws.
+     *
+     * @param ifLeft  applied when only a left value is present
+     * @param ifRight applied when only a right value is present
+     * @param ifBoth  applied when both values are present
+     * @param <X>     the type of the result
+     * @return the result of whichever function matches this IOr
+     */
+    public <X> X fold(final Function<? super L, ? extends X> ifLeft,
+                      final Function<? super R, ? extends X> ifRight,
+                      final BiFunction<? super L, ? super R, ? extends X> ifBoth) {
+        requireNonNull(ifLeft, "ifLeft must not be null");
+        requireNonNull(ifRight, "ifRight must not be null");
+        requireNonNull(ifBoth, "ifBoth must not be null");
+        return left.<X>map(l -> right.<X>map(r -> ifBoth.apply(l, r)).getOrElse(() -> ifLeft.apply(l)))
+                .getOrElse(() -> ifRight.apply(right.get()));
     }
 
     public boolean hasValue() {

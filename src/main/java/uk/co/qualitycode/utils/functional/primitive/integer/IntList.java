@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 
-public class IntList implements IntIterable {
+public final class IntList implements IntIterable {
     private final int[] backingStore;
 
     public IntList() {

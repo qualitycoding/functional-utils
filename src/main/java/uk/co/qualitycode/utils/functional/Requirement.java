@@ -2,15 +2,18 @@ package uk.co.qualitycode.utils.functional;
 
 import uk.co.qualitycode.utils.functional.monad.Option;
 
-public class Requirement {
+public final class Requirement {
+    private Requirement() {
+    }
+
     public static <T extends Comparable<T>> Require<T> require(final T t) {
         return new Require<>(t);
     }
 
-    public static class Require<T extends Comparable<T>> {
+    public static final class Require<T extends Comparable<T>> {
         private final T t;
 
-        public Require(final T t) {
+        private Require(final T t) {
             this.t = t;
         }
 

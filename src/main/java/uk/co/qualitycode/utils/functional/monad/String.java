@@ -108,7 +108,7 @@ public class String {
     }
 
     public static class NonNullString extends String {
-        NonNullString(final io.vavr.control.Option<java.lang.String> value) {
+        private NonNullString(final io.vavr.control.Option<java.lang.String> value) {
             super(value);
         }
 
@@ -122,7 +122,7 @@ public class String {
     }
 
     public static class NonEmptyString extends NonNullString {
-        NonEmptyString(final io.vavr.control.Option<java.lang.String> value) {
+        private NonEmptyString(final io.vavr.control.Option<java.lang.String> value) {
             super(value);
         }
 
@@ -139,8 +139,8 @@ public class String {
         }
     }
 
-    public static class NonBlankString extends NonEmptyString {
-        NonBlankString(final io.vavr.control.Option<java.lang.String> value) {
+    public static final class NonBlankString extends NonEmptyString {
+        private NonBlankString(final io.vavr.control.Option<java.lang.String> value) {
             super(value);
         }
 
@@ -161,7 +161,7 @@ public class String {
         }
     }
 
-    public static class ConformingString extends String {
+    public static final class ConformingString extends String {
         private final Predicate<java.lang.String> rule;
 
         private ConformingString(final Predicate<java.lang.String> rule, final io.vavr.control.Option<java.lang.String> s) {
@@ -177,7 +177,7 @@ public class String {
             return rule;
         }
 
-        public static class ConformingStringBuilder extends ConformingObjectBuilder<java.lang.String, ConformingString> {
+        public static final class ConformingStringBuilder extends ConformingObjectBuilder<java.lang.String, ConformingString> {
             @Override
             public ConformingString build() {
                 return getValue().
@@ -192,7 +192,7 @@ public class String {
 
     }
 
-    public static class MissingValueException extends RuntimeException {
+    public static final class MissingValueException extends RuntimeException {
         public MissingValueException(final java.lang.String message) {
             super(message);
         }

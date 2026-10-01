@@ -16,29 +16,69 @@ import static org.assertj.core.api.Assertions.assertThat;
 class OptionTest {
     @Nested
     class Creation {
+        private final Object value = new Object();
+
         @Test
         void none() {
-            final Option<Object> actual = Option.none();
+            assertThat(Option.none().isNone()).isTrue();
         }
 
         @Test
         void ofObject() {
-            final Option<Object> actual = Option.of(new Object());
+            assertThat(Option.of(value).get()).isSameAs(value);
         }
 
         @Test
         void ofNullObject() {
-            final Option<Object> actual = Option.of((Object) null);
+            assertThat(Option.of((Object) null)).isEqualTo(Option.none());
         }
 
         @Test
         void ofOptional() {
-            final Option<Object> actual = Option.of(Optional.of(new Object()));
+            assertThat(Option.of(Optional.of(value))).isEqualTo(Option.of(value));
         }
 
         @Test
         void ofOption() {
-            final Option<Object> actual = Option.of(io.vavr.control.Option.of(new Object()));
+            assertThat(Option.of(io.vavr.control.Option.of(value))).isEqualTo(Option.of(value));
+        }
+    }
+
+    @Nested
+    class Equality {
+        @Test
+        void somesWithEqualValuesAreEqual() {
+            assertThat(Option.of("a"))
+                    .isEqualTo(Option.of("a"))
+                    .hasSameHashCodeAs(Option.of("a"));
+        }
+
+        @Test
+        void somesWithDifferentValuesAreNotEqual() {
+            assertThat(Option.of("a")).isNotEqualTo(Option.of("b"));
+        }
+
+        @Test
+        void nonesAreEqual() {
+            assertThat(Option.none())
+                    .isEqualTo(Option.none())
+                    .hasSameHashCodeAs(Option.none());
+        }
+
+        @Test
+        void someIsNotEqualToNone() {
+            assertThat(Option.of("a")).isNotEqualTo(Option.none());
+        }
+
+        @Test
+        void isNotEqualToTheWrappedVavrOption() {
+            assertThat(Option.of("a")).isNotEqualTo(io.vavr.control.Option.of("a"));
+        }
+
+        @Test
+        void describesItself() {
+            assertThat(Option.of(1)).hasToString("Some(1)");
+            assertThat(Option.none()).hasToString("None");
         }
     }
 
@@ -109,8 +149,7 @@ class OptionTest {
         final Option<Integer> b = Option.of(100);
         final Option<Integer> c = Option.lift(plus, a, b);
 
-        assertThat(c.isSome()).isTrue();
-        assertThat(c.get()).isEqualTo(Integer.valueOf(110));
+        assertThat(c).isEqualTo(Option.of(110));
     }
 
     @Test
@@ -129,6 +168,11 @@ class OptionTest {
         final Option<Integer> c = Option.lift(plus, a, b);
 
         assertThat(c.isNone()).isTrue();
+    }
+
+    @Test
+    void optionLiftIsNoneWhenTheLiftedFunctionReturnsNull() {
+        assertThat(Option.lift((x, y) -> null, Option.of(1), Option.of(2))).isEqualTo(Option.none());
     }
 
     @Test

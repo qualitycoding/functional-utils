@@ -1,4 +1,4 @@
 package uk.co.qualitycode.utils.functional.monad;
 
-public class OptionNoValueAccessException extends RuntimeException {
+public final class OptionNoValueAccessException extends RuntimeException {
 }

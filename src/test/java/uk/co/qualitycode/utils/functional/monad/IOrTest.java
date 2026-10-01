@@ -394,6 +394,38 @@ class IOrTest {
     }
 
     @Nested
+    @Nested
+    class Fold {
+        @Test
+        void appliesTheLeftFunctionWhenOnlyLeftIsPresent() {
+            assertThat(IOr.<Integer, java.lang.String>left(1).fold(l -> "left " + l, r -> "right " + r, (l, r) -> "both"))
+                    .isEqualTo("left 1");
+        }
+
+        @Test
+        void appliesTheRightFunctionWhenOnlyRightIsPresent() {
+            assertThat(IOr.<Integer, java.lang.String>right("x").fold(l -> "left " + l, r -> "right " + r, (l, r) -> "both"))
+                    .isEqualTo("right x");
+        }
+
+        @Test
+        void appliesTheBothFunctionWhenBothArePresent() {
+            assertThat(IOr.both(1, "x").fold(l -> "left", r -> "right", (l, r) -> l + r))
+                    .isEqualTo("1x");
+        }
+
+        @Test
+        void rejectsNullFunctions() {
+            final IOr<Integer, Integer> ior = IOr.both(1, 2);
+            assertThatNullPointerException().isThrownBy(() -> ior.fold(null, r -> r, (l, r) -> l))
+                    .withMessage("ifLeft must not be null");
+            assertThatNullPointerException().isThrownBy(() -> ior.fold(l -> l, null, (l, r) -> l))
+                    .withMessage("ifRight must not be null");
+            assertThatNullPointerException().isThrownBy(() -> ior.fold(l -> l, r -> r, null))
+                    .withMessage("ifBoth must not be null");
+        }
+    }
+
     @Disabled
     class Comparable {
     }

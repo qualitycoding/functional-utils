@@ -8,7 +8,7 @@ public interface IntIterator {
     void remove();
 }
 
-class IntIteratorImpl implements IntIterator {
+final class IntIteratorImpl implements IntIterator {
     private final int[] backingStore;
     private int position;
 

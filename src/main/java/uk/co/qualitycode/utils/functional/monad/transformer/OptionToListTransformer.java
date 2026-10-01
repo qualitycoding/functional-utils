@@ -8,7 +8,10 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
-public class OptionToListTransformer {
+public final class OptionToListTransformer {
+    private OptionToListTransformer() {
+    }
+
     public static <T> io.vavr.collection.List<T> of(final Option<T> value) {
         requireNonNull(value, "value must not be null");
         return value.isDefined() ? List.of(value.get()) : List.empty();
