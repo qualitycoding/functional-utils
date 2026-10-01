@@ -17,10 +17,10 @@ import static uk.co.qualitycode.utils.functional.Functional.lessThan;
 import static uk.co.qualitycode.utils.functional.Functional.lessThanOrEqual;
 
 class Functional_Compare_Test {
-    public static Func_int_int doublingGenerator_f = a -> 2 * a;
-    public static Function<Integer, Integer> doublingGenerator = a -> 2 * a;
-    public static Function<Integer, Integer> triplingGenerator = a -> 3 * a;
-    public static Function<Integer, Integer> quadruplingGenerator = a -> 4 * a;
+    public static final Func_int_int doublingGenerator_f = a -> 2 * a;
+    public static final Function<Integer, Integer> doublingGenerator = a -> 2 * a;
+    public static final Function<Integer, Integer> triplingGenerator = a -> 3 * a;
+    public static final Function<Integer, Integer> quadruplingGenerator = a -> 4 * a;
 
     static boolean bothAreEven(final int a, final int b) {
         return isEven(a) && isEven(b);
@@ -30,7 +30,7 @@ class Functional_Compare_Test {
         return a < 10 && b < 10;
     }
 
-    static BiPredicate<Integer, Integer> dBothAreLessThan10 = Functional_Compare_Test::bothAreLessThan10;
+    static final BiPredicate<Integer, Integer> dBothAreLessThan10 = Functional_Compare_Test::bothAreLessThan10;
 
     @Test
     void isEvenReturnsTrueForEvenFalseForOdd() {

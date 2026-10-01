@@ -7,11 +7,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BooleanToOptionalTransformerTest {
     @Test
     void ofTrueReturnsSome() {
-        assertThat(BooleanToOptionalTransformer.of(true).isPresent()).isTrue();
+        assertThat(BooleanToOptionalTransformer.of(true)).contains(true);
     }
 
     @Test
     void ofFalseReturnsNone() {
-        assertThat(BooleanToOptionalTransformer.of(false).isPresent()).isFalse();
+        assertThat(BooleanToOptionalTransformer.of(false)).isEmpty();
     }
 }

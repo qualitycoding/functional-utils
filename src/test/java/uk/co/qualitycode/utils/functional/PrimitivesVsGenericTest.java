@@ -15,7 +15,7 @@ import static uk.co.qualitycode.utils.functional.FunctionalTest.doublingGenerato
 import static uk.co.qualitycode.utils.functional.FunctionalTest.doublingGenerator_f;
 
 class PrimitivesVsGenericTest {
-    private static double oneMillion = pow(10, 6);
+    private static final double oneMillion = pow(10, 6);
 
     @Test
     void integerListVsPrimitiveListToString() {

@@ -1,6 +1,5 @@
 package uk.co.qualitycode.utils.functional.monad;
 
-import org.assertj.core.api.IterableAssert;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import uk.co.qualitycode.utils.functional.Functional;
@@ -20,7 +19,7 @@ class OptionTest {
 
         @Test
         void none() {
-            assertThat(Option.none().isNone()).isTrue();
+            assertThat(Option.none().toVavrOption()).isEmpty();
         }
 
         @Test
@@ -103,7 +102,7 @@ class OptionTest {
 
         @Test
         void noneToVavrOption() {
-            assertThat(Option.none().toVavrOption().isEmpty()).isTrue();
+            assertThat(Option.none().toVavrOption()).isEmpty();
         }
     }
 
@@ -136,8 +135,7 @@ class OptionTest {
 
 
             final Iterable2<Integer> choose = output.choose(Function.identity());
-            final IterableAssert<Integer> integerIterableAssert = assertThat(choose);
-            integerIterableAssert.containsExactlyElementsOf(expected);
+            assertThat(choose).containsExactlyElementsOf(expected);
         }
     }
 
@@ -158,7 +156,7 @@ class OptionTest {
         final Option<Integer> b = Option.none();
         final Option<Integer> c = Option.lift(plus, a, b);
 
-        assertThat(c.isNone()).isTrue();
+        assertThat(c).isEqualTo(Option.none());
     }
 
     @Test
@@ -167,7 +165,7 @@ class OptionTest {
         final Option<Integer> b = Option.of(10);
         final Option<Integer> c = Option.lift(plus, a, b);
 
-        assertThat(c.isNone()).isTrue();
+        assertThat(c).isEqualTo(Option.none());
     }
 
     @Test
@@ -181,36 +179,32 @@ class OptionTest {
         final Option<Integer> b = Option.none();
         final Option<Integer> c = Option.lift(plus, a, b);
 
-        assertThat(c.isNone()).isTrue();
+        assertThat(c).isEqualTo(Option.none());
     }
 
     @Test
     void optionSomeCreatorTestValueType1() {
         final int expected = 10;
         final Option<Integer> a = Option.of(expected);
-        assertThat(a.isSome()).isTrue();
-        assertThat(a.isNone()).isFalse();
-        assertThat(a.get()).isEqualTo((Integer) expected);
+        assertThat(a).isEqualTo(Option.of(expected));
     }
 
     @Test
     void optionSomeCreatorTestStringType1() {
         final java.lang.String expected = "ll";
         final Option<java.lang.String> a = Option.of(expected);
-        assertThat(a.isSome()).isTrue();
-        assertThat(a.isNone()).isFalse();
-        assertThat(a.get()).isEqualTo(expected);
+        assertThat(a).isEqualTo(Option.of(expected));
     }
 
     @Test
     void optionOfTestValueType2() {
         final Option<?> actual = Option.of((io.vavr.control.Option<?>) null);
-        assertThat(actual.isNone()).isTrue();
+        assertThat(actual).isEqualTo(Option.none());
     }
 
     @Test
     void optionOfTestValueType3() {
         final Option<?> actual = Option.of((Optional<?>) null);
-        assertThat(actual.isNone()).isTrue();
+        assertThat(actual).isEqualTo(Option.none());
     }
 }

@@ -116,9 +116,9 @@ class Functional_SkipWhile_Test {
         void multipleCallsToHasNextDoesNotAdvancePosition() {
             final Iterable<Integer> output = Functional.Lazy.skipWhile(Functional::isEven, input);
             final Iterator<Integer> iterator = output.iterator();
-            assertThat(iterator.hasNext()).isTrue();
-            assertThat(iterator.hasNext()).isTrue();
-            assertThat(iterator.hasNext()).isTrue();
+            assertThat(iterator).hasNext();
+            assertThat(iterator).hasNext();
+            assertThat(iterator).hasNext();
             assertThat(iterator.next()).isEqualTo(1);
         }
 

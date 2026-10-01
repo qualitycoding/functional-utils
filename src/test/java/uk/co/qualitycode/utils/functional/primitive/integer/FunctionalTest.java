@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class FunctionalTest {
-    public static Func_int_int doublingGenerator = a -> 2 * a;
+    public static final Func_int_int doublingGenerator = a -> 2 * a;
 
     @Test
     void rangeTest1() {
@@ -98,9 +98,9 @@ class FunctionalTest {
 //        Assert.fail("Should not reach this point");
 //    }
 
-    public static Func_int_int triplingGenerator = a -> 3 * a;
+    public static final Func_int_int triplingGenerator = a -> 3 * a;
 
-    public static Func_int_int quadruplingGenerator = a -> 4 * a;
+    public static final Func_int_int quadruplingGenerator = a -> 4 * a;
 
     private static boolean bothAreEven(final int a, final int b) {
         return Functional.isEven(a) && Functional.isEven(b);

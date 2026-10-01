@@ -22,7 +22,6 @@ import java.util.function.IntConsumer;
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.fail;
 
 class AnyMTest {
 
@@ -58,24 +57,22 @@ class AnyMTest {
     void add20ToSmaller() {
         final OptionalIntT<Either<Exception, Integer>> result = intValue.apply("10").flatMapT(add20IfLessThan20::apply);
 
-        assertThat(result.isPresent()).isTrue();
-        assertThat(30).isEqualTo(result.getAsInt());
+        assertThat(result.toOptionalInt()).hasValue(30);
     }
 
     @Test
     void add20ToLarger() {
         final OptionalIntT<Either<Exception, Integer>> result = intValue.apply("100").flatMapT(add20IfLessThan20::apply);
 
-        result.ifPresent(i -> fail("Expected empty but received " + i));
+        assertThat(result.toOptionalInt()).isEmpty();
     }
 
     @Test
     void dontAdd() {
         final OptionalIntT<Either<Exception, Integer>> result = intValue.apply("string").flatMapT(add20IfLessThan20::apply);
 
-        assertThat(result.isPresent()).isFalse();
-        assertThat(result.liftM().isLeft()).isTrue();
-        assertThat(result.liftM().swap().get() instanceof NumberFormatException).isTrue();
+        assertThat(result.toOptionalInt()).isEmpty();
+        assertThat(result.liftM().getLeft()).isInstanceOf(NumberFormatException.class);
     }
 
     @Test
@@ -167,6 +164,10 @@ class OptionalIntT<M /*extends Monad*/> {
 
     boolean isPresent() {
         return optionalInt.isPresent();
+    }
+
+    OptionalInt toOptionalInt() {
+        return optionalInt;
     }
 
     int getAsInt() {

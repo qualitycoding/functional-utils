@@ -7,7 +7,8 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 abstract class SequenceTest<T1, T2, R> {
     protected abstract Iterable<T2> initialValues();
@@ -38,11 +39,7 @@ abstract class SequenceTest<T1, T2, R> {
     void iterableCanOnlyHaveOneIterator() {
         final Iterable<T2> l = initialValues();
         final Iterable<R> output = testFunction(l);
-        try {
-            output.iterator();
-        } catch (final UnsupportedOperationException e) {
-            fail("Should not reach this point");
-        }
+        assertThatCode(output::iterator).doesNotThrowAnyException();
         assertThatExceptionOfType(UnsupportedOperationException.class)
                 .isThrownBy(output::iterator)
                 .withMessage(methodNameInExceptionMessage() + ": this Iterable does not allow multiple Iterators");
@@ -50,14 +47,14 @@ abstract class SequenceTest<T1, T2, R> {
 
     @Test
     void canCallHasNextMultipleTimesWithoutAdvancingThePosition() {
-        if (noOfElementsInOutput() <= 0) return;
+        assumeTrue(noOfElementsInOutput() > 0, "only meaningful for a non-empty sequence");
         final Iterable<T2> l = initialValues();
         final Iterable<R> output = testFunction(l);
         final Iterator<R> iterator = output.iterator();
         IntStream.range(0, noOfElementsInOutput())
-                .forEach(i -> assertThat(iterator.hasNext()).isTrue());
+                .forEach(i -> assertThat(iterator).hasNext());
         iterator.next();
         IntStream.range(1, noOfElementsInOutput())
-                .forEach(i -> assertThat(iterator.hasNext()).isTrue());
+                .forEach(i -> assertThat(iterator).hasNext());
     }
 }

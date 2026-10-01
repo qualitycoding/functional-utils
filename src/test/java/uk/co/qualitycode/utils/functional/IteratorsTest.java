@@ -17,7 +17,7 @@ import java.util.function.Function;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 class IteratorsTest {
     private static final Function<Integer, Integer> DoublingGenerator = a -> 2 * a;
@@ -123,22 +123,14 @@ class IteratorsTest {
     @Test
     void cantRestartIteratorTest1() {
         final Iterable<Integer> rv = Iterators.reverse(Arrays.asList(1, 2, 3));
-        try {
-            rv.iterator();
-        } catch (final UnsupportedOperationException e) {
-            fail("Shouldn't reach here");
-        }
+        assertThatCode(rv::iterator).doesNotThrowAnyException();
         assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(rv::iterator);
     }
 
     @Test
     void cantRestartIteratorTest2() {
         final Iterable<Integer> rv = Iterators.everyNth(2, Arrays.asList(1, 2, 3));
-        try {
-            rv.iterator();
-        } catch (final UnsupportedOperationException e) {
-            fail("Shouldn't reach here");
-        }
+        assertThatCode(rv::iterator).doesNotThrowAnyException();
         assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(rv::iterator);
     }
 
@@ -146,13 +138,13 @@ class IteratorsTest {
     void everyNthRepeatedHasNextTest() {
         final Iterable<Integer> integers = Iterators.everyNth(2, Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9));
         final Iterator<Integer> iterator = integers.iterator();
-        assertThat(iterator.hasNext()).isTrue();
+        assertThat(iterator).hasNext();
         assertThat(iterator.next()).isEqualTo(Integer.valueOf(1));
-        assertThat(iterator.hasNext()).isTrue();
-        assertThat(iterator.hasNext()).isTrue();
+        assertThat(iterator).hasNext();
+        assertThat(iterator).hasNext();
         assertThat(iterator.next()).isEqualTo(Integer.valueOf(3));
-        assertThat(iterator.hasNext()).isTrue();
-        assertThat(iterator.hasNext()).isTrue();
+        assertThat(iterator).hasNext();
+        assertThat(iterator).hasNext();
         assertThat(iterator.next()).isEqualTo(Integer.valueOf(5));
     }
 

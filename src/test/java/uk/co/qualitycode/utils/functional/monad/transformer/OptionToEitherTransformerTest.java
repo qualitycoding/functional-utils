@@ -35,12 +35,12 @@ class OptionToEitherTransformerTest {
     @Test
     void ofOptionReturnsLeftForNone() {
         final Either<? extends Exception, Object> value = OptionToEitherTransformer.of(Option.none());
-        assertThat(value.isLeft()).isTrue();
+        assertThat(value.getLeft()).hasMessage("No value was contained in the option prior to transformation");
     }
 
     @Test
     void ofOptionalReturnsLeftForNone() {
         final Either<? extends Exception, Object> value = OptionToEitherTransformer.of(Optional.empty());
-        assertThat(value.isLeft()).isTrue();
+        assertThat(value.getLeft()).hasMessage("No value was contained in the option prior to transformation");
     }
 }

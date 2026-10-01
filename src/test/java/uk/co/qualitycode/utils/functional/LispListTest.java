@@ -100,7 +100,7 @@ class LispListTest {
         final List<Integer> output = filter(
                 a -> a > limit, input);
 
-        assertThat(output.isEmpty()).isTrue();
+        assertThat(output).isEqualTo(LispList.nil());
     }
 
     @Test

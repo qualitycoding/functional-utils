@@ -17,10 +17,10 @@ import static uk.co.qualitycode.utils.functional.Functional.isEven;
 import static uk.co.qualitycode.utils.functional.Functional.stringify;
 
 class FunctionalTest {
-    public static Func_int_int doublingGenerator_f = a -> 2 * a;
-    public static Function<Integer, Integer> doublingGenerator = a -> 2 * a;
-    public static Function<Integer, Integer> triplingGenerator = a -> 3 * a;
-    public static Function<Integer, Integer> quadruplingGenerator = a -> 4 * a;
+    public static final Func_int_int doublingGenerator_f = a -> 2 * a;
+    public static final Function<Integer, Integer> doublingGenerator = a -> 2 * a;
+    public static final Function<Integer, Integer> triplingGenerator = a -> 3 * a;
+    public static final Function<Integer, Integer> quadruplingGenerator = a -> 4 * a;
 
     @Nested
     class ConvertFlatMap {
@@ -139,13 +139,7 @@ class FunctionalTest {
         final Function<Object, Either<Exception, Object>> value = Functional.$(a -> a);
         final Object obj = new Object();
 
-//        VavrAssertions.assertThat(value.apply(obj)).satisfies(v -> {
-//            VavrAssertions.assertThat(v).isRight().containsOnRight(obj);
-//        });
-
-        final Either<Exception, Object> result = value.apply(obj);
-        assertThat(result.isRight()).isTrue();
-        assertThat(result.get()).isEqualTo(obj);
+        assertThat(value.apply(obj)).isEqualTo(Either.right(obj));
     }
 
     @Test
@@ -155,13 +149,7 @@ class FunctionalTest {
             throw exception;
         });
 
-//        VavrAssertions.assertThat(value.apply(new Object())).satisfies(v -> {
-//            VavrAssertions.assertThat(v).isLeft().containsOnLeft(exception);
-//        });
-
-        final Either<Exception, Object> result = value.apply(new Object());
-        assertThat(result.isLeft()).isTrue();
-        assertThat(result.getLeft()).isEqualTo(exception);
+        assertThat(value.apply(new Object())).isEqualTo(Either.left(exception));
     }
 
     static boolean bothAreEven(final int a, final int b) {

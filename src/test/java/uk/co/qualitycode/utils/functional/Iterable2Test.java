@@ -203,26 +203,15 @@ class Iterable2Test {
     }
 
     @Test
-    void chooseTest2A() //throws OptionNoValueAccessException
-    {
-        Map<Integer, String> o = null;
-        try {
-            final Iterable2<Integer> li = Iterable2.init(triplingGenerator, 5);
-            o = Functional.toDictionary(Function.identity(), Functional.stringify(),
-                    li.choose(
-                            i -> i % 2 == 0 ? Option.of(i) : Option.none()));
-        } catch (final Exception e) {
-        }
+    void chooseTest2A() {
+        final Iterable2<Integer> li = Iterable2.init(triplingGenerator, 5);
+        final Map<Integer, String> o = Functional.toDictionary(Function.identity(), Functional.stringify(),
+                li.choose(i -> i % 2 == 0 ? Option.of(i) : Option.none()));
+
         final Map<Integer, String> expected = new HashMap<>();
         expected.put(6, "6");
         expected.put(12, "12");
-        assertThat(expected.size() == o.size()).isTrue();
-        for (final int expectedKey : expected.keySet()) {
-            assertThat(o.containsKey(expectedKey)).isTrue();
-            final String expectedValue = expected.get(expectedKey);
-            //assertThat("Expected '"+expectedValue+"' but got '"+o.get(expectedKey)+"'").isEqualTo(expectedValue,o.get(expectedKey));
-            assertThat(o.get(expectedKey).equals(expectedValue)).isTrue();
-        }
+        assertThat(o).containsExactlyInAnyOrderEntriesOf(expected);
     }
 
     @Test
@@ -546,8 +535,7 @@ class Iterable2Test {
         expected.add(4);
         expected.add(5);
 
-        assertThat(expected.containsAll(integerSet)).isTrue();
-        assertThat(integerSet.containsAll(expected)).isTrue();
+        assertThat(integerSet).containsExactlyInAnyOrderElementsOf(expected);
     }
 
     @Test
@@ -561,13 +549,7 @@ class Iterable2Test {
         expected.put(3, "3");
         expected.put(4, "4");
         expected.put(5, "5");
-        assertThat(expected.size() == output.size()).isTrue();
-        for (final int expectedKey : expected.keySet()) {
-            assertThat(output.containsKey(expectedKey)).isTrue();
-            final String expectedValue = expected.get(expectedKey);
-            //assertThat("Expected '"+expectedValue+"' but got '"+o.get(expectedKey)+"'").isEqualTo(expectedValue,o.get(expectedKey));
-            assertThat(output.get(expectedKey).equals(expectedValue)).isTrue();
-        }
+        assertThat(output).containsExactlyInAnyOrderEntriesOf(expected);
     }
 
     @Test
@@ -663,7 +645,7 @@ class Iterable2Test {
         final Iterable2<Integer> oddElems = l.in(
                 ints -> ints.filter(Functional::isOdd));
 
-        assertThat(oddElems.iterator().hasNext()).isFalse();
+        assertThat(oddElems).isEmpty();
     }
     /*
     private class Test1
@@ -1386,15 +1368,15 @@ class Iterable2Test {
     @Test
     void emptyListPartitionTest() {
         final Tuple2<List<Object>, List<Object>> pair = Iterable2.empty().partition(o -> false);
-        assertThat(pair._1().isEmpty()).isTrue();
-        assertThat(pair._2().isEmpty()).isTrue();
+        assertThat(pair._1()).isEmpty();
+        assertThat(pair._2()).isEmpty();
     }
 
     @Test
     void emptyListGroupByTest() {
         final Map<Object, List<Object>> grp = Iterable2.empty().groupBy(o -> null);
 
-        assertThat(grp.isEmpty()).isTrue();
+        assertThat(grp).isEmpty();
     }
 
     @Test
