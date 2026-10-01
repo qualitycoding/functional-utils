@@ -213,4 +213,42 @@ class FunctionalIntSpecialisationsTest {
 
         assertThat(difference.applyAsInt(7, 2)).isEqualTo(5);
     }
+
+    @Nested
+    class EagerIntToInt {
+        @Test
+        void mapWithATypedLambdaTransformsToInts() {
+            assertThat(Functional.map((int x) -> x * x, ints(1, 2, 3)).toArray()).containsExactly(1, 4, 9);
+        }
+
+        @Test
+        void mapiPassesTheZeroBasedIndex() {
+            assertThat(Functional.mapi((int i, int x) -> i * 100 + x, ints(5, 6, 7)).toArray()).containsExactly(5, 106, 207);
+        }
+
+        @Test
+        void takeStopsAtTheEnd() {
+            assertThat(Functional.take(2, ints(1, 2, 3)).toArray()).containsExactly(1, 2);
+            assertThat(Functional.take(5, ints(1, 2)).toArray()).containsExactly(1, 2);
+        }
+
+        @Test
+        void skipDropsTheFirstElements() {
+            assertThat(Functional.skip(2, ints(1, 2, 3)).toArray()).containsExactly(3);
+            assertThat(Functional.skip(5, ints(1, 2)).toArray()).isEmpty();
+        }
+
+        @Test
+        void appendAddsAtTheEnd() {
+            assertThat(Functional.append(9, ints(1, 2)).toArray()).containsExactly(1, 2, 9);
+        }
+
+        @Test
+        void rejectNegativeCounts() {
+            assertThatIllegalArgumentException().isThrownBy(() -> Functional.take(-1, ints(1)))
+                    .withMessage("Functional.take(int,IntIterable): howMany must not be negative");
+            assertThatIllegalArgumentException().isThrownBy(() -> Functional.skip(-1, ints(1)))
+                    .withMessage("Functional.skip(int,IntIterable): howMany must not be negative");
+        }
+    }
 }

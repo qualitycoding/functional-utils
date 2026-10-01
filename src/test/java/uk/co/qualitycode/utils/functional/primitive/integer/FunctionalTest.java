@@ -56,7 +56,7 @@ class FunctionalTest {
     @Test
     void mapiTest1() {
         final IntList input = new IntList(new int[]{1, 2, 3, 4, 5});
-        final Collection<Tuple2<Integer, String>> output = Functional.mapi((pos, i) -> new Tuple2<>(pos, Integer.toString(i)), input);
+        final Collection<Tuple2<Integer, String>> output = Functional.mapi((final int pos, final int i) -> new Tuple2<>(pos, Integer.toString(i)), input);
         assertThat(uk.co.qualitycode.utils.functional.Functional.map(Tuple2::_2, output)).containsExactly("1", "2", "3", "4", "5");
         assertThat(Functional.map(Tuple2::_1, output).toArray()).containsExactly(0, 1, 2, 3, 4);
     }

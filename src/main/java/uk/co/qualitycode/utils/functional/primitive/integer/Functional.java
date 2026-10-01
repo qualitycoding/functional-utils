@@ -1355,6 +1355,63 @@ public final class Functional {
     // ---------------------------------------------------------------------------------------------------------------
 
     /**
+     * Transform each element. The int-to-int analogue of the generic {@code map(Function<A,B>, Iterable<A>)}.
+     * <p>
+     * Like {@code choose}, this overloads on the function type. Give the lambda's parameter its type and Java picks
+     * the overload from the return type: {@code map((int x) -> x * x, input)} is this method, while
+     * {@code map((int x) -> "#" + x, input)} is {@code map(Func_int_T<B>, IntIterable)}.
+     *
+     * @param f     the transformation
+     * @param input the sequence
+     * @return the transformed elements, in order
+     */
+    public static IntList map(final Func_int_int f, final IntIterable input) {
+        notNull(f, "map(Func_int_int,IntIterable)", "f");
+        return new IntList(Arrays.stream(toArray(notNull(input, "map(Func_int_int,IntIterable)", "input"))).map(f::apply).toArray());
+    }
+
+    /**
+     * The first {@code howMany} elements, or all of them if there are fewer. The int analogue of the generic
+     * {@code take(int, Iterable<T>)}.
+     */
+    public static IntList take(final int howMany, final IntIterable input) {
+        if (howMany < 0) throw new IllegalArgumentException("Functional.take(int,IntIterable): howMany must not be negative");
+        final int[] values = toArray(notNull(input, "take(int,IntIterable)", "input"));
+        return new IntList(values, Math.min(howMany, values.length));
+    }
+
+    /**
+     * All but the first {@code howMany} elements; empty if there are no more than that. The int analogue of the
+     * generic {@code skip(int, List<T>)}.
+     */
+    public static IntList skip(final int howMany, final IntIterable input) {
+        if (howMany < 0) throw new IllegalArgumentException("Functional.skip(int,IntIterable): howMany must not be negative");
+        final int[] values = toArray(notNull(input, "skip(int,IntIterable)", "input"));
+        return new IntList(Arrays.copyOfRange(values, Math.min(howMany, values.length), values.length));
+    }
+
+    /**
+     * Transform each element, given its zero-based index. The int-to-int analogue of the generic
+     * {@code mapi(BiFunction<Integer,A,B>, Iterable<A>)}. Give the lambda's parameters their types and Java picks
+     * the overload from the return type, e.g. {@code mapi((int i, int x) -> i * x, input)}.
+     */
+    public static IntList mapi(final Func2_int_int_int f, final IntIterable input) {
+        notNull(f, "mapi(Func2_int_int_int,IntIterable)", "f");
+        final int[] values = toArray(notNull(input, "mapi(Func2_int_int_int,IntIterable)", "input"));
+        return new IntList(java.util.stream.IntStream.range(0, values.length).map(i -> f.apply(i, values[i])).toArray());
+    }
+
+    /**
+     * The sequence with {@code value} added at the end.
+     */
+    public static IntList append(final int value, final IntIterable input) {
+        final int[] values = toArray(notNull(input, "append(int,IntIterable)", "input"));
+        final int[] appended = Arrays.copyOf(values, values.length + 1);
+        appended[values.length] = value;
+        return new IntList(appended);
+    }
+
+    /**
      * The leading elements for which the predicate holds. The int analogue of the generic
      * {@code takeWhile(Predicate<T>, Iterable<T>)}.
      *
@@ -1568,5 +1625,343 @@ public final class Functional {
         if (t == null)
             throw new IllegalArgumentException("Functional." + functionName + ": " + parameterName + " must not be null");
         return t;
+    }
+
+    /**
+     * Lazily evaluated int sequences: the int counterparts of the generic {@code Functional.Lazy} operations. Nothing is
+     * computed until a sequence is iterated, and then only as far as it is consumed, so infinite sequences work. Like
+     * the generic ones, each sequence may be iterated only once.
+     */
+    public static final class Lazy {
+        private Lazy() {
+        }
+
+        private static final IntIterator NO_INTS = new IntList().iterator();
+
+        public static IntIterable append(final int value, final IntIterable input) {
+            final String op = "Lazy.append(int,IntIterable)";
+            requireArgument(input, op, "input");
+            return LazyIntSequences.of(op, () -> concatenation(input.iterator(), new IntList(new int[]{value}).iterator()));
+        }
+
+        public static Function<IntIterable, IntIterable> append(final int value) {
+            return input -> append(value, input);
+        }
+
+        public static IntIterable map(final Func_int_int f, final IntIterable input) {
+            final String op = "Lazy.map(Func_int_int,IntIterable)";
+            requireArgument(f, op, "f");
+            requireArgument(input, op, "input");
+            return LazyIntSequences.of(op, () -> {
+                final IntIterator values = input.iterator();
+                return sink -> {
+                    if (!values.hasNext()) return false;
+                    sink.accept(f.apply(values.next()));
+                    return true;
+                };
+            });
+        }
+
+        public static Function<IntIterable, IntIterable> map(final Func_int_int f) {
+            return input -> map(f, input);
+        }
+
+        /**
+         * @param f given the zero-based index and the element, the mapped element
+         */
+        public static IntIterable mapi(final Func2_int_int_int f, final IntIterable input) {
+            final String op = "Lazy.mapi(Func2_int_int_int,IntIterable)";
+            requireArgument(f, op, "f");
+            requireArgument(input, op, "input");
+            return LazyIntSequences.of(op, () -> new LazyIntSequences.IntSource() {
+                private final IntIterator values = input.iterator();
+                private int index;
+
+                @Override
+                public boolean tryAdvance(final java.util.function.IntConsumer sink) {
+                    if (!values.hasNext()) return false;
+                    sink.accept(f.apply(index++, values.next()));
+                    return true;
+                }
+            });
+        }
+
+        public static Function<IntIterable, IntIterable> mapi(final Func2_int_int_int f) {
+            return input -> mapi(f, input);
+        }
+
+        public static IntIterable concat(final IntIterable input1, final IntIterable input2) {
+            final String op = "Lazy.concat(IntIterable,IntIterable)";
+            requireArgument(input1, op, "input1");
+            requireArgument(input2, op, "input2");
+            return LazyIntSequences.of(op, () -> concatenation(input1.iterator(), input2.iterator()));
+        }
+
+        public static IntIterable filter(final Predicate_int predicate, final IntIterable input) {
+            final String op = "Lazy.filter(Predicate_int,IntIterable)";
+            requireArgument(predicate, op, "predicate");
+            requireArgument(input, op, "input");
+            return LazyIntSequences.of(op, () -> {
+                final IntIterator values = input.iterator();
+                return sink -> {
+                    while (values.hasNext()) {
+                        final int value = values.next();
+                        if (predicate.test(value)) {
+                            sink.accept(value);
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+            });
+        }
+
+        public static Function<IntIterable, IntIterable> filter(final Predicate_int predicate) {
+            return input -> filter(predicate, input);
+        }
+
+        public static IntIterable choose(final Func_int_Option_int chooser, final IntIterable input) {
+            final String op = "Lazy.choose(Func_int_Option_int,IntIterable)";
+            requireArgument(chooser, op, "chooser");
+            requireArgument(input, op, "input");
+            return LazyIntSequences.of(op, () -> {
+                final IntIterator values = input.iterator();
+                return sink -> {
+                    while (values.hasNext()) {
+                        final Option_int chosen = chooser.apply(values.next());
+                        if (chosen.isSome()) {
+                            sink.accept(chosen.get());
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+            });
+        }
+
+        public static Function<IntIterable, IntIterable> choose(final Func_int_Option_int chooser) {
+            return input -> choose(chooser, input);
+        }
+
+        /**
+         * @param f       given the one-based position, the element
+         * @param howMany the number of elements
+         */
+        public static IntIterable init(final Func_int_int f, final int howMany) {
+            final String op = "Lazy.init(Func_int_int,int)";
+            requireArgument(f, op, "f");
+            if (howMany < 0) throw new IllegalArgumentException(op + ": howMany must not be negative");
+            return LazyIntSequences.of(op, () -> unfolding(f, i -> i + 1, i -> i > howMany, 1));
+        }
+
+        /**
+         * An infinite sequence.
+         *
+         * @param f given the one-based position, the element
+         */
+        public static IntIterable init(final Func_int_int f) {
+            final String op = "Lazy.init(Func_int_int)";
+            requireArgument(f, op, "f");
+            return LazyIntSequences.of(op, () -> unfolding(f, i -> i + 1, i -> false, 1));
+        }
+
+        public static IntIterable flatMap(final Func_int_T<? extends IntIterable> f, final IntIterable input) {
+            final String op = "Lazy.flatMap(Func_int_T<IntIterable>,IntIterable)";
+            requireArgument(f, op, "f");
+            requireArgument(input, op, "input");
+            return LazyIntSequences.of(op, () -> new LazyIntSequences.IntSource() {
+                private final IntIterator outer = input.iterator();
+                private IntIterator inner = NO_INTS;
+
+                @Override
+                public boolean tryAdvance(final java.util.function.IntConsumer sink) {
+                    while (!inner.hasNext()) {
+                        if (!outer.hasNext()) return false;
+                        inner = f.apply(outer.next()).iterator();
+                    }
+                    sink.accept(inner.next());
+                    return true;
+                }
+            });
+        }
+
+        public static Function<IntIterable, IntIterable> flatMap(final Func_int_T<? extends IntIterable> f) {
+            return input -> flatMap(f, input);
+        }
+
+        public static IntIterable skip(final int howMany, final IntIterable input) {
+            final String op = "Lazy.skip(int,IntIterable)";
+            if (howMany < 0) throw new IllegalArgumentException(op + ": howMany must not be negative");
+            requireArgument(input, op, "input");
+            return LazyIntSequences.of(op, () -> new LazyIntSequences.IntSource() {
+                private final IntIterator values = input.iterator();
+                private int toSkip = howMany;
+
+                @Override
+                public boolean tryAdvance(final java.util.function.IntConsumer sink) {
+                    for (; toSkip > 0 && values.hasNext(); toSkip--) values.next();
+                    if (!values.hasNext()) return false;
+                    sink.accept(values.next());
+                    return true;
+                }
+            });
+        }
+
+        public static Function<IntIterable, IntIterable> skip(final int howMany) {
+            return input -> skip(howMany, input);
+        }
+
+        public static IntIterable skipWhile(final Predicate_int predicate, final IntIterable input) {
+            final String op = "Lazy.skipWhile(Predicate_int,IntIterable)";
+            requireArgument(predicate, op, "predicate");
+            requireArgument(input, op, "input");
+            return LazyIntSequences.of(op, () -> new LazyIntSequences.IntSource() {
+                private final IntIterator values = input.iterator();
+                private boolean skipping = true;
+
+                @Override
+                public boolean tryAdvance(final java.util.function.IntConsumer sink) {
+                    while (values.hasNext()) {
+                        final int value = values.next();
+                        if (!skipping || !predicate.test(value)) {
+                            skipping = false;
+                            sink.accept(value);
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            });
+        }
+
+        public static Function<IntIterable, IntIterable> skipWhile(final Predicate_int predicate) {
+            return input -> skipWhile(predicate, input);
+        }
+
+        public static IntIterable take(final int howMany, final IntIterable input) {
+            final String op = "Lazy.take(int,IntIterable)";
+            if (howMany < 0) throw new IllegalArgumentException(op + ": howMany must not be negative");
+            requireArgument(input, op, "input");
+            return LazyIntSequences.of(op, () -> new LazyIntSequences.IntSource() {
+                private final IntIterator values = input.iterator();
+                private int remaining = howMany;
+
+                @Override
+                public boolean tryAdvance(final java.util.function.IntConsumer sink) {
+                    if (remaining == 0 || !values.hasNext()) return false;
+                    remaining--;
+                    sink.accept(values.next());
+                    return true;
+                }
+            });
+        }
+
+        public static Function<IntIterable, IntIterable> take(final int howMany) {
+            return input -> take(howMany, input);
+        }
+
+        public static IntIterable takeWhile(final Predicate_int predicate, final IntIterable input) {
+            final String op = "Lazy.takeWhile(Predicate_int,IntIterable)";
+            requireArgument(predicate, op, "predicate");
+            requireArgument(input, op, "input");
+            return LazyIntSequences.of(op, () -> {
+                final IntIterator values = input.iterator();
+                return sink -> {
+                    if (!values.hasNext()) return false;
+                    final int value = values.next();
+                    if (!predicate.test(value)) return false;
+                    sink.accept(value);
+                    return true;
+                };
+            });
+        }
+
+        public static Function<IntIterable, IntIterable> takeWhile(final Predicate_int predicate) {
+            return input -> takeWhile(predicate, input);
+        }
+
+        /**
+         * Emit {@code value(state)}, then move to {@code next(state)}, until {@code finished(state)} holds. Unbounded
+         * if it never does.
+         */
+        public static IntIterable unfold(final Func_int_int value, final Func_int_int next, final Predicate_int finished, final int seed) {
+            final String op = "Lazy.unfold(Func_int_int,Func_int_int,Predicate_int,int)";
+            requireArgument(value, op, "value");
+            requireArgument(next, op, "next");
+            requireArgument(finished, op, "finished");
+            return LazyIntSequences.of(op, () -> unfolding(value, next, finished, seed));
+        }
+
+        /**
+         * @throws IllegalArgumentException during iteration, if the sequences turn out to differ in length
+         */
+        public static Iterable<Tuple2<Integer, Integer>> zip(final IntIterable input1, final IntIterable input2) {
+            final String op = "Lazy.zip(IntIterable,IntIterable)";
+            requireArgument(input1, op, "input1");
+            requireArgument(input2, op, "input2");
+            return LazyIntSequences.ofReferences(op, () -> {
+                final IntIterator as = input1.iterator();
+                final IntIterator bs = input2.iterator();
+                return sink -> {
+                    final boolean more = as.hasNext();
+                    if (more != bs.hasNext())
+                        throw new IllegalArgumentException(op + ": cannot zip two sequences of different lengths");
+                    if (!more) return false;
+                    sink.accept(new Tuple2<>(as.next(), bs.next()));
+                    return true;
+                };
+            });
+        }
+
+        /**
+         * @throws IllegalArgumentException during iteration, if the sequences turn out to differ in length
+         */
+        public static Iterable<Tuple3<Integer, Integer, Integer>> zip3(final IntIterable input1, final IntIterable input2, final IntIterable input3) {
+            final String op = "Lazy.zip3(IntIterable,IntIterable,IntIterable)";
+            requireArgument(input1, op, "input1");
+            requireArgument(input2, op, "input2");
+            requireArgument(input3, op, "input3");
+            return LazyIntSequences.ofReferences(op, () -> {
+                final IntIterator as = input1.iterator();
+                final IntIterator bs = input2.iterator();
+                final IntIterator cs = input3.iterator();
+                return sink -> {
+                    final boolean more = as.hasNext();
+                    if (more != bs.hasNext() || more != cs.hasNext())
+                        throw new IllegalArgumentException(op + ": cannot zip three sequences of different lengths");
+                    if (!more) return false;
+                    sink.accept(new Tuple3<>(as.next(), bs.next(), cs.next()));
+                    return true;
+                };
+            });
+        }
+
+        private static LazyIntSequences.IntSource concatenation(final IntIterator first, final IntIterator second) {
+            return sink -> {
+                final IntIterator current = first.hasNext() ? first : second;
+                if (!current.hasNext()) return false;
+                sink.accept(current.next());
+                return true;
+            };
+        }
+
+        private static LazyIntSequences.IntSource unfolding(final Func_int_int value, final Func_int_int next, final Predicate_int finished, final int seed) {
+            return new LazyIntSequences.IntSource() {
+                private int state = seed;
+
+                @Override
+                public boolean tryAdvance(final java.util.function.IntConsumer sink) {
+                    if (finished.test(state)) return false;
+                    sink.accept(value.apply(state));
+                    state = next.apply(state);
+                    return true;
+                }
+            };
+        }
+
+        private static <T> T requireArgument(final T t, final String operation, final String parameterName) {
+            if (t == null) throw new IllegalArgumentException(operation + ": " + parameterName + " must not be null");
+            return t;
+        }
     }
 }
