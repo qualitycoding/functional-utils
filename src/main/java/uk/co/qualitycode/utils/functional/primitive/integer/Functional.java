@@ -1187,10 +1187,8 @@ public final class Functional {
      * @return a list of type U containing the concatenated sequences of transformed values.
      */
     public static <T, U> List<U> collect(final Function<? super T, ? extends Iterable<U>> f, final Iterable<T> input) {
-        final List<U> output = input instanceof Collection<?> ? new ArrayList<>(((Collection) input).size()) : new ArrayList<>();
-//        for(final T element : input)
-//            output = Functional.concat(output, Functional.toList(f.apply(element)));
-        return Collections.unmodifiableList(output);
+
+        return uk.co.qualitycode.utils.functional.Functional.flatMap(f, input);
     }
 
     /**
@@ -1236,9 +1234,9 @@ public final class Functional {
                 counter++;
                 if (counter < howMany && !position.hasNext()) break;
             }
-            return new Tuple2<>(output, (Iterable<A>) () -> position);
+            return new Tuple2<>(Collections.unmodifiableList(output), (Iterable<A>) () -> position);
         }
-        return new Tuple2<>(output, input);
+        return new Tuple2<>(Collections.unmodifiableList(output), input);
     }
 
     /**
@@ -1252,24 +1250,10 @@ public final class Functional {
      * @see <a href="http://en.wikipedia.org/wiki/Lazy_evaluation">Lazy evaluation</a>
      */
     public static <T> Iterable<T> append(final T t, final Iterable<T> input) {
-        return () -> new Iterator<T>() {
-            private int counter;
-            private Iterator<? extends T> iterator = input.iterator();
 
-            public boolean hasNext() {
-                return counter == 0 || iterator.hasNext();
-            }
-
-
-            public T next() {
-                return counter++ == 0 ? t : iterator.next();
-            }
-
-
-            public void remove() {
-                throw new UnsupportedOperationException("Functional.append(T,Iterable<T>): it is not possible to remove elements from this sequence");
-            }
-        };
+        if (input == null) throw new IllegalArgumentException("Functional.append(T,Iterable<T>): input must not be null");
+        // A fresh lazy iterator per call, so the result can be traversed more than once.
+        return () -> io.vavr.collection.Iterator.concat(input, Collections.singletonList(t));
     }
 
     /**
