@@ -14,6 +14,9 @@ import java.util.function.IntConsumer;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Spike: monads over a common base type ({@link AnyM}) and a first monad transformer ({@link OptionalIntT}).
+ */
 class AnyMTest {
 
     private final Function<java.lang.String, MyEither<Exception, Integer>> intValue = s -> {
@@ -25,6 +28,21 @@ class AnyMTest {
     };
 
     private final Function<Integer, OptionalInt> add20IfLessThan20 = i -> i == null || i > 20 ? OptionalInt.empty() : OptionalInt.of(i + 20);
+
+    @Test
+    void anOptionIsBoundToAnEitherByConvertingItFirst() {
+        // flatMap cannot cross from Option to MyEither (the witnesses differ, so it does not compile);
+        // convert with a natural transformation, then bind within MyEither.
+        final Function<java.lang.String, MyEither<java.lang.String, java.lang.String>> shortOnly =
+                s -> s.length() < 3 ? MyEither.right(s) : MyEither.left("too long: " + s);
+
+        assertThat(MyEither.fromOption(Option.<java.lang.String>none(), "missing").flatMap(shortOnly))
+                .isEqualTo(MyEither.left("missing"));
+        assertThat(MyEither.fromOption(Option.of("ok"), "missing").flatMap(shortOnly))
+                .isEqualTo(MyEither.right("ok"));
+        assertThat(MyEither.fromOption(Option.of("long"), "missing").flatMap(shortOnly))
+                .isEqualTo(MyEither.left("too long: long"));
+    }
 
     @Test
     void add20ToSmaller() {
@@ -101,7 +119,16 @@ class OptionalIntT<M /*extends Monad*/> {
     }
 }
 
-class MyEither<L, R> /*implements AnyM<R>*/ {
+/**
+ * The spike's Either, completed as an {@link AnyM}. The left type is fixed by the witness, which is how a type with
+ * two parameters becomes a monad in its right-hand parameter.
+ */
+final class MyEither<L, R> implements AnyM<MyEither.Witness<L>, R> {
+    static final class Witness<L> {
+        private Witness() {
+        }
+    }
+
     private final Either<L, R> either;
 
     private MyEither(final Either<L, R> either) {
@@ -116,27 +143,48 @@ class MyEither<L, R> /*implements AnyM<R>*/ {
         return new MyEither<>(Either.right(r));
     }
 
-    OptionalIntT<Either<L, R>> flatMapT(final Function<? super R, OptionalInt> f) {
-        if (either.isLeft()) {
-            return new OptionalIntT<>(OptionalInt.empty(), either);
-        } else {
-            final OptionalInt result = f.apply(either.get());
-            return new OptionalIntT<>(result, either);
-        }
+    /**
+     * A natural transformation from Option: the way to move between monads, since flatMap cannot.
+     */
+    static <L, R> MyEither<L, R> fromOption(final Option<R> option, final L ifNone) {
+        return option.map(MyEither::<L, R>right).getOrElse(() -> left(ifNone));
     }
 
-//    @Override
-//    public <U> AnyM<U> map(final Function<R, U> f) {
-//        if (either.isRight())
-//            return right(f.apply(either.get()));
-//        return left(either.swap().get());
-//    }
+    static <L, R> MyEither<L, R> narrow(final AnyM<Witness<L>, R> m) {
+        return (MyEither<L, R>) m;
+    }
 
-//    @Override
-//    public <U, M extends AnyM<U>> M flatMap(final Function<R, M> f) {
-//        if (either.isRight())
-//            return f.apply(either.get());
-//        return M.empty(left(either.swap().get()));
-//    }
+    @Override
+    public <U> MyEither<L, U> unit(final U value) {
+        return right(value);
+    }
+
+    @Override
+    public <U> MyEither<L, U> flatMap(final Function<? super R, ? extends AnyM<Witness<L>, U>> f) {
+        return either.fold(MyEither::left, r -> narrow(f.apply(r)));
+    }
+
+    @Override
+    public <U> MyEither<L, U> map(final Function<? super R, ? extends U> f) {
+        return narrow(AnyM.super.map(f));
+    }
+
+    OptionalIntT<Either<L, R>> flatMapT(final Function<? super R, OptionalInt> f) {
+        return new OptionalIntT<>(either.fold(l -> OptionalInt.empty(), f::apply), either);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        return o instanceof MyEither && either.equals(((MyEither<?, ?>) o).either);
+    }
+
+    @Override
+    public int hashCode() {
+        return either.hashCode();
+    }
+
+    @Override
+    public java.lang.String toString() {
+        return "My" + either;
+    }
 }
-

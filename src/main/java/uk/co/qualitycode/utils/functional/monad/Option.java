@@ -5,12 +5,22 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Option is an facade over the Vavr Option that supplies {@link #bind(Function)} and {@link #lift(BiFunction, Option, Option)}.
  * See http://en.wikipedia.org/wiki/Option_type
  * {@see http://en.wikipedia.org/wiki/Monad_(functional_programming)}
  */
-public final class Option<T> {
+public final class Option<T> implements AnyM<Option.Witness, T> {
+    /**
+     * Identifies Option as an {@link AnyM}.
+     */
+    public static final class Witness {
+        private Witness() {
+        }
+    }
+
     private final io.vavr.control.Option<T> t;
 
     private Option(final io.vavr.control.Option<T> t) {
@@ -73,7 +83,50 @@ public final class Option<T> {
      * @return an Option containing the result of the function <tt>f</tt> or empty
      */
     public <U> Option<U> bind(final Function<T, Option<U>> f) {
-        return t.map(f).getOrElse(Option::none);
+        return flatMap(f);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Like {@link #of(Object)}, a null value gives none, so the monad laws hold for non-null values.
+     */
+    @Override
+    public <U> Option<U> unit(final U value) {
+        return of(value);
+    }
+
+    @Override
+    public <U> Option<U> flatMap(final Function<? super T, ? extends AnyM<Witness, U>> f) {
+        requireNonNull(f, "f must not be null");
+        return t.<Option<U>>map(value -> narrow(f.apply(value))).getOrElse(Option::none);
+    }
+
+    @Override
+    public <U> Option<U> map(final Function<? super T, ? extends U> f) {
+        return narrow(AnyM.super.map(f));
+    }
+
+    @Override
+    public <U> Option<U> ap(final AnyM<Witness, ? extends Function<? super T, ? extends U>> mf) {
+        return narrow(AnyM.super.ap(mf));
+    }
+
+    @Override
+    public <U, R> Option<R> zipWith(final AnyM<Witness, U> other, final BiFunction<? super T, ? super U, ? extends R> f) {
+        return narrow(AnyM.super.zipWith(other, f));
+    }
+
+    /**
+     * Recover the concrete type of an Option viewed as an {@link AnyM}. Safe because only Option uses
+     * {@link Witness}.
+     *
+     * @param m   an Option viewed as an AnyM
+     * @param <T> the contained type
+     * @return the same Option
+     */
+    public static <T> Option<T> narrow(final AnyM<Witness, T> m) {
+        return (Option<T>) requireNonNull(m, "m must not be null");
     }
 
     /**
@@ -89,7 +142,7 @@ public final class Option<T> {
      * @return an Option containing the result of the lifted function as applied to <tt>o1</tt> and <tt>o2</tt> or empty
      */
     public static <A, B, C> Option<C> lift(final BiFunction<A, B, C> f, final Option<A> o1, final Option<B> o2) {
-        return of(o1.t.flatMap(a -> o2.t.flatMap(b -> io.vavr.control.Option.of(f.apply(a, b)))));
+        return o1.zipWith(o2, f);
     }
 
     /**
@@ -107,6 +160,6 @@ public final class Option<T> {
 
     @Override
     public java.lang.String toString() {
-        return t.isDefined() ? "Some(" + t.get() + ")" : "None";
+        return t.map(value -> "Some(" + value + ")").getOrElse("None");
     }
 }

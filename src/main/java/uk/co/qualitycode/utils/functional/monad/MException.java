@@ -9,7 +9,15 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class MException<U> {
+public final class MException<U> implements AnyM<MException.Witness, U> {
+    /**
+     * Identifies MException as an {@link AnyM}.
+     */
+    public static final class Witness {
+        private Witness() {
+        }
+    }
+
     /**
      * Evaluated at most once, on first use, and safely published between threads (vavr's Lazy is thread-safe).
      * A null result is a legitimate value and is remembered like any other.
@@ -26,17 +34,77 @@ public final class MException<U> {
         return new MException<>(Lazy.of(() -> evaluate(f)));
     }
 
+    /**
+     * An MException holding a successfully computed value: the monad's {@code pure}, usable as {@code MException::of}
+     * wherever an {@link AnyM.Pure} is needed.
+     *
+     * @param value the value
+     * @param <B>   the type of the value
+     * @return a successful MException
+     */
+    public static <B> MException<B> of(final B value) {
+        return toMException(() -> value);
+    }
+
     public <B> MException<B> bind(final Function<U, MException<B>> f) {
+        return flatMap(f);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The value is held as an already-successful computation.
+     */
+    @Override
+    public <B> MException<B> unit(final B value) {
+        return of(value);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * A failure short-circuits; an exception thrown by {@code f} becomes a failure of the result.
+     */
+    @Override
+    public <B> MException<B> flatMap(final Function<? super U, ? extends AnyM<Witness, B>> f) {
         if (f == null) throw new IllegalArgumentException("f");
         return outcome.get().<MException<B>>fold(
                 MException::failed,
                 value -> {
                     try {
-                        return f.apply(value);
+                        return narrow(f.apply(value));
                     } catch (final RuntimeException ex) {
                         return failed(new Tuple2<>(ex, new Throwable().getStackTrace()));
                     }
                 });
+    }
+
+    @Override
+    public <B> MException<B> map(final Function<? super U, ? extends B> f) {
+        return narrow(AnyM.super.map(f));
+    }
+
+    @Override
+    public <B> MException<B> ap(final AnyM<Witness, ? extends Function<? super U, ? extends B>> mf) {
+        return narrow(AnyM.super.ap(mf));
+    }
+
+    @Override
+    public <B, R> MException<R> zipWith(final AnyM<Witness, B> other, final BiFunction<? super U, ? super B, ? extends R> f) {
+        return narrow(AnyM.super.zipWith(other, f));
+    }
+
+    /**
+     * Recover the concrete type of an MException viewed as an {@link AnyM}. Safe because only MException uses
+     * {@link Witness}.
+     *
+     * @param m   an MException viewed as an AnyM
+     * @param <T> the type of the value
+     * @return the same MException
+     */
+    public static <T> MException<T> narrow(final AnyM<Witness, T> m) {
+        if (m == null) throw new IllegalArgumentException("m");
+        return (MException<T>) m;
     }
 
     public static <A, B, C> MException<C> lift(final BiFunction<A, B, C> f, final MException<A> a, final MException<B> b) {
