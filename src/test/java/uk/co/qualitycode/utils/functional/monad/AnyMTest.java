@@ -1,14 +1,6 @@
 package uk.co.qualitycode.utils.functional.monad;
 
-import io.vavr.Function1;
-import io.vavr.Function2;
-import io.vavr.Function3;
-import io.vavr.collection.HashMap;
-import io.vavr.collection.Map;
 import io.vavr.control.Either;
-import io.vavr.control.Option;
-import io.vavr.control.Try;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -19,29 +11,10 @@ import java.util.OptionalInt;
 import java.util.function.Function;
 import java.util.function.IntConsumer;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AnyMTest {
-
-    interface AnyM<T> {
-        <U> AnyM<U> map(final Function<T, U> f);
-
-        <U, M extends AnyM<U>> M flatMap(final Function<T, M> f);
-    }
-
-    @Test
-    @Disabled("This test doesn't work yet - the types aren't matching")
-    public void test() {
-        final Map<java.lang.String, java.lang.String> map = HashMap.of("key", "value");
-        final MyOption<java.lang.String> vvv = $(map.get("vvv"));
-//        final MyEither<Integer, String> strings = vvv.flatMap(s -> s.length() < 3 ? MyEither.right(s) : MyEither.left(s.length()));
-    }
-
-    private MyOption<java.lang.String> $(final Option<java.lang.String> a) {
-        return MyOption.of(a);
-    }
 
     private final Function<java.lang.String, MyEither<Exception, Integer>> intValue = s -> {
         try {
@@ -96,61 +69,6 @@ class AnyMTest {
         return is;
     }
 
-    @Test
-    void tryIt() {
-        final Try<Boolean> booleans = Try.of(() -> {
-            System.out.println("First try");
-//            throw new RuntimeException();
-            return true;
-        }).onFailure(h -> System.out.println("First failure")).
-                flatMap(i -> Try.of(() -> {
-                    throw new RuntimeException();
-//                    return true;
-                }).onFailure(j -> System.out.println("fn1 failure"))).
-                flatMap(k -> Try.of(() -> true).onFailure(l -> System.out.println("second onFailure")));
-    }
-
-    @Test
-    void currying() {
-        final Function2<Integer, Integer, Integer> sum = Integer::sum;
-        final Function1<Integer, Function1<Integer, Integer>> curriedSum = sum.curried();
-
-        final Function3<java.lang.String, Integer, Double, java.lang.String> fn3 = (a, b, c) -> Integer.toString(Integer.parseInt(a) + b + c.intValue());
-        final Function1<java.lang.String, Function1<Integer, Function1<Double, java.lang.String>>> curriedFn3 = fn3.curried();
-    }
-}
-
-class MyOption<T> /*implements AnyM<T> */ {
-    private final T t;
-
-    public MyOption(final T t) {
-        this.t = requireNonNull(t, "t must not be null");
-    }
-
-    public MyOption() {
-        t = null;
-    }
-
-    public static <T> MyOption<T> of(final Option<T> o) {
-        return o.isDefined() ? new MyOption<>(o.get()) : MyOption.empty();
-    }
-
-    private static <T> MyOption<T> empty() {
-        return new MyOption<>();
-    }
-
-    //    @Override
-    public <U> MyOption<U> map(final Function<T, U> f) {
-        if (isNull(t)) return MyOption.empty();
-        final U result = f.apply(t);
-        return result == null ? MyOption.empty() : new MyOption<>(result);
-    }
-
-//    @Override
-//    public <U, M extends AnyM<U>> M flatMap(final Function<T, M> f) {
-//        if (isNull(t)) return M.empty();
-//        return f.apply(t);
-//    }
 }
 
 class OptionalIntT<M /*extends Monad*/> {

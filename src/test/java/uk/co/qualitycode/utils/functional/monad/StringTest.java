@@ -306,26 +306,19 @@ class StringTest {
     @Nested
     class Filter {
         @Test
-        void withFunction() {
+        void keepsTheValueWhenThePredicateHolds() {
             assertThat(NonBlankString.of("jhj").filter(Objects::nonNull)).isEqualTo(NonBlankString.of("jhj"));
         }
 
         @Test
-        void withPredicate() {
-            assertThat(NonBlankString.of("jhj").filter(Objects::nonNull)).isEqualTo(NonBlankString.of("jhj"));
+        void hasNoValueWhenThePredicateFails() {
+            assertThat(NonBlankString.of("jhj").filter(value -> false).hasValue()).isFalse();
         }
 
         @Test
-        void throwsWithFunction() {
+        void rejectsANullPredicate() {
             assertThatNullPointerException()
-                    .isThrownBy(() -> assertThat(NonBlankString.of("jkh").filter(null)))
-                    .withMessage("predicate must not be null");
-        }
-
-        @Test
-        void throwsWithPredicate() {
-            assertThatNullPointerException()
-                    .isThrownBy(() -> assertThat(NonBlankString.of("jkh").filter(null)))
+                    .isThrownBy(() -> NonBlankString.of("jkh").filter(null))
                     .withMessage("predicate must not be null");
         }
     }

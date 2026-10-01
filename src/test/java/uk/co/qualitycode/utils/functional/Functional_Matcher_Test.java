@@ -19,7 +19,7 @@ class Functional_Matcher_Test {
                 .isThrownBy(() -> findMatch(new Object()).from(null).orElse(mock(Function.class)))
                 .withMessage("findMatch(A).from(Matches<A,B>).orElse(Function<A,B>): cases must not be null");
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> findMatch(new Object()).from(mock(Functional.Matcher.Matches.class)).orElse(null))
+                .isThrownBy(() -> findMatch(new Object()).from(matchers(matcher(o -> true, Function.identity()))).orElse(null))
                 .withMessage("findMatch(A).from(Matches<A,B>).orElse(Function<A,B>): defaultCase must not be null");
 
         assertThatIllegalArgumentException()
@@ -50,5 +50,34 @@ class Functional_Matcher_Test {
                                 matcher(Functional.greaterThan(10), Functional.constant(1))))
                         .orElse(Functional.constant(0)))
                 .isEqualTo(0);
+    }
+
+    @Test
+    void theFirstMatchingCaseWins() {
+        assertThat(
+                findMatch(10)
+                        .from(matchers(
+                                matcher(Functional.greaterThan(5), Functional.constant("first")),
+                                matcher(Functional.greaterThan(1), Functional.constant("second"))))
+                        .orElse(Functional.constant("none")))
+                .isEqualTo("first");
+    }
+
+    @Test
+    void casesCanBeReusedAcrossMatches() {
+        final Functional.Matcher.Matches<Integer, Integer> signum = matchers(
+                matcher(Functional.lessThan(0), Functional.constant(-1)),
+                matcher(Functional.greaterThan(0), Functional.constant(1)));
+
+        assertThat(findMatch(-7).from(signum).orElse(Functional.constant(0))).isEqualTo(-1);
+        assertThat(findMatch(7).from(signum).orElse(Functional.constant(0))).isEqualTo(1);
+        assertThat(findMatch(0).from(signum).orElse(Functional.constant(0))).isZero();
+    }
+
+    @Test
+    void matchesRejectsNullCases() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> Functional.Matcher.Matches.of(null))
+                .withMessage("Matches.of(Iterable<Match<A,B>>): it must not be null");
     }
 }

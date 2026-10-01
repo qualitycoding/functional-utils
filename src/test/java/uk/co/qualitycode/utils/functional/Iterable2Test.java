@@ -453,12 +453,9 @@ class Iterable2Test {
     @Test
     void joinTest1() {
         final String expected = "3,6,9,12,15";
-        {
-            final Iterable2<Integer> ids = Iterable2.init(triplingGenerator, 5);
-            assertThat(Functional.join(",", ids.map(Functional.stringify()))).isEqualTo(expected);
-        }
-        final Iterable2<Integer> ids = Iterable2.init(triplingGenerator, 5);
-        assertThat(")).isEqualTo(expected, ids.join(");
+
+        assertThat(Functional.join(",", Iterable2.init(triplingGenerator, 5).map(Functional.stringify()))).isEqualTo(expected);
+        assertThat(Iterable2.init(triplingGenerator, 5).join(",")).isEqualTo(expected);
     }
 
     @Test

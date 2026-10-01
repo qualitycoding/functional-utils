@@ -19,7 +19,7 @@ import static java.util.Objects.requireNonNull;
  * @param <L>
  * @param <R>
  */
-public final class IOr<L, R> implements Comparable<IOr<L, R>> {
+public final class IOr<L, R> {
     private final io.vavr.control.Option<L> left;
     private final io.vavr.control.Option<R> right;
 
@@ -104,13 +104,6 @@ public final class IOr<L, R> implements Comparable<IOr<L, R>> {
     }
 
     @Override
-    public int compareTo(final IOr<L, R> that) {
-        requireNonNull(that, "that must not be null");
-
-        return IOr.compareTo(this, that);
-    }
-
-    @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -158,20 +151,4 @@ public final class IOr<L, R> implements Comparable<IOr<L, R>> {
     public boolean hasBoth() {
         return hasValue() && hasLeft();
     }
-
-    @SuppressWarnings("unchecked")
-    private static <U1 extends Comparable<? super U1>, U2 extends Comparable<? super U2>> int compareTo(final IOr<?, ?> o1, final IOr<?, ?> o2) {
-//        final IOr<U1, U2> t1 = (IOr<U1, U2>) o1;
-//        final IOr<U1, U2> t2 = (IOr<U1, U2>) o2;
-//
-//        final int check1 = t1.left.map(l1 -> l1.compareTo(t2.left.getOrElseThrow(() -> new RuntimeException()))).getOrElseThrow(() -> new RuntimeException());
-//        if (check1 != 0) return check1;
-//
-//        final int check2 = t1.right.map(r1 -> r1.compareTo(t2.right.getOrElseThrow(() -> new RuntimeException()))).getOrElseThrow(() -> new RuntimeException());
-//        if (check2 != 0) return check2;
-
-        // all components are equal
-        return 0;
-    }
-
 }

@@ -783,7 +783,7 @@ public final class Functional {
     /**
      * A Comparator that encapsulates {link=sorter} above
      */
-    public static Comparator<Integer> sorter = Functional::sorter;
+    public static final Comparator<Integer> sorter = Functional::sorter;
 
     /**
      * A wrapper around <tt>toString()</tt>
@@ -3380,162 +3380,23 @@ public final class Functional {
             B orElse(Function<A, B> defaultCase);
         }
 
-        public interface Matches<A, B> extends Iterable2<Match<A, B>> {
-            static <A, B> Matches<A, B> of(final java.lang.Iterable<Match<A, B>> it) {
-                if (it instanceof Matches) return (Matches<A, B>) it;
-                return new Matches<A, B>() {
-                    private final Iterable2<Match<A, B>> i = Iterable2.of(it);
+        /**
+         * An ordered set of cases for {@link #findMatch(Object)}. The first case whose predicate holds wins.
+         */
+        public static final class Matches<A, B> {
+            private final io.vavr.collection.List<Match<A, B>> cases;
 
-                    @Override
-                    public Iterator<Match<A, B>> iterator() {
-                        return null;
-                    }
+            private Matches(final io.vavr.collection.List<Match<A, B>> cases) {
+                this.cases = cases;
+            }
 
-                    @Override
-                    public Iterable2<Match<A, B>> filter(final Predicate<? super Match<A, B>> f) {
-                        return null;
-                    }
+            public static <A, B> Matches<A, B> of(final java.lang.Iterable<Match<A, B>> it) {
+                notNull(it, "Matches.of(Iterable<Match<A,B>>)", "it");
+                return new Matches<>(io.vavr.collection.List.ofAll(it));
+            }
 
-                    @Override
-                    public <U> Iterable2<U> map(final Function<? super Match<A, B>, ? extends U> f) {
-                        return null;
-                    }
-
-                    @Override
-                    public <U> Iterable2<U> mapi(final BiFunction<Integer, Match<A, B>, ? extends U> f) {
-                        return null;
-                    }
-
-                    @Override
-                    public <U> Iterable2<U> choose(final Function<? super Match<A, B>, Option<U>> f) {
-                        return null;
-                    }
-
-                    @Override
-                    public boolean exists(final Predicate<? super Match<A, B>> f) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean forAll(final Predicate<? super Match<A, B>> f) {
-                        return false;
-                    }
-
-                    @Override
-                    public <U> boolean forAll2(final BiPredicate<? super U, ? super Match<A, B>> f, final Iterable<U> input1) {
-                        return false;
-                    }
-
-                    @Override
-                    public <U> U fold(final BiFunction<? super U, ? super Match<A, B>, ? extends U> f, final U seed) {
-                        return null;
-                    }
-
-                    @Override
-                    public <K, V> Map<K, V> toDictionary(final Function<? super Match<A, B>, ? extends K> keyFn, final Function<? super Match<A, B>, ? extends V> valueFn) {
-                        return null;
-                    }
-
-                    @Override
-                    public Match<A, B> last() {
-                        return null;
-                    }
-
-                    @Override
-                    public Iterable2<Match<A, B>> sortWith(final Comparator<Match<A, B>> f) {
-                        return null;
-                    }
-
-                    @Override
-                    public Iterable2<Match<A, B>> concat(final Iterable2<Match<A, B>> list2) {
-                        return null;
-                    }
-
-                    @Override
-                    public Option<Match<A, B>> find(final Predicate<? super Match<A, B>> f) {
-                        return i.find(f);
-                    }
-
-                    @Override
-                    public int findIndex(final Predicate<? super Match<A, B>> f) {
-                        return 0;
-                    }
-
-                    @Override
-                    public <U> Option<U> pick(final Function<? super Match<A, B>, Option<U>> f) {
-                        return null;
-                    }
-
-                    @Override
-                    public <U> Iterable2<U> collect(final Function<? super Match<A, B>, ? extends Iterable<U>> f) {
-                        return null;
-                    }
-
-                    @Override
-                    public Iterable2<Match<A, B>> take(final int howMany) {
-                        return null;
-                    }
-
-                    @Override
-                    public Iterable2<Match<A, B>> takeWhile(final Predicate<? super Match<A, B>> f) {
-                        return null;
-                    }
-
-                    @Override
-                    public Iterable2<Match<A, B>> skip(final int howMany) {
-                        return null;
-                    }
-
-                    @Override
-                    public Iterable2<Match<A, B>> skipWhile(final Predicate<? super Match<A, B>> f) {
-                        return null;
-                    }
-
-                    @Override
-                    public String join(final String delimiter) {
-                        return null;
-                    }
-
-                    @Override
-                    public Option<Match<A, B>> findLast(final Predicate<Match<A, B>> f) {
-                        return null;
-                    }
-
-                    @Override
-                    public Tuple2<List<Match<A, B>>, List<Match<A, B>>> partition(final Predicate<? super Match<A, B>> f) {
-                        return null;
-                    }
-
-                    @Override
-                    public <U> Iterable2<Tuple2<Match<A, B>, U>> zip(final Iterable2<? extends U> l2) {
-                        return null;
-                    }
-
-                    @Override
-                    public <U, V> Iterable2<Tuple3<Match<A, B>, U, V>> zip3(final Iterable<? extends U> l2, final Iterable<? extends V> l3) {
-                        return null;
-                    }
-
-                    @Override
-                    public <U> U in(final Function<Iterable2<Match<A, B>>, U> f) {
-                        return null;
-                    }
-
-                    @Override
-                    public <U> Map<U, List<Match<A, B>>> groupBy(final Function<? super Match<A, B>, ? extends U> keyFn) {
-                        return null;
-                    }
-
-                    @Override
-                    public List<Match<A, B>> toList() {
-                        return null;
-                    }
-
-                    @Override
-                    public java.util.Set<Match<A, B>> toSet() {
-                        return null;
-                    }
-                };
+            Option<Match<A, B>> find(final Predicate<? super Match<A, B>> f) {
+                return Option.of(cases.find(f));
             }
         }
 

@@ -1,9 +1,6 @@
 package uk.co.qualitycode.utils.functional.primitive.integer;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.ListIterator;
 
 public final class IntList implements IntIterable {
     private final int[] backingStore;
@@ -43,9 +40,8 @@ public final class IntList implements IntIterable {
     }
 
     public boolean contains(final int i) {
-        return Arrays.binarySearch(backingStore, i) >= 0;
+        return Arrays.stream(backingStore).anyMatch(element -> element == i);
     }
-
 
     public IntIterator iterator() {
         return new IntIteratorImpl(backingStore);
@@ -55,85 +51,22 @@ public final class IntList implements IntIterable {
         return Arrays.copyOf(backingStore, backingStore.length);
     }
 
+    /**
+     * Follows the contract of {@link java.util.Collection#toArray(Object[])}: the elements are boxed into
+     * {@code a} if it is large enough, otherwise into a new array of the same runtime type.
+     */
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(final T[] a) {
-        if (a.length < backingStore.length) {
-            // Make a new array of a's runtime type, but my contents:
-            final Integer[] temp = new Integer[backingStore.length];
-            for (int i = 0; i < backingStore.length; ++i) temp[i] = backingStore[i];
-            return (T[]) Arrays.copyOf(temp, backingStore.length, a.getClass());
-        }
-        System.arraycopy(backingStore, 0, a, 0, backingStore.length);
-        if (a.length > backingStore.length)
-            a[backingStore.length] = null;
+        final Integer[] boxed = Arrays.stream(backingStore).boxed().toArray(Integer[]::new);
+        if (a.length < boxed.length)
+            return (T[]) Arrays.copyOf(boxed, boxed.length, a.getClass());
+        System.arraycopy(boxed, 0, a, 0, boxed.length);
+        if (a.length > boxed.length)
+            a[boxed.length] = null;
         return a;
-    }
-
-    public boolean add(final int integer) {
-        return false;
-    }
-
-//    public boolean remove(Object o) {
-//        return false;
-//    }
-
-    public boolean containsAll(final Collection<?> c) {
-        return false;
-    }
-
-    public boolean addAll(final Collection<? extends Integer> c) {
-        return false;
-    }
-
-    public boolean addAll(final int index, final Collection<? extends Integer> c) {
-        return false;
-    }
-
-    public boolean removeAll(final Collection<?> c) {
-        throw new UnsupportedOperationException();
-    }
-
-    public boolean retainAll(final Collection<?> c) {
-        return false;
-    }
-
-    public void clear() {
-        throw new UnsupportedOperationException();
     }
 
     public int get(final int index) {
         return backingStore[index];
-    }
-
-    public int set(final int index, final int element) {
-        throw new UnsupportedOperationException();
-    }
-
-    public void add(final int index, final int element) {
-
-    }
-
-    public Integer remove(final int index) {
-        throw new UnsupportedOperationException();
-    }
-
-    public int indexOf(final Object o) {
-        return 0;
-    }
-
-    public int lastIndexOf(final Object o) {
-        return 0;
-    }
-
-    public ListIterator<Integer> listIterator() {
-        return null;
-    }
-
-    public ListIterator<Integer> listIterator(final int index) {
-        return null;
-    }
-
-    public List<Integer> subList(final int fromIndex, final int toIndex) {
-        return null;
     }
 }
