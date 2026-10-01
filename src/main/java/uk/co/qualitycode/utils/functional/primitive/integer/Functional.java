@@ -1936,6 +1936,63 @@ public final class Functional {
             });
         }
 
+        /**
+         * Lazily split a sequence into the elements that satisfy the predicate and those that do not, preserving order.
+         * The int counterpart of the generic {@code Lazy.partition(Predicate<T>, Iterable<T>)}: both halves draw on a
+         * single traversal of {@code input}, the predicate is evaluated exactly once per element, and elements for
+         * the other half wait, unboxed, until that half asks for them.
+         *
+         * @param predicate decides which half each element belongs to
+         * @param input     the sequence to split
+         * @return the elements satisfying the predicate, and the remaining elements
+         */
+        public static Tuple2<IntIterable, IntIterable> partition(final Predicate_int predicate, final IntIterable input) {
+            final String op = "Lazy.partition(Predicate_int,IntIterable)";
+            requireArgument(predicate, op, "predicate");
+            requireArgument(input, op, "input");
+            final IntPartitioner partitioner = new IntPartitioner(predicate, input);
+            return new Tuple2<>(partitioner.half(true, op), partitioner.half(false, op));
+        }
+
+        public static Function<IntIterable, Tuple2<IntIterable, IntIterable>> partition(final Predicate_int predicate) {
+            requireArgument(predicate, "Lazy.partition(Predicate_int)", "predicate");
+            return input -> partition(predicate, input);
+        }
+
+        /**
+         * The shared state behind a lazy int partition: one traversal of the input and a queue for each half.
+         */
+        private static final class IntPartitioner {
+            private final Predicate_int predicate;
+            private final IntIterable input;
+            private final LazyIntSequences.IntQueue matching = new LazyIntSequences.IntQueue();
+            private final LazyIntSequences.IntQueue rest = new LazyIntSequences.IntQueue();
+            private IntIterator source;
+
+            IntPartitioner(final Predicate_int predicate, final IntIterable input) {
+                this.predicate = predicate;
+                this.input = input;
+            }
+
+            private boolean fill(final LazyIntSequences.IntQueue wanted) {
+                if (source == null) source = input.iterator();
+                while (wanted.isEmpty() && source.hasNext()) {
+                    final int element = source.next();
+                    (predicate.test(element) ? matching : rest).add(element);
+                }
+                return !wanted.isEmpty();
+            }
+
+            IntIterable half(final boolean matchingHalf, final String op) {
+                final LazyIntSequences.IntQueue queue = matchingHalf ? matching : rest;
+                return LazyIntSequences.of(op, () -> sink -> {
+                    if (!fill(queue)) return false;
+                    sink.accept(queue.remove());
+                    return true;
+                });
+            }
+        }
+
         private static LazyIntSequences.IntSource concatenation(final IntIterator first, final IntIterator second) {
             return sink -> {
                 final IntIterator current = first.hasNext() ? first : second;

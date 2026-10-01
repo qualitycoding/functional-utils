@@ -64,6 +64,40 @@ final class LazyIntSequences {
     }
 
     /**
+     * A first-in, first-out queue of unboxed ints: a ring buffer that doubles when full.
+     */
+    static final class IntQueue {
+        private int[] items = new int[8];
+        private int head;
+        private int size;
+
+        boolean isEmpty() {
+            return size == 0;
+        }
+
+        void add(final int value) {
+            if (size == items.length) grow();
+            items[(head + size) % items.length] = value;
+            size++;
+        }
+
+        int remove() {
+            if (size == 0) throw new NoSuchElementException("IntQueue is empty");
+            final int value = items[head];
+            head = (head + 1) % items.length;
+            size--;
+            return value;
+        }
+
+        private void grow() {
+            final int[] larger = new int[items.length * 2];
+            for (int i = 0; i < size; i++) larger[i] = items[(head + i) % items.length];
+            items = larger;
+            head = 0;
+        }
+    }
+
+    /**
      * Buffers one element so that {@code hasNext()} can be answered without advancing.
      */
     private static final class LookaheadIntIterator implements IntIterator {

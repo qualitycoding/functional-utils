@@ -258,6 +258,95 @@ class FunctionalLazyTest {
     }
 
     @Nested
+    class PartitionMatchingHalf extends IntSequenceContract {
+        @Override
+        protected IntIterable sequence() {
+            return Functional.Lazy.partition(x -> x % 2 == 0, ints(1, 2, 3, 4, 5, 6))._1();
+        }
+
+        @Override
+        protected int[] expected() {
+            return new int[]{2, 4, 6};
+        }
+
+        @Override
+        protected String operation() {
+            return "Lazy.partition(Predicate_int,IntIterable)";
+        }
+    }
+
+    @Nested
+    class PartitionRemainingHalf extends IntSequenceContract {
+        @Override
+        protected IntIterable sequence() {
+            return Functional.Lazy.partition(x -> x % 2 == 0, ints(1, 2, 3, 4, 5, 6))._2();
+        }
+
+        @Override
+        protected int[] expected() {
+            return new int[]{1, 3, 5};
+        }
+
+        @Override
+        protected String operation() {
+            return "Lazy.partition(Predicate_int,IntIterable)";
+        }
+    }
+
+    @Nested
+    class Partition {
+        @Test
+        void halvesMayBeConsumedAlternately() {
+            final io.vavr.Tuple2<IntIterable, IntIterable> halves = Functional.Lazy.partition(x -> x % 2 == 0, ints(1, 2, 3, 4, 5, 6));
+            final IntIterator evens = halves._1().iterator();
+            final IntIterator odds = halves._2().iterator();
+
+            assertThat(new int[]{odds.next(), evens.next(), evens.next(), odds.next(), odds.next(), evens.next()})
+                    .containsExactly(1, 2, 4, 3, 5, 6);
+        }
+
+        @Test
+        void evaluatesThePredicateOncePerElement() {
+            final AtomicInteger evaluations = new AtomicInteger();
+            final io.vavr.Tuple2<IntIterable, IntIterable> halves =
+                    Functional.Lazy.partition(x -> evaluations.incrementAndGet() > 0 && x % 2 == 0, ints(1, 2, 3, 4, 5, 6));
+
+            drained(halves._2());
+            drained(halves._1());
+
+            assertThat(evaluations).hasValue(6);
+        }
+
+        @Test
+        void buffersTheOtherHalfWhileOneIsConsumed() {
+            // 1,000 multiples of three are read first, so the other half's 2,000 elements wait in its buffer
+            final io.vavr.Tuple2<IntIterable, IntIterable> halves = Functional.Lazy.partition(x -> x % 3 == 0, Functional.Lazy.init(i -> i, 4_000));
+
+            assertThat(drained(Functional.Lazy.take(1_000, halves._1()))).hasSize(1_000).startsWith(3, 6, 9).endsWith(3_000);
+            assertThat(drained(Functional.Lazy.take(5, halves._2()))).containsExactly(1, 2, 4, 5, 7);
+        }
+
+        @Test
+        void readsAnInfiniteInputOnlyAsFarAsNeeded() {
+            assertThat(drained(Functional.Lazy.take(3, Functional.Lazy.partition(x -> x % 2 == 0, Functional.Lazy.init(i -> i))._1())))
+                    .containsExactly(2, 4, 6);
+        }
+
+        @Test
+        void curriedFormAppliesLater() {
+            assertThat(drained(Functional.Lazy.partition((Predicate_int) x -> x > 1).apply(ints(1, 2, 3))._1())).containsExactly(2, 3);
+        }
+
+        @Test
+        void rejectsNullArguments() {
+            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.partition(x -> true, null))
+                    .withMessage("Lazy.partition(Predicate_int,IntIterable): input must not be null");
+            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.partition((Predicate_int) null, ints(1)))
+                    .withMessage("Lazy.partition(Predicate_int,IntIterable): predicate must not be null");
+        }
+    }
+
+    @Nested
     class Laziness {
         @Test
         void computesNothingUntilIterated() {

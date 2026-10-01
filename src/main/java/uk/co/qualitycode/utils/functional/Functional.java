@@ -2804,6 +2804,90 @@ public final class Functional {
         }
 
         /**
+         * Lazily split a sequence into the elements that satisfy the predicate and those that do not, preserving order.
+         * <p>
+         * Both halves draw on a single traversal of {@code input}, which starts only when either half is first
+         * iterated. The predicate is evaluated exactly once per element, in input order. An element destined for the
+         * other half is held until that half asks for it, so consuming only one half buffers the other half's
+         * elements. Infinite inputs work, provided the half being consumed keeps receiving elements.
+         * <p>
+         * Like the other lazy sequences, each half may be iterated only once.
+         *
+         * @param predicate decides which half each element belongs to
+         * @param input     the sequence to split
+         * @param <T>       the type of the elements
+         * @return the elements satisfying the predicate, and the remaining elements
+         */
+        public static <T> Tuple2<Iterable<T>, Iterable<T>> partition(final Predicate<? super T> predicate, final Iterable<T> input) {
+            final String op = "Lazy.partition(Predicate<T>,Iterable<T>)";
+            notNull(predicate, op, "predicate");
+            notNull(input, op, "input");
+            final Partitioner<T> partitioner = new Partitioner<>(predicate, input);
+            return new Tuple2<>(partitioner.half(true, op), partitioner.half(false, op));
+        }
+
+        public static <T> Function<Iterable<T>, Tuple2<Iterable<T>, Iterable<T>>> partition(final Predicate<? super T> predicate) {
+            notNull(predicate, "Lazy.partition(Predicate<T>)", "predicate");
+            return input -> partition(predicate, input);
+        }
+
+        /**
+         * The shared state behind a lazy partition: one traversal of the input, and a queue of elements for each half
+         * that have been read but not yet consumed. LinkedList, not ArrayDeque, because elements may be null.
+         */
+        private static final class Partitioner<T> {
+            private final Predicate<? super T> predicate;
+            private final Iterable<T> input;
+            private final java.util.LinkedList<T> matching = new java.util.LinkedList<>();
+            private final java.util.LinkedList<T> rest = new java.util.LinkedList<>();
+            private Iterator<T> source;
+
+            Partitioner(final Predicate<? super T> predicate, final Iterable<T> input) {
+                this.predicate = predicate;
+                this.input = input;
+            }
+
+            /**
+             * Read from the input until the requested half has an element waiting, or the input is exhausted.
+             */
+            private boolean fill(final boolean wantMatching) {
+                if (source == null) source = input.iterator();
+                final java.util.LinkedList<T> wanted = wantMatching ? matching : rest;
+                while (wanted.isEmpty() && source.hasNext()) {
+                    final T element = source.next();
+                    (predicate.test(element) ? matching : rest).add(element);
+                }
+                return !wanted.isEmpty();
+            }
+
+            Iterable<T> half(final boolean matchingHalf, final String op) {
+                final AtomicBoolean haveCreatedIterator = new AtomicBoolean(false);
+                return () -> {
+                    if (!haveCreatedIterator.compareAndSet(false, true))
+                        throw new UnsupportedOperationException(op + ": this Iterable does not allow multiple Iterators");
+                    return new Iterator<T>() {
+                        @Override
+                        public boolean hasNext() {
+                            return fill(matchingHalf);
+                        }
+
+                        @Override
+                        public T next() {
+                            if (!fill(matchingHalf))
+                                throw new NoSuchElementException(op + ": cannot seek beyond the end of the sequence");
+                            return (matchingHalf ? matching : rest).removeFirst();
+                        }
+
+                        @Override
+                        public void remove() {
+                            throw new UnsupportedOperationException(op + ": it is not possible to remove elements from this sequence");
+                        }
+                    };
+                };
+            }
+        }
+
+        /**
          * This sequence generator returns a list of Range objects which split the interval [1-'howManyElements') into 'howManyPartitions' Range objects.
          * If the interval cannot be divided exactly then the remainder is allocated evenly across the first
          * 'howManyElements' % 'howManyPartitions' Range objects.
