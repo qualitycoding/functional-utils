@@ -1103,78 +1103,6 @@ public final class Functional {
     }
 
     /**
-     * The converse of the Convolution operator
-     * See <a href="http://en.wikipedia.org/wiki/Zip_(higher-order_function)">Zip</a>
-     *
-     * @param input sequence of pairs
-     * @param <A>   the type of the first element in the pair
-     * @param <B>   the type of the second element in the pair
-     * @return pair of lists; the first element from each of the two output sequences is the first pair in the input sequence and so on,
-     * in order.
-     * @throws java.lang.IllegalArgumentException if the input sequence is null
-     */
-    public static <A, B> Tuple2<List<A>, List<B>> unzip(final Iterable<Tuple2<A, B>> input) {
-        if (input == null)
-            throw new IllegalArgumentException("Functional.unzip(Iterable<Tuple2<A,B>>): input must not be null");
-
-        final List<A> l1;
-        final List<B> l2;
-        if (input instanceof Collection<?>) {
-            final int size = ((Collection) input).size();
-            l1 = new ArrayList<>(size);
-            l2 = new ArrayList<>(size);
-        } else {
-            l1 = new ArrayList<>();
-            l2 = new ArrayList<>();
-        }
-        for (final Tuple2<A, B> pair : input) {
-            l1.add(pair._1());
-            l2.add(pair._2());
-        }
-
-        return new Tuple2<>(Collections.unmodifiableList(l1), Collections.unmodifiableList(l2));
-    }
-
-    /**
-     * The converse of the Convolution operator
-     * See <a href="http://en.wikipedia.org/wiki/Zip_(higher-order_function)">Zip</a>
-     *
-     * @param input sequence of triplets
-     * @param <A>   the type of the first element in the triplet
-     * @param <B>   the type of the second element in the triplet
-     * @param <C>   the type of the third element in the triplet
-     * @return triplet of lists; the first element from each of the output sequences is the first triplet in the input sequence and so on,
-     * in order.
-     * @throws java.lang.IllegalArgumentException if the input sequence is null
-     */
-    public static <A, B, C> Tuple3<List<A>, List<B>, List<C>> unzip3(final Iterable<Tuple3<A, B, C>> input) {
-        if (input == null)
-            throw new IllegalArgumentException("Functional.unzip(Iterable<Tuple2<A,B>>): input must not be null");
-
-        final List<A> l1;
-        final List<B> l2;
-        final List<C> l3;
-        if (input instanceof Collection<?>) {
-            final int size = ((Collection) input).size();
-            l1 = new ArrayList<>(size);
-            l2 = new ArrayList<>(size);
-            l3 = new ArrayList<>(size);
-        } else {
-            l1 = new ArrayList<>();
-            l2 = new ArrayList<>();
-            l3 = new ArrayList<>();
-        }
-
-        for (final Tuple3<A, B, C> triplet : input) {
-            l1.add(triplet._1());
-            l2.add(triplet._2());
-            l3.add(triplet._3());
-        }
-
-        return new Tuple3<>(Collections.unmodifiableList(l1), Collections.unmodifiableList(l2), Collections.unmodifiableList(l3));
-    }
-
-    /**
      * See <a href="http://en.wikipedia.org/wiki/Map_(higher-order_function)">Map</a>
      * This is a 1-to-1 transformation. Every element in the input sequence will be transformed into a sequence of output elements.
      * These sequences are concatenated into one final output sequence at the end of the transformation.
@@ -1420,5 +1348,225 @@ public final class Functional {
         Arrays.fill(ints, constant);
 
         return new IntList(ints);
+    }
+
+    // ---------------------------------------------------------------------------------------------------------------
+    // int specialisations of the remaining reference-container operations. Inputs are traversed exactly once.
+    // ---------------------------------------------------------------------------------------------------------------
+
+    /**
+     * The leading elements for which the predicate holds. The int analogue of the generic
+     * {@code takeWhile(Predicate<T>, Iterable<T>)}.
+     *
+     * @param predicate evaluated in order, up to and including the first element for which it fails
+     * @param input     the sequence
+     * @return the longest prefix of {@code input} satisfying the predicate
+     */
+    public static IntList takeWhile(final Predicate_int predicate, final IntIterable input) {
+        notNull(predicate, "takeWhile(Predicate_int,IntIterable)", "predicate");
+        final int[] values = toArray(notNull(input, "takeWhile(Predicate_int,IntIterable)", "input"));
+        return new IntList(values, indexOfFirstFailure(predicate, values));
+    }
+
+    /**
+     * The elements remaining after the leading elements for which the predicate holds have been dropped. The int
+     * analogue of the generic {@code skipWhile(Predicate<T>, Iterable<T>)}.
+     *
+     * @param predicate evaluated in order, up to and including the first element for which it fails
+     * @param input     the sequence
+     * @return {@code input} from the first element for which the predicate fails
+     */
+    public static IntList skipWhile(final Predicate_int predicate, final IntIterable input) {
+        notNull(predicate, "skipWhile(Predicate_int,IntIterable)", "predicate");
+        final int[] values = toArray(notNull(input, "skipWhile(Predicate_int,IntIterable)", "input"));
+        return new IntList(Arrays.copyOfRange(values, indexOfFirstFailure(predicate, values), values.length));
+    }
+
+    /**
+     * Group the elements by key, preserving their order within each group. The int analogue of the generic
+     * {@code groupBy(Function<T,U>, Iterable<T>)}.
+     *
+     * @param keyFn the key for each element
+     * @param input the sequence
+     * @param <U>   the type of the key
+     * @return an unmodifiable map from each key to its elements
+     */
+    public static <U> Map<U, IntList> groupBy(final Func_int_T<? extends U> keyFn, final IntIterable input) {
+        notNull(keyFn, "groupBy(Func_int_T<U>,IntIterable)", "keyFn");
+        final int[] values = toArray(notNull(input, "groupBy(Func_int_T<U>,IntIterable)", "input"));
+        return Collections.unmodifiableMap(io.vavr.collection.List.ofAll(values)
+                .<U>groupBy(keyFn::apply)
+                .mapValues(group -> new IntList(group.toJavaStream().mapToInt(Integer::intValue).toArray()))
+                .toJavaMap());
+    }
+
+    /**
+     * Generate a sequence from a seed: emit {@code value(state)}, then move to {@code next(state)}, until
+     * {@code finished(state)} holds. The int analogue of the generic {@code unfold}; state and values stay unboxed.
+     *
+     * @param value    the element emitted for each state
+     * @param next     the state that follows each state
+     * @param finished true for the first state that must not emit a value
+     * @param seed     the initial state
+     * @return the generated sequence
+     */
+    public static IntList unfold(final Func_int_int value, final Func_int_int next, final Predicate_int finished, final int seed) {
+        notNull(value, "unfold(Func_int_int,Func_int_int,Predicate_int,int)", "value");
+        notNull(next, "unfold(Func_int_int,Func_int_int,Predicate_int,int)", "next");
+        notNull(finished, "unfold(Func_int_int,Func_int_int,Predicate_int,int)", "finished");
+        return new IntList(io.vavr.collection.Iterator.iterate(seed, next::apply)
+                .takeWhile(state -> !finished.test(state))
+                .toJavaStream()
+                .mapToInt(value::apply)
+                .toArray());
+    }
+
+    /**
+     * Pair up the elements of two sequences of equal length. The int analogue of the generic
+     * {@code zip(Iterable<A>, Iterable<B>)}.
+     *
+     * @param input1 the first elements of each pair
+     * @param input2 the second elements of each pair
+     * @return the pairs, in order
+     * @throws IllegalArgumentException if the sequences differ in length
+     */
+    public static List<Tuple2<Integer, Integer>> zip(final IntIterable input1, final IntIterable input2) {
+        final int[] as = toArray(notNull(input1, "zip(IntIterable,IntIterable)", "input1"));
+        final int[] bs = toArray(notNull(input2, "zip(IntIterable,IntIterable)", "input2"));
+        if (as.length != bs.length)
+            throw new IllegalArgumentException("Functional.zip(IntIterable,IntIterable): cannot zip sequences of different lengths");
+        return unmodifiable(java.util.stream.IntStream.range(0, as.length).mapToObj(i -> new Tuple2<>(as[i], bs[i])));
+    }
+
+    /**
+     * Combine the elements of three sequences of equal length into triples. The int analogue of the generic
+     * {@code zip3}.
+     *
+     * @throws IllegalArgumentException if the sequences differ in length
+     */
+    public static List<Tuple3<Integer, Integer, Integer>> zip3(final IntIterable input1, final IntIterable input2, final IntIterable input3) {
+        final int[] as = toArray(notNull(input1, "zip3(IntIterable,IntIterable,IntIterable)", "input1"));
+        final int[] bs = toArray(notNull(input2, "zip3(IntIterable,IntIterable,IntIterable)", "input2"));
+        final int[] cs = toArray(notNull(input3, "zip3(IntIterable,IntIterable,IntIterable)", "input3"));
+        if (as.length != bs.length || bs.length != cs.length)
+            throw new IllegalArgumentException("Functional.zip3(IntIterable,IntIterable,IntIterable): cannot zip sequences of different lengths");
+        return unmodifiable(java.util.stream.IntStream.range(0, as.length).mapToObj(i -> new Tuple3<>(as[i], bs[i], cs[i])));
+    }
+
+    /**
+     * Separate pairs into two sequences. The int analogue of the generic {@code unzip}.
+     *
+     * @param input the pairs; must not contain nulls
+     * @return the first and second elements of each pair, in order
+     */
+    public static Tuple2<IntList, IntList> unzip(final Iterable<Tuple2<Integer, Integer>> input) {
+        final io.vavr.collection.List<Tuple2<Integer, Integer>> pairs =
+                io.vavr.collection.List.ofAll(notNull(input, "unzip(Iterable<Tuple2<Integer,Integer>>)", "input"));
+        return new Tuple2<>(intList(pairs.map(Tuple2::_1)), intList(pairs.map(Tuple2::_2)));
+    }
+
+    /**
+     * Separate triples into three sequences. The int analogue of the generic {@code unzip3}.
+     *
+     * @param input the triples; must not contain nulls
+     * @return the first, second and third elements of each triple, in order
+     */
+    public static Tuple3<IntList, IntList, IntList> unzip3(final Iterable<Tuple3<Integer, Integer, Integer>> input) {
+        final io.vavr.collection.List<Tuple3<Integer, Integer, Integer>> triples =
+                io.vavr.collection.List.ofAll(notNull(input, "unzip3(Iterable<Tuple3<Integer,Integer,Integer>>)", "input"));
+        return new Tuple3<>(intList(triples.map(Tuple3::_1)), intList(triples.map(Tuple3::_2)), intList(triples.map(Tuple3::_3)));
+    }
+
+    /**
+     * Map each element to a sequence and concatenate the results. The int analogue of the generic {@code flatMap}.
+     *
+     * @param f     the sequence for each element
+     * @param input the sequence
+     * @return the concatenation of the sequences, in order
+     */
+    public static IntList flatMap(final Func_int_T<? extends IntIterable> f, final IntIterable input) {
+        notNull(f, "flatMap(Func_int_T<IntIterable>,IntIterable)", "f");
+        return new IntList(ints(notNull(input, "flatMap(Func_int_T<IntIterable>,IntIterable)", "input"))
+                .flatMap(i -> ints(f.apply(i)))
+                .toArray());
+    }
+
+    /**
+     * Fold over the sequence while choosing elements. The int analogue of the generic {@code foldAndChoose}.
+     *
+     * @param f            given the state and an element, the next state and, optionally, an element to choose
+     * @param initialValue the initial state
+     * @param input        the sequence
+     * @param <A>          the type of the state
+     * @return the final state and the chosen elements, in order
+     */
+    public static <A> Tuple2<A, IntList> foldAndChoose(final Func2_T_int_T<A, Tuple2<A, Option_int>> f, final A initialValue, final IntIterable input) {
+        notNull(f, "foldAndChoose(Func2_T_int_T<A,Tuple2<A,Option_int>>,A,IntIterable)", "f");
+        final Tuple2<A, io.vavr.collection.List<Integer>> result = io.vavr.collection.List.ofAll(
+                toArray(notNull(input, "foldAndChoose(Func2_T_int_T<A,Tuple2<A,Option_int>>,A,IntIterable)", "input")))
+                .foldLeft(new Tuple2<>(initialValue, io.vavr.collection.List.<Integer>empty()), (state, element) -> {
+                    final Tuple2<A, Option_int> next = f.apply(state._1, element);
+                    return new Tuple2<>(next._1, next._2.isSome() ? state._2.prepend(next._2.get()) : state._2);
+                });
+        return new Tuple2<>(result._1, intList(result._2.reverse()));
+    }
+
+    /**
+     * Sort the sequence with a comparison function. The sort is stable. The int analogue of the generic
+     * {@code sortWith(Comparator<A>, Iterable<A>)}.
+     *
+     * @param comparator negative, zero or positive as the first argument orders before, with or after the second
+     * @param input      the sequence
+     * @return the sorted sequence
+     */
+    public static IntList sortWith(final Func2_int_int_int comparator, final IntIterable input) {
+        notNull(comparator, "sortWith(Func2_int_int_int,IntIterable)", "comparator");
+        return new IntList(ints(notNull(input, "sortWith(Func2_int_int_int,IntIterable)", "input"))
+                .boxed()
+                .sorted(comparator::apply)
+                .mapToInt(Integer::intValue)
+                .toArray());
+    }
+
+    private static java.util.stream.IntStream ints(final IntIterable input) {
+        final IntIterator iterator = input.iterator();
+        final java.util.PrimitiveIterator.OfInt adapted = new java.util.PrimitiveIterator.OfInt() {
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public int nextInt() {
+                return iterator.next();
+            }
+        };
+        return java.util.stream.StreamSupport.intStream(
+                java.util.Spliterators.spliteratorUnknownSize(adapted, java.util.Spliterator.ORDERED), false);
+    }
+
+    private static int[] toArray(final IntIterable input) {
+        return input instanceof IntList ? ((IntList) input).toArray() : ints(input).toArray();
+    }
+
+    private static int indexOfFirstFailure(final Predicate_int predicate, final int[] values) {
+        return java.util.stream.IntStream.range(0, values.length)
+                .filter(i -> !predicate.test(values[i]))
+                .findFirst()
+                .orElse(values.length);
+    }
+
+    private static IntList intList(final io.vavr.collection.Seq<Integer> values) {
+        return new IntList(values.toJavaStream().mapToInt(Integer::intValue).toArray());
+    }
+
+    private static <T> List<T> unmodifiable(final java.util.stream.Stream<T> values) {
+        return Collections.unmodifiableList(values.collect(java.util.stream.Collectors.toList()));
+    }
+
+    private static <T> T notNull(final T t, final String functionName, final String parameterName) {
+        if (t == null)
+            throw new IllegalArgumentException("Functional." + functionName + ": " + parameterName + " must not be null");
+        return t;
     }
 }

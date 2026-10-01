@@ -189,18 +189,6 @@ class FunctionalOperationsTest {
             assertThat(Functional.zip3(Arrays.asList(1, 2), Arrays.asList("a", "b"), Arrays.asList(true, false)))
                     .containsExactly(new Tuple3<>(1, "a", true), new Tuple3<>(2, "b", false));
         }
-
-        @Test
-        void unzipSeparatesPairs() {
-            assertThat(Functional.unzip(Arrays.asList(new Tuple2<>(1, "a"), new Tuple2<>(2, "b"))))
-                    .isEqualTo(new Tuple2<>(Arrays.asList(1, 2), Arrays.asList("a", "b")));
-        }
-
-        @Test
-        void unzip3SeparatesTriples() {
-            assertThat(Functional.unzip3(Arrays.asList(new Tuple3<>(1, "a", true), new Tuple3<>(2, "b", false))))
-                    .isEqualTo(new Tuple3<>(Arrays.asList(1, 2), Arrays.asList("a", "b"), Arrays.asList(true, false)));
-        }
     }
 
     @Nested
