@@ -1,14 +1,15 @@
 package uk.co.qualitycode.utils.functional.monad;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import uk.co.qualitycode.utils.functional.Functional;
 import uk.co.qualitycode.utils.functional.Iterable2;
 
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
 import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -41,55 +42,40 @@ class MExceptionTest {
         assertThat(mex.read()).isEqualTo(Integer.valueOf(10));
     }
 
-    @Test
-    void returnWithFuncTest1() {
-        for (int i = 0; i < 10; ++i) {
-            final int ii = i;
-            final Supplier<Integer> f = () -> ii;
-            final MException<Integer> mex = MException.toMException(f);
-            assertThat(mex.hasException()).isFalse();
-            assertThat(mex.read()).isEqualTo(ii);
-        }
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 5, 9})
+    void returnWithFuncTest1(final int value) {
+        final MException<Integer> mex = MException.toMException(() -> value);
+
+        assertThat(mex.hasException()).isFalse();
+        assertThat(mex.read()).isEqualTo(value);
     }
 
     private static final Function<Integer, Integer> doublingGenerator = a -> 2 * a;
 
     @Test
     void returnWithFuncTest2() {
-        final Iterable2<Integer> it = Iterable2.init(doublingGenerator, 10);
-        final java.util.List<MException<Integer>> l = it.map(
-                ii -> {
-                    final Supplier<Integer> f = () -> {
-                        if (ii == 8 || ii == 10 || ii == 16) throw new IllegalArgumentException("value");
-                        return ii;
-                    };
-                    return MException.toMException(f);
-                }).toList();
-        assertThat(l).hasSize(10);
-        for (int i = 1; i <= 10; ++i)
-            if (i != 4 && i != 5 && i != 8) assertThat(l.get(i - 1).hasException()).isFalse();
-            else assertThat(l.get(i - 1).hasException()).isTrue();
+        final java.util.List<MException<Integer>> l = Iterable2.init(doublingGenerator, 10).map(
+                ii -> MException.toMException(() -> {
+                    if (ii == 8 || ii == 10 || ii == 16) throw new IllegalArgumentException("value");
+                    return ii;
+                })).toList();
+
+        assertThat(Functional.map(MException::hasException, l))
+                .containsExactly(false, false, false, true, true, false, false, true, false, false);
     }
 
     @Test
     void bindTest1() {
-        final java.util.List<MException<Integer>> l = new ArrayList<>();
-        for (int i = 1; i < 4; ++i) {
-            final int ii = i;
-            final MException<Integer> m = MException.toMException(() -> ii);
+        // i / j for i in 1..3 and j in -i..i; dividing by zero fails once for each i.
+        final java.util.List<MException<Integer>> l = IntStream.rangeClosed(1, 3).boxed()
+                .flatMap(i -> IntStream.rangeClosed(-i, i).mapToObj(
+                        j -> MException.toMException(() -> i).bind(integer -> MException.toMException(() -> integer / j))))
+                .collect(Collectors.toList());
 
-            for (int j = -i; j <= i; ++j) {
-                final Integer jj = j;
-                final MException<Integer> m1 = m.bind(integer -> MException.toMException(() -> integer / jj));
-                l.add(m1);
-            }
-        }
-
-        final java.util.List<MException<Integer>> l1 = Functional.filter(m -> !m.hasException(), l);
-
-        assertThat(Functional.forAll(MException::hasException, l1)).isFalse();
-
-        assertThat(Iterable2.of(l).filter(MException::hasException).toList()).hasSize(3);
+        assertThat(l).filteredOn(MException::hasException).hasSize(3);
+        assertThat(l).filteredOn(m -> !m.hasException()).extracting(MException::read)
+                .containsExactly(-1, 1, -1, -2, 2, 1, -1, -1, -3, 3, 1, 1);
     }
 
     @Test

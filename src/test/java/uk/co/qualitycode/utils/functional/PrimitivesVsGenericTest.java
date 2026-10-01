@@ -1,139 +1,45 @@
 package uk.co.qualitycode.utils.functional;
 
-import org.junit.jupiter.api.Test;
-import uk.co.qualitycode.utils.functional.assertions.OptionAssert;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import uk.co.qualitycode.utils.functional.monad.Option;
-import uk.co.qualitycode.utils.functional.primitive.integer.IntList;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import java.util.function.Predicate;
 
-import static java.lang.Math.pow;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.co.qualitycode.utils.functional.FunctionalTest.doublingGenerator;
 import static uk.co.qualitycode.utils.functional.FunctionalTest.doublingGenerator_f;
 
+/**
+ * The primitive int implementations must agree with the generic ones.
+ */
 class PrimitivesVsGenericTest {
-    private static final double oneMillion = pow(10, 6);
+    @ParameterizedTest
+    @ValueSource(ints = {1, 1_000, 100_000})
+    void primitiveAndGenericJoinAgree(final int howMany) {
+        final String expected = String.join("", Collections.nCopies(howMany, "10"));
 
-    @Test
-    void integerListVsPrimitiveListToString() {
-        for (final int howMany : new int[]{1000, 10000, 100000, 1000000, 10000000}) {
-            System.out.println("Testing stringify with " + howMany + " elements");
-            final String s1, s2, s3;
-            {
-                final long beforeInitialisation = System.nanoTime();
+        final String primitive = uk.co.qualitycode.utils.functional.primitive.integer.Functional.join(
+                "", uk.co.qualitycode.utils.functional.primitive.integer.Functional.init(10, howMany));
+        final String generic = Functional.join("", Functional.init(Functional.constant(10), howMany));
 
-                final int[] ints = new int[howMany];
-                Arrays.fill(ints, 10);
-
-                final long beforeTransformation = System.nanoTime();
-
-                final StringBuilder builder = new StringBuilder();
-                for (final int i : ints)
-                    builder.append(i);
-
-                s1 = builder.toString();
-
-                final long afterTransformation = System.nanoTime();
-                System.out.println("Primitive array initialisation time " + (beforeTransformation - beforeInitialisation) / oneMillion + " ms");
-                System.out.println("Primitive array transformation took " + (afterTransformation - beforeTransformation) / oneMillion + " ms");
-            }
-
-            {
-                final long beforeInitialisation = System.nanoTime();
-
-                final IntList ints_l = uk.co.qualitycode.utils.functional.primitive.integer.Functional.init(10, howMany);
-
-                final long beforeTransformation = System.nanoTime();
-
-                s2 = uk.co.qualitycode.utils.functional.primitive.integer.Functional.join("", ints_l);
-
-                final long afterTransformation = System.nanoTime();
-                System.out.println("Primitive list initialisation time " + (beforeTransformation - beforeInitialisation) / oneMillion + " ms");
-                System.out.println("Primitive list transformation took " + (afterTransformation - beforeTransformation) / oneMillion + " ms");
-            }
-
-            {
-                final long beforeInitialisation = System.nanoTime();
-
-                final List<Integer> ints = Functional.init(Functional.constant(10), howMany);
-
-                final long beforeTransformation = System.nanoTime();
-
-                s3 = Functional.join("", ints);
-
-                final long afterTransformation = System.nanoTime();
-                System.out.println("Integer list initialisation time " + (beforeTransformation - beforeInitialisation) / oneMillion + " ms");
-                System.out.println("Integer list transformation took " + (afterTransformation - beforeTransformation) / oneMillion + " ms");
-            }
-
-            assertThat(s2).isEqualTo(s1);
-            assertThat(s3).isEqualTo(s1);
-            System.out.println("-----------------");
-        }
+        assertThat(primitive).isEqualTo(expected);
+        assertThat(generic).isEqualTo(expected);
     }
 
-    @Test
-    void primitiveVsGenericFindLast() {
-        for (final int howMany : new int[]{1000, 10000, 100000, 1000000, 10000000}) {
-            System.out.println("Testing findLast with " + howMany + " elements");
-            int s1 = Integer.MIN_VALUE;
-            final int s2;
-            final Option<Integer> s3;
-            {
-                final long beforeInitialisation = System.nanoTime();
+    @ParameterizedTest(name = "the last of 2, 4, ... {0}*2 below {0}/2 is {1}")
+    @CsvSource({"10, 4", "1000, 498", "100000, 49998"})
+    void primitiveAndGenericFindLastAgree(final int howMany, final int expected) {
+        final Predicate<Integer> belowHalf = a -> a < howMany / 2;
 
-                final int[] ints = new int[howMany];
-                for (int i = 0; i < howMany; ++i)
-                    ints[i] = i * 2;
+        final int primitive = uk.co.qualitycode.utils.functional.primitive.integer.Functional.findLast(
+                a -> a < howMany / 2,
+                uk.co.qualitycode.utils.functional.primitive.integer.Functional.init(doublingGenerator_f, howMany));
+        final Option<Integer> generic = Functional.findLast(belowHalf, Functional.init(doublingGenerator, howMany));
 
-                final long beforeTransformation = System.nanoTime();
-
-                for (int i = ints.length - 1; i >= 0; --i)
-                    if (ints[i] < (howMany / 2)) {
-                        s1 = ints[i];
-                        break;
-                    }
-
-                final long afterTransformation = System.nanoTime();
-                System.out.println("Primitive array initialisation time " + (beforeTransformation - beforeInitialisation) / oneMillion + " ms");
-                System.out.println("Primitive array transformation took " + (afterTransformation - beforeTransformation) / oneMillion + " ms");
-            }
-
-            {
-                final long beforeInitialisation = System.nanoTime();
-
-                final IntList ints = uk.co.qualitycode.utils.functional.primitive.integer.Functional.init(doublingGenerator_f, howMany);
-
-                final long beforeTransformation = System.nanoTime();
-
-                s2 = uk.co.qualitycode.utils.functional.primitive.integer.Functional.findLast(a -> a < howMany / 2, ints);
-
-                final long afterTransformation = System.nanoTime();
-                System.out.println("Primitive list initialisation time " + (beforeTransformation - beforeInitialisation) / oneMillion + " ms");
-                System.out.println("Primitive list transformation took " + (afterTransformation - beforeTransformation) / oneMillion + " ms");
-            }
-
-            {
-                final long beforeInitialisation = System.nanoTime();
-
-                final List<Integer> ints = Functional.init(doublingGenerator, howMany);
-
-                final long beforeTransformation = System.nanoTime();
-
-                final Predicate<Integer> f = a -> a < howMany / 2;
-                s3 = Functional.findLast(f, ints);
-
-                final long afterTransformation = System.nanoTime();
-                System.out.println("Generic list initialisation time " + (beforeTransformation - beforeInitialisation) / oneMillion + " ms");
-                System.out.println("Generic list transformation took " + (afterTransformation - beforeTransformation) / oneMillion + " ms");
-            }
-
-            assertThat(s2).isEqualTo(s1);
-            OptionAssert.assertThat(s3).hasValue(s1);
-            System.out.println("-----------------");
-        }
+        assertThat(primitive).isEqualTo(expected);
+        assertThat(generic).isEqualTo(Option.of(expected));
     }
 }

@@ -3365,15 +3365,22 @@ public final class Functional {
          * @param cases       sequence of Match objects
          * @param defaultCase function to be evaluated if none of the Cases are true
          * @param <A>         the type of the element passed to the predicate in the {@link Match}
-         * @param <B>         the type of the result
          * @return the result of the appropriate Match or the result of the 'defaultCase' function
          */
-        public static <A, B> WithMatches<A, B> findMatch(final A input) {
-            return cases -> defaultCase -> switchBetween(input, cases, defaultCase);
+        public static <A> WithMatches<A> findMatch(final A input) {
+            return new WithMatches<A>() {
+                @Override
+                public <B> WithDefaultCase<A, B> from(final Matches<A, B> cases) {
+                    return defaultCase -> switchBetween(input, cases, defaultCase);
+                }
+            };
         }
 
-        public interface WithMatches<A, B> {
-            WithDefaultCase<A, B> from(Matches<A, B> cases);
+        /**
+         * The result type B is fixed by the cases, so a typed set of {@link Matches} can be reused without a type witness.
+         */
+        public interface WithMatches<A> {
+            <B> WithDefaultCase<A, B> from(Matches<A, B> cases);
         }
 
         public interface WithDefaultCase<A, B> {

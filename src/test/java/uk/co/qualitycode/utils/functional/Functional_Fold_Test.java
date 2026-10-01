@@ -6,19 +6,16 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import uk.co.qualitycode.utils.functional.monad.Option;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.function.BiFunction;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.Functional.join;
 import static uk.co.qualitycode.utils.functional.FunctionalTest.doublingGenerator;
-import static uk.co.qualitycode.utils.functional.FunctionalTest.triplingGenerator;
 
 class Functional_Fold_Test {
 
@@ -108,34 +105,19 @@ class Functional_Fold_Test {
 
     @Test
     void foldAndChoose() {
-        final Collection<Integer> openedDays = Functional.init(triplingGenerator, 5);
+        // Days 3, 6, 9, 12, 15: even days carry a price (day / 2); odd days are missing and are chosen.
+        final Collection<FunctionalTest.myInt> openedDays = Functional.init(a -> new FunctionalTest.myInt(3 * a), 5);
 
-        final Hashtable<Integer, Double> missingPricesPerDate = new Hashtable<>();
-        Double previous = 10.0;
-        for (final int day : openedDays) {
-            final Option<Double> value = isEven(day) ? Option.of((double) (day / 2)) : Option.none();
-            if (value.isSome())
-                previous = value.get();
-            else
-                missingPricesPerDate.put(day, previous);
-        }
-
-        final Collection<FunctionalTest.myInt> openedDays2 = Functional.init(
-                a -> new FunctionalTest.myInt(3 * a), 5);
         final Tuple2<Double, List<FunctionalTest.myInt>> output = Functional.foldAndChoose(
-                (state, day) -> {
-                    final Double value = day.i() % 2 == 0 ? (Double) ((double) (day.i() / 2)) : null;
-                    return value != null
-                            ? new Tuple2<>(value, Option.none())
-                            : new Tuple2<>(state, Option.of(day));
-                }, 10.0, openedDays2);
+                (lastPrice, day) -> day.i() % 2 == 0
+                        ? new Tuple2<>((double) (day.i() / 2), Option.none())
+                        : new Tuple2<>(lastPrice, Option.of(day)),
+                10.0, openedDays);
 
-        assertThat(output._1()).isEqualTo(previous);
-        final List<Integer> keys = new ArrayList<>(missingPricesPerDate.keySet());
-        Collections.sort(keys);
-        assertThat(Functional.map(FunctionalTest.myInt::i, output._2())).containsExactlyElementsOf(keys);
-//        assertThatExceptionOfType(UnsupportedOperationException.class)
-//                .isThrownBy(()->output._2().add(new FunctionalTest.myInt(0)));
+        assertThat(output._1()).isEqualTo(6.0);
+        assertThat(Functional.map(FunctionalTest.myInt::i, output._2())).containsExactly(3, 9, 15);
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(() -> output._2().add(new FunctionalTest.myInt(0)));
     }
 
     @Nested

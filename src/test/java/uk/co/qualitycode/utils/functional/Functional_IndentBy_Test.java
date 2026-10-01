@@ -45,23 +45,12 @@ class Functional_IndentBy_Test {
 
     @Test
     void indentTest1() {
-        final int level = 5;
-        final String expectedResult = "     ";
+        final String expected = "     ";
+        final Collection<String> indentation = init(integer -> " ", 5);
 
-        String indentedName = "";
-        for (int i = 0; i < level; ++i) {
-            indentedName += " ";
-        }
-        assertThat(expectedResult).isEqualTo(indentedName);
-
-        final Collection<String> indentation = init(integer -> " ", level);
-        assertThat("     ").isEqualTo(join("", indentation));
-
-        final String s = fold((state, str) -> state + str, "", indentation);
-        assertThat(expectedResult).isEqualTo(s);
-
-        final String s1 = using(indentation).in(l -> fold((state, str) -> state + str, "", l));
-        assertThat(expectedResult).isEqualTo(s1);
+        assertThat(join("", indentation)).isEqualTo(expected);
+        assertThat(fold((state, str) -> state + str, "", indentation)).isEqualTo(expected);
+        assertThat(using(indentation).in(l -> fold((state, str) -> state + str, "", l))).isEqualTo(expected);
     }
 
     @Test

@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -299,36 +297,11 @@ class Iterable2Test {
 
     @Test
     void indentTest1() {
-        final int level = 5;
-        final String expectedResult = "     ";
+        final String expected = "     ";
 
-        String indentedName = "";
-        for (int i = 0; i < level; ++i) {
-            indentedName += " ";
-        }
-        assertThat(expectedResult).isEqualTo(indentedName);
-
-        {
-            final Iterable2<String> indentation = Iterable2.init(
-                    integer -> " ", level);
-            assertThat("     ").isEqualTo(Functional.join("", indentation));
-        }
-        {
-            final Iterable2<String> indentation = Iterable2.init(
-                    integer -> " ", level);
-            final String s = indentation.fold(
-                    (state, str) -> state + str, "");
-            assertThat(expectedResult).isEqualTo(s);
-        }
-        {
-            final Iterable2<String> indentation = Iterable2.init(
-                    integer -> " ", level);
-            final Function<Iterable2<String>, String> folder =
-                    l -> l.fold((state, str) -> state + str, "");
-
-            final String s1 = indentation.in(folder);
-            assertThat(expectedResult).isEqualTo(s1);
-        }
+        assertThat(Functional.join("", Iterable2.init(integer -> " ", 5))).isEqualTo(expected);
+        assertThat(Iterable2.init(integer -> " ", 5).fold((state, str) -> state + str, "")).isEqualTo(expected);
+        assertThat(Iterable2.init(integer -> " ", 5).in(l -> l.fold((state, str) -> state + str, ""))).isEqualTo(expected);
     }
 
     @Test
@@ -423,31 +396,17 @@ class Iterable2Test {
 
     @Test
     void foldAndChooseTest1() {
-        final Map<Integer, Double> missingPricesPerDate = new Hashtable<>();
-        final Iterable2<Integer> openedDays = Iterable2.init(triplingGenerator, 5);
-        Double last = 10.0;
-        for (final int day : openedDays) {
-            final Double value = day % 2 == 0 ? (Double) ((double) (day / 2)) : null;
-            if (value != null)
-                last = value;
-            else
-                missingPricesPerDate.put(day, last);
-        }
+        // Days 3, 6, 9, 12, 15: even days carry a price (day / 2); odd days are missing and are chosen.
+        final Iterable2<myInt> openedDays = Iterable2.init(a -> new myInt(3 * a), 5);
 
-        final Iterable2<myInt> openedDays2 = Iterable2.init(
-                a -> new myInt(3 * a), 5);
         final Tuple2<Double, List<myInt>> output = Functional.foldAndChoose(
-                (state, day) -> {
-                    final Double value = day.i() % 2 == 0 ? (Double) ((double) (day.i() / 2)) : null;
-                    return value != null
-                            ? new Tuple2<>(value, Option.none())
-                            : new Tuple2<>(state, Option.of(day));
-                }, 10.0, openedDays2);
+                (lastPrice, day) -> day.i() % 2 == 0
+                        ? new Tuple2<>((double) (day.i() / 2), Option.none())
+                        : new Tuple2<>(lastPrice, Option.of(day)),
+                10.0, openedDays);
 
-        assertThat(output._1()).isEqualTo(last);
-        final List<Integer> keys = new ArrayList<>(missingPricesPerDate.keySet());
-        Collections.sort(keys);
-        assertThat(Functional.map(myInt::i, output._2())).containsExactlyElementsOf(keys);
+        assertThat(output._1()).isEqualTo(6.0);
+        assertThat(Functional.map(myInt::i, output._2())).containsExactly(3, 9, 15);
     }
 
     @Test
@@ -589,13 +548,7 @@ class Iterable2Test {
 
     @Test
     void arrayIterableTest1() {
-        final Integer[] input = new Integer[]{1, 2, 3, 4, 5};
-        final Iterable2<Integer> expected = Iterable2.asList(1, 2, 3, 4, 5);
-
-        final ArrayIterable<Integer> ait = ArrayIterable.create(input);
-        final List<Integer> output = new ArrayList<>();
-        for (final int i : ait) output.add(i);
-        assertThat(output).containsExactlyElementsOf(expected);
+        assertThat(ArrayIterable.create(new Integer[]{1, 2, 3, 4, 5})).containsExactly(1, 2, 3, 4, 5);
     }
 
 
@@ -689,12 +642,7 @@ class Iterable2Test {
 
     @Test
     void constantInitialiserTest1() {
-        final int howMany = 6;
-        final int initValue = -1;
-        final Iterable2<Integer> l = Iterable2.init(Functional.constant(initValue), howMany);
-        assertThat(l.toList()).hasSize(howMany);
-        for (final int i : Iterable2.init(Functional.constant(initValue), howMany))
-            assertThat(i).isEqualTo(initValue);
+        assertThat(Iterable2.init(Functional.constant(-1), 6).toList()).hasSize(6).containsOnly(-1);
     }
 
     /*[Test]
@@ -1058,13 +1006,7 @@ class Iterable2Test {
 
     @Test
     void emptySeqTestHasNoElements() {
-        final Iterable2<Integer> l = Iterable2.empty();
-
-        int i = 0;
-        final Iterator<Integer> it = l.iterator();
-        while (it.hasNext()) ++i;
-
-        assertThat(i).isEqualTo(0);
+        assertThat(Iterable2.<Integer>empty()).isEmpty();
     }
 
     @Test

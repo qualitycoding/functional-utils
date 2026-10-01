@@ -3,6 +3,9 @@ package uk.co.qualitycode.utils.functional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,11 +16,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class IteratorsTest {
     private static final Function<Integer, Integer> DoublingGenerator = a -> 2 * a;
@@ -64,49 +69,23 @@ class IteratorsTest {
         list.clear();
     }
 
-    @Test
-    void steppedEnumTest1() {
-        final StringBuilder sb = new StringBuilder();
-        for (final String s : Iterators.everyNth(3, list))
-            sb.append(s);
+    @ParameterizedTest
+    @MethodSource("everyNthCases")
+    void everyNthTakesEveryNthElementStartingWithTheFirst(final int step, final List<String> expected) {
+        assertThat(Iterable2.of(Iterators.everyNth(step, list)).toList()).containsExactlyElementsOf(expected);
+    }
 
-        final String expected =
-                new StringBuilder("minus one").append("one hundred").append("zero zero UFO").toString();
-        assertThat(sb.toString()).isEqualTo(expected);
+    static Stream<Arguments> everyNthCases() {
+        return Stream.of(
+                arguments(3, Arrays.asList("minus one", "one hundred", "zero zero UFO")),
+                arguments(2, Arrays.asList("minus one", "one", "ten", "zero zero UFO")),
+                arguments(1, Arrays.asList("minus one", "ninety seven", "one", "one hundred", "ten", "two", "zero zero UFO")));
     }
 
     @Test
-    void steppedEnumTest2() {
-        final StringBuilder sb = new StringBuilder();
-        for (final String s : Iterators.everyNth(2, list))
-            sb.append(s);
-
-        final String expected =
-                new StringBuilder("minus one").append("one").append("ten").append("zero zero UFO").toString();
-        assertThat(sb.toString()).isEqualTo(expected);
-    }
-
-    @Test
-    void steppedEnumTest3() {
-        final StringBuilder sb = new StringBuilder();
-        for (final String s : Iterators.everyNth(1, list))
-            sb.append(s);
-
-        final String expected =
-                new StringBuilder("minus one").append("ninety seven").append("one").append("one hundred").append("ten").append("two").
-                        append("zero zero UFO").toString();
-        assertThat(sb.toString()).isEqualTo(expected);
-    }
-
-    @Test
-    void steppedEnumTest4() {
-        final StringBuilder sb = new StringBuilder();
-        for (final String s : Iterators.everyNth(4, Iterators.reverse(list)))
-            sb.append(s);
-
-        final String expected =
-                new StringBuilder("zero zero UFO").append("one").toString();
-        assertThat(sb.toString()).isEqualTo(expected);
+    void everyNthOfAReversedList() {
+        assertThat(Iterable2.of(Iterators.everyNth(4, Iterators.reverse(list))).toList())
+                .containsExactly("zero zero UFO", "one");
     }
 
     @Test
