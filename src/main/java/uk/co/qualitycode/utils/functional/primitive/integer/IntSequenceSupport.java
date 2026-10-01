@@ -20,8 +20,8 @@ import java.util.function.Supplier;
  * </ul>
  * Every message names the operation, as the generic ones do.
  */
-final class LazyIntSequences {
-    private LazyIntSequences() {
+final class IntSequenceSupport {
+    private IntSequenceSupport() {
     }
 
     /**
