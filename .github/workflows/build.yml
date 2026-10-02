@@ -9,19 +9,31 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
           cache: maven
       - name: Build, test and measure coverage
-        run: mvn -B -ntp verify
+        run: |
+          set -o pipefail
+          mvn -B -ntp verify 2>&1 | tee build.log
+      - name: Report build errors as an annotation
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          lines = [l.rstrip() for l in open("build.log", errors="replace") if "[ERROR]" in l]
+          text = "\n".join(lines[:150]) or "No [ERROR] lines in the Maven output"
+          text = text.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+          print(f"::error title=Maven build failed::{text}")
+          PY
       - name: Upload test and coverage reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: reports
           path: |
+            build.log
             target/surefire-reports/
             target/site/jacoco/
