@@ -1,22 +1,43 @@
-name: Publish package to the Maven Central Repository
+# Publishes to Maven Central (through the Sonatype Central Portal) when a GitHub release is published.
+# The release tag sets the version: tag v3.0.0 publishes 3.0.0.
+#
+# Repository secrets required:
+#   CENTRAL_TOKEN_USERNAME, CENTRAL_TOKEN_PASSWORD  - a Central Portal user token (central.sonatype.com > Account > Generate User Token)
+#   GPG_PRIVATE_KEY                                 - ASCII-armoured private key used to sign the artefacts
+#   GPG_PASSPHRASE                                  - its passphrase
+
+name: Publish to Maven Central
+
 on:
   release:
-    types: [created]
+    types: [published]
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Set up Maven Central Repository
+      - name: Set up Java, Central credentials and the signing key
         uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
-          server-id: ossrh
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
-      - name: Publish package
-        run: mvn -B deploy
+          cache: maven
+          server-id: central
+          server-username: MAVEN_CENTRAL_USERNAME
+          server-password: MAVEN_CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+      - name: Set the version from the release tag
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          case "$version" in
+            *SNAPSHOT*|"") echo "::error::Release tag '$GITHUB_REF_NAME' is not a release version"; exit 1 ;;
+          esac
+          mvn -B -ntp org.codehaus.mojo:versions-maven-plugin:2.22.0:set -DnewVersion="$version" -DgenerateBackupPoms=false
+      - name: Build, test, sign and publish
+        run: mvn -B -ntp -P release deploy
         env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

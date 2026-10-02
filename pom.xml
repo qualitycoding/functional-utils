@@ -3,22 +3,35 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>9</version>
-    </parent>
-
     <groupId>uk.co.qualitycode</groupId>
     <artifactId>functional-utils</artifactId>
     <version>3.0-SNAPSHOT</version>
+
+    <name>functional-utils</name>
+    <description>A collection of utilities for functional programming in Java 8+</description>
+    <url>https://github.com/qualitycoding/functional-utils</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>qualitycoding</id>
+            <name>qualitycoding</name>
+            <url>https://github.com/qualitycoding</url>
+        </developer>
+    </developers>
 
     <properties>
         <!-- The published library targets Java 8; tests need Java 17 because JUnit 6 does. -->
         <java.version>1.8</java.version>
         <java.release>8</java.release>
         <java.test.release>17</java.test.release>
-        <maven.version>3.3.9</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <assertj-core.version>3.27.7</assertj-core.version>
@@ -29,9 +42,10 @@
 
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
         <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
-        <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
-        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-        <maven-release-plugin.version>3.0.0-M1</maven-release-plugin.version>
+        <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
     </properties>
 
@@ -75,42 +89,49 @@
     </build>
 
     <scm>
-        <connection>scm:git:https://github.com/rpolton/functional-utils-java.git</connection>
-        <developerConnection>scm:git:https://github.com/rpolton/functional-utils-java.git</developerConnection>
-        <url>https://github.com/rpolton/functional-utils-java</url>
+        <connection>scm:git:https://github.com/qualitycoding/functional-utils.git</connection>
+        <developerConnection>scm:git:https://github.com/qualitycoding/functional-utils.git</developerConnection>
+        <url>https://github.com/qualitycoding/functional-utils</url>
     </scm>
 
     <profiles>
+        <!--
+            Everything Maven Central requires beyond the normal build: sources and Javadoc jars, GPG signatures,
+            and upload through the Central Portal. Used by the publishing workflow (mvn -P release deploy); CI also
+            builds with it, without signing, so a release cannot be the first time these steps run.
+        -->
         <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
+            <id>release</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <version>${maven-enforcer-plugin.version}</version>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven-source-plugin.version}</version>
                         <executions>
                             <execution>
-                                <id>enforce-versions</id>
+                                <id>attach-sources</id>
                                 <goals>
-                                    <goal>enforce</goal>
+                                    <goal>jar-no-fork</goal>
                                 </goals>
-                                <configuration>
-                                    <rules>
-                                        <requireJavaVersion>
-                                            <version>${java.version}</version>
-                                        </requireJavaVersion>
-                                        <requireMavenVersion>
-                                            <version>${maven.version}</version>
-                                        </requireMavenVersion>
-                                    </rules>
-                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven-javadoc-plugin.version}</version>
+                        <configuration>
+                            <release>${java.release}</release>
+                            <doclint>none</doclint>
+                            <quiet>true</quiet>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
@@ -118,6 +139,13 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>${maven-gpg-plugin.version}</version>
+                        <configuration>
+                            <!-- Non-interactive signing in CI; the passphrase comes from MAVEN_GPG_PASSPHRASE. -->
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -128,23 +156,19 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${central-publishing-maven-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>published</waitUntil>
+                            <deploymentName>${project.artifactId} ${project.version}</deploymentName>
+                        </configuration>
+                    </plugin>
                 </plugins>
-
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-release-plugin</artifactId>
-                            <version>${maven-release-plugin.version}</version>
-                            <configuration>
-                                <autoVersionSubmodules>true</autoVersionSubmodules>
-                                <useReleaseProfile>false</useReleaseProfile>
-                                <releaseProfiles>release</releaseProfiles>
-                                <goals>deploy</goals>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
             </build>
         </profile>
     </profiles>

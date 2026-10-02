@@ -16,9 +16,34 @@ jobs:
           java-version: '21'
           cache: maven
       - name: Build, test and measure coverage
+        # With the release profile but without signing, so the sources and Javadoc jars a release needs are built here too
         run: |
           set -o pipefail
-          mvn -B -ntp verify 2>&1 | tee build.log
+          mvn -B -ntp -P release -Dgpg.skip verify 2>&1 | tee build.log
+      - name: Summarise tests and coverage
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import csv, glob, os, xml.etree.ElementTree as ET
+          totals = {"tests": 0, "failures": 0, "errors": 0, "skipped": 0}
+          for f in glob.glob("target/surefire-reports/TEST-*.xml"):
+              suite = ET.parse(f).getroot()
+              for k in totals:
+                  totals[k] += int(suite.get(k, 0))
+          lines = ["Tests: {tests} run, {failures} failed, {errors} errors, {skipped} skipped".format(**totals)]
+          if os.path.exists("target/site/jacoco/jacoco.csv"):
+              rows = list(csv.DictReader(open("target/site/jacoco/jacoco.csv")))
+              def pct(missed, covered):
+                  m = sum(int(r[missed]) for r in rows); c = sum(int(r[covered]) for r in rows)
+                  return 100.0 * c / (m + c) if m + c else 100.0
+              lines.append("Coverage: {:.1f}% lines, {:.1f}% branches".format(pct("LINE_MISSED", "LINE_COVERED"), pct("BRANCH_MISSED", "BRANCH_COVERED")))
+              below = sorted((100.0 * int(r["LINE_COVERED"]) / max(1, int(r["LINE_MISSED"]) + int(r["LINE_COVERED"])), r["PACKAGE"] + "." + r["CLASS"]) for r in rows)
+              lines += ["Least covered: " + ", ".join("{} {:.0f}%".format(name, p) for p, name in below[:8])]
+          text = "\n".join(lines)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
+              summary.write(text.replace("\n", "\n\n") + "\n")
+          print("::notice title=Tests and coverage::" + text.replace("%", "%25").replace("\n", "%0A"))
+          PY
       - name: Report build errors as an annotation
         if: failure()
         run: |
