@@ -52,7 +52,9 @@ class FunctionalOperationsTest {
 
         @Test
         void pickReturnsTheFirstSomeValue() {
-            assertThat(Functional.pick(x -> x > 4 ? Option.of("p" + x) : Option.none(), ints)).isEqualTo("p8");
+            final String picked = Functional.pick(x -> x > 4 ? Option.of("p" + x) : Option.none(), ints);
+
+            assertThat(picked).isEqualTo("p8");
         }
 
         @Test

@@ -393,24 +393,26 @@ class IOrTest {
     }
 
     @Nested
-    @Nested
     class Fold {
         @Test
         void appliesTheLeftFunctionWhenOnlyLeftIsPresent() {
-            assertThat(IOr.<Integer, java.lang.String>left(1).fold(l -> "left " + l, r -> "right " + r, (l, r) -> "both"))
-                    .isEqualTo("left 1");
+            final java.lang.String folded = IOr.<Integer, java.lang.String>left(1).fold(l -> "left " + l, r -> "right " + r, (l, r) -> "both");
+
+            assertThat(folded).isEqualTo("left 1");
         }
 
         @Test
         void appliesTheRightFunctionWhenOnlyRightIsPresent() {
-            assertThat(IOr.<Integer, java.lang.String>right("x").fold(l -> "left " + l, r -> "right " + r, (l, r) -> "both"))
-                    .isEqualTo("right x");
+            final java.lang.String folded = IOr.<Integer, java.lang.String>right("x").fold(l -> "left " + l, r -> "right " + r, (l, r) -> "both");
+
+            assertThat(folded).isEqualTo("right x");
         }
 
         @Test
         void appliesTheBothFunctionWhenBothArePresent() {
-            assertThat(IOr.both(1, "x").fold(l -> "left", r -> "right", (l, r) -> l + r))
-                    .isEqualTo("1x");
+            final java.lang.String folded = IOr.both(1, "x").fold(l -> "left", r -> "right", (l, r) -> l + r);
+
+            assertThat(folded).isEqualTo("1x");
         }
 
         @Test

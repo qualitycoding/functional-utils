@@ -50,8 +50,11 @@ class Functional_IndentBy_Test {
         final Collection<String> indentation = init(integer -> " ", 5);
 
         assertThat(join("", indentation)).isEqualTo(expected);
-        assertThat(fold((state, str) -> state + str, "", indentation)).isEqualTo(expected);
-        assertThat(using(indentation).in(l -> fold((state, str) -> state + str, "", l))).isEqualTo(expected);
+        final String folded = fold((state, str) -> state + str, "", indentation);
+        final String foldedViaUsing = using(indentation).in(l -> fold((state, str) -> state + str, "", l));
+
+        assertThat(folded).isEqualTo(expected);
+        assertThat(foldedViaUsing).isEqualTo(expected);
     }
 
     @Test

@@ -300,8 +300,11 @@ class Iterable2Test {
         final String expected = "     ";
 
         assertThat(Functional.join("", Iterable2.init(integer -> " ", 5))).isEqualTo(expected);
-        assertThat(Iterable2.init(integer -> " ", 5).fold((state, str) -> state + str, "")).isEqualTo(expected);
-        assertThat(Iterable2.init(integer -> " ", 5).in(l -> l.fold((state, str) -> state + str, ""))).isEqualTo(expected);
+        final String folded = Iterable2.init(integer -> " ", 5).fold((state, str) -> state + str, "");
+        final String foldedViaIn = Iterable2.init(integer -> " ", 5).in(l -> l.fold((state, str) -> state + str, ""));
+
+        assertThat(folded).isEqualTo(expected);
+        assertThat(foldedViaIn).isEqualTo(expected);
     }
 
     @Test
