@@ -9,17 +9,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class Functional_Unzip_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.unzip(null))
                 .withMessage("unzip(Iterable<Tuple2<A,B>>): input must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.unzip3(null))
                 .withMessage("unzip3(Iterable<Tuple3<A,B,C>>): input must not be null");
     }

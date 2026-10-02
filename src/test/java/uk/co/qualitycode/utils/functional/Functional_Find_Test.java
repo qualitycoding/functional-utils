@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static uk.co.qualitycode.utils.functional.Functional.find;
 import static uk.co.qualitycode.utils.functional.Functional.init;
@@ -18,10 +18,10 @@ class Functional_Find_Test {
     @Test
     void preconditions() {
         assertAll(
-                () -> assertThatIllegalArgumentException()
+                () -> assertThatNullPointerException()
                         .isThrownBy(() -> find(null, Collections.emptySet()))
                         .withMessage("find(Predicate<A>,Iterable<A>): f must not be null"),
-                () -> assertThatIllegalArgumentException()
+                () -> assertThatNullPointerException()
                         .isThrownBy(() -> find(x -> x.equals(new Object()), null))
                         .withMessage("find(Predicate<A>,Iterable<A>): input must not be null"));
     }

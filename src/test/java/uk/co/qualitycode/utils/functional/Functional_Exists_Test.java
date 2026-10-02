@@ -8,28 +8,28 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 
 class Functional_Exists_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.exists(null, mock(Iterable.class)))
                 .withMessage("exists(Predicate<T>,Iterable<T>): predicate must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.exists(mock(Predicate.class), (Iterable) null))
                 .withMessage("exists(Predicate<T>,Iterable<T>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.exists(null, mock(Collection.class)))
                 .withMessage("exists(Predicate<T>,Collection<T>): predicate must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.exists(mock(Predicate.class), (Collection) null))
                 .withMessage("exists(Predicate<T>,Collection<T>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.exists(null))
                 .withMessage("exists(Predicate<T>): predicate must not be null");
     }
@@ -71,10 +71,10 @@ class Functional_Exists_Test {
     class Not {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.not(null))
                     .withMessage("not(Predicate<A>): predicate must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.not2(null))
                     .withMessage("not2(BiPredicate<A,B>): predicate must not be null");
         }

@@ -10,8 +10,8 @@ import uk.co.qualitycode.utils.functional.primitive.integer.Func_int_int;
 import java.util.Optional;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static uk.co.qualitycode.utils.functional.Functional.isEven;
 import static uk.co.qualitycode.utils.functional.Functional.stringify;
@@ -27,16 +27,16 @@ class FunctionalTest {
         @Test
         void preconditions() {
             assertAll(
-                    () -> assertThatIllegalArgumentException()
+                    () -> assertThatNullPointerException()
                             .isThrownBy(() -> Functional.ConvertFlatMapOptionalToFlatMapVavrOption.convert(null))
                             .withMessage("convert(Function<T,Optional<R>>): tfm must not be null"),
-                    () -> assertThatIllegalArgumentException()
+                    () -> assertThatNullPointerException()
                             .isThrownBy(() -> Functional.ConvertFlatMapVavrOptionToFlatMapOptional.convert(null))
                             .withMessage("convert(Function<T,Option<R>>): tfm must not be null"),
-                    () -> assertThatIllegalArgumentException()
+                    () -> assertThatNullPointerException()
                             .isThrownBy(() -> Functional.ConvertFlatMapVavrOptionToFlatMapOption.convert(null))
                             .withMessage("convert(Function<T,Option<R>>): tfm must not be null"),
-                    () -> assertThatIllegalArgumentException()
+                    () -> assertThatNullPointerException()
                             .isThrownBy(() -> Functional.ConvertFlatMapOptionalToFlatMapOption.convert(null))
                             .withMessage("convert(Function<T,Optional<R>>): tfm must not be null"));
         }
@@ -129,7 +129,7 @@ class FunctionalTest {
 
     @Test
     void factoryFunctionThrowsWhenGivenNullFunction() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.$(null))
                 .withMessage("$(FunctionWithExceptionDeclaration<A,R,E>): fn must not be null");
     }

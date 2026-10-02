@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
@@ -17,7 +18,7 @@ class Functional_TakeNAndYield_Test {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.takeNAndYield(-1, mock(Iterable.class)))
                 .withMessage("takeNAndYield(int,Iterable<A>): howMany must not be negative");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.takeNAndYield(1, null))
                 .withMessage("takeNAndYield(int,Iterable<A>): input must not be null");
     }

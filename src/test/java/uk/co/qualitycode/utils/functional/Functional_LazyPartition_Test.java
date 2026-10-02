@@ -9,8 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class Functional_LazyPartition_Test {
     private static final List<Integer> ONE_TO_SIX = Arrays.asList(1, 2, 3, 4, 5, 6);
@@ -139,11 +139,11 @@ class Functional_LazyPartition_Test {
 
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.partition(null, ONE_TO_SIX))
+        assertThatNullPointerException().isThrownBy(() -> Functional.Lazy.partition(null, ONE_TO_SIX))
                 .withMessage("Lazy.partition(Predicate<T>,Iterable<T>): predicate must not be null");
-        assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.partition(Functional::isEven, (Iterable<Integer>) null))
+        assertThatNullPointerException().isThrownBy(() -> Functional.Lazy.partition(Functional::isEven, (Iterable<Integer>) null))
                 .withMessage("Lazy.partition(Predicate<T>,Iterable<T>): input must not be null");
-        assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.partition((java.util.function.Predicate<Integer>) null))
+        assertThatNullPointerException().isThrownBy(() -> Functional.Lazy.partition((java.util.function.Predicate<Integer>) null))
                 .withMessage("Lazy.partition(Predicate<T>): predicate must not be null");
     }
 }

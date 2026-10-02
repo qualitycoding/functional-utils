@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -20,7 +21,7 @@ class Functional_Init_Test {
     @Test
     void preconditions() {
         assertAll(
-                () -> assertThatIllegalArgumentException()
+                () -> assertThatNullPointerException()
                         .isThrownBy(() -> Functional.init(null, 1))
                         .withMessage("init(Function<Integer,T>,int): f must not be null"),
                 () -> assertThatIllegalArgumentException()
@@ -52,7 +53,7 @@ class Functional_Init_Test {
         @Test
         void preconditions() {
             assertAll(
-                    () -> assertThatIllegalArgumentException()
+                    () -> assertThatNullPointerException()
                             .isThrownBy(() -> Functional.Lazy.init(null, 1))
                             .withMessage("Lazy.init(Function<Integer,T>,int): f must not be null"),
                     () -> assertThatIllegalArgumentException()
@@ -97,7 +98,7 @@ class Functional_Init_Test {
     class Lazy_InfiniteInit extends InfiniteIterableTest<Function<Integer, Integer>, Integer, Integer> {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.init(null))
                     .withMessage("Lazy.init(Function<Integer,T>): f must not be null");
         }

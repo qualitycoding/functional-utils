@@ -10,28 +10,28 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 
 class Functional_TakeWhile_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.takeWhile(null, mock(Iterable.class)))
                 .withMessage("takeWhile(Predicate<T>,Iterable<T>): predicate must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.takeWhile(mock(Predicate.class), (Iterable) null))
                 .withMessage("takeWhile(Predicate<T>,Iterable<T>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.takeWhile(null, mock(List.class)))
                 .withMessage("takeWhile(Predicate<T>,List<T>): predicate must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.takeWhile(mock(Predicate.class), (List) null))
                 .withMessage("takeWhile(Predicate<T>,List<T>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.takeWhile(null))
                 .withMessage("takeWhile(Predicate<T>): predicate must not be null");
     }
@@ -92,14 +92,14 @@ class Functional_TakeWhile_Test {
     class Lazy extends FiniteIterableTest<Integer, Integer, Integer> {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.takeWhile(null, mock(Iterable.class)))
                     .withMessage("Lazy.takeWhile(Predicate<T>,Iterable<T>): predicate must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.takeWhile(mock(Predicate.class), (Iterable) null))
                     .withMessage("Lazy.takeWhile(Predicate<T>,Iterable<T>): input must not be null");
 
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.takeWhile(null))
                     .withMessage("Lazy.takeWhile(Predicate<T>): predicate must not be null");
         }

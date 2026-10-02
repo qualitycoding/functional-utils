@@ -6,17 +6,17 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 
 class Functional_SetAsymmetricDifference_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.Set.asymmetricDifference(null, mock(Set.class)))
                 .withMessage("Set.asymmetricDifference(Set<A>,Set<A>): input1 must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.Set.asymmetricDifference(mock(Set.class), null))
                 .withMessage("Set.asymmetricDifference(Set<A>,Set<A>): input2 must not be null");
     }

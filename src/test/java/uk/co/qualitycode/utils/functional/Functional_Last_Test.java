@@ -6,20 +6,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 class Functional_Last_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
             .isThrownBy(()->Functional.last((Iterable)null))
             .withMessage("last(Iterable<T>): input must not be null");
         assertThatIllegalArgumentException()
             .isThrownBy(()->Functional.last(new ArrayList<>()))
             .withMessage("last(Iterable<T>): input must not be empty");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
             .isThrownBy(()->Functional.last((Object[])null))
             .withMessage("last(T[]): input must not be null");
         assertThatIllegalArgumentException()

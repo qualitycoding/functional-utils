@@ -9,29 +9,29 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 
 class Functional_Mapi_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.mapi(null, mock(Collection.class)))
                 .withMessage("mapi(BiFunction<Integer,A,B>,Collection<A>): f must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.mapi(mock(BiFunction.class), (Collection) null))
                 .withMessage("mapi(BiFunction<Integer,A,B>,Collection<A>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.mapi(null, mock(Iterable.class)))
                 .withMessage("mapi(BiFunction<Integer,A,B>,Iterable<A>): f must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.mapi(mock(BiFunction.class), (Iterable) null))
                 .withMessage("mapi(BiFunction<Integer,A,B>,Iterable<A>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.mapi(null))
                 .withMessage("mapi(BiFunction<Integer,A,B>): f must not be null");
     }
@@ -72,14 +72,14 @@ class Functional_Mapi_Test {
     class Lazy extends FiniteIterableTest<BiFunction<Integer, Integer, Integer>, Integer, Tuple2<Integer, String>> {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.mapi(null, mock(Iterable.class)))
                     .withMessage("Lazy.mapi(BiFunction<Integer,U,V>,Iterable<U>): f must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.mapi(mock(BiFunction.class), null))
                     .withMessage("Lazy.mapi(BiFunction<Integer,U,V>,Iterable<U>): input must not be null");
 
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.mapi(null))
                     .withMessage("Lazy.mapi(BiFunction<Integer,U,V>): f must not be null");
         }

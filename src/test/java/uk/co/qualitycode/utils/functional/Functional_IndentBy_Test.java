@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static uk.co.qualitycode.utils.functional.Functional.fold;
@@ -24,14 +25,14 @@ class Functional_IndentBy_Test {
 
     @Test
     void defaultParamsBehaviour_throwsWhenUnitOfIndentationIsNull() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> indentBy(0, null, "hhljj"))
                 .withMessage("indentBy(int,String,String): unitOfIndentation must not be null");
     }
 
     @Test
     void defaultParamsBehaviour_throwsWhenUnitOfIndentThisIsNull() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> indentBy(0, "d", null))
                 .withMessage("indentBy(int,String,String): indentThis must not be null");
     }

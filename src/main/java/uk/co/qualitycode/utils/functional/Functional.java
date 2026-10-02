@@ -1406,13 +1406,16 @@ public final class Functional {
      * @param input input sequence
      * @param <T>   the type of the element in the input sequence
      * @return the last element from the input sequence
-     * @throws java.lang.IllegalArgumentException if the input sequence is null or empty
+     * @throws java.lang.NullPointerException     if the input sequence is null
+     * @throws java.lang.IllegalArgumentException if the input sequence is empty or contains a null
      */
     public static <T> T last(final Iterable<T> input) {
-
         notNull(input, "last(Iterable<T>)", "input");
-        final T last = fold((state, element) -> notNull(element, "last(Iterable<T>): input must not contains nulls"), (T) null, input);
-        return notNull(last, "last(Iterable<T>): input must not be empty");
+        // Nulls are rejected, so a null result can only mean there were no elements.
+        final T last = fold((state, element) -> io.vavr.control.Option.of(element)
+                .getOrElseThrow(() -> new IllegalArgumentException("last(Iterable<T>): input must not contains nulls")), (T) null, input);
+        return io.vavr.control.Option.of(last)
+                .getOrElseThrow(() -> new IllegalArgumentException("last(Iterable<T>): input must not be empty"));
     }
 
     /**

@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -21,11 +22,11 @@ class Functional_Zip3_Test {
     @Test
     void preconditions() {
         assertAll(
-                () -> assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip3(null, mock(Iterable.class), mock(Iterable.class)))
+                () -> assertThatNullPointerException().isThrownBy(() -> Functional.zip3(null, mock(Iterable.class), mock(Iterable.class)))
                         .withMessage("zip3(Iterable<A>,Iterable<B>,Iterable<C>): input1 must not be null"),
-                () -> assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip3(mock(Iterable.class), null, mock(Iterable.class)))
+                () -> assertThatNullPointerException().isThrownBy(() -> Functional.zip3(mock(Iterable.class), null, mock(Iterable.class)))
                         .withMessage("zip3(Iterable<A>,Iterable<B>,Iterable<C>): input2 must not be null"),
-                () -> assertThatIllegalArgumentException().isThrownBy(() -> Functional.zip3(mock(Iterable.class), mock(Iterable.class), null))
+                () -> assertThatNullPointerException().isThrownBy(() -> Functional.zip3(mock(Iterable.class), mock(Iterable.class), null))
                         .withMessage("zip3(Iterable<A>,Iterable<B>,Iterable<C>): input3 must not be null"));
     }
 
@@ -83,11 +84,11 @@ class Functional_Zip3_Test {
         @Test
         void preconditions() {
             assertAll(
-                    () -> assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.zip3(null, mock(Iterable.class), mock(Iterable.class)))
+                    () -> assertThatNullPointerException().isThrownBy(() -> Functional.Lazy.zip3(null, mock(Iterable.class), mock(Iterable.class)))
                             .withMessage("Lazy.zip3(Iterable<A>,Iterable<B>,Iterable<C>): input1 must not be null"),
-                    () -> assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.zip3(mock(Iterable.class), null, mock(Iterable.class)))
+                    () -> assertThatNullPointerException().isThrownBy(() -> Functional.Lazy.zip3(mock(Iterable.class), null, mock(Iterable.class)))
                             .withMessage("Lazy.zip3(Iterable<A>,Iterable<B>,Iterable<C>): input2 must not be null"),
-                    () -> assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.zip3(mock(Iterable.class), mock(Iterable.class), null))
+                    () -> assertThatNullPointerException().isThrownBy(() -> Functional.Lazy.zip3(mock(Iterable.class), mock(Iterable.class), null))
                             .withMessage("Lazy.zip3(Iterable<A>,Iterable<B>,Iterable<C>): input3 must not be null"));
         }
 

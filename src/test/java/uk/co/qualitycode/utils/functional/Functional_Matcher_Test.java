@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.Functional.Matcher.findMatch;
 import static uk.co.qualitycode.utils.functional.Functional.Matcher.matcher;
@@ -15,17 +15,17 @@ import static uk.co.qualitycode.utils.functional.Functional.Matcher.matchers;
 class Functional_Matcher_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> findMatch(new Object()).from(null).orElse(mock(Function.class)))
                 .withMessage("findMatch(A).from(Matches<A,B>).orElse(Function<A,B>): cases must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> findMatch(new Object()).from(matchers(matcher(o -> true, Function.identity()))).orElse(null))
                 .withMessage("findMatch(A).from(Matches<A,B>).orElse(Function<A,B>): defaultCase must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> matcher(null, mock(Function.class)))
                 .withMessage("matcher(Predicate<A>,Function<A,B>): predicate must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> matcher(mock(Predicate.class), null))
                 .withMessage("matcher(Predicate<A>,Function<A,B>): result must not be null");
     }
@@ -76,7 +76,7 @@ class Functional_Matcher_Test {
 
     @Test
     void matchesRejectsNullCases() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.Matcher.Matches.of(null))
                 .withMessage("Matches.of(Iterable<Match<A,B>>): it must not be null");
     }

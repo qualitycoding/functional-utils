@@ -7,30 +7,30 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 
 class Functional_If_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.if_(new Object(), null, mock(Function.class), mock(Function.class)))
                 .withMessage("if_(A,Predicate<A>,Function<A,B>,Function<A,B>): predicate must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.if_(new Object(), mock(Predicate.class), null, mock(Function.class)))
                 .withMessage("if_(A,Predicate<A>,Function<A,B>,Function<A,B>): thenClause must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.if_(new Object(), mock(Predicate.class), mock(Function.class), null))
                 .withMessage("if_(A,Predicate<A>,Function<A,B>,Function<A,B>): elseClause must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.if_(new Object()).withPredicate(null).then(mock(Function.class)).orElse(mock(Function.class)))
                 .withMessage("if_(A,Predicate<A>,Function<A,B>,Function<A,B>): predicate must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.if_(new Object()).withPredicate(mock(Predicate.class)).then(null).orElse(mock(Function.class)))
                 .withMessage("if_(A,Predicate<A>,Function<A,B>,Function<A,B>): thenClause must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.if_(new Object()).withPredicate(mock(Predicate.class)).then(mock(Function.class)).orElse(null))
                 .withMessage("if_(A,Predicate<A>,Function<A,B>,Function<A,B>): elseClause must not be null");
 

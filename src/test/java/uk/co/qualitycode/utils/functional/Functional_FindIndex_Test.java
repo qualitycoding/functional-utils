@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collection;
 import java.util.function.Predicate;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -15,10 +16,10 @@ class Functional_FindIndex_Test {
     @Test
     void preconditions() {
         assertAll(
-                () -> assertThatIllegalArgumentException()
+                () -> assertThatNullPointerException()
                         .isThrownBy(() -> findIndex(null, mock(Iterable.class)))
                         .withMessage("findIndex(Predicate<A>,Iterable<A>): f must not be null"),
-                () -> assertThatIllegalArgumentException()
+                () -> assertThatNullPointerException()
                         .isThrownBy(() -> findIndex(x -> true, null))
                         .withMessage("findIndex(Predicate<A>,Iterable<A>): input must not be null")
         );

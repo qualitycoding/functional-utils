@@ -5,6 +5,8 @@ import io.vavr.Tuple3;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * /**
  * Lazily evaluated int sequences: the int counterparts of the generic {@code Functional.Lazy} operations. Nothing is
@@ -349,17 +351,17 @@ public class LazySequences {
         private final IntIterable input;
         private final IntSequenceSupport.IntQueue matching = new IntSequenceSupport.IntQueue();
         private final IntSequenceSupport.IntQueue rest = new IntSequenceSupport.IntQueue();
-        private IntIterator source;
+        private final io.vavr.Lazy<IntIterator> source;
 
         IntPartitioner(final Predicate_int predicate, final IntIterable input) {
             this.predicate = predicate;
             this.input = input;
+            this.source = io.vavr.Lazy.of(input::iterator);
         }
 
         private boolean fill(final IntSequenceSupport.IntQueue wanted) {
-            if (source == null) source = input.iterator();
-            while (wanted.isEmpty() && source.hasNext()) {
-                final int element = source.next();
+            while (wanted.isEmpty() && source.get().hasNext()) {
+                final int element = source.get().next();
                 (predicate.test(element) ? matching : rest).add(element);
             }
             return !wanted.isEmpty();
@@ -399,7 +401,6 @@ public class LazySequences {
     }
 
     private static <T> T requireArgument(final T t, final String operation, final String parameterName) {
-        if (t == null) throw new IllegalArgumentException(operation + ": " + parameterName + " must not be null");
-        return t;
+        return requireNonNull(t, operation + ": " + parameterName + " must not be null");
     }
 }

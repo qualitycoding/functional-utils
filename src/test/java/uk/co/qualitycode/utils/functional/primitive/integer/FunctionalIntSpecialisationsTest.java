@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -56,7 +57,7 @@ class FunctionalIntSpecialisationsTest {
 
         @Test
         void rejectsNullInput() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.takeWhile(x -> true, (IntIterable) null))
                     .withMessage("Functional.takeWhile(Predicate_int,IntIterable): input must not be null");
         }
@@ -76,7 +77,7 @@ class FunctionalIntSpecialisationsTest {
 
         @Test
         void rejectsANullPredicate() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.skipWhile((Predicate_int) null, xs))
                     .withMessage("Functional.skipWhile(Predicate_int,IntIterable): predicate must not be null");
         }

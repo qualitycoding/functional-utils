@@ -7,17 +7,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 
 class Functional_Concat_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.concat(null, mock(Iterable.class)))
                 .withMessage("concat(Iterable<T>,Iterable<T>): input1 must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.concat(mock(Iterable.class), null))
                 .withMessage("concat(Iterable<T>,Iterable<T>): input2 must not be null");
     }
@@ -33,10 +33,10 @@ class Functional_Concat_Test {
     class Lazy extends FiniteIterableTest<Iterable<Integer>, Integer, Integer> {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.concat(null, mock(Iterable.class)))
                     .withMessage("Lazy.concat(Iterable<T>,Iterable<T>): input1 must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.concat(mock(Iterable.class), null))
                     .withMessage("Lazy.concat(Iterable<T>,Iterable<T>): input2 must not be null");
         }

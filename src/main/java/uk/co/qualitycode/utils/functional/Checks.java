@@ -1,9 +1,10 @@
 package uk.co.qualitycode.utils.functional;
 
-import static java.util.Objects.isNull;
+import static java.util.Objects.requireNonNull;
 
 /**
- * Argument checks shared by the functional operations; failures are reported as IllegalArgumentException.
+ * Argument checks shared by the functional operations. A null argument is reported as a NullPointerException
+ * whose message names the operation and the parameter.
  */
 final class Checks {
     private Checks() {
@@ -14,7 +15,6 @@ final class Checks {
     }
 
     static <T> T notNull(final T t, final String fullMessage) {
-        if (isNull(t)) throw new IllegalArgumentException(fullMessage);
-        return t;
+        return requireNonNull(t, fullMessage);
     }
 }

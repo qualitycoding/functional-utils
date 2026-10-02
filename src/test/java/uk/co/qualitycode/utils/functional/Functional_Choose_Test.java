@@ -9,30 +9,30 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.FunctionalTest.triplingGenerator;
 
 class Functional_Choose_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.choose(null, mock(Iterable.class)))
                 .withMessage("choose(Function<A,Option<B>>,Iterable<A>): chooser must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.choose(mock(Function.class), (Iterable) null))
                 .withMessage("choose(Function<A,Option<B>>,Iterable<A>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.choose(null, mock(Collection.class)))
                 .withMessage("choose(Function<A,Option<B>>,Collection<A>): chooser must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.choose(mock(Function.class), (Collection) null))
                 .withMessage("choose(Function<A,Option<B>>,Collection<A>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.choose(null))
                 .withMessage("choose(Function<A,Option<B>>): chooser must not be null");
     }
@@ -91,14 +91,14 @@ class Functional_Choose_Test {
     class Lazy extends FiniteIterableTest<Function<Integer, Option<String>>, Integer, String> {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.choose(null, mock(Iterable.class)))
                     .withMessage("Lazy.choose(Function<A,Option<B>>,Iterable<A>): chooser must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.choose(mock(Function.class), (Iterable) null))
                     .withMessage("Lazy.choose(Function<A,Option<B>>,Iterable<A>): input must not be null");
 
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.choose(null))
                     .withMessage("Lazy.choose(Function<A,Option<B>>): chooser must not be null");
         }

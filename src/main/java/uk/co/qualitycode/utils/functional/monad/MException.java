@@ -9,6 +9,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static java.util.Objects.requireNonNull;
+
 public final class MException<U> implements AnyM<MException.Witness, U> {
     /**
      * Identifies MException as an {@link AnyM}.
@@ -30,7 +32,7 @@ public final class MException<U> implements AnyM<MException.Witness, U> {
 
     // this is 'return'
     public static <B> MException<B> toMException(final Supplier<B> f) {
-        if (f == null) throw new IllegalArgumentException("f");
+        requireNonNull(f, "f");
         return new MException<>(Lazy.of(() -> evaluate(f)));
     }
 
@@ -67,7 +69,7 @@ public final class MException<U> implements AnyM<MException.Witness, U> {
      */
     @Override
     public <B> MException<B> flatMap(final Function<? super U, ? extends AnyM<Witness, B>> f) {
-        if (f == null) throw new IllegalArgumentException("f");
+        requireNonNull(f, "f");
         return outcome.get().<MException<B>>fold(
                 MException::failed,
                 value -> {
@@ -103,14 +105,14 @@ public final class MException<U> implements AnyM<MException.Witness, U> {
      * @return the same MException
      */
     public static <T> MException<T> narrow(final AnyM<Witness, T> m) {
-        if (m == null) throw new IllegalArgumentException("m");
+        requireNonNull(m, "m");
         return (MException<T>) m;
     }
 
     public static <A, B, C> MException<C> lift(final BiFunction<A, B, C> f, final MException<A> a, final MException<B> b) {
-        if (f == null) throw new IllegalArgumentException("f");
-        if (a == null) throw new IllegalArgumentException("a");
-        if (b == null) throw new IllegalArgumentException("b");
+        requireNonNull(f, "f");
+        requireNonNull(a, "a");
+        requireNonNull(b, "b");
         return a.bind(x -> b.bind(y -> toMException(BinaryFunction.delay(f, x, y))));
     }
 

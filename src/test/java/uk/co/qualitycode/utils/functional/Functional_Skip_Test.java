@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
@@ -19,14 +20,14 @@ class Functional_Skip_Test {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.skip(-1, mock(Iterable.class)))
                 .withMessage("skip(int,Iterable<T>): howMany must not be negative");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.skip(1, (Iterable) null))
                 .withMessage("skip(int,Iterable<T>): input must not be null");
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.skip(-1, mock(List.class)))
                 .withMessage("skip(int,List<T>): howMany must not be negative");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.skip(1, (List) null))
                 .withMessage("skip(int,List<T>): input must not be null");
 
@@ -115,7 +116,7 @@ class Functional_Skip_Test {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Functional.Lazy.skip(-1, mock(Iterable.class)))
                     .withMessage("Lazy.skip(int,Iterable<T>): howMany must not be negative");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.skip(1, (Iterable) null))
                     .withMessage("Lazy.skip(int,Iterable<T>): input must not be null");
 

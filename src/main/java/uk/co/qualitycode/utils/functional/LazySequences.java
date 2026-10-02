@@ -1021,21 +1021,21 @@ public class LazySequences {
         private final Iterable<T> input;
         private final java.util.LinkedList<T> matching = new java.util.LinkedList<>();
         private final java.util.LinkedList<T> rest = new java.util.LinkedList<>();
-        private Iterator<T> source;
+        private final io.vavr.Lazy<Iterator<T>> source;
 
         Partitioner(final Predicate<? super T> predicate, final Iterable<T> input) {
             this.predicate = predicate;
             this.input = input;
+            this.source = io.vavr.Lazy.of(input::iterator);
         }
 
         /**
          * Read from the input until the requested half has an element waiting, or the input is exhausted.
          */
         private boolean fill(final boolean wantMatching) {
-            if (source == null) source = input.iterator();
             final java.util.LinkedList<T> wanted = wantMatching ? matching : rest;
-            while (wanted.isEmpty() && source.hasNext()) {
-                final T element = source.next();
+            while (wanted.isEmpty() && source.get().hasNext()) {
+                final T element = source.get().next();
                 (predicate.test(element) ? matching : rest).add(element);
             }
             return !wanted.isEmpty();

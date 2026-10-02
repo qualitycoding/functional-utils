@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.FunctionalTest.doublingGenerator;
 
@@ -17,21 +17,21 @@ class Functional_Filter_Test {
 
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.filter(null, mock(Iterable.class)))
                 .withMessage("filter(Predicate<A>,Iterable<A>): predicate must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.filter(mock(Predicate.class), (Iterable) null))
                 .withMessage("filter(Predicate<A>,Iterable<A>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.filter(null, mock(Collection.class)))
                 .withMessage("filter(Predicate<A>,Collection<A>): predicate must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.filter(mock(Predicate.class), null))
                 .withMessage("filter(Predicate<A>,Collection<A>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.filter(null))
                 .withMessage("filter(Predicate<A>): predicate must not be null");
     }
@@ -87,14 +87,14 @@ class Functional_Filter_Test {
     class Lazy extends FiniteIterableTest<Integer, Integer, Integer> {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.filter(null, mock(Iterable.class)))
                     .withMessage("Lazy.filter(Predicate<T>,Iterable<T>): predicate must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.filter(mock(Predicate.class), null))
                     .withMessage("Lazy.filter(Predicate<T>,Iterable<T>): input must not be null");
 
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.filter(null))
                     .withMessage("Lazy.filter(Predicate<T>): predicate must not be null");
         }
@@ -140,10 +140,10 @@ class Functional_Filter_Test {
     class Rec {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Rec.filter(null, mock(Iterable.class)))
                     .withMessage("Rec.filter(Predicate<A>,Iterable<A>): predicate must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Rec.filter(mock(Predicate.class), (Iterable<?>) null))
                     .withMessage("Rec.filter(Predicate<A>,Iterable<A>): input must not be null");
         }

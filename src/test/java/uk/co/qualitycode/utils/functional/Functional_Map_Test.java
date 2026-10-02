@@ -9,9 +9,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.Functional.map;
 import static uk.co.qualitycode.utils.functional.Functional.stringify;
@@ -20,19 +20,19 @@ import static uk.co.qualitycode.utils.functional.FunctionalTest.doublingGenerato
 class Functional_Map_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> map(null, new ArrayList<>()))
                 .withMessage("map(Function<A,B>,Collection<A>): f must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> map(i -> i, null))
                 .withMessage("map(Function<A,B>,Collection<A>): input must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> map(null, mock(Iterable.class)))
                 .withMessage("map(Function<A,B>,Iterable<A>): f must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> map(i -> i, (Iterable) null))
                 .withMessage("map(Function<A,B>,Iterable<A>): input must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> map(null))
                 .withMessage("map(Function<A,B>): f must not be null");
 
@@ -75,14 +75,14 @@ class Functional_Map_Test {
     class Lazy extends FiniteIterableTest<Function<Integer, String>, Integer, String> {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.map(null, mock(Iterable.class)))
                     .withMessage("Lazy.map(Function<T,R>,Iterable<T>): f must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.map(mock(Function.class), null))
                     .withMessage("Lazy.map(Function<T,R>,Iterable<T>): input must not be null");
 
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.map(null))
                     .withMessage("Lazy.map(Function<T,R>): f must not be null");
         }
@@ -127,10 +127,10 @@ class Functional_Map_Test {
     class Rec {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Rec.map(null, mock(Iterable.class)))
                     .withMessage("Rec.map(Function<A,B>,Iterable<A>): f must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Rec.map(i -> i, null))
                     .withMessage("Rec.map(Function<A,B>,Iterable<A>): input must not be null");
         }

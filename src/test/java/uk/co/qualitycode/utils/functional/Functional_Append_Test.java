@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 
 class Functional_Append_Test {
@@ -17,14 +17,14 @@ class Functional_Append_Test {
     class Lazy extends FiniteIterableTest<Integer, Integer, Integer> {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.append(null, mock(Iterable.class)))
                     .withMessage("Lazy.append(T,Iterable<T>): value must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.append(new Object(), null))
                     .withMessage("Lazy.append(T,Iterable<T>): input must not be null");
 
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.append(null))
                     .withMessage("Lazy.append(T): value must not be null");
         }

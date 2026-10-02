@@ -6,7 +6,7 @@ import uk.co.qualitycode.utils.functional.monad.Option;
 import java.util.Collection;
 import java.util.function.Function;
 
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.Functional.pick;
@@ -16,10 +16,10 @@ class Functional_Pick_Test {
     @Test
     void preconditions() {
         assertAll(
-                () -> assertThatIllegalArgumentException()
+                () -> assertThatNullPointerException()
                         .isThrownBy(() -> pick(null, mock(Iterable.class)))
                         .withMessage("pick(Function<A,Option<B>>, Iterable<A>): f must not be null"),
-                () -> assertThatIllegalArgumentException()
+                () -> assertThatNullPointerException()
                         .isThrownBy(() -> pick(Function.identity(), null))
                         .withMessage("pick(Function<A,Option<B>>, Iterable<A>): input must not be null"));
     }

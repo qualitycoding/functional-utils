@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
@@ -17,14 +18,14 @@ class Functional_Take_Test {
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.take(-1, mock(Iterable.class)))
                 .withMessage("take(int,Iterable<T>): howMany must not be negative");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.take(1, (Iterable)null))
                 .withMessage("take(int,Iterable<T>): input must not be null");
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> Functional.take(-1, mock(List.class)))
                 .withMessage("take(int,List<T>): howMany must not be negative");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.take(1, (List)null))
                 .withMessage("take(int,List<T>): input must not be null");
 
@@ -64,7 +65,7 @@ class Functional_Take_Test {
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> Functional.Lazy.take(-1, mock(Iterable.class)))
                     .withMessage("Lazy.take(int,Iterable<T>): howMany must not be negative");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.take(1, (Iterable) null))
                     .withMessage("Lazy.take(int,Iterable<T>): input must not be null");
 

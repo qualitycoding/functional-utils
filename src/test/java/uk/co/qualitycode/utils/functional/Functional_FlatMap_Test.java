@@ -10,30 +10,30 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.Functional.flatMap;
 
 class Functional_FlatMap_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> flatMap(null, new ArrayList<>()))
                 .withMessage("flatMap(Function<A,B>,Collection<A>): f must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> flatMap(i -> Collections.emptyList(), (List) null))
                 .withMessage("flatMap(Function<A,B>,Collection<A>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> flatMap(null, mock(Iterable.class)))
                 .withMessage("flatMap(Function<A,B>,Iterable<A>): f must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> flatMap(i -> Collections.emptyList(), (Iterable) null))
                 .withMessage("flatMap(Function<A,B>,Iterable<A>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> flatMap(null))
                 .withMessage("flatMap(Function<A,Iterable<B>>): f must not be null");
     }
@@ -77,14 +77,14 @@ class Functional_FlatMap_Test {
     class Lazy extends FiniteIterableTest<Integer, Integer, Integer> {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.flatMap(null, mock(Iterable.class)))
                     .withMessage("Lazy.flatMap(Function<A,Iterable<B>>,Iterable<A>): f must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.flatMap(i -> Collections.emptyList(), (Iterable) null))
                     .withMessage("Lazy.flatMap(Function<A,Iterable<B>>,Iterable<A>): input must not be null");
 
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.flatMap(null))
                     .withMessage("Lazy.flatMap(Function<A,Iterable<B>>): f must not be null");
         }

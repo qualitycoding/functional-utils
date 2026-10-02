@@ -2,12 +2,14 @@ package uk.co.qualitycode.utils.functional.primitive.integer;
 
 import java.util.Iterator;
 
+import static java.util.Objects.requireNonNull;
+
 public final class Iterators {
     private Iterators() {
     }
 
     public static IntIterable reverse(final IntList list) {
-        if (list == null) throw new IllegalArgumentException("list");
+        requireNonNull(list, "list");
 
         if (list.isEmpty())
             throw new IllegalArgumentException("Collection is empty");
@@ -39,7 +41,7 @@ public final class Iterators {
 
     // Return the first item of the sequence and then every nth item thereafter
     public static <T> Iterable<T> everyNth(final int step, final Iterable<T> it) {
-        if (it == null) throw new IllegalArgumentException("enumerable");
+        requireNonNull(it, "enumerable");
 
         if (step < 1)
             throw new IllegalArgumentException("Invalid step value, must be greater than zero.");

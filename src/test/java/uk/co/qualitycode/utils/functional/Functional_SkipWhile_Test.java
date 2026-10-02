@@ -11,28 +11,28 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 
 class Functional_SkipWhile_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.skipWhile(null, mock(List.class)))
                 .withMessage("skipWhile(Predicate<T>,List<T>): predicate must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.skipWhile(mock(Predicate.class), (List)null))
                 .withMessage("skipWhile(Predicate<T>,List<T>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.skipWhile(null, mock(Iterable.class)))
                 .withMessage("skipWhile(Predicate<T>,Iterable<T>): predicate must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.skipWhile(mock(Predicate.class), (Iterable)null))
                 .withMessage("skipWhile(Predicate<T>,Iterable<T>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.skipWhile(null))
                 .withMessage("skipWhile(Predicate<T>): predicate must not be null");
     }
@@ -100,14 +100,14 @@ class Functional_SkipWhile_Test {
 
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.skipWhile(null, mock(Iterable.class)))
                     .withMessage("Lazy.skipWhile(Predicate<T>,Iterable<T>): predicate must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.skipWhile(mock(Predicate.class), (Iterable) null))
                     .withMessage("Lazy.skipWhile(Predicate<T>,Iterable<T>): input must not be null");
 
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.skipWhile(null))
                     .withMessage("Lazy.skipWhile(Predicate<T>): predicate must not be null");
         }

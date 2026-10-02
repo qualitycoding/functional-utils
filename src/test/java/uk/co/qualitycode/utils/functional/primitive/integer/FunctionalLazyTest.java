@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static uk.co.qualitycode.utils.functional.primitive.integer.IntSequenceContract.drain;
@@ -339,9 +340,9 @@ class FunctionalLazyTest {
 
         @Test
         void rejectsNullArguments() {
-            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.partition(x -> true, null))
+            assertThatNullPointerException().isThrownBy(() -> Functional.Lazy.partition(x -> true, null))
                     .withMessage("Lazy.partition(Predicate_int,IntIterable): input must not be null");
-            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.partition((Predicate_int) null, ints(1)))
+            assertThatNullPointerException().isThrownBy(() -> Functional.Lazy.partition((Predicate_int) null, ints(1)))
                     .withMessage("Lazy.partition(Predicate_int,IntIterable): predicate must not be null");
         }
     }
@@ -432,9 +433,9 @@ class FunctionalLazyTest {
 
         @Test
         void rejectsNullArguments() {
-            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.filter(x -> true, null))
+            assertThatNullPointerException().isThrownBy(() -> Functional.Lazy.filter(x -> true, null))
                     .withMessage("Lazy.filter(Predicate_int,IntIterable): input must not be null");
-            assertThatIllegalArgumentException().isThrownBy(() -> Functional.Lazy.map(null, ints(1)))
+            assertThatNullPointerException().isThrownBy(() -> Functional.Lazy.map(null, ints(1)))
                     .withMessage("Lazy.map(Func_int_int,IntIterable): f must not be null");
         }
     }

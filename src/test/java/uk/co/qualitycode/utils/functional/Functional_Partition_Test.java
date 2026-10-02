@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
@@ -17,14 +18,14 @@ import static org.mockito.Mockito.mock;
 class Functional_Partition_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.partition(null, mock(Iterable.class)))
                 .withMessage("partition(Predicate<A>,Iterable<A>): predicate must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.partition(mock(Predicate.class), (Iterable) null))
                 .withMessage("partition(Predicate<A>,Iterable<A>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.partition(null))
                 .withMessage("partition(Predicate<A>): predicate must not be null");
 
@@ -35,7 +36,7 @@ class Functional_Partition_Test {
                 .isThrownBy(() -> Functional.partition(1, 0))
                 .withMessage("partition(int,int): howManyPartitions must be positive");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.partition(null, 1, 1))
                 .withMessage("partition(Function<Integer,A>,int,int): generator must not be null");
         assertThatIllegalArgumentException()
@@ -144,7 +145,7 @@ class Functional_Partition_Test {
                     .isThrownBy(() -> Functional.Lazy.partition(1, 0))
                     .withMessage("Lazy.partition(int,int): howManyPartitions must be positive");
 
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.partition(null, 1, 1))
                     .withMessage("Lazy.partition(Function<Integer,T>,int,int): generator must not be null");
             assertThatIllegalArgumentException()

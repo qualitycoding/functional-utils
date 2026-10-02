@@ -8,21 +8,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 
 class Functional_GroupBy_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
             .isThrownBy(()->Functional.groupBy(null, mock(Iterable.class)))
             .withMessage("groupBy(Function<T,U>,Iterable<T>): keyFn must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
             .isThrownBy(()->Functional.groupBy(mock(Function.class), null))
             .withMessage("groupBy(Function<T,U>,Iterable<T>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(()->Functional.groupBy(null))
                 .withMessage("groupBy(Function<T,U>): keyFn must not be null");
     }

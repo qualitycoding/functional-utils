@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static uk.co.qualitycode.utils.functional.Functional.findLast;
@@ -19,21 +19,21 @@ class Functional_FindLast_Test {
     @Test
     void preconditions() {
         assertAll(
-                () -> assertThatIllegalArgumentException()
+                () -> assertThatNullPointerException()
                         .isThrownBy(() -> findLast(null, mock(Iterable.class)))
                         .withMessage("findLast(Predicate<A>,Iterable<A>): f must not be null"),
-                () -> assertThatIllegalArgumentException()
+                () -> assertThatNullPointerException()
                         .isThrownBy(() -> findLast(x -> true, (Iterable) null))
                         .withMessage("findLast(Predicate<A>,Iterable<A>): input must not be null"),
 
-                () -> assertThatIllegalArgumentException()
+                () -> assertThatNullPointerException()
                         .isThrownBy(() -> findLast(null, mock(List.class)))
                         .withMessage("findLast(Predicate<A>,List<A>): f must not be null"),
-                () -> assertThatIllegalArgumentException()
+                () -> assertThatNullPointerException()
                         .isThrownBy(() -> findLast(x -> true, (List) null))
                         .withMessage("findLast(Predicate<A>,List<A>): input must not be null"),
 
-                () -> assertThatIllegalArgumentException()
+                () -> assertThatNullPointerException()
                         .isThrownBy(() -> findLast(null).apply(mock(Iterable.class)))
                         .withMessage("findLast(Predicate<A>): f must not be null")
         );

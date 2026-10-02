@@ -11,32 +11,32 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 
 class Functional_Unfold_Test {
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.unfold(null, mock(Predicate.class), new Object()))
                 .withMessage("unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): unspooler must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.unfold(mock(Function.class), null, new Object()))
                 .withMessage("unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): finished must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.unfold((Function<? super Object, Tuple2<Object, Object>>)null, mock(Predicate.class)))
                 .withMessage("unfold(Function<B,Tuple2<A,B>>,Predicate<B>): unspooler must not be null");
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.unfold((Function<? super Object, Tuple2<Object, Object>>)mock(Function.class), null))
                 .withMessage("unfold(Function<B,Tuple2<A,B>>,Predicate<B>): finished must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.unfold(null))
                 .withMessage("unfold(Function<B,Tuple2<A,B>>): unspooler must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.unfold(null, new Object()))
                 .withMessage("unfold(Function<B,Option<Tuple2<A,B>>>,B): unspooler must not be null");
     }
@@ -88,25 +88,25 @@ class Functional_Unfold_Test {
     class Lazy extends InfiniteIterableTest<Integer, Integer, Integer> {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.unfold(null, mock(Predicate.class), new Object()))
                     .withMessage("Lazy.unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): unspooler must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.unfold(mock(Function.class), null, new Object()))
                     .withMessage("Lazy.unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): finished must not be null");
 
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.unfold((Function<? super Object, Tuple2<Object, Object>>) null, mock(Predicate.class)))
                     .withMessage("Lazy.unfold(Function<B,Tuple2<A,B>>,Predicate<B>): unspooler must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.unfold((Function<? super Object, Tuple2<Object, Object>>) mock(Function.class), null))
                     .withMessage("Lazy.unfold(Function<B,Tuple2<A,B>>,Predicate<B>): finished must not be null");
 
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.unfold(null))
                     .withMessage("Lazy.unfold(Function<B,Tuple2<A,B>>): unspooler must not be null");
 
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Lazy.unfold(null, new Object()))
                     .withMessage("Lazy.unfold(Function<B,Option<Tuple2<A,B>>>,B): unspooler must not be null");
         }
@@ -182,14 +182,14 @@ class Functional_Unfold_Test {
     class Rec {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Rec.unfold(null, mock(Predicate.class), new Object()))
                     .withMessage("Rec.unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): unspooler must not be null");
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Rec.unfold(mock(Function.class), null, new Object()))
                     .withMessage("Rec.unfold(Function<B,Tuple2<A,B>>,Predicate<B>,B): finished must not be null");
 
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.unfold(null, new Object()))
                     .withMessage("unfold(Function<B,Option<Tuple2<A,B>>>,B): unspooler must not be null");
         }

@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -23,11 +24,11 @@ class Functional_Fold_Test {
 
     @Test
     void preconditions() {
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.fold(null, new Object(), mock(Iterable.class)))
                 .withMessage("fold(BiFunction<A,B,A>,A,Iterable<B>): folder must not be null");
         // null is an allowable initialValue
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.fold(mock(BiFunction.class), new Object(), null))
                 .withMessage("fold(BiFunction<A,B,A>,A,Iterable<B>): input must not be null");
 
@@ -38,11 +39,11 @@ class Functional_Fold_Test {
 //                .isThrownBy(() -> Functional.fold(mock(BiFunction.class), new Object(), (Collection) null))
 //                .withMessage("fold(BiFunction<A,B,A>,A,Collection<B>): input must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.fold(null, new Object()))
                 .withMessage("fold(BiFunction<A,B,A>,A): folder must not be null");
 
-        assertThatIllegalArgumentException()
+        assertThatNullPointerException()
                 .isThrownBy(() -> Functional.fold(null))
                 .withMessage("fold(BiFunction<A,B,A>): folder must not be null");
     }
@@ -124,11 +125,11 @@ class Functional_Fold_Test {
     class Rec {
         @Test
         void preconditions() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Rec.fold(null, new Object(), mock(Iterable.class)))
                     .withMessage("Rec.fold(BiFunction<A,B,A>,A,Iterable<B>): folder must not be null");
             // null is an allowable initialValue
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.Rec.fold(mock(BiFunction.class), new Object(), null))
                     .withMessage("Rec.fold(BiFunction<A,B,A>,A,Iterable<B>): input must not be null");
         }

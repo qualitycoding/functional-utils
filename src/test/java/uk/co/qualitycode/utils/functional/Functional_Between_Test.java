@@ -4,6 +4,7 @@ import io.vavr.Tuple2;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static uk.co.qualitycode.utils.functional.IsBetween.is;
@@ -14,28 +15,28 @@ class Functional_Between_Test {
     class Preconditions {
         @Test
         void lowerBound() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.between(null, 4, 3))
                     .withMessage("between(T,T,T): lowerBound must not be null");
         }
 
         @Test
         void upperBound() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.between(1, null, 3))
                     .withMessage("between(T,T,T): upperBound must not be null");
         }
 
         @Test
         void bounds() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.between(null, 3))
                     .withMessage("between(Tuple2<T,T>,T): bounds must not be null");
         }
 
         @Test
         void value() {
-            assertThatIllegalArgumentException()
+            assertThatNullPointerException()
                     .isThrownBy(() -> Functional.between(new Tuple2<>(1, 2), null))
                     .withMessage("between(Tuple2<T,T>,T): value must not be null");
         }

@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class Functional_Join_Test {
@@ -41,7 +41,7 @@ class Functional_Join_Test {
     @Test
     void joinWithMapPreconditions() {
         assertAll(
-                () -> assertThatIllegalArgumentException()
+                () -> assertThatNullPointerException()
                         .isThrownBy(() -> Functional.join(" ", new ArrayList<>(), null))
                         .withMessage("join(String,Iterable<T>,Function<T,String>): tfm must not be null"));
     }
